@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<StiReport xmlns="http://www.stimulsoft.com" ReportVersion="2013.3">
+  <ReportName>Sample Report</ReportName>
+  <Pages>
+    <StiPage Name="Page1" PageWidth="210" PageHeight="297">
+      <Components>
+        <StiText Name="Header" Left="10" Top="10" Width="190" Height="20" Text="Sample Report">
+          <Font Name="Arial" Size="14" Bold="true" />
+          <HorAlignment>Center</HorAlignment>
+        </StiText>
+        <StiText Name="Footer" Left="10" Top="267" Width="190" Height="20" Text="Generated with Stimulsoft">
+          <Font Name="Arial" Size="10" />
+          <HorAlignment>Right</HorAlignment>
+        </StiText>
+      </Components>
+    </StiPage>
+  </Pages>
+</StiReport>

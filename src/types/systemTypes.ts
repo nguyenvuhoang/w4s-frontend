@@ -1,0 +1,503 @@
+import { Locale } from "@/configs/i18n";
+import { Session } from 'next-auth';
+import { FormResponseData, ResponseData, ResponseDataPortal, ResponseDefault, ResponseDefaultData, ResponseDefaultPortal, ResponseListDefault } from ".";
+import { VerticalMenuDataType, VerticalSubMenuDataType } from "./menuTypes";
+
+
+export interface DefaultData {
+    avatar: string
+    usercommand: VerticalMenuDataType[]
+
+}
+
+export interface SystemDataRequest {
+    sessiontoken: string
+    language: Locale,
+    formid?: string
+
+}
+export interface SystemViewDataRequest {
+    sessiontoken: string
+    language: Locale,
+    [key: string]: any;
+}
+export interface SystemSearchDataRequest {
+    sessiontoken: string
+    language: Locale,
+    page_index: number
+    page_size: number
+    search_text: string
+}
+
+export interface UserInRole {
+    role_id: number,
+    user_code: string,
+    is_main: string,
+    updated_on_utc: Date,
+    created_on_utc: Date,
+    id: number
+}
+export interface SystemData {
+    user_command: VerticalSubMenuDataType[]
+    avatar: string
+    name: string
+    role: UserInRole[]
+    is_agreement: boolean | string
+    is_first_login : boolean | string
+    login_name: string
+}
+
+export interface SystemDataResponse extends ResponseDefaultData<DefaultData> {
+    dataresponse: ResponseDefault<SystemData>
+}
+
+export interface UpdateTokenRealResponse {
+    status: string
+}
+
+
+export interface FormField {
+    label: string;
+    name: string;
+    required: boolean;
+    type: string;
+    options?: string[]; // Only for select fields
+}
+export interface TableDataRow {
+    learnApiId: string;
+    learnApiName: string;
+    app: string;
+    dataAPI: string;
+    method: string;
+}
+
+export interface HeaderTableData {
+    learn_api_id: string;
+    learn_api_name: string;
+    app: string;
+    dataAPI: string;
+    method: string;
+}
+export interface TableData {
+    headers: Record<string, string>;
+    data: Array<Record<string, any>>;
+}
+
+export interface TabContent {
+    label: string;
+    content: {
+        formfields: FormField[];
+        tabledata: TableData;
+    }
+}
+
+export interface PageContent {
+    pagecontent: TabContent[]
+}
+
+export interface RuleStrong {
+    code: string
+    config: any
+    inUse: boolean
+    isStart: boolean
+    order: number
+    isDidStart?: boolean
+    isOpenFromOther?: boolean
+    isStatus?: boolean
+}
+export interface FormInfo {
+    title: string
+    des: string
+    data: string
+    learnapi: string
+    learnsql: string
+    last_update: string
+    bodata: string
+    openOne: string
+    url_input: string
+    lang_form: any
+    mode_form: any
+    form_code: string
+    ruleStrong: RuleStrong[]
+    app: string
+}
+
+export interface ListView {
+    isTab?: string;
+    lang?: any;
+    code: string
+    name: string
+    inputtype: string
+    list_input: any
+    codeHidden: string
+}
+
+export interface FormLayout {
+    id: string
+    name: string
+    des: string
+    inputtype: string
+    class: string
+    list_view: ListView[]
+    codeHidden: string
+    isTab?: string
+}
+
+export interface MobileConfig {
+    fieldName: string
+    title: string
+    valueType: string
+    config: Object
+}
+
+export interface MobileSearchButton {
+    fieldName: string
+    label: string
+    type: string
+    config: {
+        learnApiId: string
+    }
+}
+export interface MobileContent {
+    fieldName: string
+    label: string
+    type: string
+    config: MobileConfig[]
+    learnApiIdLoadMore?: string
+    searchButton?: MobileSearchButton
+    viewTemplateID?: string
+    viewWorkflowID?: string
+    viewParam?: string
+    required?: boolean
+    isSeparator?: boolean
+    defaultValue?: any
+    visible?: boolean
+    child?: any
+}
+export interface FormLayoutMobile {
+    viewName?: string
+    viewLabel?: string
+    isTab: boolean
+    content: MobileContent[]
+}
+export interface FormDesignDetail {
+    id: number
+    info: FormInfo
+    list_layout: FormLayout[]
+    form_id: string
+    app: string
+}
+
+export interface FormData {
+    status: string
+    loadRoleTask: any
+    form_design_detail: FormDesignDetail
+}
+
+export interface FormDataResponse extends ResponseDefaultData<DefaultData> {
+    dataresponse: FormResponseData<FormData>
+}
+
+
+export type FormInput = {
+    inputtype: string;
+    [key: string]: any;
+};
+
+export type FormView = {
+    id?: string;
+    code: string;
+    name: string;
+    isTab?: string;
+    isBox?: string;
+    inputtype: string;
+    list_input: FormInput[];
+    isBorder?: string;
+    lang?: any;
+};
+
+export interface LearnDataRequest {
+    sessiontoken: string | unknown
+    learnapi: string
+    pageSize: number
+    pageIndex: number
+}
+
+export interface PageData<T> {
+    total_count: number
+    total_pages: number
+    has_previous_page: boolean
+    has_next_page: boolean
+    items: T[]
+    pageindex?: number
+    pagesize?: number
+    page_index?: number
+    page_size?: number
+}
+
+export interface TableDataResponse extends ResponseDefaultData<DefaultData> {
+    dataresponse: ResponseDefaultPortal<ResponseDataPortal<PageData<any>>>
+}
+
+export interface DataRequest {
+    sessiontoken: string | unknown
+}
+
+export interface ResponseSubmitPortal<T> {
+    status: boolean
+    message: string
+    data: T
+    [key: string]: any;
+}
+export interface SubmitDataResponse extends ResponseDefaultData<{}> {
+    dataresponse: ResponseSubmitPortal<ResponseDataPortal<any>>
+}
+
+export interface SystemCode {
+    id: number
+    codeid: string
+    codename: string
+    caption: string
+    languagecaption: string
+    codegroup: string
+    codeindex: number
+    codevalue: string
+    ftag: any
+    visible: boolean
+}
+
+export interface SystemCodeDataResponse extends ResponseDefaultData<DefaultData> {
+    dataresponse: ResponseDefault<ResponseData<ResponseDefaultPortal<SystemCode[]>>>
+}
+
+
+export interface SearchDataRequest {
+    sessiontoken: string | unknown
+    learnapi?: string
+    workflowid?: string
+    commandname?: string
+    pageSize?: number
+    pageIndex?: number
+    parameters?: { [key: string]: any }
+    searchtext?: string
+    issearch?: boolean
+    advanccesearch?: any
+    language?: Locale
+    [key: string]: any;
+}
+
+export interface ViewDataRequest {
+    sessiontoken: string | unknown
+    learnapi?: string
+    workflowid?: string
+    commandname?: string
+    parameters?: any
+    issearch?: boolean
+    language?: Locale
+}
+
+export interface UpdateDataRequest {
+    sessiontoken: string | unknown
+    learnapi?: string
+    workflowid?: string
+    data: any
+}
+
+export interface ViewDataResponse extends ResponseDefaultData<DefaultData> {
+    dataresponse: ResponseDefault<ResponseData<ResponseDefaultPortal<any> | any>> 
+}
+
+
+export interface SearchDataResponse extends ResponseDefaultData<DefaultData> {
+    dataresponse: ResponseDefault<ResponseData<PageData<any>>>
+}
+
+export interface BODataResponse extends ResponseDefaultData<DefaultData> {
+    dataresponse: ResponseDefault<ResponseData<any>>
+}
+
+export interface FODataResponse extends ResponseDefaultData<DefaultData> {
+    dataresponse: ResponseDefault<ResponseData<any>>
+}
+
+export interface RunFoDataRequest {
+    sessiontoken: string | unknown
+    learnapi: string
+    workflowid: string
+}
+export interface RunFoDynamicDataRequest {
+    sessiontoken: string | unknown
+    input?: any
+    use_microservice?: boolean
+    workflowid: string
+    language?: Locale
+}
+export interface RunBoDynamicDataRequest {
+    sessiontoken: string | unknown
+    txFo: any
+}
+
+export interface FODataArrayResponse extends ResponseDefaultData<DefaultData> {
+    dataresponse: ResponseDefault<ResponseData<PageData<any>>>
+}
+
+export interface ReportDataRequest {
+    sessiontoken: string | unknown
+    pageindex: number
+    pagesize: number
+}
+export interface ReportDetailDataRequest {
+    sessiontoken: string | unknown
+    pageindex: number
+    pagesize: number
+    reportid: string | undefined
+    langid: Locale
+}
+
+export interface MenuItem {
+    application_code: string
+    command_id: string
+    parent_id: string
+    command_name: string
+    command_name_language: string
+    command_type: string
+    command_uri: string
+    is_visible: boolean
+    display_order: number
+    group_menu_icon: string
+    group_menu_visible: string
+    group_menu_id: any
+    group_menu_list_authorize_form: any
+}
+
+export interface Operation {
+    operation_header: OperationHeader[]
+    operation_body: OperationBody[]
+}
+
+export interface OperationHeader {
+    cmdid: string
+    caption: string
+}
+
+export interface OperationBody {
+    role_id: number
+    role_name: string
+    parent_id: string
+    command_id: string
+    command_name: string
+    command_id_detail: any
+    invoke: number
+    approve: number
+    application_code: string
+    command_type: string
+    group_menu_icon: string
+    group_menu_visible: string
+    group_menu_id: string
+    group_menu_list_authorize_form: any
+}
+
+export interface Service {
+    id: number
+    servicecode: string
+    servicename: string
+    description: string
+    order: number
+    status: boolean
+    totalcount: number
+}
+
+export interface Role {
+    id: number
+    roleid: number
+    rolename: string
+    roledescription: string
+    usertype: string
+    contractno: any
+    usercreated: string
+    datecreated: string
+    usermodified: any
+    datemodified: any
+    serviceid: string
+    roletype: string
+    status: string
+    isshow: string
+    order: number
+    totalcount: number
+}
+
+
+export interface SubmitDataRequest {
+    sessiontoken: string | unknown
+    learnapi?: string
+    workflowid?: string
+    commandname?: string
+    pageSize?: number
+    pageIndex?: number
+    parameters?: any
+    searchtext?: string
+    issearch?: boolean
+    advanccesearch?: any
+    language?: Locale
+    data?: any
+}
+
+export interface FilesDataResponse {
+    message: string;
+    fileUrl: string
+    trackerCode: string | null;
+    expiredOnUtc: Date | null;
+    temp: boolean;
+    status: string;
+}
+
+export interface RunDynamicDataRequest {
+    body: any;
+    sessiontoken: Session | string | unknown;
+}
+
+export interface OpenAPIType {
+    clientid: string,
+    clientsecret: string,
+    displayname: string,
+    environment: string,
+    scopes: string,
+    expiredonutc: string,
+    isrevoked: boolean,
+    isactive: boolean,
+    createdonutc: string,
+    createdby: string,
+    lastusedonutc: Date | null,
+    usage_count: number,
+    status: string,
+    id: string
+}
+
+export interface CalendarType {
+    id: number,
+    sqn_date: Date,
+    is_current_date: number,
+    is_holiday: number,
+    is_end_of_week: number,
+    is_end_of_month: number,
+    is_end_of_quater: number,
+    is_end_of_half_year: number,
+    is_end_of_year: number,
+    is_begin_of_week: number,
+    is_begin_of_month: number,
+    is_begin_of_quater: number,
+    is_begin_of_half_year: number,
+    is_begin_of_year: number,
+    is_fiscal_end_of_week: number,
+    is_fiscal_end_of_month: number,
+    is_fiscal_end_of_quater: number,
+    is_fiscal_end_of_half_year: number,
+    is_fiscal_end_of_year: number,
+    is_fiscal_begin_of_week: number,
+    is_fiscal_begin_of_month: number,
+    is_fiscal_begin_of_quater: number,
+    is_fiscal_begin_of_half_year: number,
+    is_fiscal_begin_of_year: number,
+    descs: string,
+    currency_code: string
+}

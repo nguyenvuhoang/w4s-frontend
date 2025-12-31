@@ -1,0 +1,14 @@
+# Turborepo
+.turbo
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Node / Web
+node_modules/
+.next/
+dist/
+
+# Logs
+logs/
+*.log

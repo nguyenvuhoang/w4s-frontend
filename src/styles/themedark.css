@@ -1,0 +1,114 @@
+.theme-young-pro {
+    --backgroundImage-bgDecorativeSecondary: linear-gradient(125deg, rgba(1, 12, 30, 0) 55.38%, rgba(96, 76, 140, .72) 103.36%), rgba(255, 255, 255, .05);
+    --backgroundImage-bgDecorativeTertiary: linear-gradient(128deg, rgba(1, 12, 30, 0) 55.74%, rgba(181, 48, 227, .5) 106.38%), rgba(255, 255, 255, .05);
+    --colors-backgroundBody: 15, 147, 83;
+    --colors-buttonTertiary: 255, 255, 255;
+    --colors-neutral-0: 255, 255, 255;
+    --colors-neutral-2: 250, 250, 250;
+    --colors-neutral-5: 242, 242, 242;
+    --colors-neutral-10: 231, 231, 231;
+    --colors-neutral-20: 208, 208, 208;
+    --colors-neutral-30: 183, 183, 183;
+    --colors-neutral-40: 160, 160, 160;
+    --colors-neutral-60: 89, 89, 89;
+    --colors-neutral-70: 77, 77, 77;
+    --colors-neutral-80: 65, 65, 65;
+    --colors-neutral-100: 0, 0, 0;
+    --colors-primary-1: 192, 240, 70;
+    --colors-primary-2: 239, 253, 181;
+    --colors-secondary-10: 248, 255, 236;
+    --colors-secondary-20: 236, 251, 210;
+    --colors-secondary-30: 218, 240, 180;
+    --colors-secondary-40: 239, 253, 181;
+    --colors-secondary-60: 161, 199, 109;
+    --colors-secondary-80: 133, 185, 77;
+    --colors-sematic-red: 255, 89, 64;
+    --colors-sematic-blue: 56, 115, 209;
+    --colors-sematic-green: 144, 214, 127;
+    --colors-sematic-yellow: 243, 216, 104;
+    --colors-backgroundPrimary: 26, 35, 51;
+    --colors-backgroundSecondary: 26, 35, 51;
+    --colors-backgroundTertiary: 0, 11, 29;
+    --colors-backgroundDisabled: 89, 89, 89;
+    --colors-backgroundHover: 255, 255, 255;
+    --colors-backgroundActive: 239, 253, 181;
+    --colors-borderPrimary: 64, 85, 84;
+    --colors-borderSecondary: 64, 85, 84;
+    --colors-borderDark: 64, 85, 84;
+    --colors-borderDanger: 255, 89, 64;
+    --colors-textBasePrimary: 255, 255, 255;
+    --colors-textBaseSecondary: 208, 208, 208;
+    --colors-textBaseTertiary: 126, 126, 126;
+    --colors-textPrimary1: 192, 240, 70;
+    --colors-textPrimary2: 239, 253, 181;
+    --colors-textLink: 192, 240, 70;
+    --colors-textHighlightPrimary: 192, 240, 70;
+    --colors-textHighlightSecondary: 255, 89, 64;
+    --colors-textBasePrimaryInverse: 0, 0, 0;
+    --colors-textBaseSecondaryInverse: 160, 160, 160;
+    --colors-textDanger: 255, 89, 64;
+    --colors-textSuccess: 144, 214, 127;
+    --colors-textDisabled: 208, 208, 208;
+    --colors-button-primary-borderColor: 0, 0, 0;
+    --colors-button-primary-contentColor: 0, 0, 0;
+    --colors-button-primary-borderColorDisabled: 208, 208, 208;
+    --colors-button-primary-bgColorDisabled: 208, 208, 208;
+    --colors-button-primary-contentColorDisabled: 160, 160, 160;
+    --colors-button-secondary-borderColor: 0, 0, 0;
+    --colors-button-secondary-contentColor: 255, 255, 255;
+    --colors-button-secondary-borderColorDisabled: 208, 208, 208;
+    --colors-button-secondary-bgColorDisabled: 208, 208, 208;
+    --colors-button-secondary-contentColorDisabled: 160, 160, 160;
+    --colors-button-tertiary-borderColor: 0, 0, 0;
+    --colors-button-tertiary-contentColor: 255, 255, 255;
+    --colors-button-tertiary-borderColorDisabled: 208, 208, 208;
+    --colors-button-tertiary-bgColorDisabled: 208, 208, 208;
+    --colors-button-tertiary-contentColorDisabled: 160, 160, 160;
+    --colors-button-textLink-contentColor: 192, 240, 70;
+    --colors-button-textLink-contentColorDisabled: 208, 208, 208;
+    --colors-input-borderColor: 255, 255, 255;
+    --colors-input-placeholderColor: 126, 126, 126;
+    --colors-input-bgColor: 255, 255, 255;
+    --colors-input-borderHoverColor: 239, 253, 181;
+    --colors-input-borderFocusColor: 239, 253, 181;
+    --colors-input-backgroundDisabled: 255, 255, 255;
+    --colors-input-borderDangerColor: 255, 89, 64;
+    --colors-input-labelColor: 208, 208, 208;
+    --colors-input-borderColorDisabled: 255, 255, 255;
+    --colors-input-contentColor: 255, 255, 255;
+    --colors-input-contentDisabled: 208, 208, 208;
+    --colors-input-prefixIconColor: 255, 255, 255;
+    --colors-input-suffixIconColor: 192, 240, 70;
+    --colors-tooltip-contentColor: 0, 11, 29;
+    --colors-tooltip-bgColor: 239, 253, 181;
+    --colors-toggle-activeColor: 192, 240, 70;
+    --colors-toggle-checkColor: 0, 0, 0;
+    --colors-toggle-bgColor: 183, 183, 183;
+    --colors-toggle-bgColorDisabled: 65, 65, 65;
+    --colors-toggle-iconColor: 255, 255, 255;
+    --colors-toggle-iconColorActive: 0, 0, 0;
+    --colors-toggle-iconColorDisabled: 208, 208, 208;
+    --boxShadow-mediumPrimary: 0px 4px 16px 0px rgba(161, 199, 109, .6);
+    --boxShadow-primaryLight: 0px 0px 0px 4px rgba(192, 240, 70, .25);
+    --boxShadow-sematicRed: 0px 0px 0px 4px rgba(254, 228, 226, .3), 0px 1px 2px 0px rgba(16, 24, 40, .05);
+    --boxShadow-doubleRing: 0px 0px 0px 4px rgba(192, 240, 70, .16), 0px 0px 0px 2px rgba(192, 240, 70, .16);
+    --dropShadow-mediumPrimary: 0px 4px 16px 0px rgba(161, 199, 109, .6);
+    --dropShadow-primaryLight: 0px 0px 0px 4px rgba(192, 240, 70, .25);
+    --dropShadow-sematicRed: 0px 0px 0px 4px rgba(254, 228, 226, .3), 0px 1px 2px 0px rgba(16, 24, 40, .05);
+    --dropShadow-doubleRing: 0px 0px 0px 4px rgba(192, 240, 70, .16), 0px 0px 0px 2px rgba(192, 240, 70, .16);
+    --primary-color: rgb(247, 248, 246);
+}
+
+.theme-young-pro .sidebar {
+    border-width: 0px !important;
+    background-color: transparent !important;
+    --tw-text-opacity: 1 !important;
+}
+
+.theme-young-pro .decorative-light {
+    background-image: url('/images/pages/decorative-light.svg') !important;
+}
+
+.theme-young-pro .text-primary {
+    color: #048D48 !important;
+}
