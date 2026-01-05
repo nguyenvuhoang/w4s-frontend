@@ -24,13 +24,21 @@ const menuItemStyles = (theme: Theme, iconClass: string): MenuItemStyles => ({
           [`& .${menuClasses.button}.${menuClasses.active}`]: {
             color: 'var(--mui-palette-primary-contrastText) !important',
             backgroundColor: 'var(--mui-palette-primary-main) !important',
-            boxShadow: 'var(--mui-customShadows-xs)'
+            boxShadow: 'var(--mui-customShadows-xs)',
+            '& .MuiSvgIcon-root, & svg': {
+              color: 'var(--mui-palette-primary-contrastText) !important',
+              fill: 'var(--mui-palette-primary-contrastText) !important'
+            }
           }
         }
       : {
           [`&:not([aria-expanded]) > .${menuClasses.button}.${menuClasses.active}`]: {
             backgroundColor: 'var(--mui-palette-primary-main) !important',
-            color: 'var(--mui-palette-primary-main) !important'
+            color: 'var(--mui-palette-primary-contrastText) !important',
+            '& .MuiSvgIcon-root, & svg': {
+              color: 'var(--mui-palette-primary-contrastText) !important',
+              fill: 'var(--mui-palette-primary-contrastText) !important'
+            }
           },
           [`&[aria-expanded] > .${menuClasses.button}.${menuClasses.active}`]: {
             backgroundColor: 'var(--mui-palette-action-selected) !important'

@@ -63,6 +63,7 @@ const DynamicLayout = async ({ children, params }: SessionLayoutProps) => {
             language: resolvedParams.locale,
             formid: formcode
         })
+
         if (
             !isValidResponse(pagecontentApi) ||
             (pagecontentApi.payload.dataresponse.errors && pagecontentApi.payload.dataresponse.errors.length > 0)
@@ -73,8 +74,8 @@ const DynamicLayout = async ({ children, params }: SessionLayoutProps) => {
         formdata = pagecontentApi.payload.dataresponse.data as unknown as FormInputData;
 
         const masterdata = formdata.form_design_detail.master_data;
+
         const resolvedMasterData = replaceParameterPlaceholders(masterdata, id ?? '', dictionary, resolvedParams.locale);
-console.log(masterdata);
         const viewdataApi = await systemServiceApi.runDynamic({
             sessiontoken: session?.user?.token as string,
             body: resolvedMasterData,
@@ -88,6 +89,7 @@ console.log(masterdata);
                 'ExecutionID:' + viewdataApi.payload.dataresponse.errors[0].execute_id + ' - ' + viewdataApi.payload.dataresponse.errors[0].info
             return <PageError errorDetails={errorString} />
         }
+
         viewdata = viewdataApi.payload.dataresponse.data;
 
         applyViewDataToForm(formdata, viewdata);

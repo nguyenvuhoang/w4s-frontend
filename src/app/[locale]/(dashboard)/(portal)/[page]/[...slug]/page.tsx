@@ -43,7 +43,6 @@ const DynamicPageAction = async ({ params }: { params: Params }) => {
         language: locale,
         formid,
     });
-    console.log( pagecontentApi.payload.dataresponse)
 
     if (!isValidResponse(pagecontentApi)) {
         return <PageError errorDetails='Failed to load form info' />;
@@ -58,8 +57,7 @@ const DynamicPageAction = async ({ params }: { params: Params }) => {
 
         const pagedataApi = await systemServiceApi.viewData({
             sessiontoken: session?.user?.token as string,
-            learnapi: 'cbs_workflow_execute',
-            workflowid: workflowid ?? 'BO_EXECUTE_SQL_FROM_CTH',
+            workflowid: workflowid ?? 'WF_BO_EXECUTE_SQL_FROM_CTH',
             commandname: storename,
             issearch: false,
             parameters: { id: id },

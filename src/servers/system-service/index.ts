@@ -61,7 +61,7 @@ export const systemServiceApi = {
             { lang: language, app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'SYS' }
         ),
 
-    searchData: ({ sessiontoken, workflowid, commandname, searchtext, pageSize, pageIndex, parameters, logtype }: SearchDataRequest) => {
+    searchData: ({ sessiontoken, workflowid, commandname, searchtext, pageSize, pageIndex, parameters, logtype, language }: SearchDataRequest) => {
         // Validate commandname to prevent empty calls
         if (!commandname || commandname.trim() === '') {
             console.warn('⚠️ searchData called with empty commandname, skipping API call');
@@ -69,8 +69,8 @@ export const systemServiceApi = {
                 status: 400,
                 payload: {
                     dataresponse: {
-                        error: [{ info: 'Command name is required', key: '400', code: 'VALIDATION_ERROR' }],
-                        fo: []
+                        errors: [{ info: 'Command name is required', key: '400', code: 'VALIDATION_ERROR' }],
+                        data: {}
                     }
                 }
             } as any);
@@ -85,6 +85,7 @@ export const systemServiceApi = {
                 parameters: {
                     searchtext: searchtext,
                     channel: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO',
+                    language: language ?? 'en',
                     ...parameters
                 },
                 ...(logtype && { log_type: logtype })

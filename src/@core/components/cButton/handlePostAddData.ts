@@ -27,9 +27,9 @@ export const handlePostAddData = async (
 
         if (
             !isValidResponse(submitForm) ||
-            (submitForm.payload.dataresponse.error && submitForm.payload.dataresponse.error.length > 0)
+            (submitForm.payload.dataresponse.errors && submitForm.payload.dataresponse.errors.length > 0)
         ) {
-            const error = submitForm.payload.dataresponse.error?.[0];
+            const error = submitForm.payload.dataresponse.errors?.[0];
             const errorString = `ExecutionID: ${error?.execute_id ?? ''} - ${error?.info ?? 'Unknown error'}`;
             SwalAlert('error', errorString, 'center');
             return false;

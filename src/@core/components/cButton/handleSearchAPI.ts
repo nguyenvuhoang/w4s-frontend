@@ -1,8 +1,9 @@
+import { Locale } from "@/configs/i18n";
 import { systemServiceApi } from "@/servers/system-service";
 import SwalAlert from "@/utils/SwalAlert";
 import { Session } from "next-auth";
 
-export const handleSearchAPI = async (session: Session | null, txFo_: any, pageIndex: number, pageSize: number, searchtext?: string, parameters?: { [key: string]: any }) => {
+export const handleSearchAPI = async (session: Session | null, txFo_: any, pageIndex: number, pageSize: number, searchtext?: string, parameters?: { [key: string]: any }, language?: Locale) => {
     try {
         const inputdata = txFo_[0].input;
         const submitForm = await systemServiceApi.searchData({
@@ -12,7 +13,8 @@ export const handleSearchAPI = async (session: Session | null, txFo_: any, pageI
             searchtext: searchtext ? searchtext : '',
             pageSize: pageSize,
             pageIndex: pageIndex,
-            parameters: parameters ?? inputdata?.parameters ?? {}
+            parameters: parameters ?? inputdata?.parameters ?? {},
+            language: language ?? 'en',
         });
 
         const transactionresponse = submitForm.payload.dataresponse;
@@ -20,7 +22,7 @@ export const handleSearchAPI = async (session: Session | null, txFo_: any, pageI
         const errorInfo = transactionresponse.errors;
 
         if (errorInfo.length > 0) {
-            SwalAlert('error', 'Please check system config. Maybe have no config store command name', 'center');
+            SwalAlert('error', errorInfo[0].info, 'center');
             return undefined;
         }
         return transactionresponse.data;

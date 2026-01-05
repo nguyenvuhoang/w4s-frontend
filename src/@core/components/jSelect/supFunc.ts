@@ -42,20 +42,20 @@ export const getDataConfig = async (
     if (!config) return [];
 
     let data_query: any[] = [];
-    const { query_data, json_data } = config;
+    const { json_data } = config;
     switch (config.data_mode) {
         case 'learnapi':
             const txFoArray = JSON.parse(config.txFo);
             const updatedData = replaceAtFields(txFoArray, parameter);
             // ép language vào parameters
-            if (updatedData.bo?.[0]?.input?.fields?.parameters && 'language' in updatedData.bo[0].input.fields.parameters) {
-            updatedData.bo[0].input.fields.parameters.language = language;
+            if (updatedData.fields?.parameters && 'language' in updatedData.fields.parameters) {
+                updatedData.fields.parameters.language = language;
             }
             const getQueryDataApi = await systemServiceApi.runBODynamic({
                 sessiontoken: session?.user?.token as string,
                 txFo: updatedData
             });
-            data_query = getQueryDataApi.payload.dataresponse.fo[0]?.input.result || getQueryDataApi.payload.dataresponse.fo[0]?.input.items || [];
+            data_query = getQueryDataApi.payload.dataresponse.data.result || getQueryDataApi.payload.dataresponse.data.items || [];
             break;
 
         case 'cdlist':
@@ -68,7 +68,7 @@ export const getDataConfig = async (
                     codegroup: cdgrp,
                     codename: cdname,
                 });
-                data_query = getCdlistApi.payload.dataresponse.fo[0].input.items || [];
+                data_query = getCdlistApi.payload.dataresponse.data.items || [];
             }
             break;
     }
@@ -100,25 +100,18 @@ export const useReportConfig = (
             const getQueryDataApi = await systemServiceApi.runBODynamic({
                 sessiontoken: session?.user?.token as string,
                 txFo: {
-                    bo: [
-                        {
-                            input: {
-                                learn_api: 'cbs_workflow_execute',
-                                workflowid: 'SYS_EXECUTE_SQL',
-                                commandname: ddlstore,
-                                issearch: true,
-                                pageindex: 1,
-                                pagesize: 999999,
-                                parameters: {
-                                    searchtext: ""
-                                }
-                            }
-                        }
-                    ]
+                    workflowid: 'SYS_EXECUTE_SQL',
+                    commandname: ddlstore,
+                    issearch: true,
+                    pageindex: 1,
+                    pagesize: 999999,
+                    parameters: {
+                        searchtext: ""
+                    }
                 }
             });
 
-            data_query = getQueryDataApi.payload.dataresponse.fo[0]?.input.result || getQueryDataApi.payload.dataresponse.fo[0]?.input.items || [];
+            data_query = getQueryDataApi.payload.dataresponse.data.result || getQueryDataApi.payload.dataresponse.data.items || [];
 
             let data_result: any[] = [];
             let data_json: any = [];

@@ -43,7 +43,6 @@ const DynamicPageGeneric = ({ formdesigndetail, session, language, dictionary, r
     const DynamicIcon = info?.url_input && (Icons as any)[info?.url_input] ? (Icons as any)[info?.url_input] : Icons.AccountBalance;
 
     const isFormDeclared = form_id && info && list_layout;
-
     return (
         <NoSsr>
             <WrapperContentPage>

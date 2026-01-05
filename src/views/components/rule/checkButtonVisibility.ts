@@ -12,7 +12,6 @@ export const checkButtonVisibility = (
             rule.inUse === true &&
             rule.config.component_action === "modify"
     );
-
     if (visibilityRules.length > 0) {
         // Kiểm tra tất cả các rules trong danh sách đã lọc
         return visibilityRules.some((rule) => {

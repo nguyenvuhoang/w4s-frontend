@@ -10,6 +10,8 @@ import React from 'react';
 import { normalizeLang } from './normalizeLang';
 import { Locale } from '@/configs/i18n';
 import { getLocalizedText } from './getLocalizedText';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import * as FaIcons from "@fortawesome/free-solid-svg-icons";
 
 
 export const generateCellTable = (
@@ -109,6 +111,91 @@ export const generateCellTable = (
             );
         case 'status':
         case 'ColumnTag':
+            const cfg = column?.config || {};
+            const isDynamic = cfg?.dynamic === true;
+            const item = isDynamic
+                ? {
+                    label: cfg?.showValue ? String(value ?? '') : '',
+                    backgroundColor: String(value ?? ''),
+                    color: String(value ?? ''), // không dùng text, chỉ để hợp logic
+                }
+                : cfg?.[value];
+
+            const shape = cfg?.shape || 'rect';
+            const size = cfg?.size ?? 16;
+            if (isDynamic && shape === 'circle') {
+                return (
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                        <span
+                            style={{
+                                width: size,
+                                height: size,
+                                borderRadius: '50%',
+                                backgroundColor: item?.backgroundColor || 'transparent',
+                                border: `1px solid ${cfg?.borderColor || '#ddd'}`,
+                                display: 'inline-block',
+                            }}
+                            title={String(value ?? '')}
+                        />
+                        {cfg?.showValue ? (
+                            <span style={{ fontWeight: 600 }}>{String(value ?? '')}</span>
+                        ) : null}
+                    </span>
+                );
+            }
+
+            if (cfg?.dynamicIcon === true) {
+                const iconKey = String(value ?? '');
+
+                const MuiIcon =
+                    (Icons as any)[iconKey] ||
+                    (Icons as any)[iconKey.charAt(0).toUpperCase() + iconKey.slice(1)];
+
+                if (MuiIcon) {
+                    return (
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                            {React.createElement(MuiIcon, {
+                                style: { fontSize: cfg?.size ?? 18, color: cfg?.color ?? '#555' }
+                            })}
+                            {cfg?.showValue && <span>{iconKey}</span>}
+                        </span>
+                    );
+                }
+
+                if (iconKey.startsWith('fa-')) {
+                    const faName =
+                        'fa' +
+                        iconKey
+                            .replace('fa-', '')
+                            .split('-')
+                            .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+                            .join('');
+
+                    const FaIcon = (FaIcons as any)[faName];
+
+                    if (FaIcon) {
+                        return (
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                                <FontAwesomeIcon
+                                    icon={FaIcon}
+                                    style={{
+                                        fontSize: cfg?.size ?? 18,
+                                        color: cfg?.color ?? '#555'
+                                    }}
+                                />
+                                {cfg?.showValue && <span>{iconKey}</span>}
+                            </span>
+                        );
+                    }
+                }
+
+                return (
+                    <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+                        <Icons.Help style={{ fontSize: cfg?.size ?? 18, color: '#999' }} />
+                    </span>
+                );
+            }
+
             return (
                 <span
                     style={{

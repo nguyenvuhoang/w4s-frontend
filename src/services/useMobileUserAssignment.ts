@@ -196,7 +196,7 @@ export function useMobileUserAssignment({
 
                 const response = await systemServiceApi.searchData({
                     sessiontoken: session?.user?.token as string,
-                    workflowid: WORKFLOWCODE.BO_EXECUTE_SQL_FROM_CTH,
+                    workflowid: WORKFLOWCODE.WF_BO_EXECUTE_SQL_FROM_CTH,
                     commandname: STORECOMMAND.SIMPLE_SEARCH_MOBILE_USER,
                     searchtext: searchtext,
                     pageSize: size,
@@ -204,7 +204,7 @@ export function useMobileUserAssignment({
                 });
                 console.log(
                     "result fetch: ",
-                    response.payload.dataresponse.fo[0]?.input?.items
+                    response.payload.dataresponse.data.items
                 );
                 if (response?.status === 200) {
                     // Check for direct response structure first (new format)
@@ -238,17 +238,17 @@ export function useMobileUserAssignment({
                     else if (
                         response.payload?.dataresponse &&
                         !(
-                            response.payload.dataresponse.error &&
-                            response.payload.dataresponse.error.length > 0
+                            response.payload.dataresponse.errors &&
+                            response.payload.dataresponse.errors.length > 0
                         )
                     ) {
                         const data =
-                            response.payload.dataresponse.fo[0]?.input?.items || [];
+                            response.payload.dataresponse.data.items || [];
                         const totalItems =
-                            response.payload.dataresponse.fo[0]?.input?.items[0]
+                            response.payload.dataresponse.data.items[0]
                                 ?.total_count || 0;
                         const totalPageCount =
-                            response.payload.dataresponse.fo[0]?.input?.total_pages || 1;
+                            response.payload.dataresponse.data.total_pages || 1;
 
                         const mappedUsers: UserMobileAccount[] = data.map((u: any) => ({
                             id: u.id,
@@ -274,14 +274,14 @@ export function useMobileUserAssignment({
                     } else {
                         // Handle error case for nested structure
                         if (
-                            response.payload?.dataresponse?.error &&
-                            response.payload.dataresponse.error.length > 0
+                            response.payload?.dataresponse?.errors &&
+                            response.payload.dataresponse.errors.length > 0
                         ) {
                             console.error(
                                 "ExecutionID:",
-                                response.payload.dataresponse.error[0].execute_id +
+                                response.payload.dataresponse.errors[0].execute_id +
                                 " - [MobileUser] - " +
-                                response.payload.dataresponse.error[0].info
+                                response.payload.dataresponse.errors[0].info
                             );
                         }
                         return { users: [], total: 0, totalPages: 0 };
@@ -323,7 +323,7 @@ export function useMobileUserAssignment({
 
             const response = await systemServiceApi.searchData({
                 sessiontoken: session?.user?.token as string,
-                workflowid: WORKFLOWCODE.BO_EXECUTE_SQL_FROM_CTH,
+                workflowid: WORKFLOWCODE.WF_BO_EXECUTE_SQL_FROM_CTH,
                 commandname: STORECOMMAND.SIMPLE_SEARCH_MOBILE_USER_BY_ROLE,
                 searchtext: searchtext,
                 pageSize: size,
@@ -332,7 +332,7 @@ export function useMobileUserAssignment({
             });
             console.log(
                 "result fetch right: ",
-                response.payload.dataresponse.fo[0]?.input?.items
+                response.payload.dataresponse.data.items
             );
             if (response?.status === 200) {
                 // Check for direct response structure first (new format)
@@ -370,12 +370,12 @@ export function useMobileUserAssignment({
                         response.payload.dataresponse.error.length > 0
                     )
                 ) {
-                    const data = response.payload.dataresponse.fo[0]?.input?.items || [];
+                    const data = response.payload.dataresponse.data.items || [];
                     const totalItems =
-                        response.payload.dataresponse.fo[0]?.input?.items[0]?.total_count ||
+                        response.payload.dataresponse.data.items[0]?.total_count ||
                         0;
                     const totalPageCount =
-                        response.payload.dataresponse.fo[0]?.input?.total_pages || 1;
+                        response.payload.dataresponse.data.total_pages || 1;
 
                     const mappedUsers: UserMobileAccount[] = data.map((u: any) => ({
                         id: u.id,
@@ -401,14 +401,14 @@ export function useMobileUserAssignment({
                 } else {
                     // Handle error case for nested structure
                     if (
-                        response.payload?.dataresponse?.error &&
-                        response.payload.dataresponse.error.length > 0
+                        response.payload?.dataresponse?.errors &&
+                        response.payload.dataresponse.errors.length > 0
                     ) {
                         console.error(
                             "ExecutionID:",
-                            response.payload.dataresponse.error[0].execute_id +
+                            response.payload.dataresponse.errors[0].execute_id +
                             " - [MobileUserByRole] - " +
-                            response.payload.dataresponse.error[0].info
+                            response.payload.dataresponse.errors[0].info
                         );
                     }
                     return { users: [], total: 0, totalPages: 0 };

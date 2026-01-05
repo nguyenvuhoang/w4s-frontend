@@ -65,19 +65,19 @@ const RoleProfilePage = async ({ params }: { params: Params }) => {
     const [ roleData, userData, mobileUserData] = await Promise.all([
         fetchBOData({
             sessiontoken: session?.user?.token as string,
-            workflowid: WORKFLOWCODE.BO_EXECUTE_SQL_FROM_CTH,
+            workflowid: WORKFLOWCODE.WF_BO_EXECUTE_SQL_FROM_CTH,
             commandname: 'SimpleSearchUserRole',
             label: 'Role'
         }),
         fetchBOData({
             sessiontoken: session?.user?.token as string,
-            workflowid: WORKFLOWCODE.BO_EXECUTE_SQL_FROM_CTH,
+            workflowid: WORKFLOWCODE.WF_BO_EXECUTE_SQL_FROM_CTH,
             commandname: 'SimpleSearchUser',
             label: 'User'
         }),
         fetchBOData({
             sessiontoken: session?.user?.token as string,
-            workflowid: WORKFLOWCODE.BO_EXECUTE_SQL_FROM_CTH,
+            workflowid: WORKFLOWCODE.WF_BO_EXECUTE_SQL_FROM_CTH,
             commandname: 'SimpleSearchMobileUser',
             label: 'MobileUser',
             pageSize: 10,
@@ -85,7 +85,6 @@ const RoleProfilePage = async ({ params }: { params: Params }) => {
         }),
     ]);
     if (!roleData || !userData || !mobileUserData) return <Spinner />;
-
     return (
         <RoleProfileGeneric
             locale={locale}

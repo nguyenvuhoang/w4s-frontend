@@ -54,6 +54,7 @@ export interface ResponseCode<T> {
 }
 
 export interface ResponseData<T> {
+  [x: string]: any
   data: MenuItem[]
   txcode: string
   executeId: string
@@ -153,6 +154,7 @@ export interface FormInfo {
   lang_form: Record<string, string>;
   form_code: string;
   app: string;
+  is_static: boolean;
 }
 
 export interface FormInputData {

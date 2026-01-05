@@ -1,38 +1,54 @@
 import { Locale } from "@/configs/i18n";
 import { getDictionary } from "./getDictionary";
 
+type Dict = Awaited<ReturnType<typeof getDictionary>>;
+
 export function replaceParameterPlaceholders(
   masterdata: Record<string, any>,
   id: string,
-  dictionary: Awaited<ReturnType<typeof getDictionary>>,
-  language: Locale | undefined = 'en'
+  dictionary: Dict,
+  language: Locale | undefined = "en"
 ): Record<string, any> {
   if (!masterdata) {
-    throw new Error(dictionary['common'].missingmasterdata);
+    throw new Error(dictionary["common"].missingmasterdata);
   }
 
   const result = structuredClone(masterdata);
 
-  for (const key in result) {
-    const items = result[key];
-    if (Array.isArray(items)) {
-      for (const item of items) {
-        const parameters = item?.input?.fields?.parameters;
-        if (parameters && typeof parameters === 'object') {
-          for (const paramKey in parameters) {
-            const value = parameters[paramKey];
-            if (typeof value === 'string' && value.startsWith('@')) {
-              const placeholder = value.slice(1);
-              if (placeholder === 'id') {
-                parameters[paramKey] = id;
-                parameters["language"] = language;
-              }
+  const visit = (node: any) => {
+    if (!node) return;
+
+    // array
+    if (Array.isArray(node)) {
+      for (const x of node) visit(x);
+      return;
+    }
+
+    // object
+    if (typeof node === "object") {
+      // Nếu node có parameters thì xử lý tại đây
+      const params = node.parameters;
+      if (params && typeof params === "object" && !Array.isArray(params)) {
+        for (const paramKey of Object.keys(params)) {
+          const v = params[paramKey];
+          if (typeof v === "string" && v.startsWith("@")) {
+            const placeholder = v.slice(1).trim().toLowerCase();
+
+            if (placeholder === "id") {
+              params[paramKey] = id;
             }
           }
         }
+
+        params["language"] = language ?? "en";
+      }
+
+      for (const k of Object.keys(node)) {
+        visit(node[k]);
       }
     }
-  }
+  };
 
+  visit(result);
   return result;
 }

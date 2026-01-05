@@ -42,7 +42,6 @@ const ViewCheckBoxItem = ({
     useEffect(() => {
         const fetchOptions = async () => {
             if (hasFetchedRef.current) return
-
             let selectData = input.options || []
 
             if ((!selectData || selectData.length === 0) && input.config) {
@@ -52,7 +51,6 @@ const ViewCheckBoxItem = ({
                     console.error('Failed to fetch config data for checkbox:', error)
                 }
             }
-
             const keySelected = input.config?.key_selected
             const keyDisplay = input.config?.key_display
 
@@ -134,6 +132,7 @@ const ViewCheckBoxItem = ({
                         flexDirection: input.config?.layout === 'vertical' ? 'column' : 'row',
                         flexWrap: input.config?.layout === 'horizontal' ? 'wrap' : 'nowrap'
                     }}
+                    size={12}
                 >
                     <Controller
                         name={input.default?.code}
@@ -144,11 +143,13 @@ const ViewCheckBoxItem = ({
                                 {options.map((opt, index) => {
                                     const checked = field.value?.includes(opt.value)
                                     const gridProps = parseClassToGrid(input.default?.class || '');
+                                    const defaultGridSize = { xs: 12, sm: 6, md: 4 };
+                                    const finalGridProps = Object.keys(gridProps).length > 0 ? gridProps : defaultGridSize;
                                     return (
 
                                         <Grid
                                             key={index}
-                                            size={gridProps}
+                                            size={finalGridProps}
                                         >
                                             <FormControlLabel
                                                 control={
