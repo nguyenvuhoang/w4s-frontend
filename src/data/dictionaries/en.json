@@ -1197,5 +1197,14 @@
     "application_code": "Application Code",
     "display_order": "Display Order",
     "is_visible": "Is Visible"
+  },
+  "wallet": {
+    "contractInfo": "Contract Information",
+    "contractNumber": "Contract Number",
+    "contractType": "Contract Type",
+    "contractStatus": "Contract Status",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "signedDate": "Signed Date"
   }
 }

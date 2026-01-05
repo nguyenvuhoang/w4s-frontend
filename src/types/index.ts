@@ -140,6 +140,7 @@ export type PageContentProps = {
   id?: string | undefined;
   formdata?: FormInputData;
   [x: string]: any;
+  dataview?: any;
 }
 
 export interface FormInfo {

@@ -1,193 +1,20 @@
-﻿'use client';
+'use client';
 
 import ActionButtonGroup from '@/components/ActionButtonGroup';
 import LoadingSubmit from '@/components/LoadingSubmit';
 import { PageContentProps } from '@/types';
-import { getDictionary } from '@/utils/getDictionary';
-import * as Icons from '@mui/icons-material';
 import AutoAwesomeMosaicIcon from '@mui/icons-material/AutoAwesomeMosaic';
-import { Box, Button, Card, CardContent, Grid, Typography } from '@mui/material';
+import { Box, Card, CardContent, Grid, Typography } from '@mui/material';
 
-import ViewImageItem from '../ViewImageItem';
-import ViewLabelItem from '../ViewLabelItem';
-import ContentWrapper from './content-wrapper';
-import ViewAreaItem from '../ViewAreaItem';
-import ViewCheckBoxItem from '../ViewCheckBoxItem';
-import ViewTableDynamicItem from '../ViewTableDynamicItem';
-import ViewPostingItem from '../ViewPostingItem';
-import ViewTableItem from '../ViewTableItem';
-import ViewBannerItem from '../ViewBannerItem';
-import ViewLabelBannerItem from '../ViewLabelBannerItem';
-import { useDynamicRenderer } from './hooks/useDynamicRenderer';
+import ContentWrapper from '../content-wrapper';
+import { useDynamicRenderer } from '../hooks/useDynamicRenderer';
+import RenderInputItem from './RenderInputItem';
 
 // ============================================================================
-// Types
+// Dynamic Form Renderer Component
 // ============================================================================
 
-interface RenderInputItemProps {
-  input: any;
-  dictionary: Awaited<ReturnType<typeof getDictionary>>;
-  isDirtyField?: boolean;
-  session: PageContentProps['session'];
-  locale: PageContentProps['locale'];
-  control: any;
-  getValues: any;
-  onChangeValue: (code: string, value: any) => void;
-  onChangeBanner: (input: any, bannerId: string) => void;
-  handleFormSubmit: (input: any) => void;
-  isFormDirty: boolean;
-}
-
-// ============================================================================
-// Sub-components
-// ============================================================================
-
-const RenderInputItem = ({
-  input,
-  dictionary,
-  isDirtyField,
-  session,
-  locale,
-  control,
-  getValues,
-  onChangeValue,
-  onChangeBanner,
-  handleFormSubmit,
-  isFormDirty,
-}: RenderInputItemProps) => {
-  const DynamicIcon =
-    input.icon && (Icons as any)[input.icon]
-      ? (Icons as any)[input.icon]
-      : Icons.CheckCircle;
-
-  switch (input.inputtype) {
-    case 'cLabel':
-    case 'cText':
-      return (
-        <ViewLabelItem
-          input={input}
-          dictionary={dictionary}
-          onChangeValue={onChangeValue}
-          session={session}
-          locale={locale}
-          isDirtyField={isDirtyField}
-          control={control}
-          getValues={getValues}
-        />
-      );
-
-    case 'cImage':
-      return (
-        <ViewImageItem
-          input={input}
-          onChangeValue={onChangeValue}
-          dictionary={dictionary}
-          session={session}
-        />
-      );
-
-    case 'cLabelBanner':
-      return (
-        <ViewLabelBannerItem
-          input={input}
-          dictionary={dictionary}
-          onChangeValue={onChangeValue}
-          session={session}
-          locale={locale}
-          isDirtyField={isDirtyField}
-          control={control}
-          getValues={getValues}
-        />
-      );
-
-    case 'cBanner':
-      return (
-        <ViewBannerItem
-          input={input}
-          onChangeValue={(bannerId) => onChangeBanner(input, bannerId)}
-          dictionary={dictionary}
-          session={session}
-        />
-      );
-
-    case 'cTextArea':
-      return (
-        <ViewAreaItem
-          input={input}
-          dictionary={dictionary}
-          session={session}
-          locale={locale}
-          control={control}
-        />
-      );
-
-    case 'cButton':
-      return (
-        <Button
-          type="button"
-          variant={input.variant || 'contained'}
-          color={input.color || 'primary'}
-          startIcon={DynamicIcon ? <DynamicIcon /> : undefined}
-          onClick={() => handleFormSubmit(input)}
-          disabled={input?.ishidden && input.btntype === 'submit' && !isFormDirty}
-        >
-          {input.default?.name || input.label || dictionary['common'].confirm}
-        </Button>
-      );
-
-    case 'cCheckbox':
-      return (
-        <ViewCheckBoxItem
-          input={input}
-          session={session}
-          locale={locale}
-          control={control}
-          getValues={getValues}
-          setValue={(code: string, value: any) => onChangeValue(code, value)}
-          onChangeValue={onChangeValue}
-        />
-      );
-
-    case 'cTableDynamic':
-      return (
-        <ViewTableDynamicItem
-          input={input}
-          control={control}
-          dictionary={dictionary}
-          setValue={(code: string, value: any) => onChangeValue(code, value)}
-        />
-      );
-
-    case 'cPosting':
-      return (
-        <ViewPostingItem
-          input={input}
-          control={control}
-          dictionary={dictionary}
-          setValue={(code: string, value: any) => onChangeValue(code, value)}
-        />
-      );
-
-    case 'cTableSearch':
-      return (
-        <ViewTableItem
-          input={input}
-          control={control}
-          dictionary={dictionary}
-          setValue={(code: string, value: any) => onChangeValue(code, value)}
-        />
-      );
-
-    default:
-      return null;
-  }
-};
-
-// ============================================================================
-// Main Component
-// ============================================================================
-
-const DynamicRenderer = ({
+const DynamicFormRenderer = ({
   dictionary,
   formdata,
   id,
@@ -215,9 +42,6 @@ const DynamicRenderer = ({
   });
 
   const { control, getValues, formState } = formMethods;
-
-  const formcode = formdata?.form_design_detail.info.form_code;
-  console.log(formcode);
 
   return (
     <Box className="relative">
@@ -349,4 +173,4 @@ const DynamicRenderer = ({
   );
 };
 
-export default DynamicRenderer;
+export default DynamicFormRenderer;

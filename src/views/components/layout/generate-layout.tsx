@@ -1,9 +1,7 @@
 import { auth } from '@/auth';
 import PageError from '@/components/PageError';
-import Spinner from '@/components/spinners';
 import { Locale } from '@/configs/i18n';
 import { siteConfig } from '@/data/meta';
-import { WORKFLOWCODE } from '@/data/WorkflowCode';
 import { systemServiceApi } from '@/servers/system-service';
 import { FormInputData } from '@/types';
 import { applyViewDataToForm } from '@/utils/applyViewDataToForm';
@@ -36,7 +34,7 @@ interface SessionLayoutProps {
     params: Promise<{ locale: Locale; slug?: string[] }>;
 }
 
-const DynamicLayout = async ({ children, params }: SessionLayoutProps) => {
+const GenerateLayout = async ({ children, params }: SessionLayoutProps) => {
     const resolvedParams = await params;
     const mode = await getServerMode();
 
@@ -91,7 +89,6 @@ const DynamicLayout = async ({ children, params }: SessionLayoutProps) => {
         }
 
         viewdata = viewdataApi.payload.dataresponse.data;
-
         applyViewDataToForm(formdata, viewdata);
 
     }
@@ -108,4 +105,4 @@ const DynamicLayout = async ({ children, params }: SessionLayoutProps) => {
     });
 };
 
-export default DynamicLayout;
+export default GenerateLayout;

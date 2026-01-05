@@ -1195,5 +1195,14 @@
     "application_code": "Application Code",
     "display_order": "Display Order",
     "is_visible": "Is Visible"
+  },
+  "wallet": {
+    "contractInfo": "Thông tin hợp đồng",
+    "contractNumber": "Số hợp đồng",
+    "contractType": "Loại hợp đồng",
+    "contractStatus": "Trạng thái hợp đồng",
+    "startDate": "Ngày bắt đầu",
+    "endDate": "Ngày kết thúc",
+    "signedDate": "Ngày ký"
   }
 }

@@ -1,8 +1,8 @@
 import { generateAuthMetadata } from '@/components/layout/AuthLayout';
 import { Locale } from '@/configs/i18n';
 import { splitLabel } from '@/utils/splitLabel';
-import DynamicLayout from '@/views/components/layout/dynamic-layout';
-import DynamicRenderer from '@/views/components/layout/dynamic-renderer';
+import GenerateLayout from '@/views/components/layout/generate-layout';
+import LayoutRenderer from '@/views/components/layout/layout-renderer';
 import { Metadata } from 'next';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: Locale; slug?: string[] }> }): Promise<Metadata> {
@@ -11,16 +11,15 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: L
     return generateAuthMetadata(`View - ${splitLabel(formCode)}`);
 }
 
-
-const KYCManagementView = async (props: { params: Promise<{ locale: Locale; slug?: string[] }> }) => {
+const FormView = async (props: { params: Promise<{ locale: Locale; slug?: string[] }> }) => {
     const params = await props.params;
     return (
-        <DynamicLayout params={Promise.resolve(params)}>
-            {({ dictionary, locale, session, id, formdata }) => (
-                <DynamicRenderer id={id} session={session} dictionary={dictionary} locale={locale} formdata={formdata} />
+        <GenerateLayout params={Promise.resolve(params)}>
+            {({ dictionary, locale, session, id, formdata, dataview }) => (
+                <LayoutRenderer id={id} session={session} dictionary={dictionary} locale={locale} formdata={formdata} dataview={dataview} />
             )}
-        </DynamicLayout>
+        </GenerateLayout>
     );
 };
 
-export default KYCManagementView;
+export default FormView;
