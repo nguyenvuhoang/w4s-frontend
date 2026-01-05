@@ -2,14 +2,30 @@
 
 import { PageContentProps } from '@/types';
 import {
-  Card,
-  CardContent,
-  Grid,
-  Typography,
-  Divider,
-  Chip,
-  Box,
+    Box,
+    Card,
+    CardContent,
+    Chip,
+    Grid,
+    Paper,
+    Typography,
+    alpha,
 } from '@mui/material';
+import * as Icons from '@mui/icons-material';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import * as FaIcons from "@fortawesome/free-solid-svg-icons";
+import React from 'react';
+
+interface Category {
+  category_id: string;
+  wallet_id: string;
+  parent_category_id: string;
+  category_group: string;
+  category_type: string;
+  category_name: string;
+  icon: string;
+  color: string;
+}
 
 interface WalletCategoryTabProps {
   walletData: any;
@@ -24,100 +40,210 @@ const WalletCategoryTab = ({
   session,
   locale,
 }: WalletCategoryTabProps) => {
-  const categories = walletData?.categories || [];
+  // Get categories from first wallet
+  const wallet = walletData?.wallets?.[0] || {};
+  const categories: Category[] = wallet?.categories || [];
 
-  const labelStyle = {
-    color: '#666666',
-    fontSize: '0.75rem',
-    fontWeight: 500,
-    textTransform: 'uppercase' as const,
-    letterSpacing: '0.5px',
-    mb: 0.5,
+  // Group categories by category_group
+  const groupedCategories = categories.reduce((acc, cat) => {
+    const group = cat.category_group || 'OTHER';
+    if (!acc[group]) {
+      acc[group] = [];
+    }
+    acc[group].push(cat);
+    return acc;
+  }, {} as Record<string, Category[]>);
+
+  // Helper to parse category name (JSON with vi/en)
+  const getCategoryName = (categoryName: string): string => {
+    try {
+      const parsed = JSON.parse(categoryName);
+      return parsed[locale] || parsed['en'] || parsed['vi'] || categoryName;
+    } catch {
+      return categoryName;
+    }
   };
 
-  const valueStyle = {
-    fontWeight: 600,
-    color: '#1a1a1a',
-    fontSize: '1rem',
+  // Get group label
+  const getGroupLabel = (group: string): string => {
+    const labels: Record<string, Record<string, string>> = {
+      EXPENSE: { vi: 'Chi tiêu', en: 'Expense' },
+      INCOME: { vi: 'Thu nhập', en: 'Income' },
+      LOAN: { vi: 'Vay/Cho vay', en: 'Loan' },
+      OTHER: { vi: 'Khác', en: 'Other' },
+    };
+    return labels[group]?.[locale] || labels[group]?.['en'] || group;
+  };
+
+  // Get group color
+  const getGroupColor = (group: string): string => {
+    const colors: Record<string, string> = {
+      EXPENSE: '#f44336',
+      INCOME: '#4caf50',
+      LOAN: '#2196f3',
+      OTHER: '#9e9e9e',
+    };
+    return colors[group] || '#9e9e9e';
+  };
+
+  // Render dynamic icon (handle both MUI icons and FontAwesome)
+  const renderIcon = (iconName: string, color: string, size: number = 20) => {
+    const iconKey = String(iconName ?? '');
+
+    // Try MUI icon first
+    const MuiIcon =
+      (Icons as any)[iconKey] ||
+      (Icons as any)[iconKey.charAt(0).toUpperCase() + iconKey.slice(1)];
+
+    if (MuiIcon) {
+      return React.createElement(MuiIcon, {
+        style: { fontSize: size, color: color }
+      });
+    }
+
+    // Try FontAwesome icon
+    if (iconKey.startsWith('fa-')) {
+      const faName =
+        'fa' +
+        iconKey
+          .replace('fa-', '')
+          .split('-')
+          .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+          .join('');
+
+      const FaIcon = (FaIcons as any)[faName];
+
+      if (FaIcon) {
+        return (
+          <FontAwesomeIcon
+            icon={FaIcon}
+            style={{
+              fontSize: size,
+              color: color
+            }}
+          />
+        );
+      }
+    }
+
+    // Fallback - colored circle
+    return (
+      <Box
+        sx={{
+          width: size,
+          height: size,
+          borderRadius: '50%',
+          bgcolor: color,
+          opacity: 0.8,
+        }}
+      />
+    );
   };
 
   return (
     <Card className="shadow-md" sx={{ borderRadius: 2 }}>
       <CardContent>
-        <Typography variant="h6" sx={{ mb: 3, color: '#225087', fontWeight: 600 }}>
-          {dictionary['wallet']?.categoryInfo || 'Category Information'}
-        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+          <Typography variant="h6" sx={{ color: '#225087', fontWeight: 600 }}>
+            {dictionary['wallet']?.categoryInfo || 'Wallet Categories'}
+          </Typography>
+          <Chip
+            label={`${categories.length} ${dictionary['wallet']?.categories || 'Categories'}`}
+            color="primary"
+            size="small"
+          />
+        </Box>
 
-        <Grid container spacing={3}>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Typography variant="body2" sx={labelStyle}>
-              {dictionary['wallet']?.categoryCode || 'Category Code'}
-            </Typography>
-            <Typography variant="body1" sx={valueStyle}>
-              {walletData?.categoryCode || '-'}
-            </Typography>
-            <Divider sx={{ my: 2 }} />
-
-            <Typography variant="body2" sx={labelStyle}>
-              {dictionary['wallet']?.categoryName || 'Category Name'}
-            </Typography>
-            <Typography variant="body1" sx={valueStyle}>
-              {walletData?.categoryName || '-'}
-            </Typography>
-            <Divider sx={{ my: 2 }} />
-
-            <Typography variant="body2" sx={labelStyle}>
-              {dictionary['wallet']?.categoryType || 'Category Type'}
-            </Typography>
-            <Typography variant="body1" sx={valueStyle}>
-              {walletData?.categoryType || '-'}
-            </Typography>
-          </Grid>
-
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Typography variant="body2" sx={labelStyle}>
-              {dictionary['wallet']?.categoryLevel || 'Category Level'}
-            </Typography>
-            <Typography variant="body1" sx={valueStyle}>
-              {walletData?.categoryLevel || '-'}
-            </Typography>
-            <Divider sx={{ my: 2 }} />
-
-            <Typography variant="body2" sx={labelStyle}>
-              {dictionary['wallet']?.categoryDescription || 'Description'}
-            </Typography>
-            <Typography variant="body1" sx={valueStyle}>
-              {walletData?.categoryDescription || '-'}
-            </Typography>
-            <Divider sx={{ my: 2 }} />
-
-            <Typography variant="body2" sx={labelStyle}>
-              {dictionary['wallet']?.categoryStatus || 'Status'}
-            </Typography>
-            <Chip
-              label={walletData?.categoryStatus || 'Active'}
-              color={walletData?.categoryStatus === 'Active' ? 'success' : 'default'}
-              size="small"
-            />
-          </Grid>
-        </Grid>
-
-        {/* Sub-categories if available */}
-        {categories.length > 0 && (
-          <Box sx={{ mt: 4 }}>
-            <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 600 }}>
-              {dictionary['wallet']?.subCategories || 'Sub Categories'}
-            </Typography>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-              {categories.map((cat: any, index: number) => (
-                <Chip
-                  key={index}
-                  label={cat.name || cat}
-                  variant="outlined"
-                  color="primary"
-                />
-              ))}
+        {Object.entries(groupedCategories).map(([group, cats]) => (
+          <Box key={group} sx={{ mb: 4 }}>
+            {/* Group Header */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+              <Box
+                sx={{
+                  width: 4,
+                  height: 24,
+                  bgcolor: getGroupColor(group),
+                  borderRadius: 1,
+                }}
+              />
+              <Typography variant="subtitle1" sx={{ fontWeight: 600, color: getGroupColor(group) }}>
+                {getGroupLabel(group)}
+              </Typography>
+              <Chip label={cats.length} size="small" sx={{ ml: 1, height: 20, fontSize: '0.7rem' }} />
             </Box>
+
+            {/* Category Grid */}
+            <Grid container spacing={2}>
+              {cats.map((cat) => (
+                <Grid size={{ xs: 6, sm: 4, md: 3 }} key={cat.category_id}>
+                  <Paper
+                    elevation={0}
+                    sx={{
+                      p: 2,
+                      borderRadius: 2,
+                      border: '1px solid',
+                      borderColor: alpha(cat.color || '#9e9e9e', 0.3),
+                      bgcolor: alpha(cat.color || '#9e9e9e', 0.05),
+                      transition: 'all 0.2s',
+                      cursor: 'pointer',
+                      '&:hover': {
+                        borderColor: cat.color,
+                        bgcolor: alpha(cat.color || '#9e9e9e', 0.1),
+                        transform: 'translateY(-2px)',
+                      },
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      <Box
+                        sx={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: '50%',
+                          bgcolor: alpha(cat.color || '#9e9e9e', 0.15),
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        {renderIcon(cat.icon, cat.color)}
+                      </Box>
+                      <Box sx={{ flex: 1, minWidth: 0 }}>
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            fontWeight: 600,
+                            color: '#1a1a1a',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {getCategoryName(cat.category_name)}
+                        </Typography>
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            color: '#666',
+                            fontFamily: 'monospace',
+                            fontSize: '0.65rem',
+                          }}
+                        >
+                          {cat.category_id}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Paper>
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+        ))}
+
+        {categories.length === 0 && (
+          <Box sx={{ textAlign: 'center', py: 6, color: 'text.secondary' }}>
+            <Typography variant="body1">
+              {dictionary['wallet']?.noCategories || 'No categories found'}
+            </Typography>
           </Box>
         )}
       </CardContent>

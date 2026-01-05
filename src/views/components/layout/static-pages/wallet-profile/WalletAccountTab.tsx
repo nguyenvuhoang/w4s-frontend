@@ -4,20 +4,30 @@ import { PageContentProps } from '@/types';
 import {
   Card,
   CardContent,
-  Grid,
   Typography,
-  Divider,
-  Chip,
   Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
+  alpha,
+  Chip,
   Paper,
+  Grid,
+  Divider,
 } from '@mui/material';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import StarIcon from '@mui/icons-material/Star';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
+
+interface Account {
+  id: number;
+  wallet_id: string;
+  account_number: string;
+  account_type: string;
+  account_type_caption: string;
+  currency_code: string;
+  is_primary: boolean;
+  status: string;
+  status_caption: string;
+  balance: number | null;
+}
 
 interface WalletAccountTabProps {
   walletData: any;
@@ -32,7 +42,9 @@ const WalletAccountTab = ({
   session,
   locale,
 }: WalletAccountTabProps) => {
-  const linkedAccounts = walletData?.linkedAccounts || [];
+  // Get accounts from first wallet
+  const wallet = walletData?.wallets?.[0] || {};
+  const accounts: Account[] = wallet?.accounts || [];
 
   const labelStyle = {
     color: '#666666',
@@ -45,108 +57,203 @@ const WalletAccountTab = ({
 
   const valueStyle = {
     fontWeight: 600,
-    color: '#1a1a1a',
+    color: '#215086',
     fontSize: '1rem',
+  };
+
+  // Format currency
+  const formatCurrency = (value: number | null, currency: string = 'VND') => {
+    if (value === null || value === undefined) return '-';
+    return new Intl.NumberFormat('vi-VN').format(value) + ' ' + currency;
+  };
+
+  // Get status color
+  const getStatusColor = (status: string) => {
+    switch (status?.toUpperCase()) {
+      case 'A':
+      case 'ACTIVE':
+        return 'success';
+      case 'I':
+      case 'INACTIVE':
+        return 'default';
+      case 'P':
+      case 'PENDING':
+        return 'warning';
+      case 'B':
+      case 'BLOCKED':
+        return 'error';
+      default:
+        return 'default';
+    }
+  };
+
+  // Get account type label
+  const getAccountTypeLabel = (type: string, caption: string) => {
+    if (caption) return caption;
+    const types: Record<string, string> = {
+      'DD': 'Demand Deposit',
+      'SA': 'Savings Account',
+      'CA': 'Current Account',
+      'TD': 'Term Deposit',
+    };
+    return types[type] || type;
   };
 
   return (
     <Card className="shadow-md" sx={{ borderRadius: 2 }}>
       <CardContent>
-        <Typography variant="h6" sx={{ mb: 3, color: '#225087', fontWeight: 600 }}>
-          {dictionary['wallet']?.accountInfo || 'Account Information'}
-        </Typography>
-
-        <Grid container spacing={3}>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Typography variant="body2" sx={labelStyle}>
-              {dictionary['wallet']?.accountNumber || 'Account Number'}
-            </Typography>
-            <Typography variant="body1" sx={valueStyle}>
-              {walletData?.accountNumber || '-'}
-            </Typography>
-            <Divider sx={{ my: 2 }} />
-
-            <Typography variant="body2" sx={labelStyle}>
-              {dictionary['wallet']?.accountName || 'Account Name'}
-            </Typography>
-            <Typography variant="body1" sx={valueStyle}>
-              {walletData?.accountName || '-'}
-            </Typography>
-            <Divider sx={{ my: 2 }} />
-
-            <Typography variant="body2" sx={labelStyle}>
-              {dictionary['wallet']?.accountType || 'Account Type'}
-            </Typography>
-            <Typography variant="body1" sx={valueStyle}>
-              {walletData?.accountType || '-'}
-            </Typography>
-          </Grid>
-
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Typography variant="body2" sx={labelStyle}>
-              {dictionary['wallet']?.bankName || 'Bank Name'}
-            </Typography>
-            <Typography variant="body1" sx={valueStyle}>
-              {walletData?.bankName || '-'}
-            </Typography>
-            <Divider sx={{ my: 2 }} />
-
-            <Typography variant="body2" sx={labelStyle}>
-              {dictionary['wallet']?.branchName || 'Branch Name'}
-            </Typography>
-            <Typography variant="body1" sx={valueStyle}>
-              {walletData?.branchName || '-'}
-            </Typography>
-            <Divider sx={{ my: 2 }} />
-
-            <Typography variant="body2" sx={labelStyle}>
-              {dictionary['wallet']?.accountStatus || 'Account Status'}
-            </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+          <Typography variant="h6" sx={{ color: '#225087', fontWeight: 600 }}>
+            {dictionary['wallet']?.accountInfo || 'Linked Accounts'}
+          </Typography>
+          {accounts.length > 0 && (
             <Chip
-              label={walletData?.accountStatus || 'Active'}
-              color={walletData?.accountStatus === 'Active' ? 'success' : 'default'}
+              label={`${accounts.length} ${dictionary['wallet']?.accounts || 'Accounts'}`}
+              color="primary"
               size="small"
             />
-          </Grid>
-        </Grid>
+          )}
+        </Box>
 
-        {/* Linked Accounts Table */}
-        {linkedAccounts.length > 0 && (
-          <Box sx={{ mt: 4 }}>
-            <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 600 }}>
-              <AccountBalanceIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
-              {dictionary['wallet']?.linkedAccounts || 'Linked Accounts'}
+        {accounts.length === 0 ? (
+          <Box
+            sx={{
+              textAlign: 'center',
+              py: 8,
+              px: 4,
+            }}
+          >
+            <Box
+              sx={{
+                width: 80,
+                height: 80,
+                borderRadius: '50%',
+                bgcolor: alpha('#225087', 0.1),
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                mx: 'auto',
+                mb: 3,
+              }}
+            >
+              <AccountBalanceIcon sx={{ fontSize: 40, color: '#225087' }} />
+            </Box>
+            <Typography variant="h6" sx={{ color: '#1a1a1a', mb: 1 }}>
+              {dictionary['wallet']?.noAccounts || 'No Linked Accounts'}
             </Typography>
-            
-            <TableContainer component={Paper} variant="outlined">
-              <Table size="small">
-                <TableHead>
-                  <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-                    <TableCell>{dictionary['wallet']?.accountNumber || 'Account Number'}</TableCell>
-                    <TableCell>{dictionary['wallet']?.bankName || 'Bank Name'}</TableCell>
-                    <TableCell>{dictionary['wallet']?.accountType || 'Type'}</TableCell>
-                    <TableCell>{dictionary['common']?.status || 'Status'}</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {linkedAccounts.map((account: any, index: number) => (
-                    <TableRow key={index}>
-                      <TableCell>{account.accountNumber || '-'}</TableCell>
-                      <TableCell>{account.bankName || '-'}</TableCell>
-                      <TableCell>{account.accountType || '-'}</TableCell>
-                      <TableCell>
-                        <Chip
-                          label={account.status || 'Active'}
-                          color={account.status === 'Active' ? 'success' : 'default'}
-                          size="small"
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+            <Typography variant="body2" sx={{ color: '#666', maxWidth: 400, mx: 'auto' }}>
+              {dictionary['wallet']?.noAccountsDescription || 
+                'You haven\'t linked any bank accounts to this wallet yet. Link your accounts to enable fund transfers.'}
+            </Typography>
           </Box>
+        ) : (
+          <Grid container spacing={2}>
+            {accounts.map((account, index) => (
+              <Grid size={{ xs: 12, md: 6 }} key={account.id || index}>
+                <Paper
+                  elevation={0}
+                  sx={{
+                    p: 2.5,
+                    borderRadius: 2,
+                    border: '1px solid',
+                    borderColor: account.is_primary ? alpha('#225087', 0.3) : '#e0e0e0',
+                    bgcolor: account.is_primary ? alpha('#225087', 0.03) : 'transparent',
+                    position: 'relative',
+                    transition: 'all 0.2s',
+                    '&:hover': {
+                      borderColor: '#225087',
+                      boxShadow: '0 4px 12px rgba(34, 80, 135, 0.1)',
+                    },
+                  }}
+                >
+                  {/* Primary Badge */}
+                  {account.is_primary && (
+                    <Chip
+                      icon={<StarIcon sx={{ fontSize: 14 }} />}
+                      label={dictionary['wallet']?.primary || 'Primary'}
+                      size="small"
+                      color="primary"
+                      sx={{
+                        position: 'absolute',
+                        top: 12,
+                        right: 12,
+                        height: 24,
+                        '& .MuiChip-icon': { ml: 0.5 },
+                      }}
+                    />
+                  )}
+
+                  {/* Account Header */}
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                    <Box
+                      sx={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: 2,
+                        bgcolor: alpha('#225087', 0.1),
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <CreditCardIcon sx={{ fontSize: 24, color: '#225087' }} />
+                    </Box>
+                    <Box sx={{ flex: 1 }}>
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          fontWeight: 600,
+                          color: '#1a1a1a',
+                          fontFamily: 'monospace',
+                          letterSpacing: 1,
+                        }}
+                      >
+                        {account.account_number}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#666' }}>
+                        {getAccountTypeLabel(account.account_type, account.account_type_caption)}
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  <Divider sx={{ my: 2 }} />
+
+                  {/* Account Details */}
+                  <Grid container spacing={2}>
+                    <Grid size={{ xs: 6 }}>
+                      <Typography variant="body2" sx={labelStyle}>
+                        {dictionary['wallet']?.currency || 'Currency'}
+                      </Typography>
+                      <Typography variant="body1" sx={valueStyle}>
+                        {account.currency_code || '-'}
+                      </Typography>
+                    </Grid>
+                    <Grid size={{ xs: 6 }}>
+                      <Typography variant="body2" sx={labelStyle}>
+                        {dictionary['common']?.status || 'Status'}
+                      </Typography>
+                      <Chip
+                        label={account.status_caption || account.status}
+                        color={getStatusColor(account.status)}
+                        size="small"
+                        sx={{ height: 24 }}
+                      />
+                    </Grid>
+                    {account.balance !== null && (
+                      <Grid size={{ xs: 12 }}>
+                        <Typography variant="body2" sx={labelStyle}>
+                          {dictionary['wallet']?.balance || 'Balance'}
+                        </Typography>
+                        <Typography variant="body1" sx={{ ...valueStyle, color: '#4caf50' }}>
+                          {formatCurrency(account.balance, account.currency_code)}
+                        </Typography>
+                      </Grid>
+                    )}
+                  </Grid>
+                </Paper>
+              </Grid>
+            ))}
+          </Grid>
         )}
       </CardContent>
     </Card>

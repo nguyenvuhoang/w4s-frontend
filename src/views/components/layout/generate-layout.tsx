@@ -74,6 +74,7 @@ const GenerateLayout = async ({ children, params }: SessionLayoutProps) => {
         const masterdata = formdata.form_design_detail.master_data;
 
         const resolvedMasterData = replaceParameterPlaceholders(masterdata, id ?? '', dictionary, resolvedParams.locale);
+        
         const viewdataApi = await systemServiceApi.runDynamic({
             sessiontoken: session?.user?.token as string,
             body: resolvedMasterData,

@@ -1,6 +1,7 @@
 'use client';
 
 import { PageContentProps } from '@/types';
+import { formatDateTime } from '@/utils/formatDateTime';
 import {
   Avatar,
   Box,
@@ -37,8 +38,42 @@ const WalletProfileTab = ({
 
   const valueStyle = {
     fontWeight: 600,
-    color: '#1a1a1a',
+    color: '#215086',
     fontSize: '1rem',
+  };
+
+  // Get first wallet from wallets array
+  const wallet = walletData?.wallets?.[0] || {};
+  const contract = walletData?.contract || {};
+
+  // Helper to get status color
+  const getStatusColor = (status: string) => {
+    switch (status?.toUpperCase()) {
+      case 'A':
+      case 'ACTIVE':
+        return 'success';
+      case 'I':
+      case 'INACTIVE':
+        return 'default';
+      case 'P':
+      case 'PENDING':
+        return 'warning';
+      default:
+        return 'default';
+    }
+  };
+
+  const getStatusLabel = (status: string) => {
+    switch (status?.toUpperCase()) {
+      case 'A':
+        return 'Active';
+      case 'I':
+        return 'Inactive';
+      case 'P':
+        return 'Pending';
+      default:
+        return status || '-';
+    }
   };
 
   return (
@@ -51,15 +86,15 @@ const WalletProfileTab = ({
           </Avatar>
           <Box sx={{ flex: 1 }}>
             <Typography variant="h5" sx={{ fontWeight: 600, color: '#1a1a1a' }}>
-              {walletData?.walletName || 'Wallet Name'}
+              {wallet?.wallet_name || 'Wallet Name'}
             </Typography>
-            <Typography variant="body2" sx={{ color: '#666666' }}>
-              {walletData?.walletId || 'Wallet ID'}
+            <Typography variant="body2" sx={{ color: '#666666', fontFamily: 'monospace' }}>
+              {wallet?.wallet_id || 'Wallet ID'}
             </Typography>
           </Box>
           <Chip
-            label={walletData?.status || 'Active'}
-            color={walletData?.status === 'Active' ? 'success' : 'default'}
+            label={getStatusLabel(wallet?.status)}
+            color={getStatusColor(wallet?.status)}
             size="medium"
           />
         </Box>
@@ -68,49 +103,41 @@ const WalletProfileTab = ({
 
         {/* Profile Details */}
         <Typography variant="h6" sx={{ mb: 3, color: '#225087', fontWeight: 600 }}>
-          {dictionary['wallet']?.profileInfo || 'Profile Information'}
+          {dictionary['wallet']?.profileInfo || 'Wallet Information'}
         </Typography>
 
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, md: 6 }}>
             <Typography variant="body2" sx={labelStyle}>
-              {dictionary['wallet']?.ownerName || 'Owner Name'}
+              {dictionary['wallet']?.walletType || 'Wallet Type'}
             </Typography>
             <Typography variant="body1" sx={valueStyle}>
-              {walletData?.ownerName || '-'}
+              {wallet?.wallet_type_caption || wallet?.wallet_type || '-'}
             </Typography>
             <Divider sx={{ my: 2 }} />
 
             <Typography variant="body2" sx={labelStyle}>
-              {dictionary['wallet']?.phoneNumber || 'Phone Number'}
+              {dictionary['wallet']?.userCode || 'User Code'}
             </Typography>
             <Typography variant="body1" sx={valueStyle}>
-              {walletData?.phoneNumber || '-'}
+              {wallet?.user_code || '-'}
             </Typography>
             <Divider sx={{ my: 2 }} />
 
             <Typography variant="body2" sx={labelStyle}>
-              {dictionary['wallet']?.email || 'Email'}
+              {dictionary['wallet']?.defaultCurrency || 'Default Currency'}
             </Typography>
             <Typography variant="body1" sx={valueStyle}>
-              {walletData?.email || '-'}
+              {wallet?.default_currency || '-'}
             </Typography>
           </Grid>
 
           <Grid size={{ xs: 12, md: 6 }}>
             <Typography variant="body2" sx={labelStyle}>
-              {dictionary['wallet']?.identityNumber || 'Identity Number'}
+              {dictionary['wallet']?.contractNumber || 'Contract Number'}
             </Typography>
-            <Typography variant="body1" sx={valueStyle}>
-              {walletData?.identityNumber || '-'}
-            </Typography>
-            <Divider sx={{ my: 2 }} />
-
-            <Typography variant="body2" sx={labelStyle}>
-              {dictionary['wallet']?.address || 'Address'}
-            </Typography>
-            <Typography variant="body1" sx={valueStyle}>
-              {walletData?.address || '-'}
+            <Typography variant="body1" sx={{ ...valueStyle, fontFamily: 'monospace', fontSize: '0.875rem' }}>
+              {wallet?.contract_number || '-'}
             </Typography>
             <Divider sx={{ my: 2 }} />
 
@@ -118,13 +145,71 @@ const WalletProfileTab = ({
               {dictionary['wallet']?.createdAt || 'Created At'}
             </Typography>
             <Typography variant="body1" sx={valueStyle}>
-              {walletData?.createdAt || '-'}
+              {formatDateTime(wallet?.created_on_utc) || '-'}
+            </Typography>
+            <Divider sx={{ my: 2 }} />
+
+            <Typography variant="body2" sx={labelStyle}>
+              {dictionary['wallet']?.updatedAt || 'Updated At'}
+            </Typography>
+            <Typography variant="body1" sx={valueStyle}>
+              {formatDateTime(wallet?.updated_on_utc) || '-'}
             </Typography>
           </Grid>
         </Grid>
+
+        {/* Statistics */}
+        <Box sx={{ mt: 4 }}>
+          <Typography variant="h6" sx={{ mb: 2, color: '#225087', fontWeight: 600 }}>
+            {dictionary['wallet']?.statistics || 'Statistics'}
+          </Typography>
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 6, md: 3 }}>
+              <Box sx={{ p: 2, bgcolor: '#f5f5f5', borderRadius: 2, textAlign: 'center' }}>
+                <Typography variant="h4" sx={{ fontWeight: 700, color: '#225087' }}>
+                  {wallet?.categories?.length || 0}
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#666' }}>
+                  {dictionary['wallet']?.categories || 'Categories'}
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid size={{ xs: 6, md: 3 }}>
+              <Box sx={{ p: 2, bgcolor: '#f5f5f5', borderRadius: 2, textAlign: 'center' }}>
+                <Typography variant="h4" sx={{ fontWeight: 700, color: '#225087' }}>
+                  {wallet?.accounts?.length || 0}
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#666' }}>
+                  {dictionary['wallet']?.accounts || 'Accounts'}
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid size={{ xs: 6, md: 3 }}>
+              <Box sx={{ p: 2, bgcolor: '#f5f5f5', borderRadius: 2, textAlign: 'center' }}>
+                <Typography variant="h4" sx={{ fontWeight: 700, color: '#225087' }}>
+                  {wallet?.budgets?.length || 0}
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#666' }}>
+                  {dictionary['wallet']?.budgets || 'Budgets'}
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid size={{ xs: 6, md: 3 }}>
+              <Box sx={{ p: 2, bgcolor: '#f5f5f5', borderRadius: 2, textAlign: 'center' }}>
+                <Typography variant="h4" sx={{ fontWeight: 700, color: '#225087' }}>
+                  {wallet?.goals?.length || 0}
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#666' }}>
+                  {dictionary['wallet']?.goals || 'Goals'}
+                </Typography>
+              </Box>
+            </Grid>
+          </Grid>
+        </Box>
       </CardContent>
     </Card>
   );
 };
 
 export default WalletProfileTab;
+

@@ -38,6 +38,10 @@ const WalletContractTab = ({
         fontSize: '1rem',
     };
 
+    const contractData = walletData?.contract || {};
+
+    console.log(contractData)
+
     return (
         <Card className="shadow-md" sx={{ borderRadius: 2 }}>
             <CardContent>
@@ -51,7 +55,7 @@ const WalletContractTab = ({
                             {dictionary['wallet']?.contractNumber || 'Contract Number'}
                         </Typography>
                         <Typography variant="body1" sx={valueStyle}>
-                            {walletData?.contractnumber || '-'}
+                            {contractData?.contract_number || '-'}
                         </Typography>
                         <Divider sx={{ my: 2 }} />
 
@@ -59,7 +63,7 @@ const WalletContractTab = ({
                             {dictionary['wallet']?.contractType || 'Contract Type'}
                         </Typography>
                         <Typography variant="body1" sx={valueStyle}>
-                            {walletData?.wallettypecaption || '-'}
+                            {contractData?.contract_type_caption || '-'}
                         </Typography>
                         <Divider sx={{ my: 2 }} />
 
@@ -67,7 +71,7 @@ const WalletContractTab = ({
                             {dictionary['wallet']?.contractStatus || 'Contract Status'}
                         </Typography>
                         <Typography variant="body1" sx={valueStyle}>
-                            {walletData?.contractStatus || '-'}
+                            {contractData?.status || '-'}
                         </Typography>
                     </Grid>
 
@@ -76,7 +80,7 @@ const WalletContractTab = ({
                             {dictionary['wallet']?.startDate || 'Start Date'}
                         </Typography>
                         <Typography variant="body1" sx={valueStyle}>
-                            {formatDateTime(walletData?.createdonutc) || '-'}
+                            {formatDateTime(contractData?.open_date_utc) || '-'}
                         </Typography>
                         <Divider sx={{ my: 2 }} />
 
@@ -92,7 +96,7 @@ const WalletContractTab = ({
                             {dictionary['wallet']?.signedDate || 'Signed Date'}
                         </Typography>
                         <Typography variant="body1" sx={valueStyle}>
-                            {walletData?.signedDate || '-'}
+                            {formatDateTime(contractData?.open_date_utc) || '-'}
                         </Typography>
                     </Grid>
                 </Grid>

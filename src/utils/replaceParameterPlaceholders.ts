@@ -14,7 +14,6 @@ export function replaceParameterPlaceholders(
   }
 
   const result = structuredClone(masterdata);
-
   const visit = (node: any) => {
     if (!node) return;
 
@@ -27,7 +26,7 @@ export function replaceParameterPlaceholders(
     // object
     if (typeof node === "object") {
       // Nếu node có parameters thì xử lý tại đây
-      const params = node.parameters;
+      const params = node.parameters || node.fields;
       if (params && typeof params === "object" && !Array.isArray(params)) {
         for (const paramKey of Object.keys(params)) {
           const v = params[paramKey];

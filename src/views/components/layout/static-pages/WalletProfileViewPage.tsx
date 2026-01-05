@@ -68,8 +68,7 @@ const WalletProfileViewPage = ({
     // Extract data from formdata if available
     const info = formdata?.form_design_detail?.info;
     // Extract wallet data from formdata
-    const walletData = (dataview as any).data[0] || {};
-
+    const walletData = (dataview as any) || {};
     const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
         setTabValue(newValue);
     };
