@@ -322,6 +322,56 @@ export const useMenuManagement = (initialData: MenuItem[], options?: MenuManagem
             setModalSubmittedData(formData)
             setModalSuccess(true)
             setModalLoading(false)
+            
+            // Auto reload data after successful add
+            if (lastSearchParams) {
+                // Reload with last search params
+                const reloadResponse = await systemServiceApi.loadMenu({
+                    ...lastSearchParams,
+                    pageindex: page - 1,
+                    pagesize: rowsPerPage
+                })
+                
+                if (isValidResponse(reloadResponse) && 
+                    (!reloadResponse.payload.dataresponse.errors || reloadResponse.payload.dataresponse.errors.length === 0)) {
+                    const reloadData = reloadResponse.payload.dataresponse.data as unknown as PageData<MenuItem>
+                    const reloadResult = reloadData?.items || []
+                    
+                    setTotalCount(reloadData.total_count || 0)
+                    setTotalPages(reloadData.total_pages || 0)
+                    setHasPreviousPage(reloadData.has_previous_page || false)
+                    setHasNextPage(reloadData.has_next_page || false)
+                    
+                    options?.onDataUpdate?.(reloadResult)
+                    setFilteredData(reloadResult)
+                    setSelected([])
+                }
+            } else {
+                // If no search params, do a fresh load
+                const reloadResponse = await systemServiceApi.loadMenu({
+                    sessiontoken: options?.sessionToken as string,
+                    pageindex: 0,
+                    pagesize: rowsPerPage,
+                    searchtext: '',
+                    language: options?.locale || 'en'
+                })
+                
+                if (isValidResponse(reloadResponse) && 
+                    (!reloadResponse.payload.dataresponse.errors || reloadResponse.payload.dataresponse.errors.length === 0)) {
+                    const reloadData = reloadResponse.payload.dataresponse.data as unknown as PageData<MenuItem>
+                    const reloadResult = reloadData?.items || []
+                    
+                    setTotalCount(reloadData.total_count || 0)
+                    setTotalPages(reloadData.total_pages || 0)
+                    setHasPreviousPage(reloadData.has_previous_page || false)
+                    setHasNextPage(reloadData.has_next_page || false)
+                    
+                    options?.onDataUpdate?.(reloadResult)
+                    setFilteredData(reloadResult)
+                    setSelected([])
+                    setPage(1)
+                }
+            }
         } catch (error: any) {
             console.error('Error creating menu:', error)
             setModalError(error?.message || 'An unexpected error occurred. Please try again.')

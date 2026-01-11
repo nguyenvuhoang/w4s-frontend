@@ -65,7 +65,9 @@ export interface ResponseData<T> {
 }
 
 export interface FormResponseData<T> {
-  data: T
+  data: {
+    data: T
+  }
   txcode: string
   executeId: string
   input: T
@@ -208,18 +210,7 @@ export interface FormInputData {
     form_id: string;
     app: string;
     master_data: {
-      [key: string]: Array<{
-        use_microservice: boolean;
-        input: {
-          workflowid: string;
-          learn_api: string;
-          fields: {
-            commandname: string;
-            issearch: boolean;
-            parameters: Record<string, any>;
-          };
-        };
-      }>;
+      [key: string]: any;
     };
   };
 }

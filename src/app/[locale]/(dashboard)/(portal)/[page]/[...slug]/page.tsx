@@ -47,8 +47,8 @@ const DynamicPageAction = async ({ params }: { params: Params }) => {
     if (!isValidResponse(pagecontentApi)) {
         return <PageError errorDetails='Failed to load form info' />;
     }
-    const workflowid = pagecontentApi.payload.dataresponse.data?.form_design_detail?.info?.data;
-    const pagecontentdetail = pagecontentApi.payload.dataresponse.data;
+    const workflowid = pagecontentApi.payload.dataresponse.data.data?.form_design_detail?.info?.data;
+    const pagecontentdetail = pagecontentApi.payload.dataresponse.data.data;
     const formdesigndetail = pagecontentdetail.form_design_detail;
 
     let pagedata: any = {};

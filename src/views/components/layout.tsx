@@ -2,14 +2,13 @@
 
 import { Locale } from '@/configs/i18n';
 import { portalServiceApi } from '@/servers/portal-service';
-import { FormInput, FormLayout, PageData, RuleStrong } from '@/types/systemTypes';
+import { FormInput, FormLayout, PageData, RuleStrong, UserInRole } from '@/types/systemTypes';
 import { generatePathName } from '@/utils/generatePathName';
 import { getDictionary } from '@/utils/getDictionary';
 import { Session } from 'next-auth';
 import { usePathname, useRouter } from 'next/navigation';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { v4 as uuidv4 } from 'uuid';
 import RenderLayout from './layout/layout';
 import { getHiddenFields } from './rule/getHiddenFields';
 import { generatePathNameView } from '@/utils/generatePathNameView';
@@ -36,16 +35,33 @@ type Props = {
 };
 
 
-const isComponentHidden = (codeHidden: string, roleTask: any) => {
-    if (!roleTask || !roleTask['1']) return false;
-    const entry = roleTask['1'][codeHidden];
-    if (!entry) return false;
+const isComponentHidden = (
+    codeHidden: string,
+    roleTask: any,
+    roles: UserInRole[]
+) => {
+    if (!roleTask || !roles?.length) return false;
 
-    return (
-        entry?.component?.install === false ||
-        entry?.layout?.install === false ||
-        entry?.view?.install === false
-    );
+    for (const r of roles) {
+        const roleId = r?.role_id?.toString();
+        if (!roleId) continue;
+
+        const roleMap = roleTask[roleId];
+        if (!roleMap) continue;
+
+        const entry = roleMap[codeHidden];
+        if (!entry) continue;
+
+        if (
+            entry?.component?.install === false ||
+            entry?.layout?.install === false ||
+            entry?.view?.install === false
+        ) {
+            return true; // 1 role cấm là ẩn
+        }
+    }
+
+    return false;
 };
 
 
@@ -81,16 +97,16 @@ const Layout = ({
     const router = useRouter();
     const pathname = usePathname();
     const formMethods = useForm();
-    const hiddenFields = getHiddenFields(rules);
+    const hiddenFields = useMemo(() => getHiddenFields(rules), [rules]);
 
     // Optimized: Only re-renders when role changes, not when name/avatar change
     const role = useUserStore((state) => state.role)
 
-    const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    const handleTabChange = useCallback((event: React.SyntheticEvent, newValue: number) => {
         setActiveTab(newValue);
-    };
+    }, []);
 
-    const handleRowDoubleClick = async (rowData: any, input: FormInput) => {
+    const handleRowDoubleClick = useCallback(async (rowData: any, input: FormInput) => {
         try {
             const id = rowData.id;
             if (!id) return;
@@ -159,12 +175,12 @@ const Layout = ({
         } catch (error) {
             console.error('Error fetching detail:', error);
         }
-    };
+    }, [pathname, router, language, session?.user?.token, formMethods]);
 
-    const renderLayouts = datalayout
-        .filter((layout) => !isComponentHidden(layout.codeHidden, roleTask))
+    const renderLayouts = useMemo(() => datalayout
+        .filter((layout) => !isComponentHidden(layout.codeHidden, roleTask, role))
         .map((layout) => {
-            const filteredViews = layout.list_view?.filter(view => !isComponentHidden(view.codeHidden, roleTask)) || [];
+            const filteredViews = layout.list_view?.filter(view => !isComponentHidden(view.codeHidden, roleTask, role)) || [];
 
             const isHidden = role.some(r => {
                 const roleId = r.role_id?.toString()
@@ -174,7 +190,7 @@ const Layout = ({
             if (isHidden) return null;
             return (
                 <RenderLayout
-                    key={`${layout.id}-${uuidv4()}`}
+                    key={layout.id}
                     formMethods={formMethods}
                     form_id={form_id}
                     language={language}
@@ -212,12 +228,12 @@ const Layout = ({
                     roleTask={roleTask}
                 />
             );
-        });
+        }), [datalayout, roleTask, role, formMethods, form_id, language, dictionary, hiddenFields, rules, session, setLoading, activeTab, handleTabChange, handleRowDoubleClick, datasearch, isFetching, txfoSearch, datasearchlookup, ismodify, searchtext, advancedsearch, globalAdvancedSearch, storeFormSearch, storeInfoSearch, fetchControlDefaultValue, renderviewdata]);
 
 
     return !isNested ? (
         <form
-            id={`${form_id}-${uuidv4()}`}
+            id={form_id}
             onSubmit={formMethods.handleSubmit((data) => console.log('Form Submitted:', data))}
         >
             {renderLayouts}

@@ -69,12 +69,12 @@ const GenerateLayout = async ({ children, params }: SessionLayoutProps) => {
             const errorString = 'ExecutionID:' + pagecontentApi.payload.dataresponse.errors[0].execute_id + ' - ' + pagecontentApi.payload.dataresponse.errors[0].info
             return <PageError errorDetails={errorString} />
         }
-        formdata = pagecontentApi.payload.dataresponse.data as unknown as FormInputData;
 
+        formdata = pagecontentApi.payload.dataresponse.data.data as unknown as FormInputData;
         const masterdata = formdata.form_design_detail.master_data;
 
         const resolvedMasterData = replaceParameterPlaceholders(masterdata, id ?? '', dictionary, resolvedParams.locale);
-        
+
         const viewdataApi = await systemServiceApi.runDynamic({
             sessiontoken: session?.user?.token as string,
             body: resolvedMasterData,

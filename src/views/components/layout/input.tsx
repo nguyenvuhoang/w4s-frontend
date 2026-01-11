@@ -238,6 +238,7 @@ const RenderInput: React.FC<RenderInputProps> = ({
           ismodify={ismodify}
           setIsModify={setIsModify}
           searchtext={searchtext}
+          roleTask={roleTask}
         />
       );
     case 'jTableSearch':

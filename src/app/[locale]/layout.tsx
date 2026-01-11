@@ -29,6 +29,7 @@ const RootLayout = async ({ children, params }: ChildrenType & { params: Params 
         <meta name="supported-color-schemes" content="light" />
         <meta name="color-scheme" content="light only" />
         <meta name="darkreader-lock" />
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
       </head>
 
       <body className={cn('flex is-full min-bs-full flex-auto flex-col', quicksand.variable)} suppressHydrationWarning>

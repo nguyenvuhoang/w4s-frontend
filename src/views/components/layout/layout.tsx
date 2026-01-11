@@ -127,7 +127,9 @@ const RenderLayout: React.FC<Props> = ({
                     setStoreInfoSearch={setStoreInfoSearch}
                     fetchControlDefaultValue={fetchControlDefaultValue}
                     setFetchControlDefaultValue={setFetchControlDefaultValue}
-                    viewdata={layoutviewdata} />
+                    viewdata={layoutviewdata}
+                    roleTask={roleTask}
+                />
             ))}
 
             {tabViews.length > 0 && (

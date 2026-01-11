@@ -7,10 +7,10 @@ import { Locale } from "@/configs/i18n";
 import { FormDesignDetail } from "@/types/systemTypes";
 import { getDictionary } from "@/utils/getDictionary";
 import { getLocalizedName } from "@/utils/getLocalizedName";
-import * as Icons from '@mui/icons-material';
 import {
     Box,
     Divider,
+    Icon,
     NoSsr,
     Stack,
     Typography
@@ -27,20 +27,26 @@ type PageProps = {
     dictionary: Awaited<ReturnType<typeof getDictionary>>;
     renderviewdata?: any
     ismodify?: boolean
+    roleTask?: any
 }
 
-const DynamicPageGeneric = ({ formdesigndetail, session, language, dictionary, renderviewdata, ismodify }: PageProps) => {
+const DynamicPageGeneric = ({ formdesigndetail, session, language, dictionary, renderviewdata, ismodify, roleTask }: PageProps) => {
     // State
     const [loading, setLoading] = useState(false)
-    const [advancedsearch, setAdvancedSearch] = useState<any>();
+    const [advancedsearch, setAdvancedSearch] = useState<Record<string, unknown>>();
 
     const { form_id, info, list_layout } = formdesigndetail || {
         form_id: null,
         info: null,
         list_layout: null
     };
-
-    const DynamicIcon = info?.url_input && (Icons as any)[info?.url_input] ? (Icons as any)[info?.url_input] : Icons.AccountBalance;
+    const getIconName = (iconInput?: string): string => {
+        if (!iconInput) return 'account_balance';
+        return iconInput
+            .replace(/([A-Z])/g, '_$1')
+            .toLowerCase()
+            .replace(/^_/, '');
+    };
 
     const isFormDeclared = form_id && info && list_layout;
     return (
@@ -55,19 +61,21 @@ const DynamicPageGeneric = ({ formdesigndetail, session, language, dictionary, r
                             <Box
                                 sx={{
                                     padding: 5,
-                                    backgroundColor: "#f9f9f9",
+                                    backgroundColor: 'background.default',
                                     borderRadius: 2,
-                                    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)"
+                                    boxShadow: 1
                                 }}
                             >
                                 <Stack spacing={2}>
                                     <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                                        <DynamicIcon sx={{ fontSize: 40, color: "#225087" }} />
+                                        <Icon sx={{ fontSize: 40, color: 'primary.main' }}>
+                                            {getIconName(info?.url_input)}
+                                        </Icon>
                                         <Typography
                                             variant="h4"
                                             sx={{
                                                 fontWeight: "bold",
-                                                color: "#225087"
+                                                color: 'primary.main'
                                             }}
                                         >
                                             {getLocalizedName(info?.lang_form, language)}
@@ -75,7 +83,7 @@ const DynamicPageGeneric = ({ formdesigndetail, session, language, dictionary, r
                                     </Box>
                                     <Typography
                                         variant="body1"
-                                        sx={{ color: "#225087" }}
+                                        sx={{ color: 'primary.main' }}
                                     >
                                         {getLocalizedName(info?.des, language)}
                                     </Typography>
@@ -97,6 +105,7 @@ const DynamicPageGeneric = ({ formdesigndetail, session, language, dictionary, r
                                     advancedsearch={advancedsearch}
                                     setAdvancedSearch={setAdvancedSearch}
                                     ismodifydefault={ismodify}
+                                    roleTask={roleTask}
                                 />
                             </Box>
                         </> :

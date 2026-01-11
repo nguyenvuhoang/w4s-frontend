@@ -50,7 +50,6 @@ const WalletTransactionTab = ({
   // Get transactions from wallet data
   const wallet = walletData?.wallets?.[0] || {};
   const transactions: Transaction[] = wallet?.transactions || [];
-
   // Format currency
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('vi-VN').format(value || 0);

@@ -224,7 +224,8 @@
     "failnumber": "Số lần thất bại",
     "createdonutc": "Tạo (UTC)",
     "phone": "Số điện thoại",
-    "contractnumber": "Số hợp đồng"
+    "contractnumber": "Số hợp đồng",
+    "nopermissionview": "Bạn không có quyền truy cập xem thông tin này, vui lòng liên hệ quản trị viên để được hỗ trợ"
   },
   "auth": {
     "username": "Tên đăng nhập",

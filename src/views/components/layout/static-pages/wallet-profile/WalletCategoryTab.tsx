@@ -24,6 +24,7 @@ interface Category {
   category_type: string;
   category_name: string;
   icon: string;
+  web_icon: string;
   color: string;
 }
 
@@ -89,6 +90,7 @@ const WalletCategoryTab = ({
   // Render dynamic icon (handle both MUI icons and FontAwesome)
   const renderIcon = (iconName: string, color: string, size: number = 20) => {
     const iconKey = String(iconName ?? '');
+      console.log(iconKey);
 
     // Try MUI icon first
     const MuiIcon =
@@ -102,15 +104,8 @@ const WalletCategoryTab = ({
     }
 
     // Try FontAwesome icon
-    if (iconKey.startsWith('fa-')) {
-      const faName =
-        'fa' +
-        iconKey
-          .replace('fa-', '')
-          .split('-')
-          .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-          .join('');
-
+    if (iconKey.startsWith('fa')) {
+      const faName = iconKey
       const FaIcon = (FaIcons as any)[faName];
 
       if (FaIcon) {
@@ -205,7 +200,7 @@ const WalletCategoryTab = ({
                           justifyContent: 'center',
                         }}
                       >
-                        {renderIcon(cat.icon, cat.color)}
+                        {renderIcon(cat.web_icon, cat.color)}
                       </Box>
                       <Box sx={{ flex: 1, minWidth: 0 }}>
                         <Typography

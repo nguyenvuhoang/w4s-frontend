@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Dispatch } from 'react';
+import React, { Dispatch, useCallback, memo } from 'react';
 import { Session } from 'next-auth';
 
 import PaginationPage from '@/@core/components/jTable/pagination';
@@ -27,6 +27,8 @@ import {
 } from '@mui/material';
 
 import { useRenderTableSearch, Column } from './hooks/useRenderTableSearch';
+import { useUserStore } from '@/@core/stores/useUserStore';
+import SwalAlert from '@/utils/SwalAlert';
 
 // ============================================================================
 // Types
@@ -68,6 +70,9 @@ const RenderTableSearchAdvance = ({
   roleTask,
   language,
 }: Props) => {
+  // Get role at component level for permission checks
+  const role = useUserStore((state) => state.role);
+
   // All logic is encapsulated in the custom hook
   const {
     filteredData,
@@ -101,6 +106,26 @@ const RenderTableSearchAdvance = ({
     roleTask,
   });
 
+  // Memoized handler for row double click with permission check
+  const handleRowDoubleClickWithPermission = useCallback((row: any) => {
+    const action = input?.config?.actionFo_RowSelect?.useAction;
+
+    if (action === 'viewdetail') {
+      const codeHidden = input?.default?.codeHidden;
+
+      const isNotAllowed = role.some(r => {
+        const roleId = r.role_id?.toString();
+        return roleTask?.[roleId]?.[codeHidden]?.component?.install === false;
+      });
+
+      if (isNotAllowed) {
+        SwalAlert("warning", `${dictionary['common'].nopermissionview}`, "center");
+        return;
+      }
+    }
+    onRowDoubleClick(row, input);
+  }, [input, role, roleTask, dictionary, onRowDoubleClick]);
+
   return (
     <Grid size={gridProps} sx={{ marginBottom: '16px' }}>
       {/* Table */}
@@ -131,10 +156,11 @@ const RenderTableSearchAdvance = ({
             {filteredData?.length > 0 ? (
               filteredData.map((row: any, rowIndex: number) => {
                 const isCheck = isRowSelected(row);
+                const rowKey = row.id ?? row._id ?? rowIndex;
                 return (
                   <StyledTableRow
-                    key={rowIndex}
-                    onDoubleClick={() => handleRowDoubleClick(row)}
+                    key={rowKey}
+                    onDoubleClick={() => handleRowDoubleClickWithPermission(row)}
                   >
                     {/* Checkbox Column */}
                     {!disableOnTableAction && (
@@ -150,12 +176,12 @@ const RenderTableSearchAdvance = ({
                     )}
 
                     {/* Data Columns */}
-                    {columns.map((column: Column, colIndex: number) => {
+                    {columns.map((column: Column) => {
                       const value = getNestedValue(row, column.code);
                       return (
                         <TableCell
                           id="table-search-advance"
-                          key={colIndex}
+                          key={column.code}
                           sx={{
                             fontSize: '0.875rem',
                             fontFamily: 'Quicksand, sans-serif',
@@ -227,4 +253,4 @@ const RenderTableSearchAdvance = ({
   );
 };
 
-export default RenderTableSearchAdvance;
+export default memo(RenderTableSearchAdvance);

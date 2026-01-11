@@ -224,7 +224,8 @@
     "failnumber": "Fail Number",
     "createdonutc": "Created (UTC)",
     "phone": "Phone",
-    "contractnumber": "Contract Number"
+    "contractnumber": "Contract Number",
+    "nopermissionview": "You do not have permission to view this information, please contact the administrator for assistance."
   },
   "auth": {
     "username": "Username",

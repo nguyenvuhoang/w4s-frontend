@@ -146,7 +146,6 @@ export const generateCellTable = (
 
             if (cfg?.dynamicIcon === true) {
                 const iconKey = String(value ?? '');
-
                 const MuiIcon =
                     (Icons as any)[iconKey] ||
                     (Icons as any)[iconKey.charAt(0).toUpperCase() + iconKey.slice(1)];
@@ -162,17 +161,9 @@ export const generateCellTable = (
                     );
                 }
 
-                if (iconKey.startsWith('fa-')) {
-                    const faName =
-                        'fa' +
-                        iconKey
-                            .replace('fa-', '')
-                            .split('-')
-                            .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-                            .join('');
-
+                if (iconKey.startsWith('fa')) {
+                    const faName = iconKey
                     const FaIcon = (FaIcons as any)[faName];
-
                     if (FaIcon) {
                         return (
                             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>

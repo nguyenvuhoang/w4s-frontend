@@ -1,9 +1,9 @@
 import { auth } from '@/auth'
+import AuthorizedLayout from '@/components/layout/AuthorizedLayout'
 import PageError from '@/components/PageError'
 import Spinner from '@/components/spinners'
 import { i18n, Locale } from '@/configs/i18n'
 import { systemServiceApi } from '@/servers/system-service'
-import { getDictionary } from '@/utils/getDictionary'
 import { isValidResponse } from '@/utils/isValidResponse'
 import DynamicPageGeneric from '@/views/pages/dynamic-page-generic'
 import { Suspense } from 'react'
@@ -18,10 +18,7 @@ export async function generateStaticParams() {
 const DynamicPage = async ({ params }: { params: Params }) => {
     const { locale, page } = await params
 
-    const [dictionary, session] = await Promise.all([
-        getDictionary(locale),
-        auth()
-    ]);
+    const session = await auth();
 
     const pageid = page.replace(/-/g, '_');
 
@@ -30,24 +27,33 @@ const DynamicPage = async ({ params }: { params: Params }) => {
         language: locale,
         formid: pageid
     })
-
     if (!isValidResponse(pagecontentApi)) {
         const errorDetails = pagecontentApi.payload.dataresponse.errors[0].info;
         return <PageError errorDetails={errorDetails} />;
     }
 
-    const pagecontentdetail = pagecontentApi.payload.dataresponse.data
-    const formdesigndetail = pagecontentdetail.form_design_detail
+    const pagecontentdetail = pagecontentApi.payload.dataresponse.data.data
 
+    const formdesigndetail = pagecontentdetail.form_design_detail
+    const roleTask = pagecontentdetail.loadRoleTask;
     return (
-        <Suspense fallback={<Spinner />}>
-            <DynamicPageGeneric
-                formdesigndetail={formdesigndetail}
-                session={session}
-                dictionary={dictionary}
-                language={locale}
-            />
-        </Suspense>
+        <AuthorizedLayout
+            requiredPath={`/${page}`}
+            params={await params}
+        >
+            {({ session, dictionary, locale }) => (
+                <Suspense fallback={<Spinner />}>
+                    <DynamicPageGeneric
+                        formdesigndetail={formdesigndetail}
+                        session={session}
+                        dictionary={dictionary}
+                        language={locale}
+                        roleTask={roleTask}
+                    />
+                </Suspense>
+
+            )}
+        </AuthorizedLayout>
     )
 }
 

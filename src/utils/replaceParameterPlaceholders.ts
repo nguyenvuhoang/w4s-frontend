@@ -26,7 +26,7 @@ export function replaceParameterPlaceholders(
     // object
     if (typeof node === "object") {
       // Nếu node có parameters thì xử lý tại đây
-      const params = node.parameters || node.fields;
+      const params = node.parameters || node.fields || node.Fields;
       if (params && typeof params === "object" && !Array.isArray(params)) {
         for (const paramKey of Object.keys(params)) {
           const v = params[paramKey];

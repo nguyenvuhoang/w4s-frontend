@@ -19,6 +19,7 @@
     "@emotion/styled": "11.10.5",
     "@floating-ui/react": "^0.26.19",
     "@formatjs/intl-localematcher": "^0.5.4",
+    "@fortawesome/fontawesome-free": "7.1.0",
     "@fortawesome/fontawesome-svg-core": "7.1.0",
     "@fortawesome/free-solid-svg-icons": "7.1.0",
     "@fortawesome/react-fontawesome": "3.1.1",
