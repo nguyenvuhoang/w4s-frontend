@@ -10,10 +10,11 @@ import { Suspense } from 'react';
 
 export const metadata: Metadata = generateAuthMetadata('Login');
 
-const ForgotPasswordPage = async (props: { params: Promise<{ locale: Locale }> }) => {
+const ChangePasswordPage = async (props: { params: Promise<{ locale: Locale }> }) => {
     const { locale } = await props.params;
     const session = await auth()
-    if (!session || !session.user) {
+
+    if (!session || !session.user || session.user.token?.length === 0) {
         console.log('[Portal Layout] No session found, redirecting to logout')
         redirect(getLocalizedUrl('/logout', locale))
     }
@@ -28,4 +29,4 @@ const ForgotPasswordPage = async (props: { params: Promise<{ locale: Locale }> }
     );
 };
 
-export default ForgotPasswordPage;
+export default ChangePasswordPage;

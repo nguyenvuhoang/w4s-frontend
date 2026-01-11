@@ -24,11 +24,20 @@ export interface SystemViewDataRequest {
 export interface SystemSearchDataRequest {
     sessiontoken: string
     language: Locale,
-    page_index: number
-    page_size: number
-    search_text: string
+    page_index?: number
+    page_size?: number
+    search_text?: string
+    pageindex?: number
+    pagesize?: number
+    searchtext?: string
+    [key: string]: any;
 }
-
+export interface SubmitDataFormRequest {
+    sessiontoken: string
+    language: Locale,
+    fields: any
+    [key: string]: any;
+}
 export interface UserInRole {
     role_id: number,
     user_code: string,
@@ -198,6 +207,9 @@ export interface FormDataResponse extends ResponseDefaultData<DefaultData> {
     dataresponse: FormResponseData<FormData>
 }
 
+export interface MenuDataResponse extends ResponseDefaultData<DefaultData> {
+    dataresponse: FormResponseData<MenuItem>
+} 
 
 export type FormInput = {
     inputtype: string;
@@ -368,6 +380,7 @@ export interface MenuItem {
     group_menu_visible: string
     group_menu_id: any
     group_menu_list_authorize_form: any
+    enable : boolean
 }
 
 export interface Operation {

@@ -7,10 +7,6 @@ import { getDictionary } from '@/utils/getDictionary'
 import { isValidResponse } from '@/utils/isValidResponse'
 import RoleProfileGeneric from '@/views/pages/role-profile'
 
-type Params = Promise<{
-    locale: Locale
-}>
-
 // ✅ Hàm gom xử lý gọi API với kiểm tra lỗi và trả về kết quả
 const fetchBOData = async ({
     sessiontoken,
@@ -54,8 +50,8 @@ const fetchBOData = async ({
     return data;
 };
 
-const RoleProfilePage = async ({ params }: { params: Params }) => {
-    const { locale } = await params;
+const RoleProfilePage = async (props: { params: Promise<{ locale: Locale }> }) => {
+    const { locale } = await props.params;
 
     const [dictionary, session] = await Promise.all([
         getDictionary(locale),

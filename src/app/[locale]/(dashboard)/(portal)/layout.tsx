@@ -54,7 +54,7 @@ async function PortalLayoutContent({
     const { locale } = await params
 
     const session = await auth()
-    if (!session || !session.user) {
+    if (!session || !session.user || session.user.token?.length === 0) {
         console.log('[Portal Layout] No session found, redirecting to logout')
         redirect(getLocalizedUrl('/logout', locale))
     }

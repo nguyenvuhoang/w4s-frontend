@@ -71,15 +71,15 @@ const ChangePassword = ({ dictionary, session, mode = 'light', loginname = '' }:
             return
         }
         try {
-            const userName = loginname|| '';
+            const userName = loginname || '';
             const encryptedPassword = encrypt(`${userName}_${data.oldPassword}`);
-
+            const encryptedNewPassword = encrypt(`${userName}_${data.newPassword}`);
             const apiChangePassword = await systemServiceApi.runFODynamic({
                 sessiontoken: session?.user?.token || '',
                 workflowid: WORKFLOWCODE.WF_BO_CHANGE_PASSWORD,
                 input: {
                     oldPassword: encryptedPassword,
-                    password: data.newPassword
+                    password: encryptedNewPassword
                 }
             })
 

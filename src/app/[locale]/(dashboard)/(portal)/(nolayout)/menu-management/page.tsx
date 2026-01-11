@@ -6,9 +6,11 @@ import MenuManagementSkeleton from '@/views/nolayout/menu-management/MenuManagem
 import { Suspense } from 'react'
 import ContentWrapper from '@/views/components/layout/content-wrapper'
 import DescriptionIcon from '@mui/icons-material/Description'
-import { MenuItem } from '@/types/systemTypes'
+import { MenuItem, PageData } from '@/types/systemTypes'
 import { systemServiceApi } from '@/servers/system-service'
 import { WORKFLOWCODE } from '@/data/WorkflowCode'
+import { isValidResponse } from '@/utils/isValidResponse'
+import MenuManagementError from '@/views/nolayout/menu-management/MenuManagementError'
 
 type Params = Promise<{
     locale: Locale
@@ -16,25 +18,30 @@ type Params = Promise<{
 
 async function MenuManagementData({ locale, session }: { locale: Locale; session: any }) {
     const dictionary = await getDictionary(locale)
-    const fetchMenuData = async (): Promise<MenuItem[]> => {
-        try {
-            const response = await systemServiceApi.runFODynamic({
-                sessiontoken: session?.user?.token as string,
-                workflowid: WORKFLOWCODE.SYS_GET_MENU,
-                input: {},
-                language: locale,
-                use_microservice: false
-            });
+    const response = await systemServiceApi.loadMenu({
+        sessiontoken: session?.user?.token as string,
+        pageindex: 0,
+        pagesize: 10,
+        searchtext: '',
+        language: locale,
+    });
 
-            if (response.status === 200 && response.payload?.dataresponse?.fo) {
-                return response.payload.dataresponse.fo[0].input.data as MenuItem[];
-            }
-        } catch (error) {
-            console.error("Error fetching menu data:", error);
-        }
-        return [];
-    };
-    const data = await fetchMenuData();
+    if (
+        !isValidResponse(response) ||
+        (response.payload.dataresponse.errors && response.payload.dataresponse.errors.length > 0)
+    ) {
+        const execute_id = response.payload.dataresponse.errors[0]?.execute_id
+        const errorinfo = response.payload.dataresponse.errors[0]?.info
+        console.log(
+            'ExecutionID:',
+            execute_id +
+            ' - ' +
+            errorinfo
+        );
+        return <MenuManagementError dictionary={dictionary} execute_id={execute_id} errorinfo={errorinfo} />
+    }
+    const data = response.payload.dataresponse.data as unknown as PageData<MenuItem> 
+
     return <MenuManagementContent data={data} dictionary={dictionary} session={session} locale={locale} />
 }
 

@@ -1,6 +1,6 @@
 import { WORKFLOWCODE } from '@/data/WorkflowCode';
 import { env } from '@/env.mjs';
-import { BODataResponse, FODataArrayResponse, FODataResponse, FormDataResponse, ReportDataRequest, ReportDetailDataRequest, RunBoDynamicDataRequest, RunDynamicDataRequest, RunFoDataRequest, RunFoDynamicDataRequest, SearchDataRequest, SearchDataResponse, SystemDataRequest, SystemDataResponse, UpdateDataRequest, ViewDataRequest, ViewDataResponse } from "@/types/systemTypes";
+import { BODataResponse, FODataArrayResponse, FODataResponse, FormDataResponse, MenuDataResponse, ReportDataRequest, ReportDetailDataRequest, RunBoDynamicDataRequest, RunDynamicDataRequest, RunFoDataRequest, RunFoDynamicDataRequest, SearchDataRequest, SearchDataResponse, SubmitDataFormRequest, SystemDataRequest, SystemDataResponse, SystemSearchDataRequest, UpdateDataRequest, ViewDataRequest, ViewDataResponse } from "@/types/systemTypes";
 import { apiPost, createDefaultBody } from '../lib/api';
 import http from "../lib/http";
 
@@ -23,6 +23,77 @@ export const systemServiceApi = {
                     app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
                 }
             }),
+
+    loadMenu: ({ sessiontoken, language, pageindex, pagesize, searchtext }: SystemSearchDataRequest) =>
+        http.post<MenuDataResponse>('/system-service',
+            {
+                learn_api: "CTH_LOAD_MENU",
+                fields: {
+                    pageindex: pageindex,
+                    pagesize: pagesize,
+                    searchtext: searchtext
+                }
+            },
+            {
+                baseUrl: process.env.NEXT_PUBLIC_API_URL,
+                headers: {
+                    uid: `${sessiontoken}`,
+                    lang: language,
+                    app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
+                }
+            }),
+
+    createMenu: ({ sessiontoken, language, fields }: SubmitDataFormRequest) =>
+        http.post<MenuDataResponse>('/system-service',
+            {
+                learn_api: "CTH_CREATE_MENU",
+                fields: {
+                    ...fields
+                }
+            },
+            {
+                baseUrl: process.env.NEXT_PUBLIC_API_URL,
+                headers: {
+                    uid: `${sessiontoken}`,
+                    lang: language,
+                    app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
+                }
+            }),
+
+    updateMenu: ({ sessiontoken, language, fields }: SubmitDataFormRequest) =>
+        http.post<MenuDataResponse>('/system-service',
+            {
+                learn_api: "CTH_UPDATE_MENU",
+                fields: {
+                    ...fields
+                }
+            },
+            {
+                baseUrl: process.env.NEXT_PUBLIC_API_URL,
+                headers: {
+                    uid: `${sessiontoken}`,
+                    lang: language,
+                    app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
+                }
+            }),
+    deleteMenu: ({ sessiontoken, language, fields }: SubmitDataFormRequest) =>
+        http.post<MenuDataResponse>('/system-service',
+            {
+                learn_api: "CTH_DELETE_MENU",
+                fields: {
+                    ...fields
+                }
+            },
+            {
+                baseUrl: process.env.NEXT_PUBLIC_API_URL,
+                headers: {
+                    uid: `${sessiontoken}`,
+                    lang: language,
+                    app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
+                }
+            }),
+
+
     getSystemInfo: ({ sessiontoken, language }: SystemDataRequest) =>
         apiPost<SystemDataResponse>('/system-service',
             createDefaultBody(WORKFLOWCODE.WF_BO_APP_INFO, {

@@ -1,32 +1,34 @@
 'use client'
 
 import type { Locale } from '@configs/i18n'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 // Components
-import { CustomCheckboxIcon } from '@/@core/components/mui/CustomCheckboxIcon'
 import PaginationPage from '@/@core/components/jTable/pagination'
-import EmptyListNotice from '@/components/layout/shared/EmptyListNotice'
+import { CustomCheckboxIcon } from '@/@core/components/mui/CustomCheckboxIcon'
 import { actionButtonColors, actionButtonSx } from '@/components/forms/button-color/actionButtonSx'
-import { MenuItem } from '@/types/systemTypes'
+import EmptyListNotice from '@/components/layout/shared/EmptyListNotice'
+import { MenuItem, PageData } from '@/types/systemTypes'
 import { getDictionary } from '@/utils/getDictionary'
-import { getLocalizedUrl } from '@/utils/i18n'
+import AccountTreeIcon from '@mui/icons-material/AccountTree'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import SearchIcon from '@mui/icons-material/Search'
+import ViewListIcon from '@mui/icons-material/ViewList'
 import VisibilityIcon from '@mui/icons-material/Visibility'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import CancelIcon from '@mui/icons-material/Cancel'
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import {
     Box,
     Button,
     Checkbox,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
     Grid,
     MenuItem as MuiMenuItem,
     Paper,
-    SelectChangeEvent,
     Skeleton,
     Table,
     TableBody,
@@ -34,16 +36,29 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    TextField
+    TextField,
+    ToggleButton,
+    ToggleButtonGroup,
+    Tooltip
 } from '@mui/material'
 import { Session } from 'next-auth'
 import { Controller, useForm } from 'react-hook-form'
+
+// Hooks
+import { useMenuManagement } from './hooks/useMenuManagement'
+import { useMenuTree } from './hooks/useMenuTree'
+
+// Components
+import { MenuEditModal } from './components/MenuEditModal'
+import { MenuFormModal } from './components/MenuFormModal'
+import { MenuTableRow } from './components/MenuTableRow'
+import { MenuViewModal } from './components/MenuViewModal'
 
 type Props = {
     locale: Locale
     dictionary: Awaited<ReturnType<typeof getDictionary>>
     session: Session | null
-    data: MenuItem[]
+    data: PageData<MenuItem>
 }
 
 type SearchForm = {
@@ -55,14 +70,23 @@ type SearchForm = {
 }
 
 export default function MenuManagementContent({ locale, dictionary, session, data }: Props) {
-    const [loading, setLoading] = useState(false)
-    const [selected, setSelected] = useState<string[]>([])
-    const [page, setPage] = useState(1)
-    const [rowsPerPage, setRowsPerPage] = useState(10)
-    const [jumpPage, setJumpPage] = useState<number>(1)
-    const [filteredData, setFilteredData] = useState<MenuItem[]>(data)
+    const [menuData, setMenuData] = useState<MenuItem[]>(data?.items || [])
 
-    const { control, handleSubmit } = useForm<SearchForm>({
+    // Custom hooks
+    const menuManagement = useMenuManagement(menuData, {
+        sessionToken: session?.user?.token as string,
+        locale,
+        onDataUpdate: setMenuData,
+        initialPagination: {
+            total_count: data?.total_count,
+            total_pages: data?.total_pages,
+            has_previous_page: data?.has_previous_page,
+            has_next_page: data?.has_next_page
+        }
+    })
+    const menuTree = useMenuTree(menuManagement.filteredData)
+
+    const { control, handleSubmit, getValues } = useForm<SearchForm>({
         defaultValues: {
             command_id: '',
             command_name: '',
@@ -74,9 +98,9 @@ export default function MenuManagementContent({ locale, dictionary, session, dat
 
     // Get unique application codes for dropdown
     const applicationCodes = useMemo(() => {
-        const codes = [...new Set(data.map(item => item.application_code))].filter(Boolean)
+        const codes = [...new Set(menuData.map(item => item.application_code))].filter(Boolean)
         return [{ value: 'ALL', label: dictionary['common']?.all || 'All' }, ...codes.map(code => ({ value: code, label: code }))]
-    }, [data, dictionary])
+    }, [menuData, dictionary])
 
     // Command type options
     const commandTypeOptions = [
@@ -93,94 +117,49 @@ export default function MenuManagementContent({ locale, dictionary, session, dat
         { value: 'false', label: dictionary['common']?.hidden || 'Hidden' }
     ]
 
-    const onSubmit = (formData: SearchForm) => {
-        setLoading(true)
-        setTimeout(() => {
-            let result = [...data]
-
-            if (formData.command_id) {
-                result = result.filter(item =>
-                    item.command_id.toLowerCase().includes(formData.command_id.toLowerCase())
-                )
-            }
-            if (formData.command_name) {
-                result = result.filter(item =>
-                    item.command_name.toLowerCase().includes(formData.command_name.toLowerCase())
-                )
-            }
-            if (formData.application_code !== 'ALL') {
-                result = result.filter(item => item.application_code === formData.application_code)
-            }
-            if (formData.command_type !== 'ALL') {
-                result = result.filter(item => item.command_type === formData.command_type)
-            }
-            if (formData.is_visible !== 'ALL') {
-                const visibleValue = formData.is_visible === 'true'
-                result = result.filter(item => item.is_visible === visibleValue)
-            }
-
-            setFilteredData(result)
-            setPage(1)
-            setSelected([])
-            setLoading(false)
-        }, 300)
+    const onSubmit = async (formData: SearchForm) => {
+        await menuManagement.handleSearch(formData, menuData, true) // Reset to page 1 on new search
     }
+    
+    // Auto-search on mount to initialize pagination
+    useEffect(() => {
+        const initialFormData = getValues()
+        menuManagement.handleSearch(initialFormData, menuData, true)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []) // Only run once on mount
 
-    // Pagination
-    const totalCount = filteredData.length
-    const paginatedData = useMemo(() => {
-        const startIndex = (page - 1) * rowsPerPage
-        return filteredData.slice(startIndex, startIndex + rowsPerPage)
-    }, [filteredData, page, rowsPerPage])
-
-    const handlePageChange = (_: any, newPage: number) => {
-        setPage(newPage)
-        setSelected([])
-    }
-
-    const handlePageSizeChange = (event: SelectChangeEvent<number>) => {
-        setRowsPerPage(event.target.value as number)
-        setPage(1)
-        setSelected([])
-    }
-
-    const handleJumpPage: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (event) => {
-        const targetPage = parseInt(event.target.value)
-        const maxPage = Math.ceil(totalCount / rowsPerPage)
-        if (targetPage >= 1 && targetPage <= maxPage) {
-            setPage(targetPage)
-            setSelected([])
+    // Tree data for tree view mode
+    const treeData = menuTree.buildTree
+    const displayData = useMemo(() => {
+        if (menuManagement.viewMode === 'tree') {
+            return menuTree.flattenTree(treeData, menuManagement.expandedRows)
         }
-        setJumpPage(1)
-    }
+        return menuManagement.filteredData.map(item => ({ ...item, level: 0 }))
+    }, [menuManagement.filteredData, treeData, menuManagement.expandedRows, menuManagement.viewMode, menuTree])
 
-    // Selection handlers
-    const hasSelection = selected.length > 0
-    const selectedId = selected[0] ?? null
-    const isAllSelected = paginatedData.length > 0 && selected.length === paginatedData.length
-    const isIndeterminate = selected.length > 0 && selected.length < paginatedData.length
+    // Selection state
+    const isAllSelected = displayData.length > 0 && menuManagement.selected.length === displayData.length
+    const isIndeterminate = menuManagement.selected.length > 0 && menuManagement.selected.length < displayData.length
 
-    const toggleAll = () => {
-        if (isAllSelected) {
-            setSelected([])
-        } else {
-            setSelected(paginatedData.map(row => row.command_id))
-        }
-    }
-
-    const toggleOne = (id: string) => {
-        if (selected.includes(id)) {
-            setSelected([])
-        } else {
-            setSelected([id])
-        }
+    const handleToggleAll = () => {
+        menuManagement.toggleAll(displayData.map(row => row.command_id))
     }
 
     const handleRowDblClick = (commandId: string) => {
-        if (hasSelection) return
-        window.open(getLocalizedUrl(`/menu-management/view/${commandId}`, locale), '_blank')
+        if (menuManagement.hasSelection) return
+        const menuItem = menuData.find(item => item.command_id === commandId)
+        if (menuItem) {
+            menuManagement.handleViewMenu(menuData)
+        }
     }
 
+    // Handle expand all
+    const handleExpandAll = () => {
+        const parentIds = menuTree.getAllParentIds(treeData)
+        menuManagement.expandAll(parentIds)
+    }
+
+    // Render form field
     const renderField = (name: keyof SearchForm, label: string) => (
         <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <Controller
@@ -248,8 +227,9 @@ export default function MenuManagementContent({ locale, dictionary, session, dat
                                 variant="outlined"
                                 color="inherit"
                                 startIcon={<AddIcon sx={{ color: '#225087' }} />}
-                                disabled={loading}
+                                disabled={menuManagement.loading}
                                 sx={{ ...actionButtonSx, ...actionButtonColors.primary }}
+                                onClick={menuManagement.openAddModal}
                             >
                                 {dictionary['common']?.add || 'Add'}
                             </Button>
@@ -258,12 +238,9 @@ export default function MenuManagementContent({ locale, dictionary, session, dat
                                 variant="outlined"
                                 color="inherit"
                                 startIcon={<VisibilityIcon sx={{ color: '#1876d1' }} />}
-                                disabled={loading || selected.length !== 1}
+                                disabled={menuManagement.loading || menuManagement.selected.length !== 1}
                                 sx={{ ...actionButtonSx, ...actionButtonColors.info }}
-                                onClick={() => {
-                                    const id = selected[0]
-                                    window.open(getLocalizedUrl(`/menu-management/view/${id}`, locale), '_blank')
-                                }}
+                                onClick={() => menuManagement.handleViewMenu(menuData)}
                             >
                                 {dictionary['common']?.view ?? 'View'}
                             </Button>
@@ -272,8 +249,9 @@ export default function MenuManagementContent({ locale, dictionary, session, dat
                                 variant="outlined"
                                 color="inherit"
                                 startIcon={<EditIcon sx={{ color: '#f0a000' }} />}
-                                disabled={loading || selected.length !== 1}
+                                disabled={menuManagement.loading || menuManagement.selected.length !== 1}
                                 sx={{ ...actionButtonSx, ...actionButtonColors.warning }}
+                                onClick={() => menuManagement.openEditModal(menuData)}
                             >
                                 {dictionary['common']?.modify || 'Modify'}
                             </Button>
@@ -282,10 +260,11 @@ export default function MenuManagementContent({ locale, dictionary, session, dat
                                 variant="outlined"
                                 color="inherit"
                                 startIcon={<DeleteIcon sx={{ color: '#d33' }} />}
-                                disabled={loading || selected.length !== 1}
+                                disabled={menuManagement.loading || menuManagement.selected.length !== 1 || menuManagement.deleteLoading}
                                 sx={{ ...actionButtonSx, ...actionButtonColors.error }}
+                                onClick={menuManagement.openDeleteConfirm}
                             >
-                                {dictionary['common']?.delete || 'Delete'}
+                                {menuManagement.deleteLoading ? (dictionary['common']?.deleting || 'Deleting...') : (dictionary['common']?.delete || 'Delete')}
                             </Button>
                         </Box>
 
@@ -295,13 +274,51 @@ export default function MenuManagementContent({ locale, dictionary, session, dat
                             variant="contained"
                             color="primary"
                             startIcon={<SearchIcon />}
-                            disabled={loading}
+                            disabled={menuManagement.loading}
                         >
                             {dictionary['common']?.search || 'Search'}
                         </Button>
                     </Grid>
                 </Grid>
             </form>
+
+            <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                <Box display="flex" gap={1}>
+                    <ToggleButtonGroup
+                        value={menuManagement.viewMode}
+                        exclusive
+                        onChange={(_, newMode) => {
+                            if (newMode) {
+                                menuManagement.setViewMode(newMode)
+                                menuManagement.handlePageChange(null, 1)
+                            }
+                        }}
+                        size="small"
+                    >
+                        <ToggleButton value="table">
+                            <Tooltip title={dictionary['common']?.table_view || 'Table View'}>
+                                <ViewListIcon />
+                            </Tooltip>
+                        </ToggleButton>
+                        <ToggleButton value="tree">
+                            <Tooltip title={dictionary['common']?.tree_view || 'Tree View'}>
+                                <AccountTreeIcon />
+                            </Tooltip>
+                        </ToggleButton>
+                    </ToggleButtonGroup>
+
+                    {menuManagement.viewMode === 'tree' && (
+                        <Box display="flex" gap={1}>
+                            <Button size="small" variant="outlined" onClick={handleExpandAll}>
+                                {dictionary['common']?.expand_all || 'Expand All'}
+                            </Button>
+                            <Button size="small" variant="outlined" onClick={menuManagement.collapseAll}>
+                                {dictionary['common']?.collapse_all || 'Collapse All'}
+                            </Button>
+                        </Box>
+                    )}
+                </Box>
+            </Box>
 
             <TableContainer component={Paper} sx={{ borderRadius: 2, boxShadow: 3 }}>
                 <Table
@@ -338,7 +355,7 @@ export default function MenuManagementContent({ locale, dictionary, session, dat
                                     size="small"
                                     indeterminate={isIndeterminate}
                                     checked={isAllSelected}
-                                    onChange={toggleAll}
+                                    onChange={handleToggleAll}
                                     slotProps={{
                                         input: {
                                             'aria-label': 'select all rows'
@@ -347,6 +364,7 @@ export default function MenuManagementContent({ locale, dictionary, session, dat
                                     disabled
                                 />
                             </TableCell>
+                            {menuManagement.viewMode === 'tree' && <TableCell sx={{ width: 48 }}></TableCell>}
                             <TableCell>{dictionary['menumanagement']?.command_id || 'Command'}</TableCell>
                             <TableCell>{dictionary['menumanagement']?.parent_id || 'Parent'}</TableCell>
                             <TableCell>{dictionary['menumanagement']?.command_type || 'Type'}</TableCell>
@@ -358,12 +376,17 @@ export default function MenuManagementContent({ locale, dictionary, session, dat
                     </TableHead>
 
                     <TableBody>
-                        {loading ? (
-                            [...Array(rowsPerPage)].map((_, index) => (
+                        {menuManagement.loading ? (
+                            [...Array(menuManagement.rowsPerPage)].map((_, index) => (
                                 <TableRow key={`skeleton-row-${index}`}>
                                     <TableCell sx={{ width: 48, padding: '0 16px' }}>
                                         <Skeleton variant="rectangular" width={18} height={18} />
                                     </TableCell>
+                                    {menuManagement.viewMode === 'tree' && (
+                                        <TableCell sx={{ width: 48 }}>
+                                            <Skeleton variant="rectangular" width={18} height={18} />
+                                        </TableCell>
+                                    )}
                                     {[...Array(7)].map((_, colIndex) => (
                                         <TableCell key={`skeleton-cell-${colIndex}`}>
                                             <Skeleton variant="text" width="100%" height={20} />
@@ -371,94 +394,117 @@ export default function MenuManagementContent({ locale, dictionary, session, dat
                                     ))}
                                 </TableRow>
                             ))
-                        ) : paginatedData.length === 0 ? (
+                        ) : displayData.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={8}>
+                                <TableCell colSpan={menuManagement.viewMode === 'tree' ? 9 : 8}>
                                     <EmptyListNotice message={dictionary['common']?.nodata || 'No data available'} />
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            paginatedData.map((row, index) => {
-                                const id = row.command_id
-                                const checked = selected.includes(id)
-                                const isDisabledRow = hasSelection && id !== selectedId
-                                return (
-                                    <TableRow
-                                        key={`${row.command_id}-${index}`}
-                                        hover
-                                        onDoubleClick={() => handleRowDblClick(row.command_id)}
-                                        sx={{
-                                            cursor: isDisabledRow ? 'default' : 'pointer',
-                                            pointerEvents: isDisabledRow ? 'none' : 'auto',
-                                            opacity: isDisabledRow ? 0.6 : 1
-                                        }}
-                                    >
-                                        <TableCell sx={{ width: 48, padding: '0 16px' }}>
-                                            <Checkbox
-                                                icon={
-                                                    isDisabledRow ? (
-                                                        <LockOutlinedIcon sx={{ fontSize: 18, color: '#9e9e9e' }} />
-                                                    ) : (
-                                                        <CustomCheckboxIcon checked={false} />
-                                                    )
-                                                }
-                                                checkedIcon={<CustomCheckboxIcon checked={true} />}
-                                                size="small"
-                                                checked={checked}
-                                                onChange={() => toggleOne(id)}
-                                                onClick={(e) => e.stopPropagation()}
-                                                slotProps={{
-                                                    input: {
-                                                        'aria-label': `select row ${id}`
-                                                    }
-                                                }}
-                                            />
-                                        </TableCell>
-                                        <TableCell>
-                                            <Box>
-                                                <strong>{row.command_id}</strong>
-                                                <br />
-                                                <span style={{ fontSize: '12px', color: '#666' }}>
-                                                    {getLocalizedCommandName(row)}
-                                                </span>
-                                            </Box>
-                                        </TableCell>
-                                        <TableCell>{row.parent_id === '0' ? '-' : row.parent_id}</TableCell>
-                                        <TableCell>{row.command_type}</TableCell>
-                                        <TableCell>{row.command_uri || '-'}</TableCell>
-                                        <TableCell>{row.application_code}</TableCell>
-                                        <TableCell>{row.display_order}</TableCell>
-                                        <TableCell>
-                                            <Box display="flex" alignItems="center" gap={1}>
-                                                {row.is_visible ? (
-                                                    <CheckCircleIcon sx={{ color: '#4caf50', fontSize: 20 }} />
-                                                ) : (
-                                                    <CancelIcon sx={{ color: '#f44336', fontSize: 20 }} />
-                                                )}
-                                            </Box>
-                                        </TableCell>
-                                    </TableRow>
-                                )
-                            })
+                            displayData.map((row, index) => (
+                                <MenuTableRow
+                                    key={`${row.command_id}-${index}`}
+                                    row={row}
+                                    index={index}
+                                    locale={locale}
+                                    viewMode={menuManagement.viewMode}
+                                    selected={menuManagement.selected}
+                                    hasSelection={menuManagement.hasSelection}
+                                    selectedId={menuManagement.selectedId}
+                                    expandedRows={menuManagement.expandedRows}
+                                    hasChildren={menuTree.hasChildren(row.command_id)}
+                                    onToggleSelect={menuManagement.toggleOne}
+                                    onToggleExpand={menuManagement.toggleExpand}
+                                    onRowDoubleClick={handleRowDblClick}
+                                    getLocalizedCommandName={getLocalizedCommandName}
+                                />
+                            ))
                         )}
                     </TableBody>
                 </Table>
             </TableContainer>
 
-            {totalCount > 0 && (
+            {menuManagement.totalCount > 0 && (
                 <Box mt={5}>
                     <PaginationPage
-                        page={page}
-                        pageSize={rowsPerPage}
-                        totalResults={totalCount}
-                        jumpPage={jumpPage}
-                        handlePageChange={handlePageChange}
-                        handlePageSizeChange={handlePageSizeChange}
-                        handleJumpPage={handleJumpPage}
+                        page={menuManagement.page}
+                        pageSize={menuManagement.rowsPerPage}
+                        totalResults={menuManagement.totalCount}
+                        jumpPage={menuManagement.jumpPage}
+                        handlePageChange={menuManagement.handlePageChange}
+                        handlePageSizeChange={menuManagement.handlePageSizeChange}
+                        handleJumpPage={menuManagement.handleJumpPage}
                         dictionary={dictionary}
                     />
                 </Box>
             )}
+
+            {/* Add Menu Modal */}
+            <MenuFormModal
+                open={menuManagement.isAddModalOpen}
+                onClose={menuManagement.closeAddModal}
+                onSubmit={menuManagement.handleAddMenu}
+                locale={locale}
+                dictionary={dictionary}
+                menuItems={menuData}
+                applicationCodes={applicationCodes.filter(item => item.value !== 'ALL').map(item => item.value)}
+                loading={menuManagement.modalLoading}
+                error={menuManagement.modalError}
+                isSuccess={menuManagement.modalSuccess}
+                submittedData={menuManagement.modalSubmittedData}
+                onClearError={menuManagement.clearModalError}
+            />
+
+            {/* View Menu Modal */}
+            <MenuViewModal
+                open={menuManagement.isViewModalOpen}
+                onClose={menuManagement.closeViewModal}
+                menuItem={menuManagement.selectedMenuItem}
+                locale={locale}
+                dictionary={dictionary}
+            />
+
+            {/* Edit Menu Modal */}
+            <MenuEditModal
+                open={menuManagement.isEditModalOpen}
+                onClose={menuManagement.closeEditModal}
+                onSubmit={menuManagement.handleEditMenu}
+                locale={locale}
+                dictionary={dictionary}
+                menuItems={menuData}
+                applicationCodes={applicationCodes.filter(item => item.value !== 'ALL').map(item => item.value)}
+                editData={menuManagement.editMenuItem}
+                loading={menuManagement.editLoading}
+                error={menuManagement.editError}
+                isSuccess={menuManagement.editSuccess}
+                submittedData={menuManagement.editSubmittedData}
+                onClearError={menuManagement.clearEditError}
+            />
+
+            {/* Delete Confirmation Dialog */}
+            <Dialog
+                open={menuManagement.showDeleteConfirm}
+                onClose={menuManagement.closeDeleteConfirm}
+                aria-labelledby="delete-dialog-title"
+                aria-describedby="delete-dialog-description"
+            >
+                <DialogTitle id="delete-dialog-title">
+                    {dictionary['common']?.confirm_delete || 'Confirm Delete'}
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="delete-dialog-description">
+                        {dictionary['common']?.confirm_delete_message || 'Are you sure you want to delete this menu item? This action cannot be undone.'}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={menuManagement.closeDeleteConfirm} color="inherit">
+                        {dictionary['common']?.cancel || 'Cancel'}
+                    </Button>
+                    <Button onClick={() => menuManagement.handleDeleteMenu(menuData)} color="error" variant="contained" autoFocus>
+                        {dictionary['common']?.delete || 'Delete'}
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     )
 }

@@ -50,16 +50,16 @@ const ChangePasswordForm = ({ dictionary, session }: Props) => {
         try {
             const apiChangePassword = await systemServiceApi.runFODynamic({
                 sessiontoken: session?.user?.token || '',
-                workflowid: WORKFLOWCODE.BO_CHANGE_PASSWORD,
+                workflowid: WORKFLOWCODE.WF_BO_CHANGE_PASSWORD,
                 input: {
                     password: data.newPassword
                 }
             })
 
             if (apiChangePassword.status === 200) {
-                const hasError = apiChangePassword.payload.dataresponse.error.length > 0;
+                const hasError = apiChangePassword.payload.dataresponse.errors.length > 0;
                 if (hasError) {
-                    SwalAlert('error', apiChangePassword.payload.error?.[0]?.info || dictionary['common'].updateerror, 'center')
+                    SwalAlert('error', apiChangePassword.payload.dataresponse.errors?.[0]?.info || dictionary['common'].updateerror, 'center')
                 } else {
                     SwalAlert('success', dictionary['auth'].passwordchanged || 'Password changed successfully', 'center', false, false, true, () => {
                         handleUserLogout()
@@ -67,7 +67,7 @@ const ChangePasswordForm = ({ dictionary, session }: Props) => {
                 }
 
             } else {
-                console.error(`Error changing password: ${apiChangePassword.payload.error?.[0]?.info || 'Unknown error'}`);
+                console.error(`Error changing password: ${apiChangePassword.payload.dataresponse.errors?.[0]?.info || 'Unknown error'}`);
             }
 
         } catch (error) {
