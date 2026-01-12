@@ -88,9 +88,8 @@ const WalletCategoryTab = ({
   };
 
   // Render dynamic icon (handle both MUI icons and FontAwesome)
-  const renderIcon = (iconName: string, color: string, size: number = 20) => {
+  const renderIcon = (iconName: string, color: string, size: number = 20, key?: string) => {
     const iconKey = String(iconName ?? '');
-      console.log(iconKey);
 
     // Try MUI icon first
     const MuiIcon =
@@ -98,9 +97,7 @@ const WalletCategoryTab = ({
       (Icons as any)[iconKey.charAt(0).toUpperCase() + iconKey.slice(1)];
 
     if (MuiIcon) {
-      return React.createElement(MuiIcon, {
-        style: { fontSize: size, color: color }
-      });
+      return <MuiIcon key={key} style={{ fontSize: size, color: color }} />;
     }
 
     // Try FontAwesome icon
@@ -111,6 +108,7 @@ const WalletCategoryTab = ({
       if (FaIcon) {
         return (
           <FontAwesomeIcon
+            key={key}
             icon={FaIcon}
             style={{
               fontSize: size,
@@ -124,6 +122,7 @@ const WalletCategoryTab = ({
     // Fallback - colored circle
     return (
       <Box
+        key={key}
         sx={{
           width: size,
           height: size,
@@ -200,7 +199,7 @@ const WalletCategoryTab = ({
                           justifyContent: 'center',
                         }}
                       >
-                        {renderIcon(cat.web_icon, cat.color)}
+                        {renderIcon(cat.web_icon, cat.color, 20, `icon-${cat.category_id}`)}
                       </Box>
                       <Box sx={{ flex: 1, minWidth: 0 }}>
                         <Typography

@@ -57,6 +57,7 @@ export interface SystemData {
 }
 
 export interface SystemDataResponse extends ResponseDefaultData<DefaultData> {
+    requireLogout: any;
     dataresponse: ResponseDefault<SystemData>
 }
 

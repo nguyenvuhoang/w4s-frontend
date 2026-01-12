@@ -40,6 +40,7 @@ const DynamicPageGeneric = ({ formdesigndetail, session, language, dictionary, r
         info: null,
         list_layout: null
     };
+    
     const getIconName = (iconInput?: string): string => {
         if (!iconInput) return 'account_balance';
         return iconInput

@@ -68,19 +68,27 @@ async function PortalLayoutContent({
     console.log('[Portal Layout] :', {
         status: systemData.status,
         hasError: systemData?.payload?.dataresponse?.errors?.length > 0,
-        errorCodes: systemData?.payload?.dataresponse?.errors?.map((err: any) => err.key) || []
+        errorCodes: systemData?.payload?.dataresponse?.errors?.map((err: any) => err.key) || [],
+        requireLogout: systemData?.payload?.requireLogout
     })
 
-    if (systemData?.payload?.dataresponse?.errors?.some(
-        (err: any) => parseInt(err.key) === AUTHENTICATION_ERROR_STATUS || parseInt(err.key) === BAD_REQUEST
-    )) {
-        console.log('[Portal Layout] Authentication/Bad Request error, redirecting to logout')
+    // Check for 401 status or requireLogout flag first (before accessing dataresponse)
+    if (systemData.status === 401 || systemData?.payload?.requireLogout) {
+        console.log('[Portal Layout] 401 or requireLogout detected, redirecting to logout')
         redirect(getLocalizedUrl('/logout', locale))
     }
 
     if (systemData.status !== 200) {
         console.log('[Portal Layout] Non-200 status, showing spinner')
         return <Spinner />
+    }
+
+    // Now safe to check dataresponse.errors since we already handled 401
+    if (systemData?.payload?.dataresponse?.errors?.some(
+        (err: any) => parseInt(err.key) === AUTHENTICATION_ERROR_STATUS || parseInt(err.key) === BAD_REQUEST
+    )) {
+        console.log('[Portal Layout] Authentication/Bad Request error in response, redirecting to logout')
+        redirect(getLocalizedUrl('/logout', locale))
     }
 
     const datapayload = systemData.payload.dataresponse

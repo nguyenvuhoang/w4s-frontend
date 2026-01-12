@@ -6,13 +6,13 @@ export async function POST(req: Request) {
     try {
         // Kiểm tra xem request có được mã hóa không
         const isEncrypted = req.headers.get('X-Encrypted-Request') === 'true';
-        
+
         let requestData;
         if (isEncrypted) {
             // Clone request để đọc body
             const clonedReq = req.clone();
             const { success, data, error } = await decryptRequestBody(clonedReq);
-            
+
             if (!success) {
                 logger.error('❌ Failed to decrypt request:', error);
                 return NextResponse.json(
@@ -58,7 +58,20 @@ export async function POST(req: Request) {
         }
 
         const dataresponse = await response.json();
-        
+
+        // Check if backend requires logout (token expired, unauthorized, etc.)
+        const requireLogout = dataresponse?.errors?.[0]?.next_action === 'logout';
+        if (requireLogout) {
+            return NextResponse.json(
+                { 
+                    dataresponse,
+                    requireLogout: true,
+                    message: 'Session expired or unauthorized. Please login again.'
+                },
+                { status: 401 }
+            );
+        }
+
         return NextResponse.json(
             { dataresponse },
             {

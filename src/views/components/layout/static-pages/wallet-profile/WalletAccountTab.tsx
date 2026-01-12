@@ -16,6 +16,13 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import StarIcon from '@mui/icons-material/Star';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 
+interface AccountBalance {
+  available_balance: number | null;
+  balance: number | null;
+  bonus_balance: number | null;
+  locked_balance: number | null;
+}
+
 interface Account {
   id: number;
   wallet_id: string;
@@ -26,7 +33,7 @@ interface Account {
   is_primary: boolean;
   status: string;
   status_caption: string;
-  balance: number | null;
+  balance: AccountBalance | null;
 }
 
 interface WalletAccountTabProps {
@@ -87,18 +94,6 @@ const WalletAccountTab = ({
     }
   };
 
-  // Get account type label
-  const getAccountTypeLabel = (type: string, caption: string) => {
-    if (caption) return caption;
-    const types: Record<string, string> = {
-      'DD': 'Demand Deposit',
-      'SA': 'Savings Account',
-      'CA': 'Current Account',
-      'TD': 'Term Deposit',
-    };
-    return types[type] || type;
-  };
-
   return (
     <Card className="shadow-md" sx={{ borderRadius: 2 }}>
       <CardContent>
@@ -142,7 +137,7 @@ const WalletAccountTab = ({
               {dictionary['wallet']?.noAccounts || 'No Linked Accounts'}
             </Typography>
             <Typography variant="body2" sx={{ color: '#666', maxWidth: 400, mx: 'auto' }}>
-              {dictionary['wallet']?.noAccountsDescription || 
+              {dictionary['wallet']?.noAccountsDescription ||
                 'You haven\'t linked any bank accounts to this wallet yet. Link your accounts to enable fund transfers.'}
             </Typography>
           </Box>
@@ -211,7 +206,7 @@ const WalletAccountTab = ({
                         {account.account_number}
                       </Typography>
                       <Typography variant="caption" sx={{ color: '#666' }}>
-                        {getAccountTypeLabel(account.account_type, account.account_type_caption)}
+                        {account.account_type_caption || account.account_type}
                       </Typography>
                     </Box>
                   </Box>
@@ -245,7 +240,7 @@ const WalletAccountTab = ({
                           {dictionary['wallet']?.balance || 'Balance'}
                         </Typography>
                         <Typography variant="body1" sx={{ ...valueStyle, color: '#4caf50' }}>
-                          {formatCurrency(account.balance, account.currency_code)}
+                          {formatCurrency(account.balance.available_balance, account.currency_code)}
                         </Typography>
                       </Grid>
                     )}

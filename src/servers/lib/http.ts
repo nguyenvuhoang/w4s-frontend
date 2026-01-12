@@ -144,7 +144,48 @@ const request = async <Response>(
     }
   }
 
-  // XỬ lý case Invalid Token
+  // Check for requireLogout flag in response body (from API route)
+  if ((payload as any)?.requireLogout === true) {
+    console.log('🔐 requireLogout detected in response, treating as 401')
+    if (isClient()) {
+      if (!clientLogoutRequest) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('refresh_token');
+        
+        clientLogoutRequest = fetch(`/api/logout`, {
+          method: 'POST',
+          body: JSON.stringify({ 
+            force: true, 
+            reason: 'require_logout_flag' 
+          }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+
+        try {
+          await clientLogoutRequest
+        } catch (error) {
+          console.error('Logout request failed:', error);
+        } finally {
+          clientLogoutRequest = null
+          const currentPath = window.location.pathname;
+          if (!currentPath.includes('/login') && !currentPath.includes('/logout')) {
+            const localeMatch = currentPath.match(/^\/([a-z]{2})/);
+            const locale = localeMatch ? localeMatch[1] : 'en';
+            location.href = `/${locale}/login`
+          }
+        }
+      }
+    }
+    // Return data with 401 status for server-side handling
+    return {
+      status: 401,
+      payload: decryptedPayload
+    }
+  }
+
+  // XỬ lý case Invalid Token (legacy check)
   if (!isClient()) {
     if (payload) {
       const dataresponse = (payload as any)?.dataresponse;
