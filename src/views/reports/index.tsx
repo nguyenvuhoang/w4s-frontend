@@ -2,7 +2,7 @@
 
 import Spinner from '@/components/spinners';
 import { Locale } from '@/configs/i18n';
-import { systemServiceApi } from '@/servers/system-service';
+import { reportService } from '@/servers/system-service';
 import { Report } from '@/types/bankType';
 import { PageData } from '@/types/systemTypes';
 import { getDictionary } from '@/utils/getDictionary';
@@ -30,7 +30,7 @@ const ReportPageContent = ({ dictionary, reports, session, locale }: {
         setCurrentPage(page);
         setIsLoading(true);
         try {
-            const reportApi = await systemServiceApi.loadReport({
+            const reportApi = await reportService.loadReport({
                 sessiontoken: session?.user?.token as string,
                 pageindex: page,
                 pagesize: 10,

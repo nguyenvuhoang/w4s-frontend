@@ -3,7 +3,7 @@
 import { handleSearchAPI } from '@/@core/components/cButton/handleSearchAPI';
 import Application from '@/@core/lib/libSupport';
 import { Locale } from '@/configs/i18n';
-import { systemServiceApi } from '@/servers/system-service';
+import { formService } from '@/servers/system-service';
 import { FormInput, PageData, RuleStrong } from '@/types/systemTypes';
 import { getDictionary } from '@/utils/getDictionary';
 import AcUnitIcon from '@mui/icons-material/AcUnit';
@@ -57,7 +57,7 @@ const RenderLookupDefault = ({
     const handleLookupClick = async () => {
         try {
             setLoading(true);
-            const response = await systemServiceApi.loadFormInfo({
+            const response = await formService.loadFormInfo({
                 sessiontoken: session?.user?.token as string,
                 language: language,
                 formid: input.config.callform, // Use the `callform` field in the input config

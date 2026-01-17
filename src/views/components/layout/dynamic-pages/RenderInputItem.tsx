@@ -159,7 +159,7 @@ const RenderInputItem = ({
           input={input}
           control={control}
           dictionary={dictionary}
-          setValue={(code: string, value: any) => onChangeValue(code, value)}
+          session={session}
         />
       );
 

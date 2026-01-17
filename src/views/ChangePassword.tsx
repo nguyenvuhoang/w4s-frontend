@@ -2,7 +2,7 @@
 
 import { useImageVariant } from '@/@core/hooks/useImageVariant'
 import { WORKFLOWCODE } from '@/data/WorkflowCode'
-import { systemServiceApi } from '@/servers/system-service'
+import { workflowService } from '@/servers/system-service'
 import { getDictionary } from '@/utils/getDictionary'
 import { encrypt } from '@/utils/O9Extension'
 import SwalAlert from '@/utils/SwalAlert'
@@ -74,7 +74,7 @@ const ChangePassword = ({ dictionary, session, mode = 'light', loginname = '' }:
             const userName = loginname || '';
             const encryptedPassword = encrypt(`${userName}_${data.oldPassword}`);
             const encryptedNewPassword = encrypt(`${userName}_${data.newPassword}`);
-            const apiChangePassword = await systemServiceApi.runFODynamic({
+            const apiChangePassword = await workflowService.runFODynamic({
                 sessiontoken: session?.user?.token || '',
                 workflowid: WORKFLOWCODE.WF_BO_CHANGE_PASSWORD,
                 input: {

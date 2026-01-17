@@ -1,5 +1,5 @@
 import NoData from '@/components/layout/shared/card/nodata';
-import { systemServiceApi } from '@/servers/system-service';
+import { formService } from '@/servers/system-service';
 import { FormInput, RuleStrong } from '@/types/systemTypes';
 import LoadingSubmit from '@/components/LoadingSubmit';
 import Application from '@/@core/lib/libSupport';
@@ -36,7 +36,7 @@ const DynamicSameMainComponent = ({ input, session, language, dictionary, render
         const loadPageContent = async () => {
             try {
                 setLocalLoading(true);
-                const response = await systemServiceApi.loadFormInfo({
+                const response = await formService.loadFormInfo({
                     sessiontoken: session?.user?.token as string,
                     language: language,
                     formid: input.config.callform, // Use the `callform` field in the input config

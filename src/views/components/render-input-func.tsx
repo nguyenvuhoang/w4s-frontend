@@ -11,7 +11,7 @@ import { disableField } from './rule/disableField';
 import { isFieldHidden } from './rule/isFieldHidden';
 import { isFieldRequired } from './rule/isFieldRequired';
 import { generateDynamicJson } from '@/utils/generateDynamicJson';
-import { systemServiceApi } from '@/servers/system-service';
+import { workflowService } from '@/servers/system-service';
 import { Session } from 'next-auth';
 import { Controller, useForm } from 'react-hook-form';
 
@@ -61,7 +61,7 @@ const RenderInputFunc = ({ input, gridProps, language, rules, ismodify, session,
                 for (const tx of txFoArray) {
                     if (tx.input) {
                         Object.assign(tx.input.fields, dynamicJson);
-                        const response = await systemServiceApi.runFODynamic({
+                        const response = await workflowService.runFODynamic({
                             workflowid: tx.input.workflowid,
                             sessiontoken: session?.user?.token as string,
                             input: tx

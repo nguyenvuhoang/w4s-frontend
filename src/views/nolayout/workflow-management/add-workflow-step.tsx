@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import { Session } from "next-auth";
 import { useState } from "react";
-import { systemServiceApi } from "@/servers/system-service";
+import { workflowService } from "@/servers/system-service";
 import { WORKFLOWCODE } from "@/data/WorkflowCode";
 import Grid from "@mui/material/Grid";
 import JsonEditorComponent from "@/@core/components/jSONEditor";
@@ -147,7 +147,7 @@ const AddWorkflowStepContent = ({
     console.log("calling createWfStep with object:", wfStep);
 
     try {
-      const res = await systemServiceApi.runBODynamic({
+      const res = await workflowService.runBODynamic({
         sessiontoken: session?.user?.token,
         txFo: {
           bo: [

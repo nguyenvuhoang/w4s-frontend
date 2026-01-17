@@ -2,7 +2,7 @@
 
 import { Locale } from '@/configs/i18n';
 import { WORKFLOWCODE } from '@/data/WorkflowCode';
-import { systemServiceApi } from '@/servers/system-service';
+import { workflowService } from '@/servers/system-service';
 import { PageContentProps } from '@/types';
 import { ChannelType } from '@/types/bankType';
 import { getDictionary } from '@/utils/getDictionary';
@@ -84,7 +84,7 @@ const ChannelContent = ({ dictionary, channelData, session }: PageProps) => {
                 try {
                     setActionLoadingId(channelid);
 
-                    const channelApi = await systemServiceApi.runFODynamic({
+                    const channelApi = await workflowService.runFODynamic({
                         sessiontoken: session?.user?.token as string,
                         workflowid: WORKFLOWCODE.BO_UPDATE_CHANNEL_STATUS,
                         input: {

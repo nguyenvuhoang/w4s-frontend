@@ -3,7 +3,7 @@ import AuthorizedLayout from '@/components/layout/AuthorizedLayout'
 import PageError from '@/components/PageError'
 import Spinner from '@/components/spinners'
 import { i18n, Locale } from '@/configs/i18n'
-import { systemServiceApi } from '@/servers/system-service'
+import { formService } from '@/servers/system-service'
 import { isValidResponse } from '@/utils/isValidResponse'
 import DynamicPageGeneric from '@/views/pages/dynamic-page-generic'
 import { Suspense } from 'react'
@@ -22,7 +22,7 @@ const DynamicPage = async ({ params }: { params: Params }) => {
 
     const pageid = page.replace(/-/g, '_');
 
-    const pagecontentApi = await systemServiceApi.loadFormInfo({
+    const pagecontentApi = await formService.loadFormInfo({
         sessiontoken: session?.user?.token as string,
         language: locale,
         formid: pageid

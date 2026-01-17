@@ -123,12 +123,12 @@ export const useMenuManagement = (initialData: MenuItem[], options?: MenuManagem
         setLoading(true)
         
         try {
-            const [{ systemServiceApi }, { isValidResponse: validate }] = await Promise.all([
+            const [{ menuService }, { isValidResponse: validate }] = await Promise.all([
                 import('@/servers/system-service'),
                 import('@/utils/isValidResponse')
             ])
             
-            const response = await systemServiceApi.loadMenu({
+            const response = await menuService.loadMenu({
                 ...lastSearchParams,
                 pageindex: newPage - 1, // Convert to 0-based
                 pagesize: rowsPerPage
@@ -200,7 +200,7 @@ export const useMenuManagement = (initialData: MenuItem[], options?: MenuManagem
         setLoading(true)
 
         try {
-            const { systemServiceApi } = await import('@/servers/system-service')
+            const { menuService } = await import('@/servers/system-service')
             const { isValidResponse } = await import('@/utils/isValidResponse')
 
             // Build search text from form data
@@ -209,7 +209,7 @@ export const useMenuManagement = (initialData: MenuItem[], options?: MenuManagem
             if (formData.command_name) searchParts.push(formData.command_name)
             const searchtext = searchParts.join(' ')
 
-            const response = await systemServiceApi.loadMenu({
+            const response = await menuService.loadMenu({
                 sessiontoken: options?.sessionToken as string,
                 pageindex: resetPage ? 0 : (page - 1), // Convert 1-based to 0-based for server
                 pagesize: rowsPerPage,
@@ -297,10 +297,10 @@ export const useMenuManagement = (initialData: MenuItem[], options?: MenuManagem
                 group_menu_list_authorize_form: formData.group_menu_list_authorize_form || ''
             }
 
-            const { systemServiceApi } = await import('@/servers/system-service')
+            const { menuService } = await import('@/servers/system-service')
             const { isValidResponse } = await import('@/utils/isValidResponse')
 
-            const submitApi = await systemServiceApi.createMenu({
+            const submitApi = await menuService.createMenu({
                 sessiontoken: options?.sessionToken as string,
                 language: options?.locale || 'en',
                 fields: payload
@@ -326,7 +326,7 @@ export const useMenuManagement = (initialData: MenuItem[], options?: MenuManagem
             // Auto reload data after successful add
             if (lastSearchParams) {
                 // Reload with last search params
-                const reloadResponse = await systemServiceApi.loadMenu({
+                const reloadResponse = await menuService.loadMenu({
                     ...lastSearchParams,
                     pageindex: page - 1,
                     pagesize: rowsPerPage
@@ -348,7 +348,7 @@ export const useMenuManagement = (initialData: MenuItem[], options?: MenuManagem
                 }
             } else {
                 // If no search params, do a fresh load
-                const reloadResponse = await systemServiceApi.loadMenu({
+                const reloadResponse = await menuService.loadMenu({
                     sessiontoken: options?.sessionToken as string,
                     pageindex: 0,
                     pagesize: rowsPerPage,
@@ -443,10 +443,10 @@ export const useMenuManagement = (initialData: MenuItem[], options?: MenuManagem
                 group_menu_list_authorize_form: formData.group_menu_list_authorize_form || ''
             }
 
-            const { systemServiceApi } = await import('@/servers/system-service')
+            const { menuService } = await import('@/servers/system-service')
             const { isValidResponse } = await import('@/utils/isValidResponse')
 
-            const submitApi = await systemServiceApi.updateMenu({
+            const submitApi = await menuService.updateMenu({
                 sessiontoken: options?.sessionToken as string,
                 language: options?.locale || 'en',
                 fields: payload
@@ -499,10 +499,10 @@ export const useMenuManagement = (initialData: MenuItem[], options?: MenuManagem
                 return
             }
 
-            const { systemServiceApi } = await import('@/servers/system-service')
+            const { menuService } = await import('@/servers/system-service')
             const { isValidResponse } = await import('@/utils/isValidResponse')
 
-            const submitApi = await systemServiceApi.deleteMenu({
+            const submitApi = await menuService.deleteMenu({
                 sessiontoken: options.sessionToken,
                 language: options?.locale || 'en',
                 fields: {

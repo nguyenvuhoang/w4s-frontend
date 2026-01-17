@@ -3,7 +3,7 @@
 
 import type { Locale } from '@/configs/i18n'
 import { WORKFLOWCODE } from '@/data/WorkflowCode'
-import { systemServiceApi } from '@/servers/system-service'
+import { workflowService } from '@/servers/system-service'
 import { handleLogin } from '@/services/login'
 import { encrypt } from '@/utils/O9Extension'
 import { getDictionary } from '@/utils/getDictionary'
@@ -82,7 +82,7 @@ export const useLoginHandler = ({
     const verifyPassword = async (token: string, usercode: string, password: string): Promise<boolean> => {
         try {
             const encryptedPassword = encrypt(`${usercode}_${password}`)
-            const response = await systemServiceApi.runBODynamic({
+            const response = await workflowService.runBODynamic({
                 sessiontoken: token,
                 txFo: {
                     bo: [

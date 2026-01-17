@@ -2,7 +2,7 @@
 
 import { signOut } from 'next-auth/react'
 import { WORKFLOWCODE } from '@/data/WorkflowCode'
-import { systemServiceApi } from '@/servers/system-service'
+import { workflowService } from '@/servers/system-service'
 import { getDictionary } from '@/utils/getDictionary'
 import SwalAlert from '@/utils/SwalAlert'
 import { Lock, Visibility } from '@mui/icons-material'
@@ -48,7 +48,7 @@ const ChangePasswordForm = ({ dictionary, session }: Props) => {
             return
         }
         try {
-            const apiChangePassword = await systemServiceApi.runFODynamic({
+            const apiChangePassword = await workflowService.runFODynamic({
                 sessiontoken: session?.user?.token || '',
                 workflowid: WORKFLOWCODE.WF_BO_CHANGE_PASSWORD,
                 input: {

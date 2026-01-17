@@ -1,5 +1,5 @@
 import { Locale } from '@/configs/i18n'
-import { systemServiceApi } from '@/servers/system-service'
+import { workflowService, codeService } from '@/servers/system-service'
 import { ContractType } from '@/types/bankType'
 import { PageData } from '@/types/systemTypes'
 import { isValidResponse } from '@/utils/isValidResponse'
@@ -68,7 +68,7 @@ export const useContractHandler = (
                 ...payload,
                 searchtext: ''
             }
-            const contractdataApi = await systemServiceApi.runFODynamic({
+            const contractdataApi = await workflowService.runFODynamic({
                 sessiontoken: session?.user?.token as string,
                 workflowid: 'SYS_EXECUTE_SQL',
                 input: {
@@ -135,7 +135,7 @@ export const useContractHandler = (
     }
 
     const fetchStatusOptions = async () => {
-        const getCdlistApi = await systemServiceApi.getCdList({
+        const getCdlistApi = await codeService.getCdList({
             codename: 'CONTRACTSTATUS',
             codegroup: 'BO',
             sessiontoken: session?.user?.token as string,
@@ -159,7 +159,7 @@ export const useContractHandler = (
     }
 
     const fetchContractTypeOptions = async () => {
-        const getCdlistApi = await systemServiceApi.getCdList({
+        const getCdlistApi = await codeService.getCdList({
             codename: 'CONTRACTTYPE',
             codegroup: 'BO',
             sessiontoken: session?.user?.token as string,
@@ -213,7 +213,7 @@ export const useContractHandler = (
         if (!contractNo) return { ok: false, message: 'Invalid contract number' }
         setLoading(true)
         try {
-            const resp = await systemServiceApi.runFODynamic({
+            const resp = await workflowService.runFODynamic({
                 sessiontoken: session?.user?.token as string,
                 workflowid: 'BO_DELETE_CONTRACT',
                 input: {

@@ -1,6 +1,6 @@
 import { auth } from '@/auth'
 import { Locale } from '@/configs/i18n'
-import { systemServiceApi } from '@/servers/system-service'
+import { systemServiceApi, workflowService } from '@/servers/system-service'
 import { ChannelType } from '@/types/bankType'
 import { getDictionary } from '@/utils/getDictionary'
 import { isValidResponse } from '@/utils/isValidResponse'
@@ -17,7 +17,7 @@ type Params = Promise<{
 async function ChannelData({ locale, session }: { locale: Locale; session: any }) {
     const dictionary = await getDictionary(locale)
 
-    const channelAPI = await systemServiceApi.runFODynamic({
+    const channelAPI = await workflowService.runFODynamic({
         sessiontoken: session?.user?.token as string,
         workflowid: "BO_RETRIEVE_CHANNEL",
         input: {},
@@ -25,21 +25,16 @@ async function ChannelData({ locale, session }: { locale: Locale; session: any }
 
     if (
         !isValidResponse(channelAPI) ||
-        (channelAPI.payload.dataresponse.error && channelAPI.payload.dataresponse.error.length > 0)
+        (channelAPI.payload.dataresponse.errors && channelAPI.payload.dataresponse.errors.length > 0)
     ) {
-        const execute_id = channelAPI.payload.dataresponse.error[0]?.execute_id
-        const errorinfo = channelAPI.payload.dataresponse.error[0]?.info
-        console.log(
-            'ExecutionID:',
-            execute_id +
-            ' - ' +
-            errorinfo
-        );
+        const execute_id = channelAPI.payload.dataresponse.errors[0]?.execute_id
+        const errorinfo = channelAPI.payload.dataresponse.errors[0]?.info
+
         return <ChannelError dictionary={dictionary} execute_id={execute_id} errorinfo={errorinfo} />
     }
 
-    const channelData = channelAPI.payload.dataresponse.fo[0].input.data as ChannelType[];
-    
+    const channelData = channelAPI.payload.dataresponse.data.input.data as ChannelType[];
+
     return <ChannelContent dictionary={dictionary} session={session} locale={locale} channelData={channelData} />
 }
 
@@ -52,7 +47,7 @@ const ChannelPage = async ({ params }: { params: Params }) => {
     ]);
 
     return (
-        <ContentWrapper 
+        <ContentWrapper
             title={dictionary['channel']?.title}
             description={dictionary['channel']?.description}
             icon={<></>}

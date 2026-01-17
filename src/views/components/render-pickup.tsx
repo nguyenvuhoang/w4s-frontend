@@ -1,7 +1,7 @@
 'use client'
 
 import { Locale } from '@/configs/i18n';
-import { systemServiceApi } from '@/servers/system-service';
+import { workflowService } from '@/servers/system-service';
 import { FormInput } from '@/types/systemTypes';
 import { generateParams } from '@/utils/generateParams';
 import { getDictionary } from '@/utils/getDictionary';
@@ -96,7 +96,7 @@ const RenderPickup = ({ input, language, dictionary, formData, onChange, session
 
             const updatedData = replaceAtFields(txFoArray, parameter);
 
-            const getQueryDataApi = await systemServiceApi.runBODynamic({
+            const getQueryDataApi = await workflowService.runBODynamic({
                 sessiontoken: session?.user?.token as string,
                 txFo: updatedData
             });

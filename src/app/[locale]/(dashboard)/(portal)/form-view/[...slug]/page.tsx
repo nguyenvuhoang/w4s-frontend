@@ -7,7 +7,7 @@ import { Metadata } from 'next';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: Locale; slug?: string[] }> }): Promise<Metadata> {
     const resolvedParams = await params;
-    const formCode = resolvedParams.slug?.[0] ?? 'kyc_view';
+    const formCode = resolvedParams.slug?.[0] ?? 'Form';
     return generateAuthMetadata(`View - ${splitLabel(formCode)}`);
 }
 

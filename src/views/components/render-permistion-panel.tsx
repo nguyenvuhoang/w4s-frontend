@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
-import { systemServiceApi } from '@/servers/system-service';
+import { workflowService } from '@/servers/system-service';
 import { FormInput, MenuItem, OperationBody } from '@/types/systemTypes';
 import { getDictionary } from '@/utils/getDictionary';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -55,7 +55,7 @@ const RenderPermissionPanel = ({ input, session, renderviewdata, dictionary }: P
 
     const fetchMenuData = async () => {
         try {
-            const response = await systemServiceApi.runBODynamic({
+            const response = await workflowService.runBODynamic({
                 sessiontoken: session?.user?.token as string,
                 txFo: loadmenu,
             });
@@ -111,7 +111,7 @@ const RenderPermissionPanel = ({ input, session, renderviewdata, dictionary }: P
 
         try {
             // Gọi API lấy danh sách operation
-            const response = await systemServiceApi.runBODynamic({
+            const response = await workflowService.runBODynamic({
                 sessiontoken: session?.user?.token as string,
                 txFo: loadoperation,
             });

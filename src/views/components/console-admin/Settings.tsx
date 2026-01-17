@@ -1,7 +1,7 @@
 'use client'
 import NoData from '@/components/layout/shared/card/nodata'
 import { SERVICES } from '@/data/meta'
-import { systemServiceApi } from '@/servers/system-service'
+import { dataService } from '@/servers/system-service'
 import { SettingItem } from '@/types/bankType'
 import { getDictionary } from '@/utils/getDictionary'
 import { isValidResponse } from '@/utils/isValidResponse'
@@ -45,7 +45,7 @@ const Settings = ({ session, dictionary }: {
     const fetchSettings = useCallback(async (service: string, pageIndex = 1) => {
         setLoading(true)
         try {
-            const dataSearchAPI = await systemServiceApi.searchSystemData({
+            const dataSearchAPI = await dataService.searchSystemData({
                 sessiontoken: session?.user?.token as string,
                 workflowid: `${service}_SEARCH_SETTING`,
                 searchtext: '',
@@ -55,16 +55,16 @@ const Settings = ({ session, dictionary }: {
 
             if (
                 !isValidResponse(dataSearchAPI) ||
-                (dataSearchAPI.payload.dataresponse.error && dataSearchAPI.payload.dataresponse.error.length > 0)
+                (dataSearchAPI.payload.dataresponse.errors && dataSearchAPI.payload.dataresponse.errors.length > 0)
             ) {
-                console.log(dataSearchAPI.payload.dataresponse.error);
-                const execute_id = dataSearchAPI.payload.dataresponse.error[0].execute_id
-                const errorinfo = dataSearchAPI.payload.dataresponse.error[0].info
+                console.log(dataSearchAPI.payload.dataresponse.errors);
+                const execute_id = dataSearchAPI.payload.dataresponse.errors[0].execute_id
+                const errorinfo = dataSearchAPI.payload.dataresponse.errors[0].info
                 SwalAlert('error', `[${execute_id}] - ${errorinfo}`, 'center');
                 setData([])
             }
 
-            const dataSystem = dataSearchAPI.payload.dataresponse.fo[0].input
+            const dataSystem = dataSearchAPI.payload.dataresponse.data
             setData(dataSystem.items || [])
             setTotalCount(dataSystem.total_count || 0)
         } catch (err) {
@@ -85,7 +85,7 @@ const Settings = ({ session, dictionary }: {
         if (!oldItem || oldItem.value === newValue) return
 
         try {
-            const updateAPI = await systemServiceApi.updateSystemData({
+            const updateAPI = await dataService.updateSystemData({
                 sessiontoken: session?.user?.token as string,
                 workflowid: `${selectedService}_UPDATE_SETTING`,
                 data: {
@@ -97,10 +97,10 @@ const Settings = ({ session, dictionary }: {
 
             if (
                 !isValidResponse(updateAPI) ||
-                (updateAPI.payload.dataresponse.error && updateAPI.payload.dataresponse.error.length > 0)
+                (updateAPI.payload.dataresponse.errors && updateAPI.payload.dataresponse.errors.length > 0)
             ) {
-                const execute_id = updateAPI.payload.dataresponse.error[0].execute_id
-                const errorinfo = updateAPI.payload.dataresponse.error[0].info
+                const execute_id = updateAPI.payload.dataresponse.errors[0].execute_id
+                const errorinfo = updateAPI.payload.dataresponse.errors[0].info
                 SwalAlert('error', `[${execute_id}] - ${errorinfo}`, 'center');
                 return
             }

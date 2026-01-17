@@ -1,7 +1,7 @@
 import { auth } from '@/auth'
 import Spinner from '@/components/spinners'
 import { Locale } from '@/configs/i18n'
-import { systemServiceApi } from '@/servers/system-service'
+import { workflowService } from '@/servers/system-service'
 import { ContractType } from '@/types/bankType'
 import { PageData } from '@/types/systemTypes'
 import { getDictionary } from '@/utils/getDictionary'
@@ -21,7 +21,7 @@ const CalendarPage = async ({ params }: { params: Params }) => {
         auth()
     ]);
 
-    const calendarAPI = await systemServiceApi.runFODynamic({
+    const calendarAPI = await workflowService.runFODynamic({
         sessiontoken: session?.user?.token as string,
         workflowid: "BO_RETRIEVE_CALENDAR",
         input: {
@@ -34,10 +34,10 @@ const CalendarPage = async ({ params }: { params: Params }) => {
 
     if (
         !isValidResponse(calendarAPI) ||
-        (calendarAPI.payload.dataresponse.error && calendarAPI.payload.dataresponse.error.length > 0)
+        (calendarAPI.payload.dataresponse.errors && calendarAPI.payload.dataresponse.errors.length > 0)
     ) {
-        const execute_id = calendarAPI.payload.dataresponse.error[0].execute_id
-        const errorinfo = calendarAPI.payload.dataresponse.error[0].info
+        const execute_id = calendarAPI.payload.dataresponse.errors[0].execute_id
+        const errorinfo = calendarAPI.payload.dataresponse.errors[0].info
         console.log(
             'ExecutionID:',
             execute_id +
@@ -47,7 +47,7 @@ const CalendarPage = async ({ params }: { params: Params }) => {
         return <Spinner />;
     }
 
-    const calendarData = calendarAPI.payload.dataresponse.fo[0].input as PageData<ContractType>;
+    const calendarData = calendarAPI.payload.dataresponse.data.input as PageData<ContractType>;
 
     return (
         <Suspense fallback={<Spinner />}>

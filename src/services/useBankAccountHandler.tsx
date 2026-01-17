@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import SwalAlert from '@/utils/SwalAlert';
 import { WORKFLOWCODE } from '@/data/WorkflowCode';
-import { systemServiceApi } from '@/servers/system-service';
+import { workflowService } from '@/servers/system-service';
 import { Contract } from '@/types/bankType';
 import { Session } from 'next-auth';
 
@@ -21,7 +21,7 @@ export const useBankAccountHandler = ({
     const handleSync = async () => {
         try {
             setLoading(true);
-            const response = await systemServiceApi.runFODynamic({
+            const response = await workflowService.runFODynamic({
                 sessiontoken: session?.user?.token,
                 workflowid: WORKFLOWCODE.BO_SYNC_BANK_ACCOUNT,
                 input: {

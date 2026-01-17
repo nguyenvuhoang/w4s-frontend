@@ -1,5 +1,8 @@
 "use client";
 
+import JsonEditorComponent from "@/@core/components/jSONEditor";
+import { WORKFLOWCODE } from "@/data/WorkflowCode";
+import { workflowService } from "@/servers/system-service";
 import { getDictionary } from "@/utils/getDictionary";
 import ContentWrapper from "@/views/components/layout/content-wrapper";
 import SchemaIcon from "@mui/icons-material/Schema";
@@ -15,14 +18,9 @@ import {
   Switch,
   TextField,
 } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import { Session } from "next-auth";
 import { useState } from "react";
-import { systemServiceApi } from "@/servers/system-service";
-import { WORKFLOWCODE } from "@/data/WorkflowCode";
-import Grid from "@mui/material/Grid";
-import JsonEditorComponent from "@/@core/components/jSONEditor";
-import { Label } from "recharts";
-import { set } from "lodash";
 
 const AddWorkflowDefinitionContent = ({
   session,
@@ -90,7 +88,7 @@ const AddWorkflowDefinitionContent = ({
       if (validateForm()) {
         console.log("Form valid:", form);
         const res = await createWfDef(wfDef);
-        const isInsertSuccess = res?.payload?.dataresponse?.error?.length === 0;
+        const isInsertSuccess = res?.payload?.dataresponse?.errors?.length === 0;
         console.log("isInsertSuccess:", isInsertSuccess);
 
         if (isInsertSuccess) {
@@ -104,12 +102,12 @@ const AddWorkflowDefinitionContent = ({
           setSnackbar({
             open: true,
             message:
-              "Add failed!\n" + res?.payload?.dataresponse?.error[0]?.info,
+              "Add failed!\n" + res?.payload?.dataresponse?.errors[0]?.info,
             severity: "error",
           });
           console.error(
             "Add failed for WorkflowStep: ",
-            res?.payload?.dataresponse?.error[0]?.info
+            res?.payload?.dataresponse?.errors[0]?.info
           );
         }
       } else {
@@ -130,7 +128,7 @@ const AddWorkflowDefinitionContent = ({
     console.log("calling createWfDef with object:", wfDef);
 
     try {
-      const res = await systemServiceApi.runBODynamic({
+      const res = await workflowService.runBODynamic({
         sessiontoken: session?.user?.token,
         txFo: {
           bo: [

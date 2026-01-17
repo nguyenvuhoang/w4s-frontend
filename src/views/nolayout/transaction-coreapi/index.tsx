@@ -18,7 +18,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import { Transaction } from '@/types/bankType'
 import { PageData } from '@/types/systemTypes'
-import { systemServiceApi } from '@/servers/system-service'
+import { dataService } from '@/servers/system-service'
 import { formatDateTime } from '@/utils/formatDateTime'
 import { formatCurrency } from '@/utils/formatCurrency'
 import { useRouter } from 'next/navigation'
@@ -53,14 +53,14 @@ const TransactionCoreAPIContent = ({ session, dictionary, transactiondata }: {
         const fetchPage = async (page: number) => {
             if (page === 0) return
             setLoading(true)
-            const response = await systemServiceApi.searchSystemData({
+            const response = await dataService.searchSystemData({
                 sessiontoken: session?.user?.token as string,
                 workflowid: `CBG_TRANSACTION_SEARCH`,
                 searchtext: '',
                 pageSize: 10,
                 pageIndex: page
             })
-            setPagedData(response.payload.dataresponse.fo[0].input)
+            setPagedData(response.payload.dataresponse.data.input)
             setLoading(false)
         }
 

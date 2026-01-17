@@ -4,7 +4,7 @@ import { AccountTypeIcon } from '@/components/layout/shared/AccountTypeIcon';
 import { PrimaryIcon } from '@/components/layout/shared/PrimaryIcon';
 import { Locale } from '@/configs/i18n';
 import { WORKFLOWCODE } from '@/data/WorkflowCode';
-import { systemServiceApi } from '@/servers/system-service';
+import { workflowService } from '@/servers/system-service';
 import { useBankAccountHandler } from '@/services/useBankAccountHandler';
 import { Contract, Contractaccount } from '@/types/bankType';
 import { getDictionary } from '@/utils/getDictionary';
@@ -110,7 +110,7 @@ const BankAccountInfo = ({
                         ? WORKFLOWCODE.BO_GET_FIXED_DEPOSIT_DETAIL
                         : WORKFLOWCODE.BO_GET_DEPOSIT_ACCOUNT_DETAIL;
 
-            const res = await systemServiceApi.runFODynamic({
+            const res = await workflowService.runFODynamic({
                 sessiontoken: (session?.user as any)?.tokenreal || session?.user?.token || '',
                 workflowid,
                 input: { account_number: accNo, is_digital: true },

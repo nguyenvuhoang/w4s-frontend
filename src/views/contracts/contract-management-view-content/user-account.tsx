@@ -4,7 +4,7 @@ import { OptionIcon } from '@/components/layout/shared/OptionIcon'
 import { StatusIcon } from '@/components/layout/shared/StatusIcon'
 import LoadingSubmit from '@/components/LoadingSubmit'
 import { WORKFLOWCODE } from '@/data/WorkflowCode'
-import { systemServiceApi } from '@/servers/system-service'
+import { dataService, workflowService } from '@/servers/system-service'
 import { UserAccount } from '@/types/bankType'
 import { getDictionary } from '@/utils/getDictionary'
 import { isValidResponse } from '@/utils/isValidResponse'
@@ -55,7 +55,7 @@ const UserAccountInfo = ({
         setLoading(true)
         setError(null)
         try {
-            const userAccountApi = await systemServiceApi.viewData({
+            const userAccountApi = await dataService.viewData({
                 sessiontoken: session?.user?.token as string,
                 learnapi: 'cbs_workflow_execute',
                 workflowid: WORKFLOWCODE.WF_BO_EXECUTE_SQL_FROM_CTH,
@@ -94,7 +94,7 @@ const UserAccountInfo = ({
         setDetailError(prev => ({ ...prev, [loginname]: undefined }))
 
         try {
-            const detailApi = await systemServiceApi.viewData({
+            const detailApi = await dataService.viewData({
                 sessiontoken: session?.user?.token as string,
                 learnapi: 'cbs_workflow_execute',
                 workflowid: 'BO_EXECUTE_SQL_FROM_CTH',
@@ -149,7 +149,7 @@ const UserAccountInfo = ({
                 setUnblockError(prev => ({ ...prev, [loginname]: undefined }))
 
                 try {
-                    const res = await systemServiceApi.runFODynamic({
+                    const res = await workflowService.runFODynamic({
                         sessiontoken: session?.user?.token as string,
                         workflowid: WORKFLOWCODE.BO_UNBLOCK_USER,
                         input: { user_name: loginname }

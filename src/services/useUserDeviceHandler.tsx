@@ -1,6 +1,6 @@
 import { Locale } from "@/configs/i18n";
 import { WORKFLOWCODE } from "@/data/WorkflowCode";
-import { systemServiceApi } from "@/servers/system-service";
+import { workflowService } from "@/servers/system-service";
 import { UserDeviceType } from "@/types/bankType";
 import { PageData } from "@/types/systemTypes";
 import { isValidResponse } from "@/utils/isValidResponse";
@@ -54,7 +54,7 @@ export const useUserDeviceHandler = (
         // searchtext: "",
       };
       console.log("call api: ", pageOverride, sizeOverride);
-      const contractdataApi = await systemServiceApi.runFODynamic({
+      const contractdataApi = await workflowService.runFODynamic({
         sessiontoken: session?.user?.token as string,
         workflowid: WORKFLOWCODE.WF_BO_EXECUTE_SQL_FROM_CTH,
         input: {

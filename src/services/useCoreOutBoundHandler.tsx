@@ -1,5 +1,5 @@
 import { Locale } from "@/configs/i18n";
-import { systemServiceApi } from "@/servers/system-service";
+import { workflowService } from "@/servers/system-service";
 import { CoreOutboundMessageType } from "@/types/bankType";
 import { PageData } from "@/types/systemTypes";
 import { isValidResponse } from "@/utils/isValidResponse";
@@ -53,7 +53,7 @@ export const useCoreOutboundHandler = (
         // searchtext: "",
       };
       console.log("call api: ", pageOverride, sizeOverride);
-      const contractdataApi = await systemServiceApi.runFODynamic({
+      const contractdataApi = await workflowService.runFODynamic({
         sessiontoken: session?.user?.token as string,
         workflowid: "CBG_EXECUTE_SQL",
         input: {

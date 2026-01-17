@@ -2,7 +2,7 @@ import { auth } from '@/auth';
 import PageError from '@/components/PageError';
 import { Locale } from '@/configs/i18n';
 import { siteConfig } from '@/data/meta';
-import { systemServiceApi } from '@/servers/system-service';
+import { formService, workflowService } from '@/servers/system-service';
 import { FormInputData } from '@/types';
 import { applyViewDataToForm } from '@/utils/applyViewDataToForm';
 import { getDictionary } from '@/utils/getDictionary';
@@ -56,7 +56,7 @@ const GenerateLayout = async ({ children, params }: SessionLayoutProps) => {
 
         formcode = pageid.replace(/-/g, '_');
 
-        const pagecontentApi = await systemServiceApi.loadFormInfo({
+        const pagecontentApi = await formService.loadFormInfo({
             sessiontoken: session?.user?.token as string,
             language: resolvedParams.locale,
             formid: formcode
@@ -75,7 +75,7 @@ const GenerateLayout = async ({ children, params }: SessionLayoutProps) => {
 
         const resolvedMasterData = replaceParameterPlaceholders(masterdata, id ?? '', dictionary, resolvedParams.locale);
 
-        const viewdataApi = await systemServiceApi.runDynamic({
+        const viewdataApi = await workflowService.runDynamic({
             sessiontoken: session?.user?.token as string,
             body: resolvedMasterData,
         })

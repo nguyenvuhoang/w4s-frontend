@@ -18,7 +18,7 @@ import ChangePassword from '@/views/ChangePassword'
 import GlobalSignalRLogoutListener from '@/components/GlobalSignalRLogoutListener'
 
 import { auth } from '@/auth'
-import { systemServiceApi } from '@/servers/system-service'
+import { formService, systemServiceApi } from '@/servers/system-service'
 import { i18n } from '@configs/i18n'
 import { getDictionary } from '@/utils/getDictionary'
 import { isValidResponse } from '@/utils/isValidResponse'
@@ -61,7 +61,7 @@ async function PortalLayoutContent({
 
     console.log('[Portal Layout] Session found, token exists:', !!session.user.token)
 
-    const systemData = await systemServiceApi.getSystemInfo({
+    const systemData = await formService.getSystemInfo({
         sessiontoken: session.user.token as string,
         language: locale
     })

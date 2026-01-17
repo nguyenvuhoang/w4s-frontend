@@ -10,7 +10,7 @@ import { getDictionary } from "@/utils/getDictionary";
 import { Button, TextField, Typography } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { systemServiceApi } from "@/servers/system-service";
+import { dataService, workflowService } from "@/servers/system-service";
 import SwalAlert from "@/utils/SwalAlert";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -57,7 +57,7 @@ const ForgetPassword = ({
   const handleResetPassword = async (data: any) => {
     try {
       setLoading(true);
-      const dataviewAPI = await systemServiceApi.viewData({
+      const dataviewAPI = await dataService.viewData({
         sessiontoken: "",
         learnapi: "cbs_workflow_execute",
         workflowid: "BO_EXECUTE_SQL_WITHOUT_LOGIN_CTH",
@@ -94,7 +94,7 @@ const ForgetPassword = ({
         );
         return <Spinner />;
       } else {
-        const response = await systemServiceApi.runBODynamic({
+        const response = await workflowService.runBODynamic({
           sessiontoken: "",
           txFo: {
             bo: [

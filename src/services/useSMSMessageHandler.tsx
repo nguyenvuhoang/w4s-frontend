@@ -1,5 +1,5 @@
 import { env } from '@/env.mjs'
-import { systemServiceApi } from '@/servers/system-service'
+import { dataService } from '@/servers/system-service'
 import { SMSContentType } from '@/types/bankType'
 import { PageData } from '@/types/systemTypes'
 import { isValidResponse } from '@/utils/isValidResponse'
@@ -68,7 +68,7 @@ export const useSMSMessageHandler = (
       try {
         const requestBody = buildRequest(pageindex, pagesize, f)
         setLastSearchRequest(requestBody)
-        const dataSearchAPI = await systemServiceApi.searchData(requestBody)
+        const dataSearchAPI = await dataService.searchData(requestBody)
 
         if (!isValidResponse(dataSearchAPI) || dataSearchAPI.payload?.dataresponse?.error?.length > 0) {
           console.log(
@@ -159,7 +159,7 @@ export const useSMSMessageHandler = (
     }
     const exportRequest = { ...lastSearchRequest, pageSize: 9_999_999, pageIndex: 1 }
     try {
-      const response = await systemServiceApi.searchData(exportRequest)
+      const response = await dataService.searchData(exportRequest)
       if (!isValidResponse(response) || response.payload.dataresponse.error?.length > 0) {
         console.warn('Export error:', response.payload.dataresponse.error[0])
         SwalAlert('Warning', 'No data search', 'center')

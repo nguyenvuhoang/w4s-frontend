@@ -1,6 +1,6 @@
 // hooks/useContractHandler.ts
 import { Locale } from '@/configs/i18n'
-import { systemServiceApi } from '@/servers/system-service'
+import { workflowService, codeService } from '@/servers/system-service'
 import { ContractType } from '@/types/bankType'
 import { PageData } from '@/types/systemTypes'
 import { isValidResponse } from '@/utils/isValidResponse'
@@ -60,7 +60,7 @@ export const useContractApproveHandler = (
             try {
                 const dataSearch = { ...payload, searchtext: '' }
 
-                const contractdataApi = await systemServiceApi.runFODynamic({
+                const contractdataApi = await workflowService.runFODynamic({
                     sessiontoken: token,
                     workflowid: 'SYS_EXECUTE_SQL',
                     input: {
@@ -118,7 +118,7 @@ export const useContractApproveHandler = (
 
     const fetchStatusOptions = useCallback(async () => {
         if (!token) return
-        const getCdlistApi = await systemServiceApi.getCdList({
+        const getCdlistApi = await codeService.getCdList({
             codename: 'CONTRACTSTATUS',
             codegroup: 'BO',
             sessiontoken: token,
@@ -153,7 +153,7 @@ export const useContractApproveHandler = (
     }, [token, locale])
 
     const fetchContractTypeOptions = async () => {
-        const getCdlistApi = await systemServiceApi.getCdList({
+        const getCdlistApi = await codeService.getCdList({
             codename: 'CONTRACTTYPE',
             codegroup: 'BO',
             sessiontoken: session?.user?.token as string,

@@ -1,16 +1,15 @@
 import { auth } from '@/auth'
 import { Locale } from '@/configs/i18n'
-import { getDictionary } from '@/utils/getDictionary'
-import MenuManagementContent from '@/views/nolayout/menu-management'
-import MenuManagementSkeleton from '@/views/nolayout/menu-management/MenuManagementSkeleton'
-import { Suspense } from 'react'
-import ContentWrapper from '@/views/components/layout/content-wrapper'
-import DescriptionIcon from '@mui/icons-material/Description'
+import { menuService } from '@/servers/system-service'
 import { MenuItem, PageData } from '@/types/systemTypes'
-import { systemServiceApi } from '@/servers/system-service'
-import { WORKFLOWCODE } from '@/data/WorkflowCode'
+import { getDictionary } from '@/utils/getDictionary'
 import { isValidResponse } from '@/utils/isValidResponse'
+import ContentWrapper from '@/views/components/layout/content-wrapper'
+import MenuManagementContent from '@/views/nolayout/menu-management'
 import MenuManagementError from '@/views/nolayout/menu-management/MenuManagementError'
+import MenuManagementSkeleton from '@/views/nolayout/menu-management/MenuManagementSkeleton'
+import DescriptionIcon from '@mui/icons-material/Description'
+import { Suspense } from 'react'
 
 type Params = Promise<{
     locale: Locale
@@ -18,7 +17,7 @@ type Params = Promise<{
 
 async function MenuManagementData({ locale, session }: { locale: Locale; session: any }) {
     const dictionary = await getDictionary(locale)
-    const response = await systemServiceApi.loadMenu({
+    const response = await menuService.loadMenu({
         sessiontoken: session?.user?.token as string,
         pageindex: 0,
         pagesize: 10,
@@ -32,12 +31,7 @@ async function MenuManagementData({ locale, session }: { locale: Locale; session
     ) {
         const execute_id = response.payload.dataresponse.errors[0]?.execute_id
         const errorinfo = response.payload.dataresponse.errors[0]?.info
-        console.log(
-            'ExecutionID:',
-            execute_id +
-            ' - ' +
-            errorinfo
-        );
+        
         return <MenuManagementError dictionary={dictionary} execute_id={execute_id} errorinfo={errorinfo} />
     }
     const data = response.payload.dataresponse.data as unknown as PageData<MenuItem> 

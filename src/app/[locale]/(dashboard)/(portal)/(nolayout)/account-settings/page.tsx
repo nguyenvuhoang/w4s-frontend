@@ -1,15 +1,15 @@
 import { auth } from '@/auth'
 import Spinner from '@/components/spinners'
 import { Locale } from '@/configs/i18n'
-import { systemServiceApi } from '@/servers/system-service'
+import { WORKFLOWCODE } from '@/data/WorkflowCode'
+import { dataService } from '@/servers/system-service'
+import { UserAccount } from '@/types/bankType'
 import { getDictionary } from '@/utils/getDictionary'
+import { isValidResponse } from '@/utils/isValidResponse'
 import AccountSettingContent from '@/views/nolayout/account-settings/account-setting-content'
-import { Suspense } from 'react'
 import Logout from '@/views/pages/auth/Logout'
 import jwt from 'jsonwebtoken'
-import { isValidResponse } from '@/utils/isValidResponse'
-import { AccountActivity, UserAccount } from '@/types/bankType'
-import { WORKFLOWCODE } from '@/data/WorkflowCode'
+import { Suspense } from 'react'
 
 type Params = Promise<{
     locale: Locale
@@ -31,7 +31,7 @@ const AccountSettingPage = async ({ params }: { params: Params }) => {
     const decodedToken = jwt.decode(token as string) as { usercode?: string } | null
     const usercode = decodedToken?.usercode
 
-    const dataviewAPI = await systemServiceApi.viewData({
+    const dataviewAPI = await dataService.viewData({
         sessiontoken: session?.user?.token as string,
         learnapi: 'cbs_workflow_execute',
         workflowid: WORKFLOWCODE.WF_BO_EXECUTE_SQL_FROM_CTH,
@@ -56,7 +56,7 @@ const AccountSettingPage = async ({ params }: { params: Params }) => {
     const userdata = dataviewAPI.payload.dataresponse.fo[0].input.data[0] as UserAccount;
 
 
-    const dataSearchAPI = await systemServiceApi.searchData({
+    const dataSearchAPI = await dataService.searchData({
         sessiontoken: session?.user?.token as string,
         workflowid: WORKFLOWCODE.WF_BO_EXECUTE_SQL_FROM_CTH,
         commandname: "SimpleSearchUserSession",

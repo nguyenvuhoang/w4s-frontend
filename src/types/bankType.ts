@@ -1060,3 +1060,17 @@ export interface UserMobileAccount {
     phone?: string; // Add phone for mobile user display
     total_count?: number;
 }
+export interface PostingType {
+    acgrp: string
+    date: string
+    acname: string
+    txrefid: string
+    amount: number
+    credit_amount: number
+    acidx: number
+    dorc: string
+    debit_amount: number
+    acno: string
+    currencycode: string
+    branchid: number
+}

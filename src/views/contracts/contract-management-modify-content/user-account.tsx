@@ -4,7 +4,7 @@ import LoadingSubmit from '@/components/LoadingSubmit'
 import Spinner from '@/components/spinners'
 import SwalAlert from '@/utils/SwalAlert'
 
-import { systemServiceApi } from '@/servers/system-service'
+import { dataService, workflowService } from '@/servers/system-service'
 import { UserAccount } from '@/types/bankType'
 import { getDictionary } from '@/utils/getDictionary'
 import { isValidResponse } from '@/utils/isValidResponse'
@@ -81,7 +81,7 @@ const UserAccountAssignment = ({ session, contractdata, dictionary, availableAcc
         setLoadingUsers(true)
         setError(null)
         try {
-            const res = await systemServiceApi.viewData({
+            const res = await dataService.viewData({
                 sessiontoken: session?.user?.token as string,
                 learnapi: 'cbs_workflow_execute',
                 workflowid: 'BO_EXECUTE_SQL_FROM_CTH',
@@ -110,7 +110,7 @@ const UserAccountAssignment = ({ session, contractdata, dictionary, availableAcc
     const fetchAssignedAccounts = async (user: UserAccount) => {
         setLoadingAssigned(true)
         try {
-            const res = await systemServiceApi.viewData({
+            const res = await dataService.viewData({
                 sessiontoken: session?.user?.token as string,
                 learnapi: 'cbs_workflow_execute',
                 workflowid: 'DTS_EXECUTE_SQL',
@@ -148,7 +148,7 @@ const UserAccountAssignment = ({ session, contractdata, dictionary, availableAcc
             console.log(`payload: ${JSON.stringify(payload)}`);
 
             // TODO: chỉnh lại workflowid theo hệ thống của bạn
-            const res = await systemServiceApi.runFODynamic({
+            const res = await workflowService.runFODynamic({
                 sessiontoken: session?.user?.token,
                 workflowid: 'BO_ASSIGN_USER_ACCOUNTS',
                 input: payload
@@ -183,7 +183,7 @@ const UserAccountAssignment = ({ session, contractdata, dictionary, availableAcc
         setSubmittingUnassign(acc.accountnumber)
         try {
             // TODO: chỉnh lại workflowid theo hệ thống của bạn
-            const res = await systemServiceApi.runFODynamic({
+            const res = await workflowService.runFODynamic({
                 sessiontoken: session?.user?.token,
                 workflowid: 'BO_UNASSIGN_USER_ACCOUNT',
                 input: {

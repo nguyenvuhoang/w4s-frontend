@@ -1,7 +1,7 @@
 'use client';
 
 import { WORKFLOWCODE } from '@/data/WorkflowCode';
-import { systemServiceApi } from '@/servers/system-service';
+import { workflowService } from '@/servers/system-service';
 import SwalAlert from '@/utils/SwalAlert';
 import { Session } from 'next-auth';
 import { useState } from 'react';
@@ -22,7 +22,7 @@ export const useCustomerInfoHandler = ({
     const handleSync = async () => {
         try {
             setLoading(true);
-            const response = await systemServiceApi.runFODynamic({
+            const response = await workflowService.runFODynamic({
                 sessiontoken: session?.user?.token,
                 workflowid: WORKFLOWCODE.BO_SYNC_CUSTOMER_INFO,
                 input: {

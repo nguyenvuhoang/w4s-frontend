@@ -3,7 +3,7 @@
 import SearchInput from "@/components/forms/search-input/page";
 import { Locale } from "@/configs/i18n";
 import { WORKFLOWCODE } from "@/data/WorkflowCode";
-import { systemServiceApi } from "@/servers/system-service";
+import { workflowService } from "@/servers/system-service";
 import { getDictionary } from "@/utils/getDictionary";
 import {
   Box,
@@ -66,7 +66,7 @@ const WorkflowManagementContent = ({
       searchText
     );
 
-    const res = await systemServiceApi.runBODynamic({
+    const res = await workflowService.runBODynamic({
       sessiontoken: session?.user?.token,
       txFo: {
         bo: [
@@ -110,7 +110,7 @@ const WorkflowManagementContent = ({
     console.log("calling loadWfStep with workflowid:", workflowid);
 
     try {
-      const res = await systemServiceApi.runBODynamic({
+      const res = await workflowService.runBODynamic({
         sessiontoken: session?.user?.token,
         txFo: {
           bo: [
@@ -146,7 +146,7 @@ const WorkflowManagementContent = ({
     console.log("calling updateWfDef with object:", wfDef);
 
     try {
-      const res = await systemServiceApi.runBODynamic({
+      const res = await workflowService.runBODynamic({
         sessiontoken: session?.user?.token,
         txFo: {
           bo: [
@@ -175,7 +175,7 @@ const WorkflowManagementContent = ({
     console.log("calling updateWfStep with object:", wfStep);
 
     try {
-      const res = await systemServiceApi.runBODynamic({
+      const res = await workflowService.runBODynamic({
         sessiontoken: session?.user?.token,
         txFo: {
           bo: [
@@ -204,7 +204,7 @@ const WorkflowManagementContent = ({
     console.log("selected wfDef to delete:", selectedWfDef);
 
     try {
-      const res = await systemServiceApi.runBODynamic({
+      const res = await workflowService.runBODynamic({
         sessiontoken: session?.user?.token,
         txFo: {
           bo: [
@@ -239,7 +239,7 @@ const WorkflowManagementContent = ({
     console.log("selected wfStep to delete:", selectedWfStep);
 
     try {
-      const res = await systemServiceApi.runBODynamic({
+      const res = await workflowService.runBODynamic({
         sessiontoken: session?.user?.token,
         txFo: {
           bo: [

@@ -1,7 +1,7 @@
 ﻿/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 
-import { systemServiceApi } from '@/servers/system-service'
+import { dataService, workflowService } from '@/servers/system-service'
 import { PageContentProps } from '@/types'
 import { isValidResponse } from '@/utils/isValidResponse'
 import ContentWrapper from '@/views/components/layout/content-wrapper'
@@ -99,7 +99,7 @@ type ContractInfo = {
 async function apiFetchContractByNo(contractNo: string, session: Session | null): Promise<ContractInfo | null> {
     if (!contractNo || contractNo.length < 5) return null
 
-    const dataviewAPI = await systemServiceApi.viewData({
+    const dataviewAPI = await dataService.viewData({
         sessiontoken: session?.user?.token as string,
         learnapi: 'cbs_workflow_execute',
         workflowid: 'SYS_EXECUTE_SQL',
@@ -174,7 +174,7 @@ async function apiBlockContract(
     if (!contractNo) return { ok: false, message: 'Missing contract number' }
 
     try {
-        const updateAPI = await systemServiceApi.runFODynamic({
+        const updateAPI = await workflowService.runFODynamic({
             workflowid: 'BO_TRANSITION_CONTRACT_STATUS',
             sessiontoken: session?.user?.token as string,
             input: {

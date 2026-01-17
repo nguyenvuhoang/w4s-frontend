@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { Session } from 'next-auth';
 
-import { systemServiceApi } from '@/servers/system-service';
+import { workflowService } from '@/servers/system-service';
 import { FormInfo } from '@/types/systemTypes';
 import { getDictionary } from '@/utils/getDictionary';
 import { isValidResponse } from '@/utils/isValidResponse';
@@ -263,7 +263,7 @@ export const useDynamicRenderer = ({
           fields: updatedFields,
         };
 
-        const submitApi = await systemServiceApi.runDynamic({
+        const submitApi = await workflowService.runDynamic({
           sessiontoken: session?.user?.token,
           body: payload,
         });

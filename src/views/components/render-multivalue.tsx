@@ -2,7 +2,7 @@
 
 import { handleAdvanceSearchAPI } from '@/@core/components/cButton/handleAdvanceSearchAPI';
 import { Locale } from '@/configs/i18n';
-import { systemServiceApi } from '@/servers/system-service';
+import { formService } from '@/servers/system-service';
 import { FormInput, PageData } from '@/types/systemTypes';
 import { getDictionary } from '@/utils/getDictionary';
 import SavedSearchIcon from '@mui/icons-material/SavedSearch';
@@ -64,7 +64,7 @@ const RenderMultiValueDefault = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const formcontentApi = await systemServiceApi.loadFormInfo({
+        const formcontentApi = await formService.loadFormInfo({
           sessiontoken: session?.user?.token as string,
           language: 'en',
           formid: form_id + '_advanced_search',

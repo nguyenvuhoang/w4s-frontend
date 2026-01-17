@@ -1,5 +1,5 @@
 import Application from "@/@core/lib/libSupport";
-import { systemServiceApi } from "@/servers/system-service";
+import { workflowService } from "@/servers/system-service";
 import { RuleStrong } from "@/types/systemTypes";
 import { generateDefaultString } from "@/utils/generateDefaultString";
 import SwalAlert from "@/utils/SwalAlert";
@@ -17,7 +17,7 @@ export const generateControlValue = async (sessiontoken: Session | null, columnK
                 case 'fo-get-info':
                     const learnApi = txFo_[0]?.input.learn_api;
                     const workflowid = txFo_[0]?.input.workflow_id;
-                    const runFO = await systemServiceApi.runFO({
+                    const runFO = await workflowService.runFO({
                         sessiontoken: sessiontoken?.user?.token,
                         learnapi: learnApi,
                         workflowid: workflowid

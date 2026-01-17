@@ -1,5 +1,5 @@
 import { Locale } from '@/configs/i18n'
-import { systemServiceApi } from '@/servers/system-service'
+import { workflowService } from '@/servers/system-service'
 import { AccountChartType } from '@/types/bankType'
 import { PageData } from '@/types/systemTypes'
 import { isValidResponse } from '@/utils/isValidResponse'
@@ -66,7 +66,7 @@ export const useAccountChartHandler = (
                 ...payload,
                 // searchtext: ''
             }
-            const contractdataApi = await systemServiceApi.runFODynamic({
+            const contractdataApi = await workflowService.runFODynamic({
                 sessiontoken: session?.user?.token as string,
                 workflowid: 'BO_EXECUTE_SQL_FROM_ACT',
                 input: {
@@ -163,7 +163,7 @@ export const useAccountChartHandler = (
         if (!accountnumber) return { ok: false, message: 'Invalid account number' }
         setLoading(true)
         try {
-            const resp = await systemServiceApi.runFODynamic({
+            const resp = await workflowService.runFODynamic({
                 sessiontoken: session?.user?.token as string,
                 workflowid: 'BO_DELETE_ACCOUNTCHART',
                 input: {
