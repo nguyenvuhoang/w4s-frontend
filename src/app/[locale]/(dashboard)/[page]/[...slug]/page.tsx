@@ -1,13 +1,13 @@
 import { auth } from '@/auth'
+import PageError from '@/components/PageError'
 import Spinner from '@/components/spinners'
 import { i18n, Locale } from '@/configs/i18n'
-import { systemServiceApi } from '@/servers/system-service'
+import { dataService, formService } from '@/servers/system-service'
 import { getDictionary } from '@/utils/getDictionary'
 import { isValidResponse } from '@/utils/isValidResponse'
+import Logout from '@features/auth/hooks/useLogout'
 import DynamicPageGeneric from '@features/dynamicform/components/dynamic-page-generic'
 import { Suspense } from 'react'
-import Logout from '@features/auth/hooks/useLogout'
-import PageError from '@/components/PageError'
 
 type Params = Promise<{
     locale: Locale
@@ -38,7 +38,7 @@ const DynamicPageAction = async ({ params }: { params: Params }) => {
     const pageid = page.replace(/-/g, '_');
     const formid = `${pageid}_${action}`;
 
-    const pagecontentApi = await systemServiceApi.loadFormInfo({
+    const pagecontentApi = await formService.loadFormInfo({
         sessiontoken: session?.user?.token as string,
         language: locale,
         formid,
@@ -55,7 +55,7 @@ const DynamicPageAction = async ({ params }: { params: Params }) => {
 
     if (action !== "add" && storename && id) {
 
-        const pagedataApi = await systemServiceApi.viewData({
+        const pagedataApi = await dataService.viewData({
             sessiontoken: session?.user?.token as string,
             workflowid: workflowid ?? 'WF_BO_EXECUTE_SQL_FROM_CTH',
             commandname: storename,
@@ -66,18 +66,14 @@ const DynamicPageAction = async ({ params }: { params: Params }) => {
 
         if (
             !isValidResponse(pagedataApi) ||
-            (pagedataApi.payload.dataresponse.error && pagedataApi.payload.dataresponse.error.length > 0)
+            (pagedataApi.payload.dataresponse.errors && pagedataApi.payload.dataresponse.errors.length > 0)
         ) {
-            console.log(
-                'ExecutionID:',
-                pagedataApi.payload.dataresponse.error[0].execute_id +
-                ' - ' +
-                pagedataApi.payload.dataresponse.error[0].info
-            );
-            return <Spinner />;
+            const executionId = pagedataApi.payload.dataresponse.errors[0].execute_id || '';
+            const errorDetails = pagedataApi.payload.dataresponse.errors[0].info || 'Unknown error';
+            return <PageError errorDetails={errorDetails} executionId={executionId} />;
         }
 
-        pagedata = pagedataApi.payload.dataresponse.fo[0].input.data[0];
+        pagedata = pagedataApi.payload.dataresponse.data[0];
     }
 
     return (

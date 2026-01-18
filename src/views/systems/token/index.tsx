@@ -85,20 +85,20 @@ const TokenInformation = ({ dictionary, session, locale, tokendata: initialToken
 
             if (
                 !isValidResponse(tokenApi) ||
-                (tokenApi.payload.dataresponse.error && tokenApi.payload.dataresponse.error.length > 0)
+                (tokenApi.payload.dataresponse.errors && tokenApi.payload.dataresponse.errors.length > 0)
             ) {
                 console.log(
                     'ExecutionID:',
-                    tokenApi.payload.dataresponse.error[0].execute_id +
+                    tokenApi.payload.dataresponse.errors[0].execute_id +
                     ' - ' +
-                    tokenApi.payload.dataresponse.error[0].info
+                    tokenApi.payload.dataresponse.errors[0].info
                 );
                 setNewToken({ ...newToken, value: 'Error generating token' });
                 setIsLoading(false);
                 return;
             }
 
-            const tokenvalue = tokenApi.payload.dataresponse.fo[0].input.data as string;
+            const tokenvalue = tokenApi.payload.dataresponse.data.input.data as string;
             
             setNewToken({
                 ...newToken,
@@ -132,19 +132,19 @@ const TokenInformation = ({ dictionary, session, locale, tokendata: initialToken
 
             if (
                 !isValidResponse(coregatewayApi) ||
-                (coregatewayApi.payload.dataresponse.error && coregatewayApi.payload.dataresponse.error.length > 0)
+                (coregatewayApi.payload.dataresponse.errors && coregatewayApi.payload.dataresponse.errors.length > 0)
             ) {
                 console.log(
                     'ExecutionID:',
-                    coregatewayApi.payload.dataresponse.error[0].execute_id +
+                    coregatewayApi.payload.dataresponse.errors[0].execute_id +
                     ' - ' +
-                    coregatewayApi.payload.dataresponse.error[0].info
+                    coregatewayApi.payload.dataresponse.errors[0].info
                 );
                 setIsLoading(false);
                 return;
             }
 
-            const newTokendata = coregatewayApi.payload.dataresponse.fo[0].input as PageData<Token>;
+            const newTokendata = coregatewayApi.payload.dataresponse.data.input as PageData<Token>;
             setTokenData(newTokendata);
         } catch (error) {
             console.error('Error fetching token data:', error);

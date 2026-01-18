@@ -104,9 +104,9 @@ const AccountCommonManagementContent = ({
       },
     });
 
-    if (response.status === 200 && response.payload?.dataresponse?.fo) {
+    if (response.status === 200 && response.payload?.dataresponse?.data) {
 
-      const foArray = response.payload.dataresponse.fo;
+      const foArray = response.payload.dataresponse.data;
       const hasErrorFo = foArray.find((item: any) => item.input?.error_code === 'ERROR');
 
       if (hasErrorFo) {

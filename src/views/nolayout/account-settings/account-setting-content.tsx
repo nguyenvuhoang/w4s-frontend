@@ -41,8 +41,8 @@ import {
 } from '@mui/material'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import ChangePasswordForm from '../../../features/user/components/change-password-form'
 import { Session } from 'next-auth'
+import ChangePasswordForm from '@/features/user/components/ChangePasswordForm'
 
 type PageProps = {
     userdata: UserAccount
@@ -324,7 +324,7 @@ const AccountSettingContent = ({ userdata, useractivity, dictionary, locale, ses
 
                         )}
 
-                        {tab === 1 && (< ChangePasswordForm dictionary={dictionary} session={session} />)}
+                        {tab === 1 && (< ChangePasswordForm locale={locale} dictionary={dictionary} session={session} />)}
 
                         {tab === 2 && (
                             <Grid container spacing={3}>

@@ -87,7 +87,7 @@ export const useOpenApiClientHandler = (
                 return
             }
 
-            const datacontract = openAPIdataApi.payload.dataresponse.fo[0].input as PageData<OpenAPIType>
+            const datacontract = openAPIdataApi.payload.dataresponse.data.input as PageData<OpenAPIType>
             setOpenApi(datacontract)
             setTotalCount(datacontract.total_count || 0)
         } catch (err) {

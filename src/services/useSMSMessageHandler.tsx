@@ -80,7 +80,7 @@ export const useSMSMessageHandler = (
           return
         }
 
-        const data = dataSearchAPI.payload.dataresponse.fo[0].input
+        const data = dataSearchAPI.payload.dataresponse.data.input
         setSmsData(data)
       } catch (error) {
         console.error('Error executing search API:', error)
@@ -165,7 +165,7 @@ export const useSMSMessageHandler = (
         SwalAlert('Warning', 'No data search', 'center')
         return
       }
-      const fullData = response.payload.dataresponse.fo[0].input?.items || []
+      const fullData = response.payload.dataresponse.data.input?.items || []
       if (type === 'PDF') exportToPDF(fullData)
       else exportToExcel(fullData)
     } catch (error) {

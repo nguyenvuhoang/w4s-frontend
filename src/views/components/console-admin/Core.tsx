@@ -1,7 +1,7 @@
 'use client'
 
 import { WORKFLOWCODE } from '@/data/WorkflowCode'
-import { systemServiceApi } from '@/servers/system-service'
+import { systemServiceApi, workflowService } from '@/servers/system-service'
 import { ConnectionCoreInfo, CoreConfigData } from '@/types/bankType'
 import { formatDateTime } from '@/utils/formatDateTime'
 import { getDictionary } from '@/utils/getDictionary'
@@ -15,9 +15,11 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff'
 import {
     Box,
     Button,
-    FormControlLabel,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
     Grid,
-    Switch,
     TextField,
     Typography
 } from '@mui/material'
@@ -26,12 +28,6 @@ import InputAdornment from '@mui/material/InputAdornment'
 import { Session } from 'next-auth'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import {
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions
-} from '@mui/material'
 
 type Props = {
     session: Session | null
@@ -110,7 +106,7 @@ const CoreSetting = ({ session, dictionary, configdata }: Props) => {
                 coresystemname: configdata.core_system_name || 'Optimal9 Core Banking System'
             };
 
-            const saveConfigResponse = await systemServiceApi.runFODynamic({
+            const saveConfigResponse = await workflowService.runFODynamic({
                 sessiontoken: session?.user?.token || '',
                 workflowid: WORKFLOWCODE.BO_SAVE_CONFIG_CONNECTION_CORE,
                 input: savePayload
@@ -118,9 +114,9 @@ const CoreSetting = ({ session, dictionary, configdata }: Props) => {
 
             if (
                 !isValidResponse(saveConfigResponse) ||
-                (saveConfigResponse.payload.dataresponse.error && saveConfigResponse.payload.dataresponse.error.length > 0)
+                (saveConfigResponse.payload.dataresponse.errors && saveConfigResponse.payload.dataresponse.errors.length > 0)
             ) {
-                const { execute_id, info } = saveConfigResponse.payload.dataresponse.error[0];
+                const { execute_id, info } = saveConfigResponse.payload.dataresponse.errors[0];
                 SwalAlert('error', `[${execute_id}] - ${info}`, 'center');
                 return;
             }
@@ -163,13 +159,13 @@ const CoreSetting = ({ session, dictionary, configdata }: Props) => {
             });
             if (
                 !isValidResponse(testResponse) ||
-                (testResponse.payload.dataresponse.error && testResponse.payload.dataresponse.error.length > 0)
+                (testResponse.payload.dataresponse.errors && testResponse.payload.dataresponse.errors.length > 0)
             ) {
-                const { execute_id, info } = testResponse.payload.dataresponse.error[0];
+                const { execute_id, info } = testResponse.payload.dataresponse.errors[0];
                 SwalAlert('error', `[${execute_id}] - ${info}`, 'center');
                 return;
             }
-            setConnectionInfo(testResponse.payload.dataresponse.fo[0].input.info as ConnectionCoreInfo);
+            setConnectionInfo(testResponse.payload.dataresponse.data.input.info as ConnectionCoreInfo);
             setOpenDialog(true);
         } catch (err) {
             console.error('Failed to update mail config', err);

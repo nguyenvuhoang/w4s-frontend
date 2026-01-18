@@ -2,7 +2,7 @@
 
 import { STORECOMMAND } from "@/data/StoreCommand";
 import { WORKFLOWCODE } from "@/data/WorkflowCode";
-import { systemServiceApi } from "@/servers/system-service";
+import { dataService, workflowService } from "@/servers/system-service";
 import { UserMobileAccount } from "@/types/bankType";
 import { PageData, Role } from "@/types/systemTypes";
 import { SelectChangeEvent } from "@mui/material";
@@ -194,7 +194,7 @@ export function useMobileUserAssignment({
                     searchtext,
                 });
 
-                const response = await systemServiceApi.searchData({
+                const response = await dataService.searchData({
                     sessiontoken: session?.user?.token as string,
                     workflowid: WORKFLOWCODE.WF_BO_EXECUTE_SQL_FROM_CTH,
                     commandname: STORECOMMAND.SIMPLE_SEARCH_MOBILE_USER,
@@ -321,7 +321,7 @@ export function useMobileUserAssignment({
                 return { users: [], total: 0, totalPages: 0 };
             }
 
-            const response = await systemServiceApi.searchData({
+            const response = await dataService.searchData({
                 sessiontoken: session?.user?.token as string,
                 workflowid: WORKFLOWCODE.WF_BO_EXECUTE_SQL_FROM_CTH,
                 commandname: STORECOMMAND.SIMPLE_SEARCH_MOBILE_USER_BY_ROLE,
@@ -367,7 +367,7 @@ export function useMobileUserAssignment({
                     response.payload?.dataresponse &&
                     !(
                         response.payload.dataresponse.error &&
-                        response.payload.dataresponse.error.length > 0
+                        response.payload.dataresponses.error.length > 0
                     )
                 ) {
                     const data = response.payload.dataresponse.data.items || [];
@@ -503,7 +503,7 @@ export function useMobileUserAssignment({
             isAssign: boolean
         ): Promise<boolean> => {
             try {
-                const response = await systemServiceApi.runFODynamic({
+                const response = await workflowService.runFODynamic({
                     sessiontoken: token as string,
                     workflowid: WORKFLOWCODE.BO_UPDATE_USER_ROLE_ASSIGNMENT,
                     input: {

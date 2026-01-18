@@ -3,7 +3,7 @@ import { auth } from '@/auth';
 import { generateAuthMetadata } from '@/components/layout/AuthLayout';
 import Spinner from '@/components/spinners';
 import { Locale } from '@/configs/i18n';
-import { systemServiceApi } from '@/servers/system-service';
+import { workflowService } from '@/servers/system-service';
 import { AccountChartType } from '@/types/bankType';
 import { PageData } from '@/types/systemTypes';
 import { getDictionary } from '@/utils/getDictionary';
@@ -24,7 +24,7 @@ const AccountCommonManagement = async (props: PageProps) => {
     const [dictionary, session] = await Promise.all([getDictionary(locale), auth()]);
 
     // 1) Load dữ liệu bảng chính
-    const accountChartApi = await systemServiceApi.runFODynamic({
+    const accountChartApi = await workflowService.runFODynamic({
         sessiontoken: session?.user?.token as string,
         workflowid: 'BO_EXECUTE_SQL_FROM_ACT',
         input: {
@@ -47,10 +47,10 @@ const AccountCommonManagement = async (props: PageProps) => {
 
     const hasError =
         !isValidResponse(accountChartApi) ||
-        ((accountChartApi?.payload?.dataresponse?.error ?? []).length > 0);
+        ((accountChartApi?.payload?.dataresponse?.errors ?? []).length > 0);
 
     if (hasError) {
-        const err0 = accountChartApi?.payload?.dataresponse?.error?.[0];
+        const err0 = accountChartApi?.payload?.dataresponse?.errors?.[0];
         if (err0) {
             console.log('ExecutionID:', `${err0.execute_id} - ${err0.info}`);
         }
@@ -58,7 +58,7 @@ const AccountCommonManagement = async (props: PageProps) => {
     }
 
     const AccountCommondata =
-        (accountChartApi.payload.dataresponse.fo?.[0]?.input as PageData<AccountChartType>) ?? {
+        (accountChartApi.payload.dataresponse.data.input as PageData<AccountChartType>) ?? {
             items: [],
             total: 0,
             pageindex: 1,

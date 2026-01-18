@@ -1,6 +1,9 @@
 ﻿'use client';
 
+import { WORKFLOWCODE } from '@/data/WorkflowCode';
+import { workflowService } from '@/servers/system-service';
 import { PageContentProps } from '@/types';
+import SwalAlert from '@/utils/SwalAlert';
 import { RHFSelect } from '@/views/accounting/component/RHFSelect';
 import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper';
 import AutoAwesomeMosaicIcon from '@mui/icons-material/AutoAwesomeMosaic';
@@ -17,9 +20,6 @@ import { useEffect, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { FormValues } from '../component/FormValues';
 import { RHFText } from '../component/RHFText';
-import { WORKFLOWCODE } from '@/data/WorkflowCode';
-import { systemServiceApi } from '@/servers/system-service';
-import SwalAlert from '@/utils/SwalAlert';
 
 
 const yesNoOptions = [
@@ -85,7 +85,7 @@ const AccountChartAddContent = ({
 
   const onSubmit = async (data: FormValues) => {
 
-    const response = await systemServiceApi.runBODynamic({
+    const response = await workflowService.runBODynamic({
       sessiontoken: session?.user?.token as string,
       txFo: {
         bo: [
@@ -103,9 +103,9 @@ const AccountChartAddContent = ({
       },
     });
 
-    if (response.status === 200 && response.payload?.dataresponse?.fo) {
+    if (response.status === 200 && response.payload?.dataresponse) {
 
-      const foArray = response.payload.dataresponse.fo;
+      const foArray = response.payload.dataresponse.data;
       const hasErrorFo = foArray.find((item: any) => item.input?.error_code === 'ERROR');
 
       if (hasErrorFo) {

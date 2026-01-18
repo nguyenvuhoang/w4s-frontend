@@ -36,10 +36,10 @@ const LanguageManagement = async (props: PageProps) => {
 
     const hasError =
         !isValidResponse(languageApi) ||
-        ((languageApi?.payload?.dataresponse?.error ?? []).length > 0);
+        ((languageApi?.payload?.dataresponse?.errors ?? []).length > 0);
 
     if (hasError) {
-        const err0 = languageApi?.payload?.dataresponse?.error?.[0];
+        const err0 = languageApi?.payload?.dataresponse?.errors?.[0];
         if (err0) {
             console.log('ExecutionID:', `${err0.execute_id} - ${err0.info}`);
         }
@@ -47,7 +47,7 @@ const LanguageManagement = async (props: PageProps) => {
     }
 
     const languageData =
-        (languageApi.payload.dataresponse.fo?.[0]?.input as PageLanguageResponse<LanguageDataMobileType[]>) ?? {
+        (languageApi.payload.dataresponse.data.input as PageLanguageResponse<LanguageDataMobileType[]>) ?? {
             items: [],
             total: 0,
             pageindex: 1,

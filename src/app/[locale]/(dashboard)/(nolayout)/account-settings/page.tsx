@@ -42,18 +42,18 @@ const AccountSettingPage = async ({ params }: { params: Params }) => {
 
     if (
         !isValidResponse(dataviewAPI) ||
-        (dataviewAPI.payload.dataresponse.error && dataviewAPI.payload.dataresponse.error.length > 0)
+        (dataviewAPI.payload.dataresponse.errors && dataviewAPI.payload.dataresponse.errors.length > 0)
     ) {
         console.log(
             'ExecutionID:',
-            dataviewAPI.payload.dataresponse.error[0].execute_id +
+            dataviewAPI.payload.dataresponse.errors[0].execute_id +
             ' - ' +
-            dataviewAPI.payload.dataresponse.error[0].info
+            dataviewAPI.payload.dataresponse.errors[0].info
         );
         return <Spinner />;
     }
 
-    const userdata = dataviewAPI.payload.dataresponse.fo[0].input.data[0] as UserAccount;
+    const userdata = dataviewAPI.payload.dataresponse.data.input.data[0] as UserAccount;
 
 
     const dataSearchAPI = await dataService.searchData({
@@ -68,18 +68,18 @@ const AccountSettingPage = async ({ params }: { params: Params }) => {
 
     if (
         !isValidResponse(dataSearchAPI) ||
-        (dataSearchAPI.payload.dataresponse.error && dataSearchAPI.payload.dataresponse.error.length > 0)
+        (dataSearchAPI.payload.dataresponse.errors && dataSearchAPI.payload.dataresponse.errors.length > 0)
     ) {
         console.log(
             'ExecutionID:',
-            dataSearchAPI.payload.dataresponse.error[0].execute_id +
+            dataSearchAPI.payload.dataresponse.errors[0].execute_id +
             ' - ' +
-            dataSearchAPI.payload.dataresponse.error[0].info
+            dataSearchAPI.payload.dataresponse.errors[0].info
         );
         return <Spinner />;
     }
 
-    const useractivity = dataSearchAPI.payload.dataresponse.fo[0].input 
+    const useractivity = dataSearchAPI.payload.dataresponse.data.input 
 
     return (
         <Suspense fallback={<Spinner />}>

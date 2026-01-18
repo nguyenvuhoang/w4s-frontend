@@ -21,18 +21,18 @@ const SystemCodePage = async ({ params }: { params: Params }) => {
 
     // if (
     //     !isValidResponse(dataSearchAPI) ||
-    //     (dataSearchAPI.payload.dataresponse.error && dataSearchAPI.payload.dataresponse.error.length > 0)
+    //     (dataSearchAPI.payload.dataresponse.errors && dataSearchAPI.payload.dataresponse.errors.length > 0)
     // ) {
     //     console.log(
     //         'ExecutionID:',
-    //         dataSearchAPI.payload.dataresponse.error[0].execute_id +
+    //         dataSearchAPI.payload.dataresponse.errors[0].execute_id +
     //         ' - ' +
-    //         dataSearchAPI.payload.dataresponse.error[0].info
+    //         dataSearchAPI.payload.dataresponse.errors[0].info
     //     );
     //     return <Spinner />;
     // }
 
-    // const smsdata = dataSearchAPI.payload.dataresponse.fo[0].input
+    // const smsdata = dataSearchAPI.payload.dataresponse.data.input
 
     return (
         <Suspense fallback={<Spinner />}>

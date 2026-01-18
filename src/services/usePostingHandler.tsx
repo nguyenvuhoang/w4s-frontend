@@ -1,7 +1,7 @@
 'use client';
 
 import { WORKFLOWCODE } from '@/data/WorkflowCode';
-import { systemServiceApi } from '@/servers/system-service';
+import { workflowService } from '@/servers/system-service';
 import { PostingType } from '@/types/bankType';
 import SwalAlert from '@/utils/SwalAlert';
 import { Session } from 'next-auth';
@@ -27,7 +27,7 @@ export const usePostingHandler = ({
         try {
             setLoading(true);
 
-            const response = await systemServiceApi.runFODynamic({
+            const response = await workflowService.runFODynamic({
                 sessiontoken: session?.user?.token,
                 workflowid: WORKFLOWCODE.BO_GET_GL_POSTING,
                 input: {

@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { systemServiceApi } from '@/servers/system-service';
+import { dataService, systemServiceApi } from '@/servers/system-service';
 import { MailTemplate } from '@/types/bankType';
 import { getDictionary } from '@/utils/getDictionary';
 import { isValidResponse } from '@/utils/isValidResponse';
@@ -48,7 +48,7 @@ const EmailSetting = ({ session, dictionary }: {
         setSaving(true);
 
         try {
-            const updateAPI = await systemServiceApi.updateSystemData({
+            const updateAPI = await dataService.updateSystemData({
                 sessiontoken: session?.user?.token as string,
                 workflowid: 'BO_UPDATE_MAIL_CONFIG',
                 data: {
@@ -65,9 +65,9 @@ const EmailSetting = ({ session, dictionary }: {
 
             if (
                 !isValidResponse(updateAPI) ||
-                (updateAPI.payload.dataresponse.error && updateAPI.payload.dataresponse.error.length > 0)
+                (updateAPI.payload.dataresponse.errors && updateAPI.payload.dataresponse.errors.length > 0)
             ) {
-                const { execute_id, info } = updateAPI.payload.dataresponse.error[0];
+                const { execute_id, info } = updateAPI.payload.dataresponse.errors[0];
                 SwalAlert('error', `[${execute_id}] - ${info}`, 'center');
                 return;
             }
@@ -84,7 +84,7 @@ const EmailSetting = ({ session, dictionary }: {
     const handleTestConnection = async (data: any) => {
         setTesting(true);
         try {
-            const response = await systemServiceApi.updateSystemData({
+            const response = await dataService.updateSystemData({
                 sessiontoken: session?.user?.token as string,
                 workflowid: 'BO_SEND_TEST_MAIL',
                 data: {
@@ -99,14 +99,14 @@ const EmailSetting = ({ session, dictionary }: {
 
             if (
                 !isValidResponse(response) ||
-                (response.payload.dataresponse.error && response.payload.dataresponse.error.length > 0)
+                (response.payload.dataresponse.errors && response.payload.dataresponse.errors.length > 0)
             ) {
-                const { execute_id, info } = response.payload.dataresponse.error[0];
+                const { execute_id, info } = response.payload.dataresponse.errors[0];
                 SwalAlert('error', `[${execute_id}] - ${info}`, 'center');
                 return;
             }
 
-            const isvalid = response.payload.dataresponse.fo[0].input.data;
+            const isvalid = response.payload.dataresponse.data.input.data;
 
             if (isvalid === false) {
                 SwalAlert('error', 'Test mail failed. Please check your settings.', 'center');
@@ -128,7 +128,7 @@ const EmailSetting = ({ session, dictionary }: {
     const fetchEmailSettings = useCallback(async (pageIndex = 0) => {
         setLoading(true);
         try {
-            const dataSearchAPI = await systemServiceApi.searchSystemData({
+            const dataSearchAPI = await dataService.searchSystemData({
                 sessiontoken: session?.user?.token as string,
                 workflowid: `BO_SEARCH_MAIL_CONFIG`,
                 searchtext: '',
@@ -137,14 +137,14 @@ const EmailSetting = ({ session, dictionary }: {
             });
 
             if (!isValidResponse(dataSearchAPI) ||
-                (dataSearchAPI.payload.dataresponse.error && dataSearchAPI.payload.dataresponse.error.length > 0)) {
-                const { execute_id, info } = dataSearchAPI.payload.dataresponse.error[0];
+                (dataSearchAPI.payload.dataresponse.errors && dataSearchAPI.payload.dataresponse.errors.length > 0)) {
+                const { execute_id, info } = dataSearchAPI.payload.dataresponse.errors[0];
                 SwalAlert('error', `[${execute_id}] - ${info}`, 'center');
                 reset();
                 return;
             }
 
-            const dataSystem = dataSearchAPI.payload.dataresponse.fo[0].input;
+            const dataSystem = dataSearchAPI.payload.dataresponse.data.input;
             const firstItem = dataSystem.items?.[0];
             if (firstItem) {
                 reset({
@@ -179,14 +179,14 @@ const EmailSetting = ({ session, dictionary }: {
             });
 
             if (!isValidResponse(templateResult) ||
-                (templateResult.payload.dataresponse.error && templateResult.payload.dataresponse.error.length > 0)) {
-                const { execute_id, info } = templateResult.payload.dataresponse.error[0];
+                (templateResult.payload.dataresponse.errors && templateResult.payload.dataresponse.errors.length > 0)) {
+                const { execute_id, info } = templateResult.payload.dataresponse.errors[0];
                 SwalAlert('error', `[${execute_id}] - ${info}`, 'center');
                 reset();
                 return;
             }
 
-            const input = templateResult.payload.dataresponse.fo[0].input;
+            const input = templateResult.payload.dataresponse.data.input;
             setTemplates(input.items || []);
         } catch (err) {
             console.error('Error fetching templates:', err);

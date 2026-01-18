@@ -72,7 +72,7 @@ const SessionLayout = async ({ children, params }: SessionLayoutProps) => {
                 return <Spinner />;
             }
 
-            viewdata = dataviewAPI.payload.dataresponse.fo[0].input.data[0];
+            viewdata = dataviewAPI.payload.dataresponse.data.input.data[0];
         }
     }
 

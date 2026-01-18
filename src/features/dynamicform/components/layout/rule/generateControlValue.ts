@@ -23,7 +23,7 @@ export const generateControlValue = async (sessiontoken: Session | null, columnK
                         workflowid: workflowid
                     })
 
-                    const inputData = runFO.payload.dataresponse.fo[0].input;
+                    const inputData = runFO.payload.dataresponse.data.input;
                     if (inputData) {
                         return inputData[columnKey];
                     }

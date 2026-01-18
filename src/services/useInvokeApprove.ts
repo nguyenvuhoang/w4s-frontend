@@ -1,6 +1,6 @@
 import { Locale } from '@/configs/i18n';
 import { WORKFLOWCODE } from '@/data/WorkflowCode';
-import { systemServiceApi } from '@/servers/system-service';
+import { workflowService } from '@/servers/system-service';
 import { MenuItem, Operation, OperationHeader } from '@/types/systemTypes';
 import { getDictionary } from '@/utils/getDictionary';
 import { Session } from 'next-auth';
@@ -48,18 +48,18 @@ interface UseInvokeApproveReturn {
     toastOpen: boolean;
     toastSeverity: 'success' | 'error';
     toastMessage: string;
-    
+
     // Computed values
     groupedOperations: GroupedOperation | undefined;
     dynamicColumns: DynamicColumn[];
-    
+
     // Handlers
     toggleMenu: (menu: string) => void;
     handleMenuClick: (menu: MenuItem) => Promise<void>;
     handleSelfInvokeChange: (roleName: string, checked: boolean) => Promise<void>;
     handleCommandChange: (roleName: string, cmdid: string, checked: boolean) => Promise<void>;
     handleCloseToast: (event?: React.SyntheticEvent | Event, reason?: string) => void;
-    
+
     // Utility functions
     getSelfInvokeState: (roleName: string) => boolean;
     getCommandState: (roleName: string, cmdid: string) => boolean | null;
@@ -88,7 +88,7 @@ export const useInvokeApprove = ({
 
     const fetchMenuData = useCallback(async (channelId: string): Promise<MenuItem[]> => {
         try {
-            const response = await systemServiceApi.runFODynamic({
+            const response = await workflowService.runFODynamic({
                 sessiontoken: session?.user?.token as string,
                 workflowid: WORKFLOWCODE.WF_BO_LOAD_MENU,
                 input: {
@@ -108,7 +108,7 @@ export const useInvokeApprove = ({
     const handleMenuClick = useCallback(async (menu: MenuItem): Promise<void> => {
         setSelectedMenu(menu);
         try {
-            const response = await systemServiceApi.runFODynamic({
+            const response = await workflowService.runFODynamic({
                 sessiontoken: session?.user?.token as string,
                 workflowid: WORKFLOWCODE.WF_BO_LOAD_OPERATION,
                 input: {
@@ -154,7 +154,7 @@ export const useInvokeApprove = ({
         const loadMenuData = async () => {
             const channelId = "BO";
             const data = await fetchMenuData(channelId);
-            setMenuParent(data?.filter((item: MenuItem) => 
+            setMenuParent(data?.filter((item: MenuItem) =>
                 item.parent_id === "0" && item.group_menu_visible === "1" && item.group_menu_id === null
             ));
             setMenuData(data);
@@ -223,7 +223,7 @@ export const useInvokeApprove = ({
                 return;
             }
 
-            const response = await systemServiceApi.runFODynamic({
+            const response = await workflowService.runFODynamic({
                 sessiontoken: session?.user?.token as string,
                 workflowid: WORKFLOWCODE.WF_BO_UPDATE_RIGHT,
                 input: {
@@ -274,7 +274,7 @@ export const useInvokeApprove = ({
                 return;
             }
 
-            const response = await systemServiceApi.runFODynamic({
+            const response = await workflowService.runFODynamic({
                 sessiontoken: session?.user?.token as string,
                 workflowid: WORKFLOWCODE.WF_BO_UPDATE_RIGHT,
                 input: {
@@ -328,18 +328,18 @@ export const useInvokeApprove = ({
         toastOpen,
         toastSeverity,
         toastMessage,
-        
+
         // Computed values
         groupedOperations,
         dynamicColumns,
-        
+
         // Handlers
         toggleMenu,
         handleMenuClick,
         handleSelfInvokeChange,
         handleCommandChange,
         handleCloseToast,
-        
+
         // Utility functions
         getSelfInvokeState,
         getCommandState,

@@ -7,8 +7,10 @@ import { useEffect, useState } from 'react'
 
 const useLogout = ({
   locale,
+  dictionary,
 }: {
-  locale: Locale
+  locale: Locale;
+  dictionary?: any;
 }) => {
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)

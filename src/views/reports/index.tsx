@@ -37,13 +37,13 @@ const ReportPageContent = ({ dictionary, reports, session, locale }: {
             });
             if (
                 reportApi.status !== 200 ||
-                !reportApi.payload?.dataresponse?.fo ||
-                !reportApi.payload.dataresponse.fo[0]?.input
+                !reportApi.payload?.dataresponse?.data ||
+                !reportApi.payload.dataresponse.data.input
             ) {
                 return <Spinner />;
             }
 
-            const reports = reportApi.payload.dataresponse.fo[0].input;
+            const reports = reportApi.payload.dataresponse.data.input;
             setSetDataReport(reports);
         } catch (error) {
             console.error(error);

@@ -67,7 +67,7 @@ const RenderInputFunc = ({ input, gridProps, language, rules, ismodify, session,
                             input: tx
                         });
 
-                        const formdata = response.payload.dataresponse.fo[0].input.data;
+                        const formdata = response.payload.dataresponse.data;
                         fillDataForForm(formdata, rule.config.component_result);
                     } else {
                         console.warn('tx.input không tồn tại trong txFo:', tx);

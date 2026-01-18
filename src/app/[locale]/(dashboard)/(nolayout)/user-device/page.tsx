@@ -1,9 +1,11 @@
 import { auth } from '@/auth'
 import { Locale } from '@/configs/i18n'
-import { systemServiceApi } from '@/servers/system-service'
+import { workflowService } from '@/servers/system-service'
 import { getDictionary } from '@/utils/getDictionary'
 import { isValidResponse } from '@/utils/isValidResponse'
 import UserDeviceContent from '@/views/nolayout/user-device'
+import { PageData } from '@/types/systemTypes'
+import { UserDeviceType } from '@/types/bankType'
 import UserDeviceSkeleton from '@/views/nolayout/user-device/UserDeviceSkeleton'
 import UserDeviceError from '@/views/nolayout/user-device/UserDeviceError'
 import { Suspense } from 'react'
@@ -18,19 +20,19 @@ type Params = Promise<{
 async function UserDeviceData({ locale, session }: { locale: Locale; session: any }) {
     const dictionary = await getDictionary(locale)
 
-    const dataSearchAPI = await systemServiceApi.runFODynamic({
+    const dataSearchAPI = await workflowService.runFODynamic({
         sessiontoken: session?.user?.token as string,
         workflowid: WORKFLOWCODE.WF_BO_EXECUTE_SQL_FROM_CTH,
         input: {
-          commandname: "SimpleSearchUserDevice",
-          issearch: true,
-          pageindex: 1,
-          pagesize: 10,
-          parameters: {
-            searchtext: '',
-          },
+            commandname: "SimpleSearchUserDevice",
+            issearch: true,
+            pageindex: 1,
+            pagesize: 10,
+            parameters: {
+                searchtext: '',
+            },
         },
-      });
+    });
 
     if (
         !isValidResponse(dataSearchAPI) ||
@@ -47,7 +49,7 @@ async function UserDeviceData({ locale, session }: { locale: Locale; session: an
         return <UserDeviceError dictionary={dictionary} execute_id={execute_id} errorinfo={errorinfo} />
     }
 
-    const transactiondata = dataSearchAPI.payload.dataresponse.data
+    const transactiondata = dataSearchAPI.payload.dataresponse.data.input as PageData<UserDeviceType>
 
     return <UserDeviceContent dictionary={dictionary} session={session} transactiondata={transactiondata} locale={locale} />
 }
@@ -61,7 +63,7 @@ const UserDevicePage = async ({ params }: { params: Params }) => {
     ]);
 
     return (
-        <ContentWrapper 
+        <ContentWrapper
             icon={<SystemSecurityUpdateGood sx={{ fontSize: 40, color: "#0C9150" }} />}
             title={dictionary["userdevice"].title}
             description={dictionary["userdevice"].description}

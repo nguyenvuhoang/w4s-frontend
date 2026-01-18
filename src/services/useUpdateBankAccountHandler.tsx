@@ -35,14 +35,14 @@ export const useUpdateBankAccountHandler = ({
                 return;
             }
 
-            const errs = response.payload?.dataresponse?.error ?? [];
+            const errs = response.payload?.dataresponse?.errors ?? [];
             if (errs.length) {
                 SwalAlert('error', errs.map((e: any) => e.info ?? e).join(', '), 'center');
                 return;
             }
 
             // 👉 cố gắng lấy list account từ fo
-            const fo = response.payload?.dataresponse?.fo ?? [];
+            const fo = response.payload?.dataresponse.data.input ?? [];
             let accounts: Contractaccount[] = [];
             for (const item of fo) {
                 const input = item?.input ?? {};

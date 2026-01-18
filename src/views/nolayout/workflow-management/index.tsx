@@ -222,7 +222,7 @@ const WorkflowManagementContent = ({
       setResultDeleteWfDef(res);
       setActionDeleteWfDef(true);
 
-      const isDeleteSuccess = res?.payload?.dataresponse?.error?.length === 0;
+      const isDeleteSuccess = res?.payload?.dataresponse?.errors?.length === 0;
       if (isDeleteSuccess) {
         setSelectedWfDef([]);
         fetchData();
@@ -257,7 +257,7 @@ const WorkflowManagementContent = ({
       setResultDeleteWfStep(res);
       setActionDeleteWfStep(true);
 
-      const isDeleteSuccess = res?.payload?.dataresponse?.error?.length === 0;
+      const isDeleteSuccess = res?.payload?.dataresponse?.errors?.length === 0;
       if (isDeleteSuccess) {
         setSelectedWfStep([]);
       }

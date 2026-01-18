@@ -1,8 +1,8 @@
 import { auth } from '@/auth'
+import PageError from '@/components/PageError'
 import Spinner from '@/components/spinners'
 import { Locale } from '@/configs/i18n'
-import { systemServiceApi } from '@/servers/system-service'
-import { APIError } from '@/utils/APIError'
+import { reportService } from '@/servers/system-service'
 import { getDictionary } from '@/utils/getDictionary'
 import { isValidResponse } from '@/utils/isValidResponse'
 import ReportPageContent from '@/views/reports'
@@ -21,7 +21,7 @@ const ReportPage = async ({ params }: { params: Params }) => {
     ]);
 
 
-    const reportApi = await systemServiceApi.loadReport({
+    const reportApi = await reportService.loadReport({
         sessiontoken: session?.user?.token as string,
         pageindex: 1,
         pagesize: 10
@@ -29,18 +29,20 @@ const ReportPage = async ({ params }: { params: Params }) => {
 
     if (
         !isValidResponse(reportApi) ||
-        (reportApi.payload.dataresponse.error && reportApi.payload.dataresponse.error.length > 0)
+        (reportApi.payload.dataresponse.errors && reportApi.payload.dataresponse.errors.length > 0)
     ) {
         console.log(
             'ExecutionID:',
-            reportApi.payload.dataresponse.error[0].execute_id +
+            reportApi.payload.dataresponse.errors[0].execute_id +
             ' - ' +
-            reportApi.payload.dataresponse.error[0].info
+            reportApi.payload.dataresponse.errors[0].info
         );
-        return <Spinner />;
+        const executionId = reportApi.payload.dataresponse.errors[0].execute_id;
+        const errorDetails = reportApi.payload.dataresponse.errors[0].info;
+        return <PageError executionId={executionId} errorDetails={errorDetails} />;
     }
 
-    const reports = reportApi.payload.dataresponse.fo[0].input
+    const reports = reportApi.payload.dataresponse.data.input
 
     return (
         <Suspense fallback={<Spinner />}>

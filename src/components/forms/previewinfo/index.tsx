@@ -2,7 +2,7 @@
 'use client'
 
 import { Locale } from "@/configs/i18n";
-import { systemServiceApi } from "@/servers/system-service";
+import { workflowService } from "@/servers/system-service";
 import { FormInput } from "@/types/systemTypes";
 import { getDictionary } from "@/utils/getDictionary";
 import SwalAlert from "@/utils/SwalAlert";
@@ -98,7 +98,7 @@ const PreviewInfo: React.FC<PreviewContentProps> = ({ input, content, onClose, d
             bo: newFormData,
         }
 
-        const submitApi = await systemServiceApi.runBODynamic({
+        const submitApi = await workflowService.runBODynamic({
             sessiontoken: session?.user?.token as string,
             txFo: submitData,
         })
@@ -107,8 +107,8 @@ const PreviewInfo: React.FC<PreviewContentProps> = ({ input, content, onClose, d
             SwalAlert('error', dictionary['common'].servererror, 'center');
         } else {
             const response = submitApi.payload.dataresponse;
-            if (response.error.length > 0) {
-                SwalAlert('error', response.error[0].info || 'Unknown error', 'center');
+            if (response.errors.length > 0) {
+                SwalAlert('error', response.errors[0].info || 'Unknown error', 'center');
             } else {
                 SwalAlert('success', dictionary['common'].datachange.replace("{0}", ""), 'center', false, true, true);
             }

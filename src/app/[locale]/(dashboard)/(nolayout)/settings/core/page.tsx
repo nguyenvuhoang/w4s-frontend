@@ -1,8 +1,9 @@
 import { auth } from '@/auth'
+import PageError from '@/components/PageError'
 import Spinner from '@/components/spinners'
 import { Locale } from '@/configs/i18n'
 import { WORKFLOWCODE } from '@/data/WorkflowCode'
-import { systemServiceApi } from '@/servers/system-service'
+import { workflowService } from '@/servers/system-service'
 import { getDictionary } from '@/utils/getDictionary'
 import { isValidResponse } from '@/utils/isValidResponse'
 import CoreBankingConnectionSettingContent from '@/views/nolayout/settings/core'
@@ -20,7 +21,7 @@ const CoreBankingConnectionSettingPage = async ({ params }: { params: Params }) 
         auth()
     ]);
 
-    const dataCoreAPI = await systemServiceApi.runFODynamic({
+    const dataCoreAPI = await workflowService.runFODynamic({
         sessiontoken: session?.user?.token as string,
         workflowid: WORKFLOWCODE.BO_LOAD_CONNECTION_CORE_BANKING
     });
@@ -28,18 +29,20 @@ const CoreBankingConnectionSettingPage = async ({ params }: { params: Params }) 
 
     if (
         !isValidResponse(dataCoreAPI) ||
-        (dataCoreAPI.payload.dataresponse.error && dataCoreAPI.payload.dataresponse.error.length > 0)
+        (dataCoreAPI.payload.dataresponse.errors && dataCoreAPI.payload.dataresponse.errors.length > 0)
     ) {
         console.log(
             'ExecutionID:',
-            dataCoreAPI.payload.dataresponse.error[0].execute_id +
+            dataCoreAPI.payload.dataresponse.errors[0].execute_id +
             ' - ' +
-            dataCoreAPI.payload.dataresponse.error[0].info
+            dataCoreAPI.payload.dataresponse.errors[0].info
         );
-        return <Spinner />;
+        const executionId = dataCoreAPI.payload.dataresponse.errors[0].execute_id || '';
+        const errorDetails = dataCoreAPI.payload.dataresponse.errors[0].info || 'Unknown error';
+        return <PageError errorDetails={errorDetails} executionId={executionId} />;
     }
 
-    const coreconfigdata = dataCoreAPI.payload.dataresponse.fo[0].input
+    const coreconfigdata = dataCoreAPI.payload.dataresponse.data.input
 
     return (
         <Suspense fallback={<Spinner />}>

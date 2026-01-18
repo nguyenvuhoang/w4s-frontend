@@ -1,7 +1,7 @@
 'use client';
 
 import { WORKFLOWCODE } from '@/data/WorkflowCode';
-import { systemServiceApi } from '@/servers/system-service';
+import { systemServiceApi, workflowService } from '@/servers/system-service';
 import { PageDefaultResponse, UserAccount } from '@/types/bankType';
 import { PageData, Role } from '@/types/systemTypes';
 import { normalize } from '@/utils/normalize';
@@ -97,14 +97,14 @@ export function useUserAssignment({ session, dictionary, role, userdata }: Param
     const updateUserRoleAssignment = useCallback(
         async (userIds: string[], roleId: number, isAssign: boolean): Promise<boolean> => {
             try {
-                const response = await systemServiceApi.runFODynamic({
+                const response = await workflowService.runFODynamic({
                     sessiontoken: token as string,
                     workflowid: WORKFLOWCODE.BO_UPDATE_USER_ROLE_ASSIGNMENT,
                     input: { role_id: roleId, list_of_user: userIds, is_assign: isAssign }
                 });
 
                 if (response.status === 200) {
-                    const hasError = response.payload.dataresponse.error.length > 0;
+                    const hasError = response.payload.dataresponse.errors.length > 0;
                     if (hasError) {
                         showToast('error', response.payload.error?.[0]?.info || dictionary['common'].updateerror);
                         return false;
@@ -227,8 +227,8 @@ export function useUserAssignment({ session, dictionary, role, userdata }: Param
                         input: { role_id: selectedUserGroup }
                     });
 
-                    const user = response.status === 200 && response.payload?.dataresponse?.fo
-                        ? response.payload.dataresponse.fo[0].input.data ?? []
+                    const user = response.status === 200 && response.payload?.dataresponse
+                        ? response.payload.dataresponse.data.input.data ?? []
                         : [];
 
                     const mapped: User[] = user.map((u: any) => ({
@@ -259,13 +259,13 @@ export function useUserAssignment({ session, dictionary, role, userdata }: Param
         (async () => {
             if (roleIdNum == null) { if (!aborted) setAssignedUsers([]); return; }
             try {
-                const response = await systemServiceApi.runFODynamic({
+                const response = await workflowService.runFODynamic({
                     sessiontoken: token as string,
                     workflowid: WORKFLOWCODE.BO_GET_USER_BY_ROLE,
                     input: { role_id: roleIdNum }
                 });
 
-                const data = response.status === 200 ? response.payload?.dataresponse?.fo?.[0]?.input?.data : [];
+                const data = response.status === 200 ? response.payload?.dataresponse?.data.data : [];
                 if (!Array.isArray(data)) { if (!aborted) setAssignedUsers([]); return; }
 
                 const mapped: User[] = data.map((u: any) => ({

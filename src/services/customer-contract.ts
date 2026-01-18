@@ -1,12 +1,12 @@
 'use client'
 
+import { handleSearchAPI } from '@/@core/components/cButton/handleSearchAPI';
+import { WORKFLOWCODE } from '@/data/WorkflowCode';
+import { workflowService } from '@/servers/system-service';
+import { createTxFo } from '@/utils/createTxFo';
+import SwalAlert from '@/utils/SwalAlert';
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import SwalAlert from '@/utils/SwalAlert';
-import { handleSearchAPI } from '@/@core/components/cButton/handleSearchAPI';
-import { createTxFo } from '@/utils/createTxFo';
-import { WORKFLOWCODE } from '@/data/WorkflowCode';
-import { systemServiceApi } from '@/servers/system-service';
 
 export const useCustomerContract = ({ session, dictionary }: { session: any; dictionary: any }) => {
     const [isLoading, setIsLoading] = useState(false);
@@ -35,7 +35,7 @@ export const useCustomerContract = ({ session, dictionary }: { session: any; dic
         setIsLoading(true);
         const contracttype = getValues('contractpurpose');
         try {
-            const response = await systemServiceApi.runBODynamic({
+            const response = await workflowService.runBODynamic({
                 sessiontoken: session?.user?.token,
                 txFo: {
                     bo: [
@@ -55,9 +55,9 @@ export const useCustomerContract = ({ session, dictionary }: { session: any; dic
                 },
             });
 
-            const data = response?.payload?.dataresponse?.fo?.[0]?.input;
+            const data = response?.payload?.dataresponse?.data?.input;
             if (data) {
-                const error = response?.payload?.dataresponse?.fo?.[0]?.input?.error_message;
+                const error = response?.payload?.dataresponse?.data?.input?.error_message;
                 if (error) {
                     SwalAlert('error', error || dictionary['contract'].cannotfindcustomer.replace('{0}', cif), 'center');
                     return;
@@ -92,7 +92,7 @@ export const useCustomerContract = ({ session, dictionary }: { session: any; dic
             await trigger();
 
             const [depositAccountRes, loanAccountRes] = await Promise.all([
-                systemServiceApi.runBODynamic({
+                workflowService.runBODynamic({
                     sessiontoken: session?.user?.token,
                     txFo: {
                         bo: [
@@ -107,7 +107,7 @@ export const useCustomerContract = ({ session, dictionary }: { session: any; dic
                         ],
                     },
                 }),
-                systemServiceApi.runBODynamic({
+                workflowService.runBODynamic({
                     sessiontoken: session?.user?.token,
                     txFo: {
                         bo: [
@@ -124,8 +124,8 @@ export const useCustomerContract = ({ session, dictionary }: { session: any; dic
                 }),
             ]);
 
-            const depositAccounts = depositAccountRes?.payload?.dataresponse?.fo?.[0]?.input?.items ?? [];
-            const loanAccounts = loanAccountRes?.payload?.dataresponse?.fo?.[0]?.input?.items ?? [];
+            const depositAccounts = depositAccountRes?.payload?.dataresponse?.data.input?.items ?? [];
+            const loanAccounts = loanAccountRes?.payload?.dataresponse?.data?.input?.items ?? [];
             const allAccounts = [...depositAccounts, ...loanAccounts];
 
             if (allAccounts.length > 0) {

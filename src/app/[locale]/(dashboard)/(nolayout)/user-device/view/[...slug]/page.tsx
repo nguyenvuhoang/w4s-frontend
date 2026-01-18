@@ -35,18 +35,18 @@ const UserDeviceViewPage = async ({ params }: { params: Params }) => {
 
     if (
         !isValidResponse(dataviewAPI) ||
-        (dataviewAPI.payload.dataresponse.error && dataviewAPI.payload.dataresponse.error.length > 0)
+        (dataviewAPI.payload.dataresponse.errors && dataviewAPI.payload.dataresponse.errors.length > 0)
     ) {
         console.log(
             'ExecutionID:',
-            dataviewAPI.payload.dataresponse.error[0].execute_id +
+            dataviewAPI.payload.dataresponse.errors[0].execute_id +
             ' - ' +
-            dataviewAPI.payload.dataresponse.error[0].info
+            dataviewAPI.payload.dataresponse.errors[0].info
         );
         return <Spinner />;
     }
 
-    const viewdata = dataviewAPI.payload.dataresponse.fo[0].input.data[0];
+    const viewdata = dataviewAPI.payload.dataresponse.data.input.data[0];
 
     return (
         <Suspense fallback={<Spinner />}>

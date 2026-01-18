@@ -1,6 +1,6 @@
 // hooks/useContractHandler.ts
 import { Locale } from '@/configs/i18n'
-import { systemServiceApi } from '@/servers/system-service'
+import { codeService, systemServiceApi } from '@/servers/system-service'
 import { Transaction } from '@/types/bankType'
 import { PageData } from '@/types/systemTypes'
 import { isValidResponse } from '@/utils/isValidResponse'
@@ -106,16 +106,16 @@ export const useTransactionHistoryHandler = (
 
             if (
                 !isValidResponse(transactiondataApi) ||
-                (transactiondataApi.payload.dataresponse.error && transactiondataApi.payload.dataresponse.error.length > 0)
+                (transactiondataApi.payload.dataresponse.errors && transactiondataApi.payload.dataresponse.errors.length > 0)
             ) {
                 console.log(
                     'ExecutionID:',
-                    transactiondataApi.payload.dataresponse.error?.[0]?.execute_id + ' - ' + transactiondataApi.payload.dataresponse.error?.[0]?.info
+                    transactiondataApi.payload.dataresponse.errors?.[0]?.execute_id + ' - ' + transactiondataApi.payload.dataresponse.errors?.[0]?.info
                 )
                 return
             }
 
-            const datatransaction = transactiondataApi.payload.dataresponse.fo[0].input as PageData<Transaction>
+            const datatransaction = transactiondataApi.payload.dataresponse.data.input as PageData<Transaction>
             setTransactions(datatransaction)
             setTotalCount(datatransaction.total_count || 0)
         } catch (err) {
@@ -148,30 +148,30 @@ export const useTransactionHistoryHandler = (
 
     // ====== options loading ======
     const fetchStatusOptions = async () => {
-        const res = await systemServiceApi.getCdList({
+        const res = await codeService.getCdList({
             codename: 'TRANSACTIONSTATUS', // changed from CONTRACTSTATUS
             codegroup: 'BO',
             sessiontoken: session?.user?.token as string,
             language: locale || 'en'
         })
 
-        if (!isValidResponse(res) || !res.payload.dataresponse?.fo) return
-        const items = res.payload.dataresponse.fo[0].input.items || []
+        if (!isValidResponse(res) || !res.payload.dataresponse) return
+        const items = res.payload.dataresponse.data.input.items || []
         const opts = items.map((it: any) => ({ value: it.codeid, label: it.caption }))
         opts.unshift({ value: 'ALL', label: 'All' })
         setStatusOptions(opts)
     }
 
     const fetchTxTypeOptions = async () => {
-        const res = await systemServiceApi.getCdList({
+        const res = await codeService.getCdList({
             codename: 'TRANSACTIONTYPE',
             codegroup: 'BO',
             sessiontoken: session?.user?.token as string,
             language: locale || 'en'
         })
 
-        if (!isValidResponse(res) || !res.payload.dataresponse?.fo) return
-        const items = res.payload.dataresponse.fo[0].input.items || []
+        if (!isValidResponse(res) || !res.payload.dataresponse) return
+        const items = res.payload.dataresponse.data.input.items || []
         const opts = items.map((it: any) => ({ value: it.codeid, label: it.caption }))
         opts.unshift({ value: 'ALL', label: 'All' })
         setTxTypeOptions(opts)

@@ -46,17 +46,11 @@ const SMSMessageData = async (
 
     if (
         !isValidResponse(dataSearchAPI) ||
-        (dataSearchAPI.payload.dataresponse.error && dataSearchAPI.payload.dataresponse.error.length > 0)
+        (dataSearchAPI.payload.dataresponse.errors && dataSearchAPI.payload.dataresponse.errors.length > 0)
     ) {
-        const error = dataSearchAPI.payload.dataresponse.error?.[0];
+        const error = dataSearchAPI.payload.dataresponse.errors?.[0];
         const executionId = error?.execute_id;
         const errorInfo = error?.info;
-        
-        console.log(
-            'ExecutionID:',
-            executionId + ' - ' + errorInfo
-        );
-        
         return (
             <SMSMessageError 
                 executionId={executionId}
@@ -66,7 +60,7 @@ const SMSMessageData = async (
         );
     }
 
-    const smsdata = dataSearchAPI.payload.dataresponse.fo[0].input
+    const smsdata = dataSearchAPI.payload.dataresponse.data.input
 
     return (
         <SMSMessageContent 

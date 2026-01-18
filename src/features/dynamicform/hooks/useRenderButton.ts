@@ -16,11 +16,12 @@ import { FormInput, PageData, RuleStrong } from '@/types/systemTypes';
 import { getDictionary } from '@/utils/getDictionary';
 import SwalAlert from '@/utils/SwalAlert';
 
-import { checkRules } from '../../../features/dynamicform/components/layout/rule';
-import { checkButtonVisibility } from '../../../features/dynamicform/components/layout/rule/checkButtonVisibility';
-import { disableButton } from '../../../features/dynamicform/components/layout/rule/disableButton';
-import { handleRuleExecution } from '../../../features/dynamicform/components/layout/rule/handleRuleExecution';
+import { checkRules } from '../components/layout/rule';
+import { checkButtonVisibility } from '../components/layout/rule/checkButtonVisibility';
+import { disableButton } from '../components/layout/rule/disableButton';
+import { handleRuleExecution } from '../components/layout/rule/handleRuleExecution';
 import { Locale } from '@/configs/i18n';
+import { performTransaction } from '@/features/dynamicform/services/transactionService';
 
 export interface UseRenderButtonParams {
   input: FormInput;
@@ -175,80 +176,57 @@ export const useRenderButton = ({
 
         const txcode = txFo_[0].txcode;
 
-        switch (txcode) {
-          case '#sys:fo-post-updatedata':
-            await handlePostUpdateData(session, txFo_, formMethods.getValues(), dictionary);
-            break;
-
-          case '#sys:fo-post-deletedata':
-            await handlePostDeleteData(session, txFo_, selectedRows, dictionary);
-            break;
-
-          case '#sys:fo-create-dataAPI': {
-            const isValid = await formMethods.trigger();
-            if (!isValid) {
-              Object.entries(formMethods.formState.errors).forEach(([fieldName, error]) => {
-                formMethods.setError(fieldName, {
-                  type: 'manual',
-                  message: typeof error?.message === 'string' ? error.message : 'Invalid value',
-                });
+        // Handle UI-only txcodes here
+        if (txcode === '#sys:fo-create-dataAPI') {
+          const isValid = await formMethods.trigger();
+          if (!isValid) {
+            Object.entries(formMethods.formState.errors).forEach(([fieldName, error]) => {
+              formMethods.setError(fieldName, {
+                type: 'manual',
+                message: typeof error?.message === 'string' ? error.message : 'Invalid value',
               });
-              setIsLoading(false);
-              return;
-            }
-            handleOpenModal();
+            });
+            setIsLoading(false);
             return;
           }
+          handleOpenModal();
+          return;
+        }
 
-          case '#sys:fo-form-clear':
-            formMethods.reset();
-            break;
+        if (txcode === '#sys:fo-form-clear') {
+          formMethods.reset();
+          return;
+        }
 
-          case '#sys:fo-open-form': {
-            const form_key = txFo_[0].input.form_key;
-            const newUrl = `/${form_key}`;
-            window.open(newUrl, '_blank');
-            return;
-          }
+        if (txcode === '#sys:fo-open-form') {
+          const form_key = txFo_[0].input.form_key;
+          const newUrl = `/${form_key}`;
+          window.open(newUrl, '_blank');
+          return;
+        }
 
-          case 'fo-search-API': {
-            const response = await handleSearchAPI(session, txFo_, 1, 10, searchtext, undefined, language);
-            setDatasearch(response);
+        // Delegate API-backed txcodes to the transaction service
+        try {
+          const result: any = await performTransaction({
+            txcode,
+            txFo: txFo_,
+            session,
+            formValues: formMethods.getValues(),
+            selectedRows,
+            dictionary,
+            searchtext,
+            language,
+          });
+
+          if (result?.type === 'search') {
+            setDatasearch(result.payload);
             setTxFOSearch(txFo_);
             return;
           }
 
-          case '#sys:fo-submit-dataAPI': {
-            try {
-              setIsLoading(true);
-              const isValid = await formMethods.trigger();
-              if (!isValid) {
-                const firstError = Object.keys(formMethods.formState.errors)[0];
-                if (firstError) formMethods.setFocus(firstError);
-
-                SwalAlert(
-                  'error',
-                  dictionary['common']?.invalidform ?? 'Please correct the highlighted fields',
-                  'center'
-                );
-                return;
-              }
-              const values = formMethods.getValues();
-              await handlePostAddData(session, txFo_, values, dictionary);
-            } catch (err) {
-              SwalAlert('error', dictionary['common']?.error ?? 'Error', 'center');
-            } finally {
-              setIsLoading(false);
-            }
-            return;
-          }
-
-          case '#sys:view-data':
-            await handlePostViewData(txFo_, selectedRows);
-            break;
-
-          default:
-            SwalAlert('error', 'Unknown transaction code', 'center');
+          // For view or other operations the underlying handlers already executed
+        } catch (err) {
+          SwalAlert('error', dictionary['common']?.error ?? 'Error', 'center');
         }
       } catch (error) {
         Application.AppException('#CBUTTON.onClick', String(error), 'Error');

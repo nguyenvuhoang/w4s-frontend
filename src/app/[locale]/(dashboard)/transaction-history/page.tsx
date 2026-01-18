@@ -58,9 +58,9 @@ const TransactionHistoryData = async (
 
     if (
         !isValidResponse(contractdataApi) ||
-        (contractdataApi.payload.dataresponse.error && contractdataApi.payload.dataresponse.error.length > 0)
+        (contractdataApi.payload.dataresponse.errors && contractdataApi.payload.dataresponse.errors.length > 0)
     ) {
-        const error = contractdataApi.payload.dataresponse.error?.[0];
+        const error = contractdataApi.payload.dataresponse.errors?.[0];
         const executionId = error?.execute_id;
         const errorInfo = error?.info;
         
@@ -78,7 +78,7 @@ const TransactionHistoryData = async (
         );
     }
 
-    const transactionhistorydata = contractdataApi.payload.dataresponse.fo[0].input as PageData<Transaction>;
+    const transactionhistorydata = contractdataApi.payload.dataresponse.data.input as PageData<Transaction>;
     
     return (
         <TransactionHistoryContent 

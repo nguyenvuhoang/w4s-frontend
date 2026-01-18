@@ -185,7 +185,7 @@ const AuthorizedLayout = async ({
                 return <ErrorPage error={errorString} side="server" />;
             }
 
-            viewdata = dataviewAPI.payload.dataresponse.fo[0].input.data[0];
+            viewdata = dataviewAPI.payload.dataresponse.data.input.data[0];
         }
     }
 

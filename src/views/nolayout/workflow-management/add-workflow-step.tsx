@@ -104,11 +104,8 @@ const AddWorkflowStepContent = ({
   const handleSave = async (wfStep: object) => {
     try {
       if (validateForm()) {
-        console.log("Form valid:", form);
         const res = await createWfStep(wfStep);
-        const isInsertSuccess = res?.payload?.dataresponse?.error?.length === 0;
-
-        console.log("isInsertSuccess:", isInsertSuccess);
+        const isInsertSuccess = res?.payload?.dataresponse?.errors?.length === 0;
 
         if (isInsertSuccess) {
           setSnackbar({
@@ -121,12 +118,12 @@ const AddWorkflowStepContent = ({
           setSnackbar({
             open: true,
             message:
-              "Add failed!\n" + res?.payload?.dataresponse?.error[0]?.info,
+              "Add failed!\n" + res?.payload?.dataresponse?.errors[0]?.info,
             severity: "error",
           });
           console.error(
             "Add failed for WorkflowStep: ",
-            res?.payload?.dataresponse?.error[0]?.info
+            res?.payload?.dataresponse?.errors[0]?.info
           );
         }
       } else {

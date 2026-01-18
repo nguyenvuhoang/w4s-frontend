@@ -33,8 +33,8 @@ export const useCustomerInfoHandler = ({
             });
 
             if (response.status === 200) {
-                const hasError = response.payload.dataresponse.error.length > 0;
-                const errorMessage = response.payload.dataresponse.error.join(', ');
+                const hasError = response.payload.dataresponse.errors.length > 0;
+                const errorMessage = response.payload.dataresponse.errors.join(', ');
                 if (hasError) {
                     SwalAlert('error', errorMessage, 'center');
                 } else {

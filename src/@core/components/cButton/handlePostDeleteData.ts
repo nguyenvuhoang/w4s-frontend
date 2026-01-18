@@ -1,5 +1,5 @@
 import Application from "@/@core/lib/libSupport";
-import { systemServiceApi } from "@/servers/system-service";
+import { workflowService } from "@/servers/system-service";
 import { getDictionary } from "@/utils/getDictionary";
 import SwalAlert from "@/utils/SwalAlert";
 import { Session } from "next-auth";
@@ -109,7 +109,7 @@ export const handlePostDeleteData = async (
                         return resolve(false);
                     }
 
-                    const submitApi = await systemServiceApi.runBODynamic({
+                    const submitApi = await workflowService.runBODynamic({
                         sessiontoken: session?.user?.token as string,
                         txFo: requestBody
                     });
@@ -120,8 +120,10 @@ export const handlePostDeleteData = async (
                     }
 
                     const response = submitApi.payload.dataresponse;
-                    if (response.error.length > 0) {
-                        SwalAlert('error', response.error[0].info || 'Unknown error', 'center');
+                    const respAny: any = response;
+                    const errors = respAny.error ?? respAny.errors ?? [];
+                    if (Array.isArray(errors) && errors.length > 0) {
+                        SwalAlert('error', errors[0].info || 'Unknown error', 'center');
                         return resolve(false);
                     }
 

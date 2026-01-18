@@ -80,18 +80,18 @@ export const useAccountChartHandler = (
 
             if (
                 !isValidResponse(contractdataApi) ||
-                (contractdataApi.payload.dataresponse.error && contractdataApi.payload.dataresponse.error.length > 0)
+                (contractdataApi.payload.dataresponse.errors && contractdataApi.payload.dataresponse.errors.length > 0)
             ) {
                 console.log(
                     'ExecutionID:',
-                    contractdataApi.payload.dataresponse.error[0].execute_id +
+                    contractdataApi.payload.dataresponse.errors[0].execute_id +
                     ' - ' +
-                    contractdataApi.payload.dataresponse.error[0].info
+                    contractdataApi.payload.dataresponse.errors[0].info
                 )
                 return
             }
 
-            const dataaccountchart = contractdataApi.payload.dataresponse.fo[0].input as PageData<AccountChartType>
+            const dataaccountchart = contractdataApi.payload.dataresponse.data.input as PageData<AccountChartType>
             setAccountChart(dataaccountchart)
             setTotalCount(dataaccountchart.total_count || 0)
         } catch (err) {

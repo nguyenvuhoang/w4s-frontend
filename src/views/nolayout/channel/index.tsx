@@ -95,15 +95,15 @@ const ChannelContent = ({ dictionary, channelData, session }: PageProps) => {
 
                     if (
                         !isValidResponse(channelApi) ||
-                        (channelApi.payload?.dataresponse?.error && channelApi.payload.dataresponse.error.length > 0)
+                        (channelApi.payload?.dataresponse?.errors && channelApi.payload.dataresponse.errors.length > 0)
                     ) {
-                        const error = channelApi.payload?.dataresponse?.error?.[0];
+                        const error = channelApi.payload?.dataresponse?.errors?.[0];
                         const errorString = `ExecutionID: ${error?.execute_id ?? ''} - ${error?.info ?? 'Unknown error'}`;
                         SwalAlert('error', errorString, 'center');
                         return;
                     }
 
-                    const newStatus = channelApi.payload?.dataresponse?.fo?.[0]?.input.status;
+                    const newStatus = channelApi.payload?.dataresponse?.data.input.status;
 
                     setChannels(prev =>
                         prev.map(c =>

@@ -30,18 +30,18 @@ const TokenPage = async ({ params }: { params: Params }) => {
 
     if (
         !isValidResponse(coregatewayApi) ||
-        (coregatewayApi.payload.dataresponse.error && coregatewayApi.payload.dataresponse.error.length > 0)
+        (coregatewayApi.payload.dataresponse.errors && coregatewayApi.payload.dataresponse.errors.length > 0)
     ) {
         console.log(
             'ExecutionID:',
-            coregatewayApi.payload.dataresponse.error[0].execute_id +
+            coregatewayApi.payload.dataresponse.errors[0].execute_id +
             ' - ' +
-            coregatewayApi.payload.dataresponse.error[0].info
+            coregatewayApi.payload.dataresponse.errors[0].info
         );
         return <Spinner />;
     }
 
-    const tokendata = coregatewayApi.payload.dataresponse.fo[0].input;
+    const tokendata = coregatewayApi.payload.dataresponse.data.input;
 
 
 

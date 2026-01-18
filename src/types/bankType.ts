@@ -1074,3 +1074,10 @@ export interface PostingType {
     currencycode: string
     branchid: number
 }
+export interface TransactionField {
+    field_name: string
+    field_value: string
+    paramtype: string
+    pos: number
+    property_name: string
+}

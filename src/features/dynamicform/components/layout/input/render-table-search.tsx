@@ -1,7 +1,7 @@
 'use client';
 
-import React, { Dispatch, useCallback, memo } from 'react';
 import { Session } from 'next-auth';
+import React, { Dispatch, memo, useCallback } from 'react';
 
 import PaginationPage from '@/@core/components/jTable/pagination';
 import { StyledHeaderCell, StyledTableRow } from '@/@core/components/jTable/style';
@@ -26,9 +26,9 @@ import {
   TableRow,
 } from '@mui/material';
 
-import { useRenderTableSearch, Column } from '../../../../../views/components/hooks/useRenderTableSearch';
 import { useUserStore } from '@/@core/stores/useUserStore';
 import SwalAlert from '@/utils/SwalAlert';
+import { Column, useRenderTableSearch } from '@features/dynamicform/hooks/useRenderTableSearch';
 
 // ============================================================================
 // Types
@@ -91,7 +91,6 @@ const RenderTableSearchAdvance = ({
     handleCloseModal,
     handlePreviewModal,
     handleCheckboxChange,
-    handleRowDoubleClick,
   } = useRenderTableSearch({
     input,
     rules,

@@ -6,7 +6,6 @@ import CustomModal from '@/@core/components/mui/CustomModal'
 import { SexIcon } from '@/components/layout/shared/SexIcon'
 import { StatusIcon } from '@/components/layout/shared/StatusIcon'
 import { Locale } from '@/configs/i18n'
-import { useLoginHandler } from '@/services/useLoginHandler'
 import { formatAmount } from '@/utils/formatAmount'
 import { formatDateTime } from '@/utils/formatDateTime'
 import { getDictionary } from '@/utils/getDictionary'
@@ -20,6 +19,7 @@ import { useEffect, useState } from 'react'
 import { Control, Controller, FieldValues, UseFormGetValues, useWatch } from 'react-hook-form'
 import Swal from 'sweetalert2'
 import CircularProgress from '@mui/material/CircularProgress'
+import { useLoginHandler } from '@features/auth/hooks/useLoginHandler'
 type Props = {
   input: any
   dictionary: Awaited<ReturnType<typeof getDictionary>>

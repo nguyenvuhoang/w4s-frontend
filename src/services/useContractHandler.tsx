@@ -82,18 +82,18 @@ export const useContractHandler = (
 
             if (
                 !isValidResponse(contractdataApi) ||
-                (contractdataApi.payload.dataresponse.error && contractdataApi.payload.dataresponse.error.length > 0)
+                (contractdataApi.payload.dataresponse.errors && contractdataApi.payload.dataresponse.errors.length > 0)
             ) {
                 console.log(
                     'ExecutionID:',
-                    contractdataApi.payload.dataresponse.error[0].execute_id +
+                    contractdataApi.payload.dataresponse.errors[0].execute_id +
                     ' - ' +
-                    contractdataApi.payload.dataresponse.error[0].info
+                    contractdataApi.payload.dataresponse.errors[0].info
                 )
                 return
             }
 
-            const datacontract = contractdataApi.payload.dataresponse.fo[0].input as PageData<ContractType>
+            const datacontract = contractdataApi.payload.dataresponse.data.input as PageData<ContractType>
             setContracts(datacontract)
             setTotalCount(datacontract.total_count || 0)
         } catch (err) {
@@ -142,11 +142,11 @@ export const useContractHandler = (
             language: locale || 'en'
         })
 
-        if (!isValidResponse(getCdlistApi) || !getCdlistApi.payload.dataresponse || !getCdlistApi.payload.dataresponse.fo) {
+        if (!isValidResponse(getCdlistApi) || !getCdlistApi.payload.dataresponse || !getCdlistApi.payload.dataresponse) {
             console.error('Failed to fetch status options:', getCdlistApi)
             return
         }
-        const data_query = getCdlistApi.payload.dataresponse.fo[0].input.items || []
+        const data_query = getCdlistApi.payload.dataresponse.data.input.items || []
         let data_result: any[] = []
         data_result = data_result.concat(data_query)
 
@@ -166,11 +166,11 @@ export const useContractHandler = (
             language: locale || 'en'
         })
 
-        if (!isValidResponse(getCdlistApi) || !getCdlistApi.payload.dataresponse || !getCdlistApi.payload.dataresponse.fo) {
+        if (!isValidResponse(getCdlistApi) || !getCdlistApi.payload.dataresponse || !getCdlistApi.payload.dataresponse) {
             console.error('Failed to fetch contract type options:', getCdlistApi)
             return
         }
-        const data_query = getCdlistApi.payload.dataresponse.fo[0].input.items || []
+        const data_query = getCdlistApi.payload.dataresponse.data.input.items || []
         let data_result: any[] = []
         data_result = data_result.concat(data_query)
 
