@@ -1,6 +1,6 @@
 import type { Locale } from '@/configs/i18n'
 import { env } from '@/env.mjs'
-import LoginForm from '@/features/auth/components/login-form'
+import LoginForm from '@features/auth/components/login-form'
 import { getDictionary } from '@/utils/getDictionary'
 import { Box, NoSsr } from '@mui/material'
 import Image from 'next/image'

@@ -4,7 +4,7 @@ import { Locale } from '@/configs/i18n'
 import { PageContentProps, ResponseDefaultData } from '@/types'
 import { OpenAPIType } from '@/types/systemTypes'
 import { getDictionary } from '@/utils/getDictionary'
-import ContentWrapper from '@/views/components/layout/content-wrapper'
+import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper'
 
 import ApiIcon from '@mui/icons-material/Api'
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';

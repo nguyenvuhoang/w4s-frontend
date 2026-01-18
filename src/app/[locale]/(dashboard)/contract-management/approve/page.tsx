@@ -12,7 +12,7 @@ import ContractApproveSearchError from '@/views/contracts/contract-management-se
 import { Metadata } from 'next';
 import { Session } from 'next-auth';
 import { Suspense } from 'react';
-import ContentWrapper from '@/views/components/layout/content-wrapper';
+import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper';
 import BackupTableIcon from '@mui/icons-material/BackupTable'
 
 export const metadata: Metadata = generateAuthMetadata('Verify for contract');

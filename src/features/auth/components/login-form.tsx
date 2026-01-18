@@ -4,7 +4,7 @@ import LanguageDropdown from '@/@core/components/layouts/shared/LanguageDropdown
 import { createLoginSchema } from '@/@core/schemas/auth'
 import LoginLoading from '@/components/LoginLoading'
 import type { Locale } from '@/configs/i18n'
-import { useLoginHandler } from '@/features/auth/hooks/useLoginHandler'
+import { useLoginHandler } from '@features/auth/hooks/useLoginHandler'
 import { getDictionary } from '@/utils/getDictionary'
 import type { FormData } from '@core/types'
 import { valibotResolver } from '@hookform/resolvers/valibot'

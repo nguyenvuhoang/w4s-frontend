@@ -3,7 +3,7 @@
 import { UserDeviceType } from "@/types/bankType";
 import { formatDateTime } from "@/utils/formatDateTime";
 import { getDictionary } from "@/utils/getDictionary";
-import ContentWrapper from "@/views/components/layout/content-wrapper";
+import ContentWrapper from "@features/dynamicform/components/layout/content-wrapper";
 import { SystemSecurityUpdateGood } from "@mui/icons-material";
 import AndroidIcon from "@mui/icons-material/Android";
 import AppleIcon from "@mui/icons-material/Apple";

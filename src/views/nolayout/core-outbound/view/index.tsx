@@ -5,7 +5,7 @@ import { CoreOutboundMessageType } from "@/types/bankType";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { formatDateTime } from "@/utils/formatDateTime";
 import { getDictionary } from "@/utils/getDictionary";
-import ContentWrapper from "@/views/components/layout/content-wrapper";
+import ContentWrapper from "@features/dynamicform/components/layout/content-wrapper";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CancelIcon from "@mui/icons-material/Cancel";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";

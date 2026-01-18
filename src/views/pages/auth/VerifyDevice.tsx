@@ -1,27 +1,24 @@
 'use client'
 
-import { useImageVariant } from '@/@core/hooks/useImageVariant'
 import type { Locale } from '@/configs/i18n'
-import type { Mode } from '@core/types'
 import { Box, NoSsr } from '@mui/material'
 import Image from 'next/image'
 // Util Imports
+import { authenticate } from '@/actions'
+import LoadingSubmit from '@/components/LoadingSubmit'
+import { getDeviceInfo } from '@/utils/getDeviceInfo'
 import { getDictionary } from '@/utils/getDictionary'
-import { QRCode } from 'react-qrcode-logo'
+import { getLocalizedUrl } from '@/utils/i18n'
 import { Button, TextField, Typography } from '@mui/material'
-import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { getDeviceInfo } from '@/utils/getDeviceInfo'
-import { authenticate } from '@/actions'
-import { getLocalizedUrl } from '@/utils/i18n'
-import LoadingSubmit from '@/components/LoadingSubmit'
+import { useEffect, useState } from 'react'
+import { QRCode } from 'react-qrcode-logo'
 
 
 
-const VerifyDevice = ({ mode, dictionary, locale }: {
-    mode: Mode,
+const VerifyDevice = ({ dictionary, locale }: {
     dictionary: Awaited<ReturnType<typeof getDictionary>>
     locale: Locale
 }) => {
@@ -29,13 +26,9 @@ const VerifyDevice = ({ mode, dictionary, locale }: {
     /**
      * Vars Image
      */
-    const darkImg = '/images/pages/login-night.jpg'
     const lightImg = '/images/pages/login-day.jpg'
-    const authBackground = useImageVariant(mode, lightImg, darkImg)
 
-    const darklogo = '/images/pages/logo-night.svg'
     const lightlogo = '/images/pages/logo.svg'
-    const logo = useImageVariant(mode, lightlogo, darklogo)
 
     const [verifyCode, setVerifyCode] = useState('')
     const [countdown, setCountdown] = useState(30)
@@ -138,11 +131,11 @@ const VerifyDevice = ({ mode, dictionary, locale }: {
             <NoSsr>
                 <Box className="relative">
                     {loading &&
-                       <LoadingSubmit loadingtext={dictionary['common'].loading} />
+                        <LoadingSubmit loadingtext={dictionary['common'].loading} />
                     }
                     <Box
                         className='fixed top-0 left-0 w-full h-full'
-                        style={{ backgroundImage: `url(${authBackground})`, backgroundSize: 'cover', backgroundAttachment: 'fixed', backgroundPosition: 'center' }}
+                        style={{ backgroundImage: `url(${lightImg})`, backgroundSize: 'cover', backgroundAttachment: 'fixed', backgroundPosition: 'center' }}
                     >
                         <Box className="relative w-full h-full overflow-auto">
                             <Box className="elipse"></Box>
@@ -150,7 +143,7 @@ const VerifyDevice = ({ mode, dictionary, locale }: {
                                 {/* Header */}
                                 <Box className="header">
                                     <Box className="logo">
-                                        <Image src={logo} className='sm:h-[67px] h-[40px]' width={200} height={70} alt='Logo'></Image>
+                                        <Image src={lightlogo} className='sm:h-[67px] h-[40px]' width={200} height={70} alt='Logo'></Image>
                                     </Box>
                                 </Box>
                                 {/* Content */}

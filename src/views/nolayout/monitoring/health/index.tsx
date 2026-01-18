@@ -1,7 +1,7 @@
 'use client'
 
 import { getDictionary } from '@/utils/getDictionary';
-import ContentWrapper from '@/views/components/layout/content-wrapper';
+import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper';
 import ScreenshotMonitorIcon from '@mui/icons-material/ScreenshotMonitor';
 import {
     Box

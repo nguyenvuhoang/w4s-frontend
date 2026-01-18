@@ -6,8 +6,8 @@ import ClearIcon from '@mui/icons-material/Clear';
 import SearchIcon from '@mui/icons-material/Search';
 import { Grid, IconButton, InputAdornment, TextField } from '@mui/material';
 import { useState } from 'react';
-import { disableField } from './rule/disableField';
-import { isFieldHidden } from './rule/isFieldHidden';
+import { disableField } from '../rule/disableField';
+import { isFieldHidden } from '../rule/isFieldHidden';
 
 type Props = {
     input: FormInput;

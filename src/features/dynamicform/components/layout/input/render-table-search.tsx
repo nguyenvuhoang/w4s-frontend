@@ -26,7 +26,7 @@ import {
   TableRow,
 } from '@mui/material';
 
-import { useRenderTableSearch, Column } from './hooks/useRenderTableSearch';
+import { useRenderTableSearch, Column } from '../../../../../views/components/hooks/useRenderTableSearch';
 import { useUserStore } from '@/@core/stores/useUserStore';
 import SwalAlert from '@/utils/SwalAlert';
 

@@ -7,7 +7,7 @@ import CoreSessionContent from '@/views/nolayout/core-session'
 import CoreSessionSkeleton from '@/views/nolayout/core-session/CoreSessionSkeleton'
 import CoreSessionError from '@/views/nolayout/core-session/CoreSessionError'
 import { Suspense } from 'react'
-import ContentWrapper from '@/views/components/layout/content-wrapper'
+import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper'
 import WebhookIcon from '@mui/icons-material/Webhook'
 
 type Params = Promise<{

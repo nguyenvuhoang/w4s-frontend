@@ -8,8 +8,8 @@ export const metadata: Metadata = generateAuthMetadata('Login');
 const VerifyDevicePage = async (props: { params: Promise<{ locale: Locale }> }) => {
     return (
         <AuthLayout params={(await props.params)}>
-            {({ mode, dictionary, locale }) => (
-                <VerifyDevice mode={mode} dictionary={dictionary} locale={locale} />
+            {({ dictionary, locale }) => (
+                <VerifyDevice dictionary={dictionary} locale={locale} />
             )}
         </AuthLayout>
     );

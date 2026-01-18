@@ -5,7 +5,7 @@ import useOpenApiView from '@/services/useOpenApiView'
 import { PageContentProps, ResponseDefaultData } from '@/types'
 import { OpenAPIType } from '@/types/systemTypes'
 import { getDictionary } from '@/utils/getDictionary'
-import ContentWrapper from '@/views/components/layout/content-wrapper'
+import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper'
 
 import ApiIcon from '@mui/icons-material/Api'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'

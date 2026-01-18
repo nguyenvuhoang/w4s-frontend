@@ -2,7 +2,7 @@
 
 import { PageContentProps } from '@/types';
 import { RHFSelect } from '@/views/accounting/component/RHFSelect';
-import ContentWrapper from '@/views/components/layout/content-wrapper';
+import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper';
 import AutoAwesomeMosaicIcon from '@mui/icons-material/AutoAwesomeMosaic';
 import SaveIcon from '@mui/icons-material/Save';
 import SearchIcon from '@mui/icons-material/Search';

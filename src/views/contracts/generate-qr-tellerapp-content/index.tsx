@@ -3,7 +3,7 @@
 import { useGenerateQRTeller } from '@/services/useGenerateQRTeller'
 import { PageContentProps } from '@/types'
 import { maskAccount } from '@/utils/maskAccount'
-import ContentWrapper from '@/views/components/layout/content-wrapper'
+import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper'
 import QrCodeIcon from '@mui/icons-material/QrCode'
 import {
     Alert, Box, Button, Card, CardContent, CircularProgress,

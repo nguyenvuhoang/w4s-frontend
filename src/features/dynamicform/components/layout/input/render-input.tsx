@@ -7,10 +7,10 @@ import { Grid, InputAdornment, TextField } from '@mui/material';
 import { Session } from 'next-auth';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { disableField } from './rule/disableField';
-import { generateControlValue } from './rule/generateControlValue';
-import { isFieldHidden } from './rule/isFieldHidden';
-import { isFieldRequired } from './rule/isFieldRequired';
+import { disableField } from '../rule/disableField';
+import { generateControlValue } from '../rule/generateControlValue';
+import { isFieldHidden } from '../rule/isFieldHidden';
+import { isFieldRequired } from '../rule/isFieldRequired';
 import { getDictionary } from '@/utils/getDictionary';
 
 type Props = {

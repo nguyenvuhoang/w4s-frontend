@@ -7,7 +7,7 @@ import CoreOutboundContent from '@/views/nolayout/core-outbound'
 import CoreOutboundSkeleton from '@/views/nolayout/core-outbound/CoreOutboundSkeleton'
 import CoreOutboundError from '@/views/nolayout/core-outbound/CoreOutboundError'
 import { Suspense } from 'react'
-import ContentWrapper from '@/views/components/layout/content-wrapper'
+import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper'
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong'
 
 type Params = Promise<{

@@ -7,7 +7,7 @@ import { LanguageDataMobileType, PageLanguageResponse } from '@/types/bankType';
 import { flattenJson } from '@/utils/flattenJson';
 import { getDictionary } from '@/utils/getDictionary';
 import { parseMaybeJson } from '@/utils/parseMaybeJson';
-import ContentWrapper from '@/views/components/layout/content-wrapper';
+import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper';
 import AddIcon from '@mui/icons-material/Add';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';

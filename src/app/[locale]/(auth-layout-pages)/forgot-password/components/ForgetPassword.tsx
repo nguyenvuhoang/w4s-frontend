@@ -2,7 +2,7 @@ import type { Locale } from "@/configs/i18n";
 import { Box, NoSsr } from "@mui/material";
 // Util Imports
 import { env } from "@/env.mjs";
-import ForgetPasswordForm from "@/features/user/components/ForgetPasswordForm";
+import ForgetPasswordForm from "@features/user/components/ForgetPasswordForm";
 import { getDictionary } from "@/utils/getDictionary";
 import { Typography } from "@mui/material";
 import { Session } from "next-auth";

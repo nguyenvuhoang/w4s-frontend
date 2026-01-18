@@ -6,7 +6,7 @@ import { ContractType } from '@/types/bankType';
 import { PageData } from '@/types/systemTypes';
 import { getDictionary } from '@/utils/getDictionary';
 import { isValidResponse } from '@/utils/isValidResponse';
-import ContentWrapper from '@/views/components/layout/content-wrapper';
+import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper';
 import ContractManagementContent from '@/views/contracts/contract-management';
 import ContractManagementSkeleton from '@/views/contracts/contract-management/ContractManagementSkeleton';
 import ContractManagementError from '@/views/contracts/contract-management/ContractManagementError';

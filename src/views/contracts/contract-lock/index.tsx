@@ -4,7 +4,7 @@
 import { dataService, workflowService } from '@/servers/system-service'
 import { PageContentProps } from '@/types'
 import { isValidResponse } from '@/utils/isValidResponse'
-import ContentWrapper from '@/views/components/layout/content-wrapper'
+import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper'
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined' // đổi icon khóa

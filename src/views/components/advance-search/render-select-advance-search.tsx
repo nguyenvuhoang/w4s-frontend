@@ -7,8 +7,8 @@ import { FormInput, RuleStrong } from '@/types/systemTypes';
 import { FormControl, Grid, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import { Session } from 'next-auth';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
-import { disableField } from '../rule/disableField';
-import { isFieldHidden } from '../rule/isFieldHidden';
+import { disableField } from '../../../features/dynamicform/components/layout/rule/disableField';
+import { isFieldHidden } from '../../../features/dynamicform/components/layout/rule/isFieldHidden';
 import { generateParams } from '@/utils/generateParams';
 
 type Props = {

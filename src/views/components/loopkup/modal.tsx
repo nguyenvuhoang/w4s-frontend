@@ -9,7 +9,7 @@ import { getDictionary } from '@/utils/getDictionary'
 import { Box, Button, Modal } from '@mui/material'
 import { Session } from 'next-auth'
 import { Dispatch, SetStateAction, useState } from 'react'
-import Layout from '../layout'
+import Layout from '../../../features/dynamicform/components/layout'
 
 type Props = {
     isModalOpen: boolean

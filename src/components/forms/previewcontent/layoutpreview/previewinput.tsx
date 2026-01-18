@@ -8,8 +8,8 @@ import { v4 as uuidv4 } from 'uuid';
 import RenderInputPreviewDefault from "./render-input-preview";
 import RenderSelectPreviewDefault from "./render-select-preview";
 import RenderTextAreaPreviewDefault from "./render-area-preview";
-import RenderButtonPreviewDefault from "./render-button-preview";
 import RenderTablePreviewDefault from "./render-table-preview";
+import RenderButtonPreviewDefault from "./render-button-preview";
 
 export const RenderPreviewInput = (
     language: Locale,

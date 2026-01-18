@@ -4,7 +4,7 @@ import JsonEditorComponent from "@/@core/components/jSONEditor";
 import { CoreSessionType } from "@/types/bankType";
 import { formatDateTime } from "@/utils/formatDateTime";
 import { getDictionary } from "@/utils/getDictionary";
-import ContentWrapper from "@/views/components/layout/content-wrapper";
+import ContentWrapper from "@features/dynamicform/components/layout/content-wrapper";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import WebhookIcon from "@mui/icons-material/Webhook";
 import { Box, Grid, Paper, Typography } from "@mui/material";

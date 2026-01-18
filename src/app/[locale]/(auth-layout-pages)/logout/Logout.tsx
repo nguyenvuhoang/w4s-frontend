@@ -1,11 +1,10 @@
-'use client'
-
-import FallbackSpinner from '@/components/spinners'
 import { Locale } from '@/configs/i18n'
+import LogoutLogic from '@features/auth/hooks/useLogout'
 import { getDictionary } from '@/utils/getDictionary'
-import { getLocalizedUrl } from '@/utils/i18n'
+import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded'
+import LockRoundedIcon from '@mui/icons-material/LockRounded'
+import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded'
 import {
-  Alert,
   Box,
   Divider,
   LinearProgress,
@@ -13,67 +12,15 @@ import {
   Stack,
   Typography
 } from '@mui/material'
-import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded'
-import LockRoundedIcon from '@mui/icons-material/LockRounded'
-import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
 
-const LogoutLogic = ({
+const Logout = ({
   locale,
   dictionary
 }: {
   locale: Locale
   dictionary: Awaited<ReturnType<typeof getDictionary>>
 }) => {
-  const router = useRouter()
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    const handleLogout = async () => {
-      try {
-        // Get CSRF token first
-        const csrfResponse = await fetch('/api/auth/csrf')
-        const { csrfToken } = await csrfResponse.json()
-
-        // Call the signout API with CSRF token
-        const response = await fetch('/api/auth/signout', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: new URLSearchParams({
-            csrfToken,
-            callbackUrl: getLocalizedUrl('/login', locale)
-          }),
-          credentials: 'include'
-        })
-
-        if (!response.ok && response.status !== 302) {
-          throw new Error('Logout failed')
-        }
-
-        // Clear any local storage tokens
-        if (typeof window !== 'undefined') {
-          localStorage.removeItem('token')
-          localStorage.removeItem('refresh_token')
-        }
-
-        // Navigate to login page
-        window.location.href = getLocalizedUrl('/login', locale)
-      } catch (err: any) {
-        console.error('[LOGOUT] Failed:', err)
-        setError(err?.message || 'Logout failed. Please try again.')
-        // fallback hard redirect after a short pause
-        setTimeout(() => {
-          window.location.href = getLocalizedUrl('/login', locale)
-        }, 3000)
-      }
-    }
-
-    handleLogout()
-  }, [locale, router])
 
   const t = dictionary['common'] || {}
   const loggingOutText = `${t.logout || 'Logging out'}`
@@ -118,29 +65,30 @@ const LogoutLogic = ({
         elevation={0}
         sx={{
           position: 'relative',
-          zIndex: 1,
+          zIndex: 1300,
           width: '100%',
           maxWidth: '96vw',
-          height: 800,
+          minHeight: '60vh',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           p: { xs: 3, sm: 4 },
           borderRadius: 4,
           backdropFilter: 'blur(10px)',
-          backgroundColor: 'rgba(255,255,255,0.75)',
+          backgroundColor: 'rgba(255,255,255,0.95)',
           border: '1px solid rgba(3,73,42,0.08)',
           boxShadow:
             '0 10px 30px rgba(3,73,42,0.08), inset 0 1px 0 rgba(255,255,255,0.6)',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          margin: 'auto'
         }}
       >
-        <Stack spacing={3} alignItems="center">
+        <Stack spacing={5} alignItems="center">
           <Image
-            src="/images/illustrations/logout.svg"
+            src="/images/illustrations/logout.webp"
             alt="Logging out"
-            width={320}
-            height={210}
+            width={400}
+            height={400}
             priority
             style={{ filter: 'drop-shadow(0 8px 20px rgba(0,0,0,0.08))' }}
           />
@@ -181,19 +129,9 @@ const LogoutLogic = ({
             <Tip icon={<CheckCircleRoundedIcon fontSize="small" />} text="Redirecting safely" />
           </Stack>
 
-          <FallbackSpinner loadingtext={`${loggingOutText}...`} />
+          {/* Mount logout logic (performs signout and redirect) */}
+          <LogoutLogic locale={locale} />
 
-          {error && (
-            <Alert
-              severity="error"
-              sx={{
-                width: '100%',
-                borderRadius: 2
-              }}
-            >
-              {error}
-            </Alert>
-          )}
         </Stack>
       </Paper>
     </Box>
@@ -239,4 +177,4 @@ const DotDotDot = () => (
   </Box>
 )
 
-export default LogoutLogic
+export default Logout

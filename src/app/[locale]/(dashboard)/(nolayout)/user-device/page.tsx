@@ -7,7 +7,7 @@ import UserDeviceContent from '@/views/nolayout/user-device'
 import UserDeviceSkeleton from '@/views/nolayout/user-device/UserDeviceSkeleton'
 import UserDeviceError from '@/views/nolayout/user-device/UserDeviceError'
 import { Suspense } from 'react'
-import ContentWrapper from '@/views/components/layout/content-wrapper'
+import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper'
 import { SystemSecurityUpdateGood } from '@mui/icons-material'
 import { WORKFLOWCODE } from '@/data/WorkflowCode'
 

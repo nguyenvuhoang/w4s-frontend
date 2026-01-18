@@ -5,7 +5,7 @@ import { WORKFLOWCODE } from '@/data/WorkflowCode';
 import { systemServiceApi } from '@/servers/system-service';
 import { getDictionary } from '@/utils/getDictionary';
 import { isValidResponse } from '@/utils/isValidResponse';
-import ContentWrapper from '@/views/components/layout/content-wrapper';
+import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper';
 import WorkflowManagementContent from '@/views/nolayout/workflow-management';
 import WorkflowManagementError from '@/views/nolayout/workflow-management/WorkflowManagementError';
 import WorkflowManagementSkeleton from '@/views/nolayout/workflow-management/WorkflowManagementSkeleton';

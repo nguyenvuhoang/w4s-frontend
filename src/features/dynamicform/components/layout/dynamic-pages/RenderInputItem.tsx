@@ -5,15 +5,15 @@ import { getDictionary } from '@/utils/getDictionary';
 import * as Icons from '@mui/icons-material';
 import { Button } from '@mui/material';
 
-import ViewImageItem from '../../ViewImageItem';
-import ViewLabelItem from '../../ViewLabelItem';
-import ViewAreaItem from '../../ViewAreaItem';
-import ViewCheckBoxItem from '../../ViewCheckBoxItem';
-import ViewTableDynamicItem from '../../ViewTableDynamicItem';
-import ViewPostingItem from '../../ViewPostingItem';
-import ViewTableItem from '../../ViewTableItem';
-import ViewBannerItem from '../../ViewBannerItem';
-import ViewLabelBannerItem from '../../ViewLabelBannerItem';
+import ViewImageItem from '../../../../../views/components/ViewImageItem';
+import ViewLabelItem from '../../../../../views/components/ViewLabelItem';
+import ViewAreaItem from '../../../../../views/components/ViewAreaItem';
+import ViewCheckBoxItem from '../../../../../views/components/ViewCheckBoxItem';
+import ViewTableDynamicItem from '../../../../../views/components/ViewTableDynamicItem';
+import ViewPostingItem from '../../../../../views/components/ViewPostingItem';
+import ViewTableItem from '../../../../../views/components/ViewTableItem';
+import ViewBannerItem from '../../../../../views/components/ViewBannerItem';
+import ViewLabelBannerItem from '../../../../../views/components/ViewLabelBannerItem';
 
 // ============================================================================
 // Types

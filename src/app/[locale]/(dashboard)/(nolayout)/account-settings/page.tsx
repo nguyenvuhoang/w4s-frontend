@@ -7,7 +7,7 @@ import { UserAccount } from '@/types/bankType'
 import { getDictionary } from '@/utils/getDictionary'
 import { isValidResponse } from '@/utils/isValidResponse'
 import AccountSettingContent from '@/views/nolayout/account-settings/account-setting-content'
-import Logout from '@/views/pages/auth/Logout'
+import Logout from '@features/auth/hooks/useLogout'
 import jwt from 'jsonwebtoken'
 import { Suspense } from 'react'
 

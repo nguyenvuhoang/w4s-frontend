@@ -10,9 +10,9 @@ import { Box, Checkbox, FormControlLabel, Grid } from '@mui/material';
 import { Session } from 'next-auth';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { disableField } from './rule/disableField';
-import { isFieldHidden } from './rule/isFieldHidden';
-import { isFieldRequired } from './rule/isFieldRequired';
+import { disableField } from '../rule/disableField';
+import { isFieldHidden } from '../rule/isFieldHidden';
+import { isFieldRequired } from '../rule/isFieldRequired';
 
 type Props = {
   input: FormInput;

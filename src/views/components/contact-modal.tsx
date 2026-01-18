@@ -35,19 +35,19 @@ const ContactInfoModal = ({ dictionary }: {
                         {dictionary['common'].contactinformation}
                     </Typography>
 
-                    <div>
-                        <div className="flex items-center space-x-2 mb-3">
+                    <Box>
+                        <Box className="flex items-center space-x-2 mb-3">
                             <i className="ri-message-line text-[#A1C038] text-2xl"></i>
-                            <div>
+                            <Box>
                                 <Typography variant="body1">{dictionary['common'].chatwithdigibot}</Typography>
-                            </div>
-                        </div>
+                            </Box>
+                        </Box>
 
                         <Divider sx={{ my: 2 }} /> {/* Horizontal line */}
 
-                        <div className="flex items-center space-x-2 mb-3">
+                        <Box className="flex items-center space-x-2 mb-3">
                             <i className="ri-phone-line text-[#A1C038] text-2xl"></i>
-                            <div>
+                            <Box>
                                 <Typography variant="body1">{dictionary['common'].hotline} 24/7</Typography>
                                 <Typography variant="body2" color="textSecondary">
                                     +856 21 520520
@@ -55,21 +55,21 @@ const ContactInfoModal = ({ dictionary }: {
                                 <Typography variant="body2" color="textSecondary">
                                     www.emimfi.com
                                 </Typography>
-                            </div>
-                        </div>
+                            </Box>
+                        </Box>
 
                         <Divider sx={{ my: 2 }} /> {/* Horizontal line */}
 
-                        <div className="flex items-center space-x-2">
+                        <Box className="flex items-center space-x-2">
                             <i className="ri-building-line text-[#A1C038] text-2xl"></i>
-                            <div>
+                            <Box>
                                 <Typography variant="body1">{dictionary['common'].headoffice}</Typography>
                                 <Typography variant="body2" color="textSecondary">
                                     Saphanthong Nuear Village, Sisattanak District, Vientiane Capital,
                                 </Typography>
-                            </div>
-                        </div>
-                    </div>
+                            </Box>
+                        </Box>
+                    </Box>
                 </Box>
             </Modal>
         </div>

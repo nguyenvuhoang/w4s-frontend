@@ -7,7 +7,7 @@ import TransactionCoreAPIContent from '@/views/nolayout/transaction-coreapi'
 import TransactionCoreAPISkeleton from '@/views/nolayout/transaction-coreapi/TransactionCoreAPISkeleton'
 import TransactionCoreAPIError from '@/views/nolayout/transaction-coreapi/TransactionCoreAPIError'
 import { Suspense } from 'react'
-import ContentWrapper from '@/views/components/layout/content-wrapper'
+import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper'
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong'
 
 type Params = Promise<{

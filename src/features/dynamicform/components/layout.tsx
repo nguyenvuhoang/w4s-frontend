@@ -1,19 +1,19 @@
 'use client';
 
+import { useUserStore } from '@/@core/stores/useUserStore';
 import { Locale } from '@/configs/i18n';
 import { portalServiceApi } from '@/servers/portal-service';
 import { FormInput, FormLayout, PageData, RuleStrong, UserInRole } from '@/types/systemTypes';
 import { generatePathName } from '@/utils/generatePathName';
+import { generatePathNameView } from '@/utils/generatePathNameView';
 import { getDictionary } from '@/utils/getDictionary';
+import { getLocalizedUrl } from '@/utils/i18n';
 import { Session } from 'next-auth';
 import { usePathname, useRouter } from 'next/navigation';
 import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import RenderLayout from './layout/layout';
-import { getHiddenFields } from './rule/getHiddenFields';
-import { generatePathNameView } from '@/utils/generatePathNameView';
-import { useUserStore } from '@/@core/stores/useUserStore';
-import { getLocalizedUrl } from '@/utils/i18n';
+import { getHiddenFields } from './layout/rule/getHiddenFields';
 
 type Props = {
     datalayout: FormLayout[];

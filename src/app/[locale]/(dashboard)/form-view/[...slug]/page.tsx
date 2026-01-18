@@ -1,8 +1,8 @@
 import { generateAuthMetadata } from '@/components/layout/AuthLayout';
 import { Locale } from '@/configs/i18n';
 import { splitLabel } from '@/utils/splitLabel';
-import GenerateLayout from '@/views/components/layout/generate-layout';
-import LayoutRenderer from '@/views/components/layout/layout-renderer';
+import GenerateLayout from '@features/dynamicform/components/layout/generate-layout';
+import LayoutRenderer from '@features/dynamicform/components/layout/layout-renderer';
 import { Metadata } from 'next';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: Locale; slug?: string[] }> }): Promise<Metadata> {

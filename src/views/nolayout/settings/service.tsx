@@ -2,7 +2,7 @@
 
 import { getDictionary } from '@/utils/getDictionary'
 import Settings from '@/views/components/console-admin/Settings';
-import ContentWrapper from '@/views/components/layout/content-wrapper'
+import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper'
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import {
     Box

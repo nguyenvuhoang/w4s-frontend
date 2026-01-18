@@ -16,10 +16,10 @@ import { FormInput, PageData, RuleStrong } from '@/types/systemTypes';
 import { getDictionary } from '@/utils/getDictionary';
 import SwalAlert from '@/utils/SwalAlert';
 
-import { checkRules } from '../rule';
-import { checkButtonVisibility } from '../rule/checkButtonVisibility';
-import { disableButton } from '../rule/disableButton';
-import { handleRuleExecution } from '../rule/handleRuleExecution';
+import { checkRules } from '../../../features/dynamicform/components/layout/rule';
+import { checkButtonVisibility } from '../../../features/dynamicform/components/layout/rule/checkButtonVisibility';
+import { disableButton } from '../../../features/dynamicform/components/layout/rule/disableButton';
+import { handleRuleExecution } from '../../../features/dynamicform/components/layout/rule/handleRuleExecution';
 import { Locale } from '@/configs/i18n';
 
 export interface UseRenderButtonParams {

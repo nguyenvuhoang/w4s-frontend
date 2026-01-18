@@ -11,7 +11,7 @@ import AddBoxIcon from '@mui/icons-material/AddBox';
 import { Box, Button, Grid, Typography } from '@mui/material';
 import { Session } from 'next-auth';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import RenderLayout from './layout';
+import RenderLayout from '../../layout';
 import { useAdvanceSearchStore } from '@/@core/stores/advanceSearchStore';
 
 type Props = {
@@ -70,7 +70,7 @@ const RenderMultiValueDefault = ({
           formid: form_id + '_advanced_search',
         });
 
-        const pagecontentdetail = formcontentApi.payload.dataresponse.data.input;
+        const pagecontentdetail = formcontentApi.payload.dataresponse.data.data;
 
         if (pagecontentdetail?.form_design_detail) {
           const { list_layout: layout, info: form_info } = pagecontentdetail.form_design_detail;

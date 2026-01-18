@@ -4,7 +4,7 @@ import JsonEditorComponent from "@/@core/components/jSONEditor";
 import { WORKFLOWCODE } from "@/data/WorkflowCode";
 import { workflowService } from "@/servers/system-service";
 import { getDictionary } from "@/utils/getDictionary";
-import ContentWrapper from "@/views/components/layout/content-wrapper";
+import ContentWrapper from "@features/dynamicform/components/layout/content-wrapper";
 import SchemaIcon from "@mui/icons-material/Schema";
 import {
   Alert,

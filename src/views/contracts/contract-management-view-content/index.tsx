@@ -3,7 +3,7 @@
 
 import TabPanel from '@/components/tab/tab-panel';
 import { PageContentProps } from '@/types';
-import ContentWrapper from '@/views/components/layout/content-wrapper';
+import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper';
 import AutoAwesomeMosaicIcon from '@mui/icons-material/AutoAwesomeMosaic';
 import {
     Box,

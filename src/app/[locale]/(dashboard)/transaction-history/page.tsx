@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import { generateAuthMetadata } from '@/components/layout/AuthLayout';
-import ContentWrapper from '@/views/components/layout/content-wrapper';
+import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper';
 import BackupTableIcon from '@mui/icons-material/BackupTable';
 import { Locale } from '@/configs/i18n';
 import { systemServiceApi } from '@/servers/system-service';

@@ -60,8 +60,8 @@ const RenderPermissionPanel = ({ input, session, renderviewdata, dictionary }: P
                 txFo: loadmenu,
             });
 
-            if (response.status === 200 && response.payload?.dataresponse?.fo) {
-                return response.payload.dataresponse.fo[0].input.data;
+            if (response.status === 200 && response.payload?.dataresponse) {
+                return response.payload.dataresponse.data.input.data;
             }
         } catch (error) {
             console.error("Error fetching menu data:", error);
@@ -116,8 +116,8 @@ const RenderPermissionPanel = ({ input, session, renderviewdata, dictionary }: P
                 txFo: loadoperation,
             });
 
-            if (response.status === 200 && response.payload?.dataresponse?.fo) {
-                const operationsData = response.payload.dataresponse.fo[0]?.input?.data.operation_body || [];
+            if (response.status === 200 && response.payload?.dataresponse) {
+                const operationsData = response.payload.dataresponse.data.input?.data.operation_body || [];
                 setOperations(operationsData);
             } else {
                 console.warn("⚠️ No operations found for this menu!");

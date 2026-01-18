@@ -11,10 +11,10 @@ import SearchIcon from '@mui/icons-material/Search';
 import { Grid, IconButton, InputAdornment, TextField } from '@mui/material';
 import { Session } from 'next-auth';
 import { useState } from 'react';
-import LookupModal from './loopkup/modal';
-import { isFieldHidden } from './rule/isFieldHidden';
-import { isFieldRequired } from './rule/isFieldRequired';
-import { disableField } from './rule/disableField';
+import LookupModal from '../../../../../views/components/loopkup/modal';
+import { isFieldHidden } from '../rule/isFieldHidden';
+import { isFieldRequired } from '../rule/isFieldRequired';
+import { disableField } from '../rule/disableField';
 
 type Props = {
     input: FormInput;
@@ -66,9 +66,9 @@ const RenderLookupDefault = ({
             if (
                 response.status === 200 &&
                 response.payload?.dataresponse?.data &&
-                response.payload.dataresponse.data.input
+                response.payload.dataresponse.data.data
             ) {
-                const detail = response.payload.dataresponse.data.input;
+                const detail = response.payload.dataresponse.data.data;
 
                 const txFo_ = JSON.parse(input.config.txFo);
 

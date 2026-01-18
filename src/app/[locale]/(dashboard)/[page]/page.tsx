@@ -1,12 +1,10 @@
 import { auth } from '@/auth'
 import AuthorizedLayout from '@/components/layout/AuthorizedLayout'
 import PageError from '@/components/PageError'
-import Spinner from '@/components/spinners'
 import { i18n, Locale } from '@/configs/i18n'
 import { formService } from '@/servers/system-service'
 import { isValidResponse } from '@/utils/isValidResponse'
-import DynamicPageGeneric from '@/views/pages/dynamic-page-generic'
-import { Suspense } from 'react'
+import DynamicForm from './components/dynamic-form'
 
 type Params = Promise<{
     locale: Locale
@@ -42,16 +40,13 @@ const DynamicPage = async ({ params }: { params: Params }) => {
             params={await params}
         >
             {({ session, dictionary, locale }) => (
-                <Suspense fallback={<Spinner />}>
-                    <DynamicPageGeneric
-                        formdesigndetail={formdesigndetail}
-                        session={session}
-                        dictionary={dictionary}
-                        language={locale}
-                        roleTask={roleTask}
-                    />
-                </Suspense>
-
+                <DynamicForm
+                    formdesigndetail={formdesigndetail}
+                    session={session}
+                    dictionary={dictionary}
+                    language={locale}
+                    roleTask={roleTask}
+                />
             )}
         </AuthorizedLayout>
     )

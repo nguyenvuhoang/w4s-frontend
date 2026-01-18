@@ -3,7 +3,7 @@
 import { CoreConfigData } from '@/types/bankType';
 import { getDictionary } from '@/utils/getDictionary';
 import CoreSetting from '@/views/components/console-admin/Core';
-import ContentWrapper from '@/views/components/layout/content-wrapper';
+import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper';
 import HubIcon from '@mui/icons-material/Hub';
 import {
     Box

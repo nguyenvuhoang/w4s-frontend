@@ -3,7 +3,7 @@
 import { Locale } from '@/configs/i18n'
 import { PageContentProps } from '@/types'
 import { getDictionary } from '@/utils/getDictionary'
-import ContentWrapper from '@/views/components/layout/content-wrapper'
+import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper'
 
 import ApiIcon from '@mui/icons-material/Api'
 import RestartAltIcon from '@mui/icons-material/RestartAlt'

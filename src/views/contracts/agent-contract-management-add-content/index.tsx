@@ -6,7 +6,7 @@ import { systemServiceApi } from '@/servers/system-service';
 import { PageContentProps } from '@/types';
 import { fileToBase64 } from '@/utils/fileToBase64';
 import SwalAlert from '@/utils/SwalAlert';
-import ContentWrapper from '@/views/components/layout/content-wrapper';
+import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper';
 import AutoAwesomeMosaicIcon from '@mui/icons-material/AutoAwesomeMosaic';
 import {
   Box,

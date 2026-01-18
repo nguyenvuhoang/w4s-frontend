@@ -4,9 +4,9 @@ import { i18n, Locale } from '@/configs/i18n'
 import { systemServiceApi } from '@/servers/system-service'
 import { getDictionary } from '@/utils/getDictionary'
 import { isValidResponse } from '@/utils/isValidResponse'
-import DynamicPageGeneric from '@/views/pages/dynamic-page-generic'
+import DynamicPageGeneric from '@features/dynamicform/components/dynamic-page-generic'
 import { Suspense } from 'react'
-import Logout from '@/views/pages/auth/Logout'
+import Logout from '@features/auth/hooks/useLogout'
 import PageError from '@/components/PageError'
 
 type Params = Promise<{

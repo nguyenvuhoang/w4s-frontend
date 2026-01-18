@@ -1,5 +1,5 @@
 import { auth } from '@/auth';
-import Logout from '@/views/pages/auth/Logout';
+import Logout from '@features/auth/hooks/useLogout';
 import { getDictionary } from '@/utils/getDictionary';
 import { Locale } from '@/configs/i18n';
 import React from 'react';

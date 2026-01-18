@@ -5,7 +5,7 @@ import { PageContentProps } from '@/types';
 import { AccountChartType } from '@/types/bankType';
 import { PageData } from '@/types/systemTypes';
 import { getDictionary } from '@/utils/getDictionary';
-import ContentWrapper from '@/views/components/layout/content-wrapper';
+import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper';
 import { Session } from 'next-auth';
 
 import { useMemo } from 'react';

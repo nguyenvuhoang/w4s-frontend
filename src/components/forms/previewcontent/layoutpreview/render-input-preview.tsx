@@ -1,6 +1,6 @@
 import { Locale } from '@/configs/i18n';
 import { FormInput } from '@/types/systemTypes';
-import { isFieldRequired } from '@/views/components/rule/isFieldRequired';
+import { isFieldRequired } from '@features/dynamicform/components/layout/rule/isFieldRequired';
 import AcUnitIcon from '@mui/icons-material/AcUnit';
 import { Grid, InputAdornment, TextField } from '@mui/material';
 

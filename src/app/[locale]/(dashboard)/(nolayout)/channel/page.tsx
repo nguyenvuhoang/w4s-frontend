@@ -8,7 +8,7 @@ import ChannelContent from '@/views/nolayout/channel'
 import ChannelSkeleton from '@/views/nolayout/channel/ChannelSkeleton'
 import ChannelError from '@/views/nolayout/channel/ChannelError'
 import { Suspense } from 'react'
-import ContentWrapper from '@/views/components/layout/content-wrapper'
+import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper'
 
 type Params = Promise<{
     locale: Locale
