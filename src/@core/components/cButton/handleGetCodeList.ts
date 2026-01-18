@@ -1,11 +1,11 @@
 import { Locale } from "@/configs/i18n";
-import { systemServiceApi } from "@/servers/system-service";
+import { codeService } from "@/servers/system-service";
 import SwalAlert from "@/utils/SwalAlert";
 import { Session } from "next-auth";
 
 export const handleGetCodeList = async (session: Session | null, codegroup: string, codename: string, language: Locale) => {
     try {
-        const response = await systemServiceApi.getCdListFromACT({
+        const response = await codeService.getCdListFromACT({
             sessiontoken: session?.user?.token as string,
             language: language,
             codegroup: codegroup,
@@ -14,14 +14,14 @@ export const handleGetCodeList = async (session: Session | null, codegroup: stri
 
         const dataresponse = response.payload.dataresponse;
 
-        const errorInfo = dataresponse.error;
+        const errorInfo = dataresponse.errors;
 
         if (errorInfo.length > 0) {
             SwalAlert('error', 'Please check code list config. Maybe have no config code group or code name', 'center');
             return undefined;
         }
 
-        return dataresponse.fo[0].input;
+        return dataresponse.data.input;
 
     } catch (error) {
         console.log(error);

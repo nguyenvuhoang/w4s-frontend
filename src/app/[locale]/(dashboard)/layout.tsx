@@ -1,33 +1,33 @@
 // src/app/[locale]/(dashboard)/(portal)/layout.tsx
-import { Suspense } from 'react'
-import { redirect } from 'next/navigation'
-import { Skeleton } from '@mui/material'
-import Providers from '@/components/Providers'
-import VerticalLayout from '@/@layouts/VerticalLayout'
+import Navbar from '@/@layouts/components/vertical/Navbar'
 import HorizontalLayout from '@/@layouts/HorizontalLayout'
 import LayoutWrapper from '@/@layouts/LayoutWrapper'
+import VerticalLayout from '@/@layouts/VerticalLayout'
+import GlobalSignalRLogoutListener from '@/components/GlobalSignalRLogoutListener'
 import Navigation from '@/components/layout/vertical/Navigation'
-import Navbar from '@/@layouts/components/vertical/Navbar'
-import HeaderHorizontal from '@components/layout/horizontal/Header'
-import HorizontalFooter from '@components/layout/horizontal/Footer'
+import Providers from '@/components/Providers'
 import Spinner from '@/components/spinners'
 import AuthGuard from '@/hocs/AuthGuard'
 import IdleTimer from '@/hocs/IdleTimer'
 import ErrorPage from '@/views/Error'
-import ChangePassword from '@/views/ChangePassword'
-import GlobalSignalRLogoutListener from '@/components/GlobalSignalRLogoutListener'
+import HorizontalFooter from '@components/layout/horizontal/Footer'
+import HeaderHorizontal from '@components/layout/horizontal/Header'
+import { Skeleton } from '@mui/material'
+import { redirect } from 'next/navigation'
+import { Suspense } from 'react'
 
-import { auth } from '@/auth'
-import { formService, systemServiceApi } from '@/servers/system-service'
-import { i18n } from '@configs/i18n'
-import { getDictionary } from '@/utils/getDictionary'
-import { isValidResponse } from '@/utils/isValidResponse'
-import { AUTHENTICATION_ERROR_STATUS, BAD_REQUEST } from '@/servers/lib/http'
-import type { ChildrenType } from '@core/types'
-import type { Locale } from '@configs/i18n'
-import { unstable_cache as cache } from 'next/cache'
 import { InitUserStore } from '@/@core/stores/InitUserStore'
+import { auth } from '@/auth'
+import { AUTHENTICATION_ERROR_STATUS, BAD_REQUEST } from '@/servers/lib/http'
+import { formService } from '@/servers/system-service'
+import { getDictionary } from '@/utils/getDictionary'
 import { getLocalizedUrl } from '@/utils/i18n'
+import { isValidResponse } from '@/utils/isValidResponse'
+import type { Locale } from '@configs/i18n'
+import { i18n } from '@configs/i18n'
+import type { ChildrenType } from '@core/types'
+import { unstable_cache as cache } from 'next/cache'
+import ChangePassword from '../(auth-layout-pages)/change-password/components'
 
 const getDictionaryCached = cache(
     async (locale: Locale) => getDictionary(locale),
@@ -113,14 +113,14 @@ async function PortalLayoutContent({
     if (isfirstlogin) {
         return (
             <Providers initialAvatar={avatar}>
-                <ChangePassword dictionary={dictionary} session={session} loginname={login_name} />
+                <ChangePassword dictionary={dictionary} session={session} locale={locale} />
             </Providers>
         )
     }
 
     return (
         <Providers initialAvatar={avatar}>
-            <AuthGuard locale={locale}>
+            <AuthGuard locale={locale} dictionary={dictionary} >
                 <IdleTimer locale={locale}>
                     {/* Global SignalR listener for remote logout */}
                     <GlobalSignalRLogoutListener dictionary={dictionary} locale={locale} />

@@ -1,13 +1,12 @@
 // app/[locale]/(auth)/layout.tsx
+import type { Locale } from '@/configs/i18n'
+import { siteConfig } from '@/data/meta'
+import { Metadata } from 'next'
 import { Suspense } from 'react'
 import AuthPayload from './AuthPayload'
-import type { Locale } from '@/configs/i18n'
-import type { Mode } from '@core/types'
-import { Metadata } from 'next'
-import { siteConfig } from '@/data/meta';
 
 interface AuthLayoutProps {
-    children: (props: { mode: Mode; dictionary: any; locale: Locale }) => React.ReactElement
+    children: (props: { dictionary: any; locale: Locale }) => React.ReactElement
     params: { locale: Locale }
 }
 

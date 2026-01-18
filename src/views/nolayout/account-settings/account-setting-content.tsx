@@ -41,7 +41,7 @@ import {
 } from '@mui/material'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import ChangePasswordForm from './change-password-form'
+import ChangePasswordForm from '../../../features/user/components/change-password-form'
 import { Session } from 'next-auth'
 
 type PageProps = {

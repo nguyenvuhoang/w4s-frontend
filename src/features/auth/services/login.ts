@@ -1,4 +1,3 @@
-// services/login.ts
 
 import { getDeviceInfo } from '@/utils/getDeviceInfo';
 import { getLocalizedUrl } from '@/utils/i18n';

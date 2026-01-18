@@ -49,6 +49,9 @@
       ],
       "@lib/*": [
         "./src/libs/*"
+      ],
+      "@features/*": [
+        "./src/features/*"
       ]
     }
   },

@@ -1,13 +1,14 @@
 // Type Imports
-import type { Locale } from '@configs/i18n'
-import type { ChildrenType } from '@core/types'
-
+import type { Locale } from '@configs/i18n';
+import type { ChildrenType } from '@core/types';
 // Component Imports
-import AuthRedirect from '@/components/AuthRedirect'
-import React from 'react'
-import { auth } from '@/auth'
+import RequireSession from '@/hocs/RequireSession';
+import { getDictionary } from '@/utils/getDictionary';
 
-export default async function AuthGuard({ children, locale }: ChildrenType & { locale: Locale }) {
-  const session = await auth()
-  return <>{session ? children : <AuthRedirect locale={locale as Locale} />}</>
+export default function AuthGuard({ children, locale, dictionary }:
+  ChildrenType & {
+    locale: Locale,
+    dictionary: Awaited<ReturnType<typeof getDictionary>>
+  }) {
+  return <RequireSession locale={locale} dictionary={dictionary}>{children}</RequireSession>;
 }

@@ -15,7 +15,6 @@ import { getLocalizedUrl } from '@/utils/i18n'
 const AuthRedirect = ({ locale }: { locale: Locale }) => {
   const pathname = usePathname()
 
-  // ℹ️ Bring me `lang`
   const redirectUrl = `/${locale}/login?redirectTo=${pathname}`
   const login = `/${locale}/login`
   const homePage = getLocalizedUrl(themeConfig.homePageUrl, locale)
