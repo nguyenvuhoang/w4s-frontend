@@ -14,7 +14,7 @@ export interface SystemDataRequest {
     sessiontoken: string
     language: Locale,
     formid?: string
-
+    application?: string
 }
 export interface SystemViewDataRequest {
     sessiontoken: string
@@ -46,14 +46,23 @@ export interface UserInRole {
     created_on_utc: Date,
     id: number
 }
+export interface RoleChannel {
+    id: number,
+    channel_id: string
+    channel_name: string
+    sort_order: number
+    app_icon?: string
+    description?: string
+}
 export interface SystemData {
     user_command: VerticalSubMenuDataType[]
     avatar: string
     name: string
     role: UserInRole[]
     is_agreement: boolean | string
-    is_first_login : boolean | string
+    is_first_login: boolean | string
     login_name: string
+    role_channel: RoleChannel[]
 }
 
 export interface SystemDataResponse extends ResponseDefaultData<DefaultData> {
@@ -61,6 +70,10 @@ export interface SystemDataResponse extends ResponseDefaultData<DefaultData> {
     dataresponse: ResponseDefault<SystemData>
 }
 
+export interface SystemDataListResponse extends ResponseDefaultData<DefaultData> {
+    requireLogout: any;
+    dataresponse: ResponseListDefault<SystemData>
+}
 export interface UpdateTokenRealResponse {
     status: string
 }
@@ -210,7 +223,7 @@ export interface FormDataResponse extends ResponseDefaultData<DefaultData> {
 
 export interface MenuDataResponse extends ResponseDefaultData<DefaultData> {
     dataresponse: FormResponseData<MenuItem>
-} 
+}
 
 export type FormInput = {
     inputtype: string;
@@ -317,7 +330,7 @@ export interface UpdateDataRequest {
 }
 
 export interface ViewDataResponse extends ResponseDefaultData<DefaultData> {
-    dataresponse: ResponseDefault<ResponseData<ResponseDefaultPortal<any> | any>> 
+    dataresponse: ResponseDefault<ResponseData<ResponseDefaultPortal<any> | any>>
 }
 
 
@@ -381,7 +394,7 @@ export interface MenuItem {
     group_menu_visible: string
     group_menu_id: any
     group_menu_list_authorize_form: any
-    enable : boolean
+    enable: boolean
 }
 
 export interface Operation {

@@ -1,28 +1,28 @@
 'use client'
 
 // React Imports
-import { useRef, useState } from 'react'
 import type { MouseEvent } from 'react'
+import { useState } from 'react'
 
 // Next Imports
 import { useParams, useRouter } from 'next/navigation'
 
 // MUI Imports
-import { styled } from '@mui/material/styles'
-import Badge from '@mui/material/Badge'
 import Avatar from '@mui/material/Avatar'
-import Popper from '@mui/material/Popper'
-import Fade from '@mui/material/Fade'
-import Paper from '@mui/material/Paper'
-import ClickAwayListener from '@mui/material/ClickAwayListener'
-import MenuList from '@mui/material/MenuList'
-import Typography from '@mui/material/Typography'
-import Divider from '@mui/material/Divider'
-import MenuItem from '@mui/material/MenuItem'
+import Badge from '@mui/material/Badge'
 import Button from '@mui/material/Button'
+import ClickAwayListener from '@mui/material/ClickAwayListener'
+import Divider from '@mui/material/Divider'
+import Fade from '@mui/material/Fade'
+import MenuItem from '@mui/material/MenuItem'
+import MenuList from '@mui/material/MenuList'
+import Paper from '@mui/material/Paper'
+import Popper from '@mui/material/Popper'
+import { styled } from '@mui/material/styles'
+import Typography from '@mui/material/Typography'
 
 // Third-party Imports
-import { signOut, useSession } from 'next-auth/react'
+import { signOut } from 'next-auth/react'
 
 // Type Imports
 import type { Locale } from '@configs/i18n'
@@ -31,8 +31,8 @@ import type { Locale } from '@configs/i18n'
 import { useSettings } from '@core/hooks/useSettings'
 
 // Util Imports
-import { getLocalizedUrl } from '@/utils/i18n'
 import { getDictionary } from '@/utils/getDictionary'
+import { getLocalizedUrl } from '@/utils/i18n'
 import { Box } from '@mui/material'
 
 // Styled component for badge content
@@ -53,33 +53,34 @@ const UserDropdown = ({ avatar, name, dictionary }: {
   // States
   const [open, setOpen] = useState(false)
 
-  // Refs
-  const anchorRef = useRef<HTMLDivElement>(null)
+  // Anchor element for Popper
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
 
   // Hooks
   const router = useRouter()
   const { settings } = useSettings()
   const { locale } = useParams()
 
-  const handleDropdownOpen = () => {
-    !open ? setOpen(true) : setOpen(false)
+  const handleDropdownOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget)
+    setOpen(true)
   }
 
   const handleDropdownClose = (event?: MouseEvent<HTMLLIElement> | (MouseEvent | TouchEvent), url?: string) => {
     if (url) {
       router.push(getLocalizedUrl(url, locale as Locale))
     }
-
-    if (anchorRef.current && anchorRef.current.contains(event?.target as HTMLElement)) {
+    // If click is inside the anchor element, do nothing
+    if (anchorEl && event && anchorEl.contains(event.target as Node)) {
       return
     }
-
     setOpen(false)
+    setAnchorEl(null)
   }
 
   const handleUserLogout = async () => {
     try {
-      await signOut({ callbackUrl: process.env.NEXT_PUBLIC_APP_URL })
+      router.push(`${getLocalizedUrl('/logout', locale as Locale)}`)
     } catch (error) {
       console.error(error)
     }
@@ -88,14 +89,12 @@ const UserDropdown = ({ avatar, name, dictionary }: {
   return (
     <>
       <Badge
-        ref={anchorRef}
         overlap='circular'
         badgeContent={<BadgeContentSpan onClick={handleDropdownOpen} />}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         className='mis-2'
       >
         <Avatar
-          ref={anchorRef}
           alt={name || ''}
           src={avatar || ''}
           onClick={handleDropdownOpen}
@@ -107,7 +106,7 @@ const UserDropdown = ({ avatar, name, dictionary }: {
         transition
         disablePortal
         placement='bottom-end'
-        anchorEl={anchorRef.current}
+        anchorEl={anchorEl}
         className='min-is-[240px] !mbs-4 z-[1]'
       >
         {({ TransitionProps, placement }) => (

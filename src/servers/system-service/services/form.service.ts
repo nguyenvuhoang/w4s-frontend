@@ -1,6 +1,6 @@
 import { WORKFLOWCODE } from '@/data/WorkflowCode';
 import { env } from '@/env.mjs';
-import { FormDataResponse, SystemDataRequest, SystemDataResponse } from "@/types/systemTypes";
+import { FormDataResponse, SystemDataListResponse, SystemDataRequest, SystemDataResponse } from "@/types/systemTypes";
 import { apiPost, createDefaultBody } from '../../lib/api';
 import http from "../../lib/http";
 
@@ -39,7 +39,10 @@ export const formService = {
                 applicationcode: env.NEXT_PUBLIC_APPLICATION_CODE ?? ''
             }),
             sessiontoken,
-            { lang: language, app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'SYS' }
+            {
+                lang: language,
+                app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'SYS'
+            }
         ),
 
     /**
@@ -54,4 +57,17 @@ export const formService = {
                 baseUrl: process.env.NEXT_PUBLIC_API_URL,
             }
         ),
+
+    getMenuInfo: ({ sessiontoken, language, application }: SystemDataRequest) =>
+        apiPost<SystemDataListResponse>('/system-service',
+            createDefaultBody(WORKFLOWCODE.WF_BO_LOAD_MENU, {
+                channel_id: application ?? env.NEXT_PUBLIC_APPLICATION_CODE ?? ''
+            }),
+            sessiontoken,
+            {
+                lang: language,
+                app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'SYS'
+            }
+        ),
+
 }

@@ -21,7 +21,7 @@ import { checkButtonVisibility } from '../components/layout/rule/checkButtonVisi
 import { disableButton } from '../components/layout/rule/disableButton';
 import { handleRuleExecution } from '../components/layout/rule/handleRuleExecution';
 import { Locale } from '@/configs/i18n';
-import { performTransaction } from '@/features/dynamicform/services/transactionService';
+import { performTransaction } from '@features/dynamicform/services/transactionService';
 
 export interface UseRenderButtonParams {
   input: FormInput;

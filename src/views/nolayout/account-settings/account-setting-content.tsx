@@ -42,7 +42,7 @@ import {
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Session } from 'next-auth'
-import ChangePasswordForm from '@/features/user/components/ChangePasswordForm'
+import ChangePasswordForm from '@features/user/components/ChangePasswordForm'
 
 type PageProps = {
     userdata: UserAccount

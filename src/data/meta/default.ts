@@ -18,7 +18,7 @@ export function fullURL(path = "", host = appHost()): URL {
  * @returns the hostname for the given environment.
  */
 export function appHost(includeProtocol = true): string {
-  const host = process.env.NEXT_PUBLIC_APP_URL ?? "https://API Manager.com"
+  const host = process.env.NEXT_PUBLIC_APP_URL ?? "https://Enterprise Console.com"
 
   return includeProtocol ? host : (
     host.replace("https://", "").replace("http://", "")
@@ -38,10 +38,10 @@ const links = {
 };
 
 export const siteConfig = {
-  name: "API Manager",
-  shortName: "API Manager",
+  name: "Enterprise Console",
+  shortName: "Enterprise Console",
   author: "JITS",
-  description: "API Manager",
+  description: "Enterprise Console",
   company: {
     name: "EMI",
     link: "https://github.com/",
@@ -52,7 +52,7 @@ export const siteConfig = {
     twitter: "@nguyenvuhoangz",
   },
   keywords: [
-    "API Manager"
+    "Enterprise Console"
   ],
   url: {
     base: env.NEXT_PUBLIC_APP_URL,
@@ -60,7 +60,7 @@ export const siteConfig = {
   },
   ogImage: `${env.NEXT_PUBLIC_APP_URL}/img/logo-seo.png`,
   links,
-  title: 'API Manager',
+  title: 'Enterprise Console',
   companyname: 'EKPHATTHANA MICROFINANCE INSTITUTION (“EMI”)',
   companyadress: "Saphanthong nuear Village, Sisattanak District, Vientiane Capital, Lao PDR",
   companyphone: "Tel: +856 21 520 520",

@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import { Locale } from '@/configs/i18n';
-import { systemServiceApi } from '@/servers/system-service';
+import { formService, systemServiceApi } from '@/servers/system-service';
 import { getAccessibleRoutes, hasRouteAccess } from '@/utils/authorization';
 import { getDictionary } from '@/utils/getDictionary';
 import { getLocalizedUrl } from '@/utils/i18n';
@@ -10,6 +10,7 @@ import ErrorPage from '@/views/Error';
 import type { Mode } from '@core/types';
 import { Metadata } from 'next';
 import { Session } from 'next-auth';
+import { cookies } from 'next/headers';
 import { notFound, redirect } from 'next/navigation';
 import { JSX } from 'react';
 
@@ -77,8 +78,8 @@ interface AuthorizedLayoutProps {
  * - Server-side check cannot be bypassed by client manipulation
  * - Works even if menu is hidden on client side
  */
-const AuthorizedLayout = async ({ 
-    children, 
+const AuthorizedLayout = async ({
+    children,
     params,
     requiredPath,
     unauthorizedBehavior = 'redirect'
@@ -97,10 +98,14 @@ const AuthorizedLayout = async ({
         redirect(getLocalizedUrl('/logout', resolvedParams.locale));
     }
 
+    const cookieStore = await cookies()
+    let application = cookieStore.get('app')?.value as string | undefined
+
     // Fetch user's authorized commands/menu structure
-    const systemData = await systemServiceApi.getSystemInfo({
+    const systemData = await formService.getMenuInfo({
         sessiontoken: session.user.token as string,
-        language: resolvedParams.locale
+        language: resolvedParams.locale,
+        application: application
     });
 
     // Validate API response
@@ -118,8 +123,8 @@ const AuthorizedLayout = async ({
         return <ErrorPage error={errorString} side="server" />;
     }
 
-    const datainput = systemData.payload.dataresponse.data
-    const userCommand = datainput?.user_command;
+    const datainput = systemData.payload.dataresponse.data.data as any;
+    const userCommand = datainput || [];
 
     // **AUTHORIZATION CHECK**
     const hasAccess = hasRouteAccess(userCommand, requiredPath);
@@ -137,7 +142,7 @@ const AuthorizedLayout = async ({
     // Handle unauthorized access
     if (!hasAccess) {
         console.warn(`[AuthorizedLayout] Unauthorized access attempt to ${requiredPath} by ${datainput?.name || 'unknown'}`);
-        
+
         switch (unauthorizedBehavior) {
             case 'notfound':
                 notFound(); // Shows 404 page

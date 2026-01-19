@@ -31,6 +31,7 @@ import VeriticalSubNav from '@/@menu/components/vertical-menu/VeriticalSubNav'
 import { VerticalSubMenuDataType } from '@/types/menuTypes'
 import navigationCustomStyles from '@core/styles/vertical/navigationCustomStyles'
 import VerticalSubMenu from './VerticalSubMenu'
+import { MenuItem } from '@/types/systemTypes'
 
 type Props = {
   dictionary: Awaited<ReturnType<typeof getDictionary>>

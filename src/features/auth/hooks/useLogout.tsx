@@ -39,11 +39,14 @@ const useLogout = ({
           throw new Error('Logout failed')
         }
 
-        // Clear any local storage tokens
+        // Clear any local storage tokens và gọi API xóa cookie app ở server
         if (typeof window !== 'undefined') {
           localStorage.removeItem('token')
           localStorage.removeItem('refresh_token')
         }
+
+        await fetch('/api/clear-app', { method: 'POST', credentials: 'include' })
+
 
         // Allow a paint frame before redirecting so the logout UI is visible briefly
         if (typeof window !== 'undefined') {

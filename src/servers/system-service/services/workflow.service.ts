@@ -2,6 +2,7 @@ import { env } from '@/env.mjs';
 import { BODataResponse, FODataResponse, RunBoDynamicDataRequest, RunDynamicDataRequest, RunFoDataRequest, RunFoDynamicDataRequest, SearchDataRequest, ViewDataResponse } from "@/types/systemTypes";
 import { apiPost, createDefaultBody } from '../../lib/api';
 import http from "../../lib/http";
+import Cookies from 'js-cookie';
 
 /**
  * Workflow Service
@@ -27,6 +28,7 @@ export const workflowService = {
             } as any);
         }
 
+        const selectedApp = Cookies.get('selected_app') || 'PORTAL';
         return http.post<BODataResponse>('/system-service',
             {
                 bo: [
@@ -47,7 +49,7 @@ export const workflowService = {
                 baseUrl: process.env.NEXT_PUBLIC_API_URL,
                 headers: {
                     uid: `${sessiontoken}`,
-                    app: 'PORTAL'
+                    app: selectedApp
                 }
             })
     },
@@ -56,25 +58,28 @@ export const workflowService = {
      * Run Function Object (FO) operation
      */
     runFO: ({ sessiontoken, learnapi, workflowid }: RunFoDataRequest) =>
-        http.post<FODataResponse>('/system-service',
-            {
-                bo: [
-                    {
-                        use_microservice: true,
-                        input: {
-                            learn_api: learnapi,
-                            workflowid: workflowid
+        (() => {
+            const selectedApp = Cookies.get('selected_app') || env.NEXT_PUBLIC_APPLICATION_CODE || 'BO';
+            return http.post<FODataResponse>('/system-service',
+                {
+                    bo: [
+                        {
+                            use_microservice: true,
+                            input: {
+                                learn_api: learnapi,
+                                workflowid: workflowid
+                            }
                         }
+                    ]
+                },
+                {
+                    baseUrl: process.env.NEXT_PUBLIC_API_URL,
+                    headers: {
+                        uid: `${sessiontoken}`,
+                        app: selectedApp
                     }
-                ]
-            },
-            {
-                baseUrl: process.env.NEXT_PUBLIC_API_URL,
-                headers: {
-                    uid: `${sessiontoken}`,
-                    app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
-                }
-            }),
+                })
+        })(),
 
     /**
      * Run Function Object (FO) with dynamic input
@@ -99,16 +104,19 @@ export const workflowService = {
      * Run Business Object (BO) with dynamic transaction
      */
     runBODynamic: ({ sessiontoken, txFo, encrypt }: RunBoDynamicDataRequest & { encrypt?: boolean }) =>
-        http.post<FODataResponse>('/system-service',
-            txFo,
-            {
-                baseUrl: process.env.NEXT_PUBLIC_API_URL,
-                headers: {
-                    uid: `${sessiontoken}`,
-                    app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
-                },
-                encrypt
-            }),
+        (() => {
+            const selectedApp = Cookies.get('selected_app') || env.NEXT_PUBLIC_APPLICATION_CODE || 'BO';
+            return http.post<FODataResponse>('/system-service',
+                txFo,
+                {
+                    baseUrl: process.env.NEXT_PUBLIC_API_URL,
+                    headers: {
+                        uid: `${sessiontoken}`,
+                        app: selectedApp
+                    },
+                    encrypt
+                })
+        })(),
 
     /**
      * Run dynamic workflow with custom body
