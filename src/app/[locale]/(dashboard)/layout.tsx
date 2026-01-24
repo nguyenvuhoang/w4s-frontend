@@ -169,7 +169,13 @@ async function PortalLayoutContent({ children, params }: ChildrenType & { params
                         }
                         horizontalLayout={
                             <HorizontalLayout
-                                header={<HeaderHorizontal menu={usercommand} avatar={avatar} name={name} dictionary={dictionary} />}
+                                header={<HeaderHorizontal
+                                    menu={usercommand}
+                                    avatar={avatar}
+                                    name={name}
+                                    dictionary={dictionary}
+                                    roleChannel={roleChannel}
+                                />}
                                 footer={<HorizontalFooter />}
                             >
                                 <InitUserStore name={name} avatar={avatar} role={role} />

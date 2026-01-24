@@ -85,6 +85,7 @@ const LanguageDropdown = () => {
         transition
         disablePortal
         placement='bottom-start'
+        // eslint-disable-next-line react-hooks/refs
         anchorEl={anchorRef.current}
         className='min-is-[160px] !mbs-4 z-[1]'
       >
