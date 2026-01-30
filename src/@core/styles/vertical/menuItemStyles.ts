@@ -20,36 +20,36 @@ const menuItemStyles = (verticalNavOptions: VerticalNavState, theme: Theme): Men
     root: ({ level }) => ({
       ...(!isPopoutWhenCollapsed || popoutExpanded || (popoutCollapsed && level === 0)
         ? {
-            marginBlockStart: theme.spacing(2)
-          }
+          marginBlockStart: theme.spacing(2)
+        }
         : {
-            marginBlockStart: 0
-          }),
+          marginBlockStart: 0
+        }),
       [`&.${menuClasses.subMenuRoot}.${menuClasses.open} > .${menuClasses.button}, &.${menuClasses.subMenuRoot} > .${menuClasses.button}.${menuClasses.active}`]:
-        {
-          backgroundImage: 'linear-gradient(290deg, #EAF6FF 9.78%, #F3FFE9 109.56%) !important',
-          color: '#066a4c'
-        },
+      {
+        backgroundImage: 'linear-gradient(290deg, #EAF6FF 9.78%, #F3FFE9 109.56%) !important',
+        color: '#066a4c'
+      },
       [`&.${menuClasses.disabled} > .${menuClasses.button}`]: {
         color: 'var(--mui-palette-text-disabled)'
       },
       [`&:not(.${menuClasses.subMenuRoot}) > .${menuClasses.button}.${menuClasses.active}`]: {
         ...(popoutCollapsed && level > 0
           ? {
-              backgroundImage: 'linear-gradient(290deg, #EAF6FF 9.78%, #F3FFE9 109.56%) !important;',
-              color: '#066a4c !important;',
-              [`& .${menuClasses.icon}`]: {
-                color: 'var(--mui-palette-primary-main)'
-              }
+            backgroundImage: 'linear-gradient(290deg, #EAF6FF 9.78%, #F3FFE9 109.56%) !important',
+            color: '#066a4c !important',
+            [`& .${menuClasses.icon}`]: {
+              color: 'var(--mui-palette-primary-main)'
             }
+          }
           : {
-              color: '#066a4c !important;',
-              backgroundImage: 'linear-gradient(290deg, #EAF6FF 9.78%, #F3FFE9 109.56%) !important;',
-              boxShadow: 'var(--mui-customShadows-xs)',
-              [`& .${menuClasses.icon}`]: {
-                color: '#066a4c !important;'
-              }
-            })
+            color: '#066a4c !important',
+            backgroundImage: 'linear-gradient(290deg, #EAF6FF 9.78%, #F3FFE9 109.56%) !important',
+            boxShadow: 'var(--mui-customShadows-xs)',
+            [`& .${menuClasses.icon}`]: {
+              color: '#066a4c !important'
+            }
+          })
       }
     }),
     button: ({ level, active }) => ({
@@ -87,8 +87,8 @@ const menuItemStyles = (verticalNavOptions: VerticalNavState, theme: Theme): Men
       }),
       ...(level === 1 &&
         !popoutCollapsed && {
-          marginInlineStart: theme.spacing(1.5)
-        }),
+        marginInlineStart: theme.spacing(1.5)
+      }),
       ...(level > 1 && {
         marginInlineStart: theme.spacing((popoutCollapsed ? 0 : 1.5) + 2.5 * (level - 1))
       }),
@@ -97,8 +97,8 @@ const menuItemStyles = (verticalNavOptions: VerticalNavState, theme: Theme): Men
       }),
       ...(popoutCollapsed &&
         level > 0 && {
-          marginInlineEnd: theme.spacing(2)
-        }),
+        marginInlineEnd: theme.spacing(2)
+      }),
       '& > i, & > svg': {
         fontSize: 'inherit'
       }
@@ -130,17 +130,17 @@ const menuItemStyles = (verticalNavOptions: VerticalNavState, theme: Theme): Men
       backgroundColor: popoutCollapsed ? 'var(--mui-palette-background-paper)' : 'transparent',
       ...(popoutCollapsed &&
         level === 0 && {
-          paddingBlock: theme.spacing(2),
-          borderRadius: 'var(--mui-shape-borderRadius)',
-          boxShadow: 'var(--mui-customShadows-lg)',
-          '[data-skin="bordered"] &': {
-            boxShadow: 'none',
-            border: '1px solid var(--mui-palette-divider)'
-          },
-          [`& .${menuClasses.button}`]: {
-            paddingInline: theme.spacing(4)
-          }
-        })
+        paddingBlock: theme.spacing(2),
+        borderRadius: 'var(--mui-shape-borderRadius)',
+        boxShadow: 'var(--mui-customShadows-lg)',
+        '[data-skin="bordered"] &': {
+          boxShadow: 'none',
+          border: '1px solid var(--mui-palette-divider)'
+        },
+        [`& .${menuClasses.button}`]: {
+          paddingInline: theme.spacing(4)
+        }
+      })
     })
   }
 }
