@@ -3,9 +3,9 @@
 
 import { getDataConfig } from '@/@core/components/jSelect/supFunc';
 import { Locale } from '@/configs/i18n';
-import { FormInput, RuleStrong } from '@/types/systemTypes';
-import { generateParams } from '@/utils/generateParams';
-import { getDictionary } from '@/utils/getDictionary';
+import { FormInput, RuleStrong } from '@shared/types/systemTypes';
+import { generateParams } from '@utils/generateParams';
+import { getDictionary } from '@utils/getDictionary';
 import AcUnitIcon from '@mui/icons-material/AcUnit';
 import { Box, FormControl, Grid, InputLabel, MenuItem, Select } from '@mui/material';
 import { Session } from 'next-auth';
@@ -14,7 +14,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { disableField } from '../rule/disableField';
 import { isFieldHidden } from '../rule/isFieldHidden';
 import { isFieldRequired } from '../rule/isFieldRequired';
-import { evaluateDefault } from '@/utils/evaluateDefault';
+import { evaluateDefault } from '@utils/evaluateDefault';
 
 type Props = {
   input: FormInput;
@@ -184,3 +184,4 @@ const RenderSelectDefault = ({
 };
 
 export default RenderSelectDefault;
+

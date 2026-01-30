@@ -2,10 +2,10 @@
 'use client';
 
 import { useState } from 'react';
-import SwalAlert from '@/utils/SwalAlert';
+import SwalAlert from '@utils/SwalAlert';
 import { WORKFLOWCODE } from '@/data/WorkflowCode';
 import { workflowService } from '@/servers/system-service';
-import { Contract, Contractaccount } from '@/types/bankType';
+import { Contract, Contractaccount } from '@shared/types/bankType';
 import { Session } from 'next-auth';
 
 export const useUpdateBankAccountHandler = ({
@@ -41,7 +41,7 @@ export const useUpdateBankAccountHandler = ({
                 return;
             }
 
-            // 👉 cố gắng lấy list account từ fo
+            // ðŸ‘‰ cá»‘ gáº¯ng láº¥y list account tá»« fo
             const fo = response.payload?.dataresponse.data.input ?? [];
             let accounts: Contractaccount[] = [];
             for (const item of fo) {
@@ -62,3 +62,4 @@ export const useUpdateBankAccountHandler = ({
 
     return { loading, handleSync };
 };
+

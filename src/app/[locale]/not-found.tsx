@@ -9,7 +9,7 @@ import NotFound from '@views/NotFound'
 import { i18n } from '@configs/i18n'
 
 // Util Imports
-import FallbackSpinner from '@/components/spinners'
+import FallbackSpinner from '@components/spinners'
 import { Suspense } from 'react'
 
 export async function generateStaticParams() {

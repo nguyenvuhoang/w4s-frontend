@@ -3,7 +3,7 @@
 
 import { useEffect } from 'react'
 import { useUserStore } from '@/@core/stores/useUserStore'
-import type { UserInRole } from '@/types/systemTypes'
+import type { UserInRole } from '@shared/types/systemTypes'
 
 export const InitUserStore = ({
   name,
@@ -20,3 +20,4 @@ export const InitUserStore = ({
 
   return null
 }
+

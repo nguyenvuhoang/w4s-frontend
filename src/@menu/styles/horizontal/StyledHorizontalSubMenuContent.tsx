@@ -2,7 +2,7 @@
 import styled from '@emotion/styled'
 
 // Type Imports
-import type { SubMenuContentProps } from '../../components/horizontal-menu/SubMenuContent'
+import type { SubMenuContentProps } from '@components/horizontal-menu/SubMenuContent'
 
 const StyledHorizontalSubMenuContent = styled.div<SubMenuContentProps>`
   inline-size: 260px;

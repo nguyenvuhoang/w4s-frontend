@@ -6,7 +6,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import SearchIcon from '@mui/icons-material/Search'
 import VisibilityIcon from '@mui/icons-material/Visibility'
-import { getDictionary } from '@/utils/getDictionary'
+import { getDictionary } from '@utils/getDictionary'
 
 interface MenuManagementSkeletonProps {
   dictionary: Awaited<ReturnType<typeof getDictionary>>
@@ -121,3 +121,4 @@ const MenuManagementSkeleton = ({ dictionary }: MenuManagementSkeletonProps) => 
 }
 
 export default MenuManagementSkeleton
+

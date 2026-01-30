@@ -1,8 +1,8 @@
 /**
  * Secure Login API Route
  * 
- * API endpoint xử lý login với End-to-End Encryption (AES-256-GCM).
- * Giải mã request, xác thực, và trả về kết quả.
+ * API endpoint xá»­ lÃ½ login vá»›i End-to-End Encryption (AES-256-GCM).
+ * Giáº£i mÃ£ request, xÃ¡c thá»±c, vÃ  tráº£ vá» káº¿t quáº£.
  * 
  * @module app/api/secure-login/route
  */
@@ -10,7 +10,7 @@
 import { NextResponse } from 'next/server';
 import logger from '@lib/logger';
 import { decryptRequestBody } from '@/servers/lib/encrypted-handler';
-import { encrypt as o9Encrypt } from '@/utils/O9Extension';
+import { encrypt as o9Encrypt } from '@utils/O9Extension';
 
 interface LoginPayload {
   username: string;
@@ -24,9 +24,9 @@ export async function POST(req: Request) {
   try {
     logger.start('=================== Secure Login API ===================');
 
-    // Giải mã request
+    // Giáº£i mÃ£ request
     const { success, data, error, isEncrypted } = await decryptRequestBody<LoginPayload>(req, {
-      verifySignature: false, // Tạm thời tắt signature verification cho testing
+      verifySignature: false, // Táº¡m thá»i táº¯t signature verification cho testing
       maxAge: 5 * 60 * 1000 // 5 minutes
     });
 
@@ -40,17 +40,17 @@ export async function POST(req: Request) {
 
     logger.info(`Login request received (encrypted: ${isEncrypted})`);
     logger.info(`Username: ${data.username}`);
-    // KHÔNG log password!
+    // KHÃ”NG log password!
 
-    // Mã hóa password theo format cũ để gọi API authenticate
+    // MÃ£ hÃ³a password theo format cÅ© Ä‘á»ƒ gá»i API authenticate
     const encryptedPassword = o9Encrypt(`${data.username}_${data.password}`);
 
-    // Gọi API authenticate nội bộ
+    // Gá»i API authenticate ná»™i bá»™
     const authResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/authenticate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // Forward cookies từ request gốc
+        // Forward cookies tá»« request gá»‘c
         'Cookie': req.headers.get('cookie') || ''
       },
       body: JSON.stringify({
@@ -68,7 +68,7 @@ export async function POST(req: Request) {
     logger.info(`Auth response status: ${authResponse.status}`);
     logger.info('=================== End Secure Login ===================');
 
-    // Lấy cookies từ response của /api/authenticate để forward về client
+    // Láº¥y cookies tá»« response cá»§a /api/authenticate Ä‘á»ƒ forward vá» client
     const setCookieHeaders = authResponse.headers.getSetCookie();
 
     // Handle device verification
@@ -81,14 +81,14 @@ export async function POST(req: Request) {
       });
     }
 
-    // Handle success - forward cookies về client
+    // Handle success - forward cookies vá» client
     if (authResult && (authResult.error === null || authResult.error === '')) {
       const response = NextResponse.json({
         success: true,
         message: 'Login successful'
       });
       
-      // Forward all Set-Cookie headers từ authenticate response
+      // Forward all Set-Cookie headers tá»« authenticate response
       if (setCookieHeaders && setCookieHeaders.length > 0) {
         setCookieHeaders.forEach(cookie => {
           response.headers.append('Set-Cookie', cookie);
@@ -124,3 +124,4 @@ export async function GET() {
     }
   });
 }
+

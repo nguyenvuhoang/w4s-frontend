@@ -1,8 +1,8 @@
 'use client'
 
 import type { Locale } from '@configs/i18n'
-import { getDictionary } from '@/utils/getDictionary'
-import { MenuItem } from '@/types/systemTypes'
+import { getDictionary } from '@utils/getDictionary'
+import { MenuItem } from '@shared/types/systemTypes'
 import {
     Dialog,
     DialogTitle,
@@ -210,3 +210,4 @@ export function MenuViewModal({ open, onClose, menuItem, locale, dictionary }: P
         </Dialog>
     )
 }
+

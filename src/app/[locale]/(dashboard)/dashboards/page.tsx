@@ -1,4 +1,4 @@
-import Spinner from '@/components/spinners';
+import Spinner from '@components/spinners';
 import { i18n, Locale } from '@/configs/i18n';
 import { Suspense } from 'react';
 import DashboardPageContent from './components';

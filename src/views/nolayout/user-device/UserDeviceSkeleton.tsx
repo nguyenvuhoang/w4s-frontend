@@ -1,7 +1,7 @@
 'use client'
 
 import { Box, Paper, Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material'
-import type { getDictionary } from '@/utils/getDictionary'
+import type { getDictionary } from '@utils/getDictionary'
 
 type Dictionary = Awaited<ReturnType<typeof getDictionary>>
 
@@ -116,3 +116,4 @@ const UserDeviceSkeleton = ({ dictionary }: UserDeviceSkeletonProps) => {
 }
 
 export default UserDeviceSkeleton
+

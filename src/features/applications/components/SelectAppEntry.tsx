@@ -1,7 +1,7 @@
 'use client'
 
-import LoadingSubmit from '@/components/LoadingSubmit'
-import { RoleChannel } from '@/types/systemTypes'
+import LoadingSubmit from '@components/LoadingSubmit'
+import { RoleChannel } from '@shared/types/systemTypes'
 import useSelectApp from '@features/applications/hooks/useSelectApp'
 import * as MuiIcons from '@mui/icons-material'
 import { Box, Card, CardContent, Typography } from '@mui/material'
@@ -98,3 +98,4 @@ const SelectAppEntry = ({ ch }: Props) => {
 }
 
 export default SelectAppEntry
+

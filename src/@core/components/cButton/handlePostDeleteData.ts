@@ -1,7 +1,7 @@
 import Application from "@/@core/lib/libSupport";
 import { workflowService } from "@/servers/system-service";
-import { getDictionary } from "@/utils/getDictionary";
-import SwalAlert from "@/utils/SwalAlert";
+import { getDictionary } from "@utils/getDictionary";
+import SwalAlert from "@utils/SwalAlert";
 import { Session } from "next-auth";
 
 export const handlePostDeleteData = async (
@@ -33,10 +33,10 @@ export const handlePostDeleteData = async (
 
                             return Object.entries(input).reduce<Record<string, any>>((result, [key, value]) => {
                                 if (typeof value === "object" && value !== null) {
-                                    // Nếu là object thì đệ quy tiếp
+                                    // Náº¿u lÃ  object thÃ¬ Ä‘á»‡ quy tiáº¿p
                                     result[key] = processInput(value);
                                 } else if (typeof value === "string" && value.startsWith("@")) {
-                                    // Nếu value là placeholder dạng @id, @productcode,...
+                                    // Náº¿u value lÃ  placeholder dáº¡ng @id, @productcode,...
                                     const paramName = value.substring(1);
                                     const collectedValues = rowsToDeleteIds
                                         .map(row => row[paramName])
@@ -47,7 +47,7 @@ export const handlePostDeleteData = async (
                                             ? collectedValues
                                             : collectedValues[0] ?? value;
                                 } else {
-                                    // Nếu không phải object hoặc placeholder, thì giữ nguyên
+                                    // Náº¿u khÃ´ng pháº£i object hoáº·c placeholder, thÃ¬ giá»¯ nguyÃªn
                                     const equivalentKeys = [
                                         key,
                                         key.toLowerCase().replace(/_/g, ""),
@@ -139,3 +139,4 @@ export const handlePostDeleteData = async (
         );
     });
 };
+

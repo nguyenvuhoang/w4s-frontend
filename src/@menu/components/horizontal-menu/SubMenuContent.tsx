@@ -6,7 +6,7 @@ import type { ForwardRefRenderFunction, HTMLAttributes } from 'react'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 
 // Type Imports
-import type { ChildrenType, RootStylesType } from '../../types'
+import type { ChildrenType, RootStylesType } from '@shared/types'
 
 // Styled Component Imports
 import StyledHorizontalSubMenuContent from '../../styles/horizontal/StyledHorizontalSubMenuContent'

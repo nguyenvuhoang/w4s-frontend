@@ -1,4 +1,4 @@
-import { generateAuthMetadata } from '@/components/layout/AuthLayout';
+import { generateAuthMetadata } from '@components/layout/AuthLayout';
 import { i18n } from '@/configs/i18n';
 import { Metadata } from 'next';
 import LoginPage from './LoginPage';

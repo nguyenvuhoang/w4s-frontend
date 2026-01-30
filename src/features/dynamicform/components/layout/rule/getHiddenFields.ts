@@ -1,4 +1,4 @@
-import { RuleStrong } from "@/types/systemTypes";
+import { RuleStrong } from "@shared/types/systemTypes";
 
 export const getHiddenFields = (rules: RuleStrong[]): string[] => {
     const visibilityRule = rules.find(rule => rule.code === 'visibility');
@@ -19,3 +19,4 @@ export const getHiddenFields = (rules: RuleStrong[]): string[] => {
     }
     return [];
 };
+

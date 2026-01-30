@@ -1,4 +1,4 @@
-import Spinner from "@/components/spinners";
+import Spinner from "@components/spinners";
 import { Suspense } from "react";
 
 // app/[page]/layout.tsx

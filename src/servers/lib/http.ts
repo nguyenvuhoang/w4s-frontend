@@ -1,12 +1,12 @@
 import envConfig from '@/configs/config';
-import { normalizePath } from '@/utils';
+import { normalizePath } from '@utils';
 import { decrypt, isEncryptedPayload, createEncryptedPayload, generateNonce, createHMAC } from '@lib/crypto';
 
 type CustomOptions = Omit<RequestInit, 'method'> & {
   baseUrl?: string | undefined;
-  /** Có mã hóa request body không */
+  /** CÃ³ mÃ£ hÃ³a request body khÃ´ng */
   encrypt?: boolean;
-  /** Có giải mã response không */
+  /** CÃ³ giáº£i mÃ£ response khÃ´ng */
   decryptResponse?: boolean;
 }
 
@@ -74,11 +74,11 @@ const request = async <Response>(
   if (options?.body instanceof FormData) {
     body = options.body
   } else if (options?.body) {
-    // Mã hóa request body nếu cần
+    // MÃ£ hÃ³a request body náº¿u cáº§n
     if (shouldEncrypt && typeof options.body === 'object') {
       const encryptedPayload = await createEncryptedPayload(options.body)
       encryptedPayload.nonce = generateNonce()
-      // Tạo HMAC signature
+      // Táº¡o HMAC signature
       const signatureData = `${encryptedPayload.data}:${encryptedPayload.iv}:${encryptedPayload.timestamp}:${encryptedPayload.nonce}`
       encryptedPayload.signature = await createHMAC(signatureData, process.env.NEXT_PUBLIC_HMAC_SECRET || 'o24-hmac-secret')
       body = JSON.stringify(encryptedPayload)
@@ -96,7 +96,7 @@ const request = async <Response>(
         'Content-Type': 'application/json'
       }
 
-  // Thêm encryption headers nếu cần
+  // ThÃªm encryption headers náº¿u cáº§n
   if (shouldEncrypt) {
     baseHeaders['X-Encrypted-Request'] = 'true'
     baseHeaders['X-Encryption-Algorithm'] = 'AES-256-GCM'
@@ -110,8 +110,8 @@ const request = async <Response>(
     }
   }
 
-  // Nếu không truyền baseUrl (hoặc baseUrl = undefined) thì lấy từ envConfig.NEXT_PUBLIC_REST_API_ENDPOINT
-  // Nếu truyền baseUrl thì lấy giá trị truyền vào, truyền vào '' thì đồng nghĩa với việc chúng ta gọi API đến Next.js Server
+  // Náº¿u khÃ´ng truyá»n baseUrl (hoáº·c baseUrl = undefined) thÃ¬ láº¥y tá»« envConfig.NEXT_PUBLIC_REST_API_ENDPOINT
+  // Náº¿u truyá»n baseUrl thÃ¬ láº¥y giÃ¡ trá»‹ truyá»n vÃ o, truyá»n vÃ o '' thÃ¬ Ä‘á»“ng nghÄ©a vá»›i viá»‡c chÃºng ta gá»i API Ä‘áº¿n Next.js Server
 
   const baseUrl =
     options?.baseUrl === undefined
@@ -132,7 +132,7 @@ const request = async <Response>(
 
   const payload: Response = await res.json()
 
-  // Giải mã response nếu cần
+  // Giáº£i mÃ£ response náº¿u cáº§n
   let decryptedPayload = payload
   if (shouldDecryptResponse && typeof payload === 'object' && payload !== null) {
     if (isEncryptedPayload(payload)) {
@@ -146,7 +146,7 @@ const request = async <Response>(
 
   // Check for requireLogout flag in response body (from API route)
   if ((payload as any)?.requireLogout === true) {
-    console.log('🔐 requireLogout detected in response, treating as 401')
+    console.log('ðŸ” requireLogout detected in response, treating as 401')
     if (isClient()) {
       if (!clientLogoutRequest) {
         localStorage.removeItem('token');
@@ -185,7 +185,7 @@ const request = async <Response>(
     }
   }
 
-  // XỬ lý case Invalid Token (legacy check)
+  // Xá»¬ lÃ½ case Invalid Token (legacy check)
   if (!isClient()) {
     if (payload) {
       const dataresponse = (payload as any)?.dataresponse;
@@ -206,7 +206,7 @@ const request = async <Response>(
               }
             });
           } catch (error) {
-            console.log(`🟢 ==========Error Logout: ==> ${error}`);
+            console.log(`ðŸŸ¢ ==========Error Logout: ==> ${error}`);
           }
         }
       }
@@ -220,7 +220,7 @@ const request = async <Response>(
   }
 
 
-  // Interceptor là nơi chúng ta xử lý request và response trước khi trả về cho phía component
+  // Interceptor lÃ  nÆ¡i chÃºng ta xá»­ lÃ½ request vÃ  response trÆ°á»›c khi tráº£ vá» cho phÃ­a component
   if (!res.ok) {
     if (res.status === ENTITY_ERROR_STATUS) {
       throw new EntityError(
@@ -270,8 +270,8 @@ const request = async <Response>(
           'Bearer '
         )[1]
 
-        console.log(`🟢 ==========Status Code: ==> ${res.status}`)
-        console.log(`🟢 ==========SesionToken: ==> ${sessionToken}`)
+        console.log(`ðŸŸ¢ ==========Status Code: ==> ${res.status}`)
+        console.log(`ðŸŸ¢ ==========SesionToken: ==> ${sessionToken}`)
 
         //
       }
@@ -291,7 +291,7 @@ const request = async <Response>(
     }
   }
 
-  // Đảm bảo logic dưới đây chỉ chạy ở phía client (browser)
+  // Äáº£m báº£o logic dÆ°á»›i Ä‘Ã¢y chá»‰ cháº¡y á»Ÿ phÃ­a client (browser)
   if (isClient()) {
     if (
       ['login', 'register'].some(
@@ -339,3 +339,4 @@ const http = {
 }
 
 export default http
+

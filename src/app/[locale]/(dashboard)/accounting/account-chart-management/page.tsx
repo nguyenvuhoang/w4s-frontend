@@ -1,13 +1,13 @@
 import { handleGetCodeList } from '@/@core/components/cButton/handleGetCodeList';
 import { auth } from '@/auth';
-import { generateAuthMetadata } from '@/components/layout/AuthLayout';
-import Spinner from '@/components/spinners';
+import { generateAuthMetadata } from '@components/layout/AuthLayout';
+import Spinner from '@components/spinners';
 import { Locale } from '@/configs/i18n';
 import {  workflowService } from '@/servers/system-service';
-import { AccountChartType } from '@/types/bankType';
-import { PageData } from '@/types/systemTypes';
-import { getDictionary } from '@/utils/getDictionary';
-import { isValidResponse } from '@/utils/isValidResponse';
+import { AccountChartType } from '@shared/types/bankType';
+import { PageData } from '@shared/types/systemTypes';
+import { getDictionary } from '@utils/getDictionary';
+import { isValidResponse } from '@utils/isValidResponse';
 import AccountingManagementContent from '@/views/accounting';
 import { Metadata } from 'next';
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { getDictionary } from '@/utils/getDictionary'
+import { getDictionary } from '@utils/getDictionary'
 import { Add, Delete } from '@mui/icons-material'
 import {
     Box, Checkbox, FormControlLabel, IconButton,
@@ -32,7 +32,7 @@ const ViewTableDynamicItem = ({ input, control, dictionary, setValue }: Props) =
         { key: 'isactive', label: 'Is Active' }
     ]
 
-    // ✅ watch the whole array so UI re-renders when any row changes (including isdeleted)
+    // âœ… watch the whole array so UI re-renders when any row changes (including isdeleted)
     const rows = useWatch({
         control,
         name: fieldName
@@ -40,7 +40,7 @@ const ViewTableDynamicItem = ({ input, control, dictionary, setValue }: Props) =
 
     useEffect(() => {
         if (Array.isArray(input.value)) {
-            // ensure required flags exist so they’re reactive
+            // ensure required flags exist so theyâ€™re reactive
             const normalized = input.value.map((r: any) =>
                 r && typeof r === 'object'
                     ? { ismainkey: !!r.ismainkey, isdeleted: !!r.isdeleted, ...r }
@@ -53,7 +53,7 @@ const ViewTableDynamicItem = ({ input, control, dictionary, setValue }: Props) =
     const handleSoftDelete = (rowIndex: number) => {
         const path = `${fieldName}.${rowIndex}.isdeleted`
         setValue(path, true, { shouldDirty: true, shouldTouch: true, shouldValidate: false })
-        // ⤴️ do NOT call remove(); we keep the row but mark it deleted
+        // â¤´ï¸ do NOT call remove(); we keep the row but mark it deleted
     }
 
     return (
@@ -81,7 +81,7 @@ const ViewTableDynamicItem = ({ input, control, dictionary, setValue }: Props) =
                     <TableBody>
                         {fields.map((field: any, rowIndex: number) => {
                             const row = rows?.[rowIndex]
-                            if (row?.isdeleted) return null // 👈 hide deleted rows
+                            if (row?.isdeleted) return null // ðŸ‘ˆ hide deleted rows
 
                             const isMainKey = !!row?.ismainkey
 
@@ -115,7 +115,7 @@ const ViewTableDynamicItem = ({ input, control, dictionary, setValue }: Props) =
                                                                 size="small"
                                                                 fullWidth
                                                                 value={field.value ?? ''}
-                                                                disabled={isMainKey} // 🔒 disable when ismainkey = true
+                                                                disabled={isMainKey} // ðŸ”’ disable when ismainkey = true
                                                             />
                                                         )
                                                     }
@@ -153,3 +153,4 @@ const ViewTableDynamicItem = ({ input, control, dictionary, setValue }: Props) =
 }
 
 export default ViewTableDynamicItem
+

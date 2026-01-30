@@ -1,4 +1,4 @@
-import { generateAuthMetadata } from '@/components/layout/AuthLayout';
+import { generateAuthMetadata } from '@components/layout/AuthLayout';
 import { Metadata } from 'next';
 import VerifyDevicePage from './VerifyDevicePage';
 

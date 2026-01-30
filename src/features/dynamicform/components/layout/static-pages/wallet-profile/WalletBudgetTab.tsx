@@ -1,6 +1,6 @@
 'use client';
 
-import { PageContentProps } from '@/types';
+import { PageContentProps } from '@shared/types';
 import {
     Card,
     CardContent,
@@ -81,10 +81,10 @@ const WalletBudgetTab = ({
     // Get period label
     const getPeriodLabel = (period: string) => {
         const periods: Record<string, Record<string, string>> = {
-            'MONTH': { vi: 'Tháng', en: 'Monthly' },
-            'WEEK': { vi: 'Tuần', en: 'Weekly' },
-            'YEAR': { vi: 'Năm', en: 'Yearly' },
-            'DAY': { vi: 'Ngày', en: 'Daily' },
+            'MONTH': { vi: 'ThÃ¡ng', en: 'Monthly' },
+            'WEEK': { vi: 'Tuáº§n', en: 'Weekly' },
+            'YEAR': { vi: 'NÄƒm', en: 'Yearly' },
+            'DAY': { vi: 'NgÃ y', en: 'Daily' },
         };
         return periods[period]?.[locale] || periods[period]?.['en'] || period;
     };
@@ -352,3 +352,4 @@ const WalletBudgetTab = ({
 };
 
 export default WalletBudgetTab;
+

@@ -1,4 +1,4 @@
-import AuthLayout, { generateAuthMetadata } from '@/components/layout/AuthLayout';
+import AuthLayout, { generateAuthMetadata } from '@components/layout/AuthLayout';
 import { Locale } from '@/configs/i18n';
 import VerifyDevice from '@/views/pages/auth/VerifyDevice';
 import { Metadata } from 'next';

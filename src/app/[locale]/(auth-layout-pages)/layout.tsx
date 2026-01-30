@@ -1,5 +1,5 @@
-import Providers from '@/components/Providers';
-import Spinner from '@/components/spinners';
+import Providers from '@components/Providers';
+import Spinner from '@components/spinners';
 import { i18n } from '@configs/i18n';
 import { Suspense } from 'react';
 

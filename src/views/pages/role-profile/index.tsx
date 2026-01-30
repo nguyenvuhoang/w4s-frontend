@@ -1,9 +1,9 @@
 'use client'
 
 import { Locale } from '@/configs/i18n';
-import { UserAccount, UserMobileAccount } from '@/types/bankType';
-import { PageData, Role } from '@/types/systemTypes';
-import { getDictionary } from '@/utils/getDictionary';
+import { UserAccount, UserMobileAccount } from '@shared/types/bankType';
+import { PageData, Role } from '@shared/types/systemTypes';
+import { getDictionary } from '@utils/getDictionary';
 import { Box, Tab, Tabs } from '@mui/material';
 import { Session } from 'next-auth';
 import React, { useState } from 'react';
@@ -12,7 +12,7 @@ import InvokeLimit from './invoke-limit';
 import MobileUserAssignment from './mobile-user-assignment';
 import UserAssignment from './user-assignment';
 
-// Component để hiển thị nội dung của mỗi tab
+// Component Ä‘á»ƒ hiá»ƒn thá»‹ ná»™i dung cá»§a má»—i tab
 interface TabPanelProps {
     children?: React.ReactNode;
     index: number;
@@ -90,7 +90,7 @@ const RoleProfileGeneric = ({ locale, session, dictionary, role, userdata, mobil
                             overflow: 'auto',
                         }}
                     >
-                        {/* Tab nhỏ bên trong */}
+                        {/* Tab nhá» bÃªn trong */}
                         <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
                             <Tabs
                                 value={subValue}
@@ -118,7 +118,7 @@ const RoleProfileGeneric = ({ locale, session, dictionary, role, userdata, mobil
                             </Tabs>
                         </Box>
 
-                        {/* Nội dung của tab nhỏ */}
+                        {/* Ná»™i dung cá»§a tab nhá» */}
                         {subTabs.map((subTab, subIndex) => (
                             <TabPanel key={subIndex} value={subValue} index={subIndex}>
                                 {subTab === 'Invoke-Approve' ? (

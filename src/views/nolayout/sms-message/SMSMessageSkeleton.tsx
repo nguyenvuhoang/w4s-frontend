@@ -2,7 +2,7 @@
 
 import { Box, Button, Grid, Paper, Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
-import { getDictionary } from '@/utils/getDictionary'
+import { getDictionary } from '@utils/getDictionary'
 
 interface SMSMessageSkeletonProps {
     dictionary: Awaited<ReturnType<typeof getDictionary>>
@@ -92,3 +92,4 @@ const SMSMessageSkeleton = ({ dictionary }: SMSMessageSkeletonProps) => {
 }
 
 export default SMSMessageSkeleton
+

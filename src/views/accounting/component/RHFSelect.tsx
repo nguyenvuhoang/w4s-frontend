@@ -1,4 +1,4 @@
-import { Labeled } from "@/components/Labeled";
+import { Labeled } from "@components/Labeled";
 import { MenuItem, TextField, TextFieldProps } from "@mui/material";
 import { Controller, RegisterOptions } from "react-hook-form";
 import { FormValues } from "./FormValues";
@@ -37,7 +37,7 @@ export const RHFSelect = ({
                         select
                         fullWidth
                         size="medium"
-                        // quan trọng: đồng bộ với RHF
+                        // quan trá»ng: Ä‘á»“ng bá»™ vá»›i RHF
                         name={field.name}
                         inputRef={field.ref}
                         value={field.value ?? ""}
@@ -62,3 +62,4 @@ export const RHFSelect = ({
         />
     );
 };
+

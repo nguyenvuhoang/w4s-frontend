@@ -3,9 +3,9 @@
 import PaginationPage from '@/@core/components/jTable/pagination';
 import SnackbarComponent from '@/@core/components/layouts/shared/Snackbar';
 import { useMobileUserAssignment } from '@/services/useMobileUserAssignment';
-import { UserMobileAccount } from '@/types/bankType';
-import { PageData, Role } from '@/types/systemTypes';
-import { getDictionary } from '@/utils/getDictionary';
+import { UserMobileAccount } from '@shared/types/bankType';
+import { PageData, Role } from '@shared/types/systemTypes';
+import { getDictionary } from '@utils/getDictionary';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';

@@ -1,5 +1,5 @@
 import { env } from '@/env.mjs';
-import { BODataResponse, FODataResponse, RunBoDynamicDataRequest, RunDynamicDataRequest, RunFoDataRequest, RunFoDynamicDataRequest, SearchDataRequest, ViewDataResponse } from "@/types/systemTypes";
+import { BODataResponse, FODataResponse, RunBoDynamicDataRequest, RunDynamicDataRequest, RunFoDataRequest, RunFoDynamicDataRequest, SearchDataRequest, ViewDataResponse } from "@shared/types/systemTypes";
 import { apiPost, createDefaultBody } from '../../lib/api';
 import http from "../../lib/http";
 import Cookies from 'js-cookie';
@@ -16,7 +16,7 @@ export const workflowService = {
     runBO: ({ sessiontoken, learnapi, workflowid, commandname, pageSize, pageIndex, parameters, issearch }: SearchDataRequest) => {
         // Validate commandname to prevent empty calls (only when issearch is true and commandname is expected)
         if (issearch && (!commandname || commandname.trim() === '')) {
-            console.warn('⚠️ runBO called with empty commandname for search operation, skipping API call');
+            console.warn('âš ï¸ runBO called with empty commandname for search operation, skipping API call');
             return Promise.resolve({
                 status: 400,
                 payload: {
@@ -128,3 +128,4 @@ export const workflowService = {
             { lang: "en", app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'SYS' }
         ),
 }
+

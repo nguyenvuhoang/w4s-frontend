@@ -1,5 +1,5 @@
 import { Locale } from '@/configs/i18n';
-import { FormInput, RuleStrong } from '@/types/systemTypes';
+import { FormInput, RuleStrong } from '@shared/types/systemTypes';
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
 import {
@@ -185,3 +185,4 @@ const MultiSelectWithDialog = ({ gridProps, ismodify }: Props) => {
 };
 
 export default MultiSelectWithDialog;
+

@@ -13,9 +13,9 @@ import { Box } from '@mui/material';
 // Styled Component Imports
 import StyledContentWrapper from './styles/horizontal/StyledContentWrapper';
 // Component Imports
-import LayoutContent from './components/horizontal/LayoutContent';
+import LayoutContent from '@layouts/components/horizontal/LayoutContent';
 // Util Imports
-import { horizontalLayoutClasses } from './utils/layoutClasses';
+import { horizontalLayoutClasses } from '@layouts/utils/layoutClasses';
 
 
 type HorizontalLayoutProps = ChildrenType & {

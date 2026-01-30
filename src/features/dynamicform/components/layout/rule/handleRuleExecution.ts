@@ -1,13 +1,13 @@
-import { RuleStrong } from "@/types/systemTypes";
+import { RuleStrong } from "@shared/types/systemTypes";
 import { Dispatch, SetStateAction } from "react";
 
 
 export const handleRuleExecution = async (
     rules: RuleStrong[],
-    action: string, // Nút đang nhấn
+    action: string, // NÃºt Ä‘ang nháº¥n
     setIsModify: Dispatch<SetStateAction<boolean>>
 ): Promise<void> => {
-    // Lọc các rules có `code` là "calculator" và `component_action` khớp với action
+    // Lá»c cÃ¡c rules cÃ³ `code` lÃ  "calculator" vÃ  `component_action` khá»›p vá»›i action
     const matchingRules = rules.filter(
         (rule) =>
             rule.code === "calculator" &&
@@ -15,7 +15,7 @@ export const handleRuleExecution = async (
     );
 
     if (matchingRules.length > 0) {
-        // Duyệt qua từng rule để xử lý
+        // Duyá»‡t qua tá»«ng rule Ä‘á»ƒ xá»­ lÃ½
         matchingRules.forEach((rule) => {
             const { component_event, function_cal, component_result } = rule.config;
             if (component_event === "on_click") {
@@ -42,3 +42,4 @@ export const handleRuleExecution = async (
         console.log(`No matching rule found for action: ${action}`);
     }
 };
+

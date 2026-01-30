@@ -7,13 +7,13 @@ const Footer = () => {
             sx={{
                 position: 'absolute',
                 bottom: { xs: 'auto', sm: 8 },
-                top: { xs: 8, sm: 'auto' },
+                top: { xs: 10, sm: 'auto' },
                 right: { xs: 8, sm: 16 },
                 fontSize: { xs: '14px', sm: '16px' },
                 color: '#999',
                 opacity: 0.7,
                 fontFamily: 'Quicksand, sans-serif',
-                zIndex: 1000
+                zIndex: 1000,
             }}
         >
             v{env.NEXT_PUBLIC_VERSION} - {env.NEXT_PUBLIC_ENVIRONMENT}

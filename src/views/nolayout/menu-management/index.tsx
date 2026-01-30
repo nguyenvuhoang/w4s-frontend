@@ -6,10 +6,8 @@ import { useEffect, useMemo, useState } from 'react'
 // Components
 import PaginationPage from '@/@core/components/jTable/pagination'
 import { CustomCheckboxIcon } from '@/@core/components/mui/CustomCheckboxIcon'
-import { actionButtonColors, actionButtonSx } from '@/components/forms/button-color/actionButtonSx'
-import EmptyListNotice from '@/components/layout/shared/EmptyListNotice'
-import { MenuItem, PageData } from '@/types/systemTypes'
-import { getDictionary } from '@/utils/getDictionary'
+import { actionButtonColors, actionButtonSx } from '@components/forms/button-color/actionButtonSx'
+import EmptyListNotice from '@components/layout/shared/EmptyListNotice'
 import AccountTreeIcon from '@mui/icons-material/AccountTree'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -41,6 +39,8 @@ import {
     ToggleButtonGroup,
     Tooltip
 } from '@mui/material'
+import { MenuItem, PageData } from '@shared/types/systemTypes'
+import { getDictionary } from '@utils/getDictionary'
 import { Session } from 'next-auth'
 import { Controller, useForm } from 'react-hook-form'
 
@@ -120,12 +120,12 @@ export default function MenuManagementContent({ locale, dictionary, session, dat
     const onSubmit = async (formData: SearchForm) => {
         await menuManagement.handleSearch(formData, menuData, true) // Reset to page 1 on new search
     }
-    
+
     // Auto-search on mount to initialize pagination
     useEffect(() => {
         const initialFormData = getValues()
         menuManagement.handleSearch(initialFormData, menuData, true)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []) // Only run once on mount
 
     // Tree data for tree view mode
@@ -508,3 +508,4 @@ export default function MenuManagementContent({ locale, dictionary, session, dat
         </Box>
     )
 }
+

@@ -3,9 +3,9 @@
 
 import PaginationPage from '@/@core/components/jTable/pagination';
 import { StyledHeaderCell, StyledTableRow } from '@/@core/components/jTable/style';
-import { FormInput, PageData } from '@/types/systemTypes';
-import { generateCellTable } from '@/utils/generateCellTable';
-import { getNestedValue } from '@/utils/getNestedValue';
+import { FormInput, PageData } from '@shared/types/systemTypes';
+import { generateCellTable } from '@utils/generateCellTable';
+import { getNestedValue } from '@utils/getNestedValue';
 import { Grid, Paper, SelectChangeEvent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
@@ -32,19 +32,19 @@ const RenderTableForm = ({ input, gridProps, onRowDoubleClick, renderviewdata, i
     const [data, setData] = useState<any[]>([]);
     const [filteredData, setFilteredData] = useState<any[]>(data);
     const [page, setPage] = useState(1);
-    const [totalResults, setTotalResults] = useState(0); // Tổng số bản ghi
-    const [pageSize, setPageSize] = useState(parseInt(input.config.paging_record || '50', 10)); // Số bản ghi mỗi trang (mặc định là 5)
-    const [jumpPage, setJumpPage] = useState(1); // Số trang muốn nhảy đến
+    const [totalResults, setTotalResults] = useState(0); // Tá»•ng sá»‘ báº£n ghi
+    const [pageSize, setPageSize] = useState(parseInt(input.config.paging_record || '50', 10)); // Sá»‘ báº£n ghi má»—i trang (máº·c Ä‘á»‹nh lÃ  5)
+    const [jumpPage, setJumpPage] = useState(1); // Sá»‘ trang muá»‘n nháº£y Ä‘áº¿n
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [selectedRow, setSelectedRow] = useState<any>(null);
 
-    // Lấy cột từ config
+    // Láº¥y cá»™t tá»« config
     const columns = JSON.parse(input.config.columns || '[]');
 
     const hasSystemColumnCheck = input.config.hasSystemColumnCheck === 'true';
 
-    // Lấy dữ liệu từ renderviewdata
+    // Láº¥y dá»¯ liá»‡u tá»« renderviewdata
     const keygetdata = input.config.onKeyTable || '';
 
     const rendertabledata = renderviewdata[keygetdata] || [];
@@ -80,7 +80,7 @@ const RenderTableForm = ({ input, gridProps, onRowDoubleClick, renderviewdata, i
 
     const handlePageSizeChange = (event: SelectChangeEvent<number>) => {
         setPageSize(Number(event.target.value));
-        setPage(1); // Reset về trang 1 khi đổi số bản ghi
+        setPage(1); // Reset vá» trang 1 khi Ä‘á»•i sá»‘ báº£n ghi
     };
 
 
@@ -125,7 +125,7 @@ const RenderTableForm = ({ input, gridProps, onRowDoubleClick, renderviewdata, i
                 <Table>
                     <TableHead>
                         <TableRow>
-                            {/* Render các cột khác */}
+                            {/* Render cÃ¡c cá»™t khÃ¡c */}
                             {columns.map((column: Column, index: number) => (
                                 <StyledHeaderCell key={index}>
                                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -174,7 +174,7 @@ const RenderTableForm = ({ input, gridProps, onRowDoubleClick, renderviewdata, i
                 </Table>
             </TableContainer>
 
-            {/* Phân trang */}
+            {/* PhÃ¢n trang */}
             {totalResults > 0 && (
                 <PaginationPage
                     page={page}
@@ -192,3 +192,4 @@ const RenderTableForm = ({ input, gridProps, onRowDoubleClick, renderviewdata, i
 };
 
 export default RenderTableForm;
+

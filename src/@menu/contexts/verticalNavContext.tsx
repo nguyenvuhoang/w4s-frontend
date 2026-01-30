@@ -4,7 +4,7 @@
 import { createContext, useCallback, useMemo, useState } from 'react'
 
 // Type Imports
-import type { ChildrenType } from '../types'
+import type { ChildrenType } from '@shared/types'
 
 export type VerticalNavState = {
   width?: number

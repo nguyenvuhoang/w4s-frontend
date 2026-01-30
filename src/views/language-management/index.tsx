@@ -2,11 +2,11 @@
 
 import CountryFlag from '@/@core/components/mui/CountryFlag';
 import { Locale } from '@/configs/i18n';
-import { PageContentProps } from '@/types';
-import { LanguageDataMobileType, PageLanguageResponse } from '@/types/bankType';
-import { flattenJson } from '@/utils/flattenJson';
-import { getDictionary } from '@/utils/getDictionary';
-import { parseMaybeJson } from '@/utils/parseMaybeJson';
+import { PageContentProps } from '@shared/types';
+import { LanguageDataMobileType, PageLanguageResponse } from '@shared/types/bankType';
+import { flattenJson } from '@utils/flattenJson';
+import { getDictionary } from '@utils/getDictionary';
+import { parseMaybeJson } from '@utils/parseMaybeJson';
 import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper';
 import AddIcon from '@mui/icons-material/Add';
 import CheckIcon from '@mui/icons-material/Check';
@@ -34,7 +34,7 @@ import { Session } from 'next-auth';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import React, { useCallback, useDeferredValue, useMemo, useState } from 'react';
 
-// 👇 nếu path khác, sửa lại cho đúng dự án của bạn
+// ðŸ‘‡ náº¿u path khÃ¡c, sá»­a láº¡i cho Ä‘Ãºng dá»± Ã¡n cá»§a báº¡n
 import PaginationPage from '@/@core/components/jTable/pagination';
 import { SelectChangeEvent } from '@mui/material/Select';
 
@@ -185,7 +185,7 @@ export default function LanguageManagementContent({
     const totalPages =
         languageData.total_pages ?? Math.max(1, Math.ceil(totalItems / Math.max(1, pageSize)));
 
-    // Local state mirror cho PaginationPage (Pagination của MUI nhận 1-based)
+    // Local state mirror cho PaginationPage (Pagination cá»§a MUI nháº­n 1-based)
     const [page, setPage] = useState<number>(pageIndex + 1); // 1-based
     const [rowsPerPage, setRowsPerPage] = useState<number>(pageSize);
     const [jumpPage, setJumpPage] = useState<number>(pageIndex + 1);
@@ -327,13 +327,13 @@ export default function LanguageManagementContent({
         updateQuery({ q: search, page_index: 0 });
     }, [search, updateQuery]);
 
-    // ===== Handlers theo CHỮ KÝ mà bạn cung cấp =====
-    // Pagination (MUI) -> (event, value) value là 1-based
+    // ===== Handlers theo CHá»® KÃ mÃ  báº¡n cung cáº¥p =====
+    // Pagination (MUI) -> (event, value) value lÃ  1-based
     const handlePageChange = useCallback(
         (event: React.ChangeEvent<unknown>, value: number) => {
-            setPage(value);       // giữ 1-based cho UI
+            setPage(value);       // giá»¯ 1-based cho UI
             setJumpPage(value);
-            toPage(value - 1);    // convert về 0-based cho API/query
+            toPage(value - 1);    // convert vá» 0-based cho API/query
         },
         [toPage]
     );
@@ -345,7 +345,7 @@ export default function LanguageManagementContent({
             setRowsPerPage(newSize);
             setPage(1);
             setJumpPage(1);
-            changeSize(newSize);  // đổi size và reset về trang 0 ở server
+            changeSize(newSize);  // Ä‘á»•i size vÃ  reset vá» trang 0 á»Ÿ server
         },
         [changeSize]
     );
@@ -449,7 +449,7 @@ export default function LanguageManagementContent({
                             </Box>
                         </Box>
 
-                        {/* Bảng dữ liệu */}
+                        {/* Báº£ng dá»¯ liá»‡u */}
                         <TableContainer sx={{ maxHeight: 600 }}>
                             <Table size="small" stickyHeader sx={{ tableLayout: 'fixed' }}>
                                 <TableHead
@@ -495,7 +495,7 @@ export default function LanguageManagementContent({
                             </Table>
                         </TableContainer>
 
-                        {/* Phân trang — đặt DƯỚI bảng */}
+                        {/* PhÃ¢n trang â€” Ä‘áº·t DÆ¯á»šI báº£ng */}
                         {totalItems > 0 && (
                             <Box mt={5}>
                                 <PaginationPage
@@ -515,3 +515,5 @@ export default function LanguageManagementContent({
         </ContentWrapper>
     );
 }
+
+

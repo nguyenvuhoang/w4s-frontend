@@ -2,7 +2,7 @@
 'use client';
 
 import { Locale } from '@/configs/i18n';
-import { FormInput } from '@/types/systemTypes';
+import { FormInput } from '@shared/types/systemTypes';
 import ClearIcon from '@mui/icons-material/Clear';
 import SearchIcon from '@mui/icons-material/Search';
 import { Grid, IconButton, InputAdornment, TextField } from '@mui/material';
@@ -106,3 +106,4 @@ const RenderInputAdvanceSearch = ({
 };
 
 export default RenderInputAdvanceSearch;
+

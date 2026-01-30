@@ -10,14 +10,14 @@ import type { CSSObject } from '@emotion/styled'
 
 // Type Imports
 import type { MenuSectionStyles } from './Menu'
-import type { ChildrenType, RootStylesType } from '../../types'
+import type { ChildrenType, RootStylesType } from '@shared/types'
 
 // Hook Imports
-import useVerticalNav from '../../hooks/useVerticalNav'
-import useVerticalMenu from '../../hooks/useVerticalMenu'
+import useVerticalNav from '@hooks/useVerticalNav'
+import useVerticalMenu from '@hooks/useVerticalMenu'
 
 // Util Imports
-import { menuClasses } from '../../utils/menuClasses'
+import { menuClasses } from '@utils/menuClasses'
 
 // Styled Component Imports
 import StyledMenuIcon from '../../styles/StyledMenuIcon'

@@ -1,12 +1,12 @@
 import { Locale } from '@/configs/i18n';
 import { WORKFLOWCODE } from '@/data/WorkflowCode';
 import { workflowService } from '@/servers/system-service';
-import { MenuItem, Operation, OperationHeader } from '@/types/systemTypes';
-import { getDictionary } from '@/utils/getDictionary';
+import { MenuItem, Operation, OperationHeader } from '@shared/types/systemTypes';
+import { getDictionary } from '@utils/getDictionary';
 import { Session } from 'next-auth';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-// Định nghĩa type cho command trong groupedOperations
+// Äá»‹nh nghÄ©a type cho command trong groupedOperations
 interface Command {
     command_id: string;
     command_type: string;
@@ -120,7 +120,7 @@ export const useInvokeApprove = ({
                 const operationsData: Operation = data || { operation_header: [], operation_body: [] };
                 setOperations(operationsData);
 
-                // Khởi tạo trạng thái checkbox dựa trên dữ liệu ban đầu
+                // Khá»Ÿi táº¡o tráº¡ng thÃ¡i checkbox dá»±a trÃªn dá»¯ liá»‡u ban Ä‘áº§u
                 const initialCheckboxState: { [roleName: string]: { [cmdid: string]: boolean } } = {};
                 const initialSelfInvokeState: { [roleName: string]: boolean } = {};
                 operationsData.operation_body?.forEach(row => {
@@ -137,13 +137,13 @@ export const useInvokeApprove = ({
                 setCheckboxState(initialCheckboxState);
                 setSelfInvokeState(initialSelfInvokeState);
             } else {
-                console.warn("⚠️ No operations found for this menu!", response);
+                console.warn("âš ï¸ No operations found for this menu!", response);
                 setOperations({ operation_header: [], operation_body: [] });
                 setCheckboxState({});
                 setSelfInvokeState({});
             }
         } catch (error) {
-            console.error("❌ Error fetching operations:", error);
+            console.error("âŒ Error fetching operations:", error);
             setOperations({ operation_header: [], operation_body: [] });
             setCheckboxState({});
             setSelfInvokeState({});
@@ -345,3 +345,4 @@ export const useInvokeApprove = ({
         getCommandState,
     };
 };
+

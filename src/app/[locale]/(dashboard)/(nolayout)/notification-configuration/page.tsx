@@ -1,7 +1,7 @@
 import { auth } from '@/auth'
-import Spinner from '@/components/spinners'
+import Spinner from '@components/spinners'
 import { Locale } from '@/configs/i18n'
-import { getDictionary } from '@/utils/getDictionary'
+import { getDictionary } from '@utils/getDictionary'
 import NotificationConfigurationContent from '@/views/nolayout/notification-configuration'
 import { Suspense } from 'react'
 

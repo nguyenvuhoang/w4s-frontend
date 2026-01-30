@@ -1,9 +1,9 @@
 import { Locale } from '@/configs/i18n'
 import { systemServiceApi } from '@/servers/system-service'
-import { OpenAPIType, PageData } from '@/types/systemTypes'
-import { getDictionary } from '@/utils/getDictionary'
-import { isValidResponse } from '@/utils/isValidResponse'
-import SwalAlert from '@/utils/SwalAlert'
+import { OpenAPIType, PageData } from '@shared/types/systemTypes'
+import { getDictionary } from '@utils/getDictionary'
+import { isValidResponse } from '@utils/isValidResponse'
+import SwalAlert from '@utils/SwalAlert'
 import { SelectChangeEvent } from '@mui/material'
 import { Session } from 'next-auth'
 import { useEffect, useMemo, useState } from 'react'
@@ -32,7 +32,7 @@ export const useOpenApiClientHandler = (
         { value: 'INACTIVE', label: 'Inactive' }
     ])
 
-    const [selected, setSelected] = useState<string[]>([]) // dùng client_id làm id
+    const [selected, setSelected] = useState<string[]>([]) // dÃ¹ng client_id lÃ m id
     const currentPageIds = useMemo(
         () => (openapiData?.items ?? []).map(x => x.id),
         [openapiData?.items]
@@ -139,12 +139,12 @@ export const useOpenApiClientHandler = (
     }
 
     // =========================
-    // 🔴 DELETE LOGIC
+    // ðŸ”´ DELETE LOGIC
     // =========================
 
     /**
-     * Xoá 1 hợp đồng theo contractNo.
-     * Trả về { ok, message } để UI hiển thị Swal/toast.
+     * XoÃ¡ 1 há»£p Ä‘á»“ng theo contractNo.
+     * Tráº£ vá» { ok, message } Ä‘á»ƒ UI hiá»ƒn thá»‹ Swal/toast.
      */
     const deleteOpenAPI = async (id: string, clientId: string,): Promise<{ ok: boolean; message: string }> => {
         if (!clientId) return { ok: false, message: 'Invalid client ID' }
@@ -169,17 +169,17 @@ export const useOpenApiClientHandler = (
                 return { ok: false, message: msg }
             }
 
-            // Có backend trả error trong payload?
+            // CÃ³ backend tráº£ error trong payload?
             const errArr = (resp as any)?.payload?.dataresponse?.error
             if (Array.isArray(errArr) && errArr.length > 0) {
                 const msg = errArr[0]?.info || 'Delete client failed'
                 return { ok: false, message: msg }
             }
 
-            // Refresh lại danh sách theo filter hiện tại
+            // Refresh láº¡i danh sÃ¡ch theo filter hiá»‡n táº¡i
             const payload = searchPayload ?? defaultPayload
 
-            // Nếu trang hiện tại chỉ còn 1 record và xoá nó => lùi về trang trước (tránh trống trang)
+            // Náº¿u trang hiá»‡n táº¡i chá»‰ cÃ²n 1 record vÃ  xoÃ¡ nÃ³ => lÃ¹i vá» trang trÆ°á»›c (trÃ¡nh trá»‘ng trang)
             const willBeEmptyPage = (openapi?.items?.length ?? 0) === 1
             const nextPage = willBeEmptyPage ? Math.max((page ?? 1) - 1, 0) : page
 
@@ -197,8 +197,8 @@ export const useOpenApiClientHandler = (
     }
 
     /**
-     * Xoá tất cả các client đang chọn (selected).
-     * Trả về { ok, message, results } – trong đó results liệt kê từng id ok/failed.
+     * XoÃ¡ táº¥t cáº£ cÃ¡c client Ä‘ang chá»n (selected).
+     * Tráº£ vá» { ok, message, results } â€“ trong Ä‘Ã³ results liá»‡t kÃª tá»«ng id ok/failed.
      */
     // const deleteManySelected = async (): Promise<{
     //     ok: boolean
@@ -275,3 +275,4 @@ export const useOpenApiClientHandler = (
         // deleteManySelected
     }
 }
+

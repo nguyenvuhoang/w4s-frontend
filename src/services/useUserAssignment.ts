@@ -2,9 +2,9 @@
 
 import { WORKFLOWCODE } from '@/data/WorkflowCode';
 import { systemServiceApi, workflowService } from '@/servers/system-service';
-import { PageDefaultResponse, UserAccount } from '@/types/bankType';
-import { PageData, Role } from '@/types/systemTypes';
-import { normalize } from '@/utils/normalize';
+import { PageDefaultResponse, UserAccount } from '@shared/types/bankType';
+import { PageData, Role } from '@shared/types/systemTypes';
+import { normalize } from '@utils/normalize';
 import { Session } from 'next-auth';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -292,7 +292,7 @@ export function useUserAssignment({ session, dictionary, role, userdata }: Param
         const groupId: number | null = (() => {
             if (typeof selectedUserGroup === 'number') return selectedUserGroup;
             if (typeof selectedUserGroup === 'string' && /^\d+$/.test(selectedUserGroup)) return Number(selectedUserGroup);
-            return null; // 'ALL' hoặc ''
+            return null; // 'ALL' hoáº·c ''
         })();
 
         const userNameQuery = filterUserName.trim().toLowerCase();
@@ -355,3 +355,4 @@ export function useUserAssignment({ session, dictionary, role, userdata }: Param
         toastOpen, toastMessage, toastSeverity, handleCloseToast,
     };
 }
+

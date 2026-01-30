@@ -1,5 +1,5 @@
 import { Locale } from "@/configs/i18n";
-import { getDictionary } from "@/utils/getDictionary";
+import { getDictionary } from "@utils/getDictionary";
 import Logout from "./Logout";
 
 const LogoutPage = async (props: { params: Promise<{ locale: Locale }> }) => {

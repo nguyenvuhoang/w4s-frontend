@@ -1,9 +1,9 @@
 'use client'
 
 import { Locale } from "@/configs/i18n";
-import { FormInput, PageData, RuleStrong } from "@/types/systemTypes";
-import { getDictionary } from "@/utils/getDictionary";
-import { parseClassToGrid } from "@/utils/parseClassToGrid";
+import { FormInput, PageData, RuleStrong } from "@shared/types/systemTypes";
+import { getDictionary } from "@utils/getDictionary";
+import { parseClassToGrid } from "@utils/parseClassToGrid";
 import { Session } from "next-auth";
 import { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
@@ -278,3 +278,4 @@ const RenderInput: React.FC<RenderInputProps> = ({
 };
 
 export default RenderInput;
+

@@ -2,7 +2,7 @@
 
 import { WORKFLOWCODE } from '@/data/WorkflowCode';
 import { workflowService } from '@/servers/system-service';
-import SwalAlert from '@/utils/SwalAlert';
+import SwalAlert from '@utils/SwalAlert';
 import { Session } from 'next-auth';
 import { useState } from 'react';
 
@@ -61,3 +61,4 @@ export const useCustomerInfoHandler = ({
 
     return { loading, handleSync };
 };
+

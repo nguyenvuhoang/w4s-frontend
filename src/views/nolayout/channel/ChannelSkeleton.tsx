@@ -13,7 +13,7 @@ import {
   TableRow,
   Tabs,
 } from '@mui/material'
-import type { getDictionary } from '@/utils/getDictionary'
+import type { getDictionary } from '@utils/getDictionary'
 
 type Dictionary = Awaited<ReturnType<typeof getDictionary>>
 
@@ -82,3 +82,4 @@ const ChannelSkeleton = ({ dictionary }: ChannelSkeletonProps) => {
 }
 
 export default ChannelSkeleton
+

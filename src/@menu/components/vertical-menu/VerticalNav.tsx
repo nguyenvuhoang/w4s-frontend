@@ -9,17 +9,17 @@ import classnames from 'classnames'
 import type { CSSObject } from '@emotion/styled'
 
 // Type Imports
-import type { BreakpointType } from '../../types'
+import type { BreakpointType } from '@shared/types'
 
 // Context Imports
-import type { VerticalNavState } from '../../contexts/verticalNavContext'
+import type { VerticalNavState } from '@contexts/verticalNavContext'
 
 // Hook Imports
-import useMediaQuery from '../../hooks/useMediaQuery'
-import useVerticalNav from '../../hooks/useVerticalNav'
+import useMediaQuery from '@hooks/useMediaQuery'
+import useVerticalNav from '@hooks/useVerticalNav'
 
 // Util Imports
-import { verticalNavClasses } from '../../utils/menuClasses'
+import { verticalNavClasses } from '@utils/menuClasses'
 
 // Styled Component Imports
 import StyledBackdrop from '../../styles/StyledBackdrop'

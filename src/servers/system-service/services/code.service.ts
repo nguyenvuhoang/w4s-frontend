@@ -1,6 +1,6 @@
 import { WORKFLOWCODE } from '@/data/WorkflowCode';
 import { env } from '@/env.mjs';
-import { FODataArrayResponse, SystemDataRequest } from "@/types/systemTypes";
+import { FODataArrayResponse, SystemDataRequest } from "@shared/types/systemTypes";
 import { apiPost, createDefaultBody } from '../../lib/api';
 
 /**
@@ -34,3 +34,4 @@ export const codeService = {
             { lang: language, app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'SYS' }
         ),
 }
+

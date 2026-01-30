@@ -3,13 +3,13 @@
 import { getDataConfig } from '@/@core/components/jSelect/supFunc'
 import CountryFlag from '@/@core/components/mui/CountryFlag'
 import CustomModal from '@/@core/components/mui/CustomModal'
-import { SexIcon } from '@/components/layout/shared/SexIcon'
-import { StatusIcon } from '@/components/layout/shared/StatusIcon'
+import { SexIcon } from '@components/layout/shared/SexIcon'
+import { StatusIcon } from '@components/layout/shared/StatusIcon'
 import { Locale } from '@/configs/i18n'
-import { formatAmount } from '@/utils/formatAmount'
-import { formatDateTime } from '@/utils/formatDateTime'
-import { getDictionary } from '@/utils/getDictionary'
-import { getInfoByToken } from '@/utils/getInfoByToken'
+import { formatAmount } from '@utils/formatAmount'
+import { formatDateTime } from '@utils/formatDateTime'
+import { getDictionary } from '@utils/getDictionary'
+import { getInfoByToken } from '@utils/getInfoByToken'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 import CheckIcon from '@mui/icons-material/Check'
 import EditIcon from '@mui/icons-material/Edit'
@@ -383,3 +383,4 @@ const ViewLabelItem = ({
 }
 
 export default ViewLabelItem
+

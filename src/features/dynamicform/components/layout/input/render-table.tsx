@@ -6,12 +6,12 @@ import {
   StyledHeaderCell,
   StyledTableRow,
 } from "@/@core/components/jTable/style";
-import PreviewContent from "@/components/forms/previewcontent";
-import LoadingSubmit from "@/components/LoadingSubmit";
-import { FormInput } from "@/types/systemTypes";
-import { generateCellTable } from "@/utils/generateCellTable";
-import { getDictionary } from "@/utils/getDictionary";
-import { getNestedValue } from "@/utils/getNestedValue";
+import PreviewContent from "@components/forms/previewcontent";
+import LoadingSubmit from "@components/LoadingSubmit";
+import { FormInput } from "@shared/types/systemTypes";
+import { generateCellTable } from "@utils/generateCellTable";
+import { getDictionary } from "@utils/getDictionary";
+import { getNestedValue } from "@utils/getNestedValue";
 import {
   Box,
   Grid,
@@ -56,17 +56,17 @@ const RenderTableDefault = ({
   renderviewdata,
 }: Props) => {
   const [data, setData] = useState<any[]>([]);
-  const [filteredData, setFilteredData] = useState<any[]>([]); // Dữ liệu sau khi lọc
+  const [filteredData, setFilteredData] = useState<any[]>([]); // Dá»¯ liá»‡u sau khi lá»c
   const [searchTerms, setSearchTerms] = useState<{ [key: string]: string }>({});
   const [page, setPage] = useState(1);
   const [searchVisible, setSearchVisible] = useState<{
     [key: string]: boolean;
   }>({});
-  const [totalResults, setTotalResults] = useState(0); // Tổng số bản ghi
+  const [totalResults, setTotalResults] = useState(0); // Tá»•ng sá»‘ báº£n ghi
   const [pageSize, setPageSize] = useState(
     parseInt(input.config.paging_record || "50", 10)
-  ); // Số bản ghi mỗi trang (mặc định là 5)
-  const [jumpPage, setJumpPage] = useState(1); // Số trang muốn nhảy đến
+  ); // Sá»‘ báº£n ghi má»—i trang (máº·c Ä‘á»‹nh lÃ  5)
+  const [jumpPage, setJumpPage] = useState(1); // Sá»‘ trang muá»‘n nháº£y Ä‘áº¿n
   const [selectedRow, setSelectedRow] = useState<any>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isModalOpen, setModalOpen] = useState(false);
@@ -74,7 +74,7 @@ const RenderTableDefault = ({
 
   // Hooks
   const { data: session } = useSession();
-  const columns = JSON.parse(input.config.columns || "[]"); // Parse cột từ config
+  const columns = JSON.parse(input.config.columns || "[]"); // Parse cá»™t tá»« config
 
   const memoizedColumns = useMemo(() => JSON.parse(input.config.columns || "[]"), [input.config.columns]);
   const memoizedRenderViewData = useMemo(() => renderviewdata, [renderviewdata]);
@@ -176,7 +176,7 @@ const RenderTableDefault = ({
 
   const handlePageSizeChange = (event: SelectChangeEvent<number>) => {
     setPageSize(Number(event.target.value));
-    setPage(1); // Reset về trang 1 khi đổi số bản ghi
+    setPage(1); // Reset vá» trang 1 khi Ä‘á»•i sá»‘ báº£n ghi
   };
 
   const handleJumpPage = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -217,7 +217,7 @@ const RenderTableDefault = ({
 
   return (
     <Grid size={gridProps} sx={{ marginBottom: "16px", position: "relative" }}>
-      {/* LoadingSubmit nằm giữa nội dung bảng */}
+      {/* LoadingSubmit náº±m giá»¯a ná»™i dung báº£ng */}
       {isFetching && (
         <Box
           sx={{
@@ -230,7 +230,7 @@ const RenderTableDefault = ({
             justifyContent: "center",
             alignItems: "center",
             borderRadius: "8px",
-            padding: "50px", // Tùy chọn thêm khoảng cách
+            padding: "50px", // TÃ¹y chá»n thÃªm khoáº£ng cÃ¡ch
           }}
         >
           <LoadingSubmit loadingtext={dictionary['common'].loading} />
@@ -363,7 +363,7 @@ const RenderTableDefault = ({
         </Table>
       </TableContainer>
 
-      {/* Phân trang */}
+      {/* PhÃ¢n trang */}
       {!isFetching && totalResults > 0 && (
         <PaginationPage
           page={page}
@@ -399,3 +399,4 @@ const RenderTableDefault = ({
 };
 
 export default RenderTableDefault;
+

@@ -1,11 +1,11 @@
 'use client'
-import NoData from '@/components/layout/shared/card/nodata'
+import NoData from '@components/layout/shared/card/nodata'
 import { SERVICES } from '@/data/meta'
 import { dataService } from '@/servers/system-service'
-import { StoreCommandType } from '@/types/bankType'
-import { getDictionary } from '@/utils/getDictionary'
-import { isValidResponse } from '@/utils/isValidResponse'
-import SwalAlert from '@/utils/SwalAlert'
+import { StoreCommandType } from '@shared/types/bankType'
+import { getDictionary } from '@utils/getDictionary'
+import { isValidResponse } from '@utils/isValidResponse'
+import SwalAlert from '@utils/SwalAlert'
 import {
     Box,
     CircularProgress,
@@ -277,14 +277,14 @@ const StoreCommand = ({ session, dictionary }: {
                                                         onClick={() => navigator.clipboard.writeText(item.query)}
                                                         title="Copy query"
                                                     >
-                                                        📋
+                                                        ðŸ“‹
                                                     </IconButton>
                                                     <IconButton
                                                         size="small"
                                                         onClick={() => handleOpenModal(item.query)}
                                                         title="View full"
                                                     >
-                                                        🔍
+                                                        ðŸ”
                                                     </IconButton>
                                                 </Box>
                                             </Box>
@@ -407,3 +407,4 @@ const StoreCommand = ({ session, dictionary }: {
 }
 
 export default StoreCommand
+

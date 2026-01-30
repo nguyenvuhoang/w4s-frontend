@@ -1,4 +1,4 @@
-import { getDictionary } from '@/utils/getDictionary';
+import { getDictionary } from '@utils/getDictionary';
 import { Box, Divider, IconButton, Modal, Typography } from '@mui/material';
 import { useState } from 'react';
 
@@ -77,3 +77,4 @@ const ContactInfoModal = ({ dictionary }: {
 };
 
 export default ContactInfoModal;
+

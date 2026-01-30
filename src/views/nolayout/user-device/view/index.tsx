@@ -1,8 +1,8 @@
 "use client";
 
-import { UserDeviceType } from "@/types/bankType";
-import { formatDateTime } from "@/utils/formatDateTime";
-import { getDictionary } from "@/utils/getDictionary";
+import { UserDeviceType } from "@shared/types/bankType";
+import { formatDateTime } from "@utils/formatDateTime";
+import { getDictionary } from "@utils/getDictionary";
 import ContentWrapper from "@features/dynamicform/components/layout/content-wrapper";
 import { SystemSecurityUpdateGood } from "@mui/icons-material";
 import AndroidIcon from "@mui/icons-material/Android";
@@ -260,3 +260,4 @@ const LabelText = ({
 );
 
 export default UserDeviceViewContent;
+

@@ -1,4 +1,4 @@
-import AuthLayout, { generateAuthMetadata } from '@/components/layout/AuthLayout';
+import AuthLayout, { generateAuthMetadata } from '@components/layout/AuthLayout';
 import { Locale } from '@/configs/i18n';
 import { Metadata } from 'next';
 import ForgetPassword from './components/ForgetPassword';

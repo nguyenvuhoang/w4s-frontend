@@ -1,6 +1,6 @@
 'use client';
 
-import { PageContentProps } from '@/types';
+import { PageContentProps } from '@shared/types';
 import {
   Card,
   CardContent,
@@ -256,3 +256,4 @@ const WalletAccountTab = ({
 };
 
 export default WalletAccountTab;
+

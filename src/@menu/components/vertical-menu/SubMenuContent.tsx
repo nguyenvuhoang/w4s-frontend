@@ -7,7 +7,7 @@ import { forwardRef, useEffect, useState } from 'react'
 // Third-party Imports
 
 // Type Imports
-import type { ChildrenType, RootStylesType } from '../../types'
+import type { ChildrenType, RootStylesType } from '@shared/types'
 import type { VerticalMenuContextProps } from './Menu'
 
 // Hooks Imports
@@ -21,7 +21,7 @@ import navigationCustomStyles from '@/@core/styles/vertical/navigationCustomStyl
 import useVerticalNav from '@/@menu/hooks/useVerticalNav'
 import VerticalNav from './VerticalNav'
 
-export type SubMenuContentProps = HTMLAttributes<HTMLDivElement> &
+export type SubMenuContentProps = HTMLAttributes<HTMLUListElement> &
   RootStylesType &
   Partial<ChildrenType> & {
     open?: boolean
@@ -37,7 +37,7 @@ export type SubMenuContentProps = HTMLAttributes<HTMLDivElement> &
 
 
 
-const SubMenuContent: ForwardRefRenderFunction<HTMLDivElement, SubMenuContentProps> = (props, ref) => {
+const SubMenuContent: ForwardRefRenderFunction<HTMLUListElement, SubMenuContentProps> = (props, ref) => {
   // Props
   const {
     children,
@@ -52,66 +52,23 @@ const SubMenuContent: ForwardRefRenderFunction<HTMLDivElement, SubMenuContentPro
     ...rest
   } = props
 
-  // States
-  const [mounted, setMounted] = useState(false)
-
-  // Refs
-  const SubMenuContentRef = ref as MutableRefObject<HTMLDivElement>
-
-  useEffect(() => {
-    if (mounted) {
-      if (open || (open && isHovered)) {
-        const target = SubMenuContentRef?.current
-
-        if (target) {
-          target.style.display = 'block'
-          target.style.overflow = 'hidden'
-          target.style.blockSize = 'auto'
-          const height = target.offsetHeight
-
-          target.style.blockSize = '0px'
-          target.offsetHeight
-
-          target.style.blockSize = `${height}px`
-
-          setTimeout(() => {
-            target.style.overflow = 'auto'
-            target.style.blockSize = 'auto'
-          }, transitionDuration)
-        }
-      } else {
-        const target = SubMenuContentRef?.current
-
-        if (target) {
-          target.style.overflow = 'hidden'
-          target.style.blockSize = `${target.offsetHeight}px`
-          target.offsetHeight
-          target.style.blockSize = '0px'
-
-          setTimeout(() => {
-            target.style.overflow = 'auto'
-            target.style.display = 'none'
-          }, transitionDuration)
-        }
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, mounted, SubMenuContentRef])
-
-  useEffect(() => {
-    setMounted(true)
-  }, [isHovered])
-
-  const verticalNavOptions = useVerticalNav()
-  const theme = useTheme()
+  // Extract non-DOM props to prevent React warnings
+  const { rootStyles, className, ...domProps } = rest as any
 
   return (
-    <VerticalNav
-      customStyles={navigationCustomStyles(verticalNavOptions, theme)}
-      collapsedWidth={71}
-      backgroundColor='#FFFFFF'
+    <ul
+      ref={ref}
+      className={className}
+      style={{
+        display: open ? 'block' : 'none',
+        listStyle: 'none',
+        padding: 0,
+        margin: 0,
+        ...(typeof rootStyles === 'object' ? rootStyles : {})
+      }}
     >
-    </VerticalNav>
+      {children}
+    </ul>
   )
 }
 

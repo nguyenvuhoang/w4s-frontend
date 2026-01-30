@@ -1,6 +1,6 @@
-import { generateAuthMetadata } from '@/components/layout/AuthLayout';
+import { generateAuthMetadata } from '@components/layout/AuthLayout';
 import { Locale } from '@/configs/i18n';
-import { splitLabel } from '@/utils/splitLabel';
+import { splitLabel } from '@utils/splitLabel';
 import GenerateLayout from '@features/dynamicform/components/layout/generate-layout';
 import LayoutRenderer from '@features/dynamicform/components/layout/layout-renderer';
 import { Metadata } from 'next';

@@ -1,6 +1,6 @@
 'use client'
 
-import { getDictionary } from '@/utils/getDictionary'
+import { getDictionary } from '@utils/getDictionary'
 import EmailSetting from '@/views/components/console-admin/EmailSetting'
 import LocalStringResource from '@/views/components/console-admin/LocalStringResource'
 import Settings from '@/views/components/console-admin/Settings'
@@ -84,3 +84,4 @@ const ConsoleAdminContent = ({ session, dictionary }: {
 }
 
 export default ConsoleAdminContent
+

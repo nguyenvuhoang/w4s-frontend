@@ -1,6 +1,6 @@
 import { env } from "@/env.mjs";
-import { RequestDataDefault } from "@/types";
-import { FODataResponse } from "@/types/systemTypes";
+import { RequestDataDefault } from "@shared/types";
+import { FODataResponse } from "@shared/types/systemTypes";
 import { apiPost, createDefaultBody } from "../lib/api";
 
 export const qrServiceApi = {
@@ -27,3 +27,5 @@ export const qrServiceApi = {
         ),
 
 }
+
+

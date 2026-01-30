@@ -1,14 +1,14 @@
 "use client";
 
 import PaginationPage from "@/@core/components/jTable/pagination";
-import EmptyListNotice from "@/components/layout/shared/EmptyListNotice";
+import EmptyListNotice from "@components/layout/shared/EmptyListNotice";
 import { Locale } from "@/configs/i18n";
 import { useUserDeviceHandler } from "@/services/useUserDeviceHandler";
-import { UserDeviceType } from "@/types/bankType";
-import { PageData } from "@/types/systemTypes";
-import { formatDateTime } from "@/utils/formatDateTime";
-import { getDictionary } from "@/utils/getDictionary";
-import { getLocalizedUrl } from "@/utils/i18n";
+import { UserDeviceType } from "@shared/types/bankType";
+import { PageData } from "@shared/types/systemTypes";
+import { formatDateTime } from "@utils/formatDateTime";
+import { getDictionary } from "@utils/getDictionary";
+import { getLocalizedUrl } from "@utils/i18n";
 import AndroidIcon from "@mui/icons-material/Android";
 import AppleIcon from "@mui/icons-material/Apple";
 import DeviceUnknownIcon from "@mui/icons-material/DeviceUnknown";
@@ -204,3 +204,4 @@ const UserDeviceContent = ({
 };
 
 export default UserDeviceContent;
+

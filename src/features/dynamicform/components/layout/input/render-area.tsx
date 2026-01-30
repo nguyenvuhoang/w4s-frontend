@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import JsonEditorComponent from '@/@core/components/jSONEditor'; // Component JSON Editor
-import { FormInput } from '@/types/systemTypes';
-import { createRequestHeaderJSON } from '@/utils/createRequestHeaderJSON'; // Hàm tạo JSON mặc định
-import { xmlToJson } from '@/utils/xmlToJson';
+import { FormInput } from '@shared/types/systemTypes';
+import { createRequestHeaderJSON } from '@utils/createRequestHeaderJSON'; // HÃ m táº¡o JSON máº·c Ä‘á»‹nh
+import { xmlToJson } from '@utils/xmlToJson';
 import { Grid, NoSsr, Typography } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -45,20 +45,20 @@ const RenderTextAreaDefault = ({ input, gridProps, formData, onChange, rendervie
         return parseData(rawValue);
     }, [formData, columnKey, input]);
 
-    // Trạng thái JSON hiện tại trong editor
+    // Tráº¡ng thÃ¡i JSON hiá»‡n táº¡i trong editor
     const [jsonContent, setJsonContent] = useState<object>(initialJson);
 
-    // Cập nhật `jsonContent` khi `initialJson` thay đổi
+    // Cáº­p nháº­t `jsonContent` khi `initialJson` thay Ä‘á»•i
     useEffect(() => {
         setJsonContent(initialJson);
     }, [initialJson]);
 
-    // Xử lý khi JSON trong editor thay đổi
+    // Xá»­ lÃ½ khi JSON trong editor thay Ä‘á»•i
     const handleJsonChange = (updatedJson: object) => {
         console.log('Updated JSON:', updatedJson);
         setJsonContent(updatedJson);
 
-        // Gọi hàm onChange để cập nhật `formData`
+        // Gá»i hÃ m onChange Ä‘á»ƒ cáº­p nháº­t `formData`
         if (onChange && columnKey) {
             onChange(columnKey, updatedJson);
         }
@@ -91,3 +91,4 @@ const RenderTextAreaDefault = ({ input, gridProps, formData, onChange, rendervie
 };
 
 export default RenderTextAreaDefault;
+

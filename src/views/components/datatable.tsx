@@ -1,4 +1,4 @@
-import { TableData } from '@/types/systemTypes';
+import { TableData } from '@shared/types/systemTypes';
 import CloseIcon from '@mui/icons-material/Close';
 import SearchIcon from '@mui/icons-material/Search';
 import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
@@ -123,3 +123,4 @@ const DataTable: React.FC<DataTableProps> = ({ tabledata }) => {
 };
 
 export default DataTable;
+

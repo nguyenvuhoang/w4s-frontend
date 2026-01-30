@@ -2,7 +2,7 @@
 
 import { getDataConfig } from '@/@core/components/jSelect/supFunc'
 import { Locale } from '@/configs/i18n'
-import { parseClassToGrid } from '@/utils/parseClassToGrid'
+import { parseClassToGrid } from '@utils/parseClassToGrid'
 import DoneIcon from '@mui/icons-material/Done'
 import EditIcon from '@mui/icons-material/Edit'
 import FactCheckIcon from '@mui/icons-material/FactCheck'
@@ -183,3 +183,4 @@ const ViewCheckBoxItem = ({
 }
 
 export default ViewCheckBoxItem
+

@@ -2,7 +2,7 @@
 
 import { Dispatch, SetStateAction, useState } from 'react';
 
-import { DeviceView } from '@/types';
+import { DeviceView } from '@shared/types';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import ClearIcon from '@mui/icons-material/Clear';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -19,7 +19,7 @@ import UploadIcon from '@mui/icons-material/Upload';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Box, Menu, MenuItem } from '@mui/material';
 import EditJson from './EditJson';
-import { getDictionary } from '@/utils/getDictionary';
+import { getDictionary } from '@utils/getDictionary';
 
 type Props = {
     selectedView: DeviceView;
@@ -191,3 +191,5 @@ const HeaderArea = ({ selectedView, setSelectedView, dictionary }: Props) => {
 }
 
 export default HeaderArea
+
+

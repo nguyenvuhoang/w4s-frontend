@@ -1,5 +1,5 @@
 import { env } from "@/env.mjs";
-import { DataRequest, LearnDataRequest, SubmitDataRequest, SubmitDataResponse, TableDataResponse } from "@/types/systemTypes";
+import { DataRequest, LearnDataRequest, SubmitDataRequest, SubmitDataResponse, TableDataResponse } from "@shared/types/systemTypes";
 import { apiPost, createDefaultBody } from "../lib/api";
 import http from "../lib/http";
 
@@ -61,3 +61,4 @@ export const portalServiceApi = {
         ),
 
 }
+

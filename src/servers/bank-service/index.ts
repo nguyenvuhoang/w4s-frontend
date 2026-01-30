@@ -1,5 +1,5 @@
-import { AccountDetailResponse, AccountHistoryInfoResponse, BalanceDetailResponse, BankDataResponse, BankInfoResponse, BenificiaryInfoResponse, BenificiaryListResponse, CardByIDResponse, CardListResponse, FavoriteFeatureOfUser, FundTransferDataRequest, ListFavoriteFeature, LoanProductResponse, PointOfUserResponse, SavingProductResponse, TemplateTransferResponse, UpdateFavoriteFeatureOfUserResponse } from "@/types/bankType"
-import { SystemDataRequest } from "@/types/systemTypes"
+import { AccountDetailResponse, AccountHistoryInfoResponse, BalanceDetailResponse, BankDataResponse, BankInfoResponse, BenificiaryInfoResponse, BenificiaryListResponse, CardByIDResponse, CardListResponse, FavoriteFeatureOfUser, FundTransferDataRequest, ListFavoriteFeature, LoanProductResponse, PointOfUserResponse, SavingProductResponse, TemplateTransferResponse, UpdateFavoriteFeatureOfUserResponse } from "@shared/types/bankType"
+import { SystemDataRequest } from "@shared/types/systemTypes"
 import http from "../lib/http"
 
 export const bankServiceApi = {
@@ -45,7 +45,7 @@ export const bankServiceApi = {
                             accountnumber: `${accountnumber}`,
                             transactionreference: transactionreference,
                             accounttype: accountype,
-                            description: 'Lấy thông tin số dư tài khoản'
+                            description: 'Láº¥y thÃ´ng tin sá»‘ dÆ° tÃ i khoáº£n'
                         }
                     }
                 ]
@@ -473,3 +473,4 @@ export const bankServiceApi = {
                     }
                 }),
 }
+

@@ -5,10 +5,10 @@ import { useForm } from 'react-hook-form';
 import { Session } from 'next-auth';
 
 import { workflowService } from '@/servers/system-service';
-import { FormInfo } from '@/types/systemTypes';
-import { getDictionary } from '@/utils/getDictionary';
-import { isValidResponse } from '@/utils/isValidResponse';
-import SwalAlert from '@/utils/SwalAlert';
+import { FormInfo } from '@shared/types/systemTypes';
+import { getDictionary } from '@utils/getDictionary';
+import { isValidResponse } from '@utils/isValidResponse';
+import SwalAlert from '@utils/SwalAlert';
 import { Locale } from '@/configs/i18n';
 
 // ============================================================================
@@ -382,3 +382,4 @@ export const useDynamicRenderer = ({
     onChangeBanner,
   };
 };
+

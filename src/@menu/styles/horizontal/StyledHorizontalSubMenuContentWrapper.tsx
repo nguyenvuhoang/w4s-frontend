@@ -2,7 +2,7 @@
 import styled from '@emotion/styled'
 
 // Type Imports
-import type { RootStylesType } from '../../types'
+import type { RootStylesType } from '@shared/types'
 
 const StyledHorizontalSubMenuContentWrapper = styled.div<RootStylesType>`
   z-index: 10;

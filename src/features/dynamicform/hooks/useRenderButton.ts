@@ -11,10 +11,10 @@ import { handlePostAddData } from '@/@core/components/cButton/handlePostAddData'
 import { handlePostViewData } from '@/@core/components/cButton/handlePostViewData';
 import Application from '@/@core/lib/libSupport';
 import { useUserStore } from '@/@core/stores/useUserStore';
-import { useRowSelection } from '@/contexts/RowSelectionContext';
-import { FormInput, PageData, RuleStrong } from '@/types/systemTypes';
-import { getDictionary } from '@/utils/getDictionary';
-import SwalAlert from '@/utils/SwalAlert';
+import { useRowSelection } from '@contexts/RowSelectionContext';
+import { FormInput, PageData, RuleStrong } from '@shared/types/systemTypes';
+import { getDictionary } from '@utils/getDictionary';
+import SwalAlert from '@utils/SwalAlert';
 
 import { checkRules } from '../components/layout/rule';
 import { checkButtonVisibility } from '../components/layout/rule/checkButtonVisibility';
@@ -45,7 +45,7 @@ export interface UseRenderButtonReturn {
   disableButtonclick: boolean;
   isPreview: boolean;
   isLoading: boolean;
-  
+
   // Computed values
   shouldShowButton: boolean;
   shouldVisibilityButton: boolean;
@@ -53,7 +53,7 @@ export interface UseRenderButtonReturn {
   isComponentHidden: boolean;
   selectedRows: any[];
   buttonCode: string;
-  
+
   // Handlers
   handleClick: (e?: React.MouseEvent<HTMLButtonElement>) => Promise<void>;
   handleOpenModal: () => void;
@@ -256,7 +256,7 @@ export const useRenderButton = ({
     disableButtonclick,
     isPreview,
     isLoading,
-    
+
     // Computed values
     shouldShowButton,
     shouldVisibilityButton,
@@ -264,10 +264,11 @@ export const useRenderButton = ({
     isComponentHidden,
     selectedRows,
     buttonCode,
-    
+
     // Handlers
     handleClick,
     handleOpenModal,
     handleCloseModal,
   };
 };
+

@@ -4,13 +4,13 @@ import { Session } from 'next-auth';
 import { Dispatch, SetStateAction } from 'react';
 import { useForm } from 'react-hook-form';
 
-import PreviewInfo from '@/components/forms/previewinfo';
-import LoadingSubmit from '@/components/LoadingSubmit';
+import PreviewInfo from '@components/forms/previewinfo';
+import LoadingSubmit from '@components/LoadingSubmit';
 import { Locale } from '@/configs/i18n';
 import { useRenderButton } from '@features/dynamicform/hooks/useRenderButton';
-import { FormInput, PageData, RuleStrong } from '@/types/systemTypes';
-import { getDictionary } from '@/utils/getDictionary';
-import { getIcon } from '@/utils/getIcon';
+import { FormInput, PageData, RuleStrong } from '@shared/types/systemTypes';
+import { getDictionary } from '@utils/getDictionary';
+import { getIcon } from '@utils/getIcon';
 import { Box, Button, Grid, Modal } from '@mui/material';
 
 
@@ -134,3 +134,4 @@ const RenderButtonDefault = ({
 };
 
 export default RenderButtonDefault;
+

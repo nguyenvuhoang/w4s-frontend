@@ -1,19 +1,19 @@
 'use client';
 
 import { Locale } from '@/configs/i18n';
-import { PageContentProps } from '@/types';
-import { getDictionary } from '@/utils/getDictionary';
+import { PageContentProps } from '@shared/types';
+import { getDictionary } from '@utils/getDictionary';
 import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper';
 import { Session } from 'next-auth';
 
 
 // MUI
-import { ContractType } from '@/types/bankType';
-import { PageData } from '@/types/systemTypes';
+import { ContractType } from '@shared/types/bankType';
+import { PageData } from '@shared/types/systemTypes';
 import { Box } from '@mui/material';
 import CalendarMain from './CalendarMain';
 import { useState } from 'react';
-import { CalendarColors, CalendarColorsDetail } from '@/types/calendarTypes';
+import { CalendarColors, CalendarColorsDetail } from '@shared/types/calendarTypes';
 
 
 type PageProps = PageContentProps & {
@@ -75,3 +75,5 @@ const CalendarContent = ({
 };
 
 export default CalendarContent;
+
+

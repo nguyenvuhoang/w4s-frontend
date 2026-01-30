@@ -12,7 +12,7 @@
  */
 
 import { ComponentType } from 'react';
-import { PageContentProps } from '@/types';
+import { PageContentProps } from '@shared/types';
 
 // Import static page components
 import WalletProfileViewPage from './WalletProfileViewPage';
@@ -50,3 +50,4 @@ export const hasStaticPage = (formcode: string | undefined | null): boolean => {
 export const getStaticPage = (formcode: string): StaticPageComponent | undefined => {
   return STATIC_PAGES_MAP[formcode];
 };
+

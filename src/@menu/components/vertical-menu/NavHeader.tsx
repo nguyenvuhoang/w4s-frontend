@@ -2,8 +2,8 @@
 import styled from '@emotion/styled'
 
 // Type Imports
-import type { ChildrenType } from '../../types'
 import type { VerticalNavContextProps } from '../../contexts/verticalNavContext'
+import type { ChildrenType } from '../../types'
 
 // Hook Imports
 import useVerticalNav from '../../hooks/useVerticalNav'

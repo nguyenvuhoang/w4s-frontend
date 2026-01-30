@@ -13,18 +13,18 @@ import { useUpdateEffect } from 'react-use'
 import type { CSSObject } from '@emotion/styled'
 
 // Type Imports
-import type { ChildrenType, MenuItemElement, MenuItemExactMatchUrlProps, RootStylesType } from '../../types'
+import type { ChildrenType, MenuItemElement, MenuItemExactMatchUrlProps, RootStylesType } from '@shared/types'
 
 // Component Imports
 import MenuButton from './MenuButton'
 
 // Hook Imports
-import useVerticalNav from '../../hooks/useVerticalNav'
-import useVerticalMenu from '../../hooks/useVerticalMenu'
+import useVerticalNav from '@hooks/useVerticalNav'
+import useVerticalMenu from '@hooks/useVerticalMenu'
 
 // Util Imports
-import { renderMenuIcon } from '../../utils/menuUtils'
-import { menuClasses } from '../../utils/menuClasses'
+import { renderMenuIcon } from '@utils/menuUtils'
+import { menuClasses } from '@utils/menuClasses'
 
 // Styled Component Imports
 import StyledMenuLabel from '../../styles/StyledMenuLabel'

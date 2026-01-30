@@ -1,5 +1,5 @@
 import { Locale } from '@/configs/i18n';
-import { getDictionary } from '@/utils/getDictionary';
+import { getDictionary } from '@utils/getDictionary';
 import ChangePasswordForm from '@features/user/components/ChangePasswordForm';
 import { Box, Card, CardContent, Typography } from '@mui/material';
 import { Session } from 'next-auth';

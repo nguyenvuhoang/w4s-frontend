@@ -3,14 +3,14 @@
 import type { Locale } from "@/configs/i18n";
 import { Box } from "@mui/material";
 // Util Imports
-import LoadingSubmit from "@/components/LoadingSubmit";
-import { getDictionary } from "@/utils/getDictionary";
+import LoadingSubmit from "@components/LoadingSubmit";
+import { getDictionary } from "@utils/getDictionary";
 import { Button, TextField, Typography } from "@mui/material";
 import { Session } from "next-auth";
 import Link from "next/link";
 import { FormProvider } from "react-hook-form";
 import { useForgetPasswordForm } from "../hooks/useForgetPasswordForm";
-import { getLocalizedUrl } from "@/utils/i18n";
+import { getLocalizedUrl } from "@utils/i18n";
 
 const ForgetPasswordForm = ({
   session,
@@ -102,7 +102,7 @@ const ForgetPasswordForm = ({
                     fontSize: "14px",
                   }}
                 >
-                  ← {dictionary["auth"].backtologin}
+                  â† {dictionary["auth"].backtologin}
                 </Link>
               </Typography>
             </Box>
@@ -114,3 +114,4 @@ const ForgetPasswordForm = ({
 };
 
 export default ForgetPasswordForm;
+

@@ -1,7 +1,7 @@
 import NextAuth, { type NextAuthConfig, type User } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { env } from "./env.mjs";
-import { edgeFetch } from "./utils/edgeFetch";
+import { edgeFetch } from "@utils/edgeFetch";
 
 export const authConfig: NextAuthConfig = {
   providers: [

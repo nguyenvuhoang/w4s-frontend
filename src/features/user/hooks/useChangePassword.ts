@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import SwalAlert from '@/utils/SwalAlert'
+import SwalAlert from '@utils/SwalAlert'
 import { changePassword } from '@features/user/services/changePassword'
 import { signOut } from 'next-auth/react'
 import type { Session } from 'next-auth'
@@ -95,3 +95,4 @@ export function useChangePassword({ dictionary, session, loginname = '' }: UseCh
 }
 
 export default useChangePassword
+

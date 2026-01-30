@@ -1,11 +1,11 @@
 'use client'
-import NoData from '@/components/layout/shared/card/nodata'
+import NoData from '@components/layout/shared/card/nodata'
 import { SERVICES } from '@/data/meta'
 import { dataService } from '@/servers/system-service'
-import { SettingItem } from '@/types/bankType'
-import { getDictionary } from '@/utils/getDictionary'
-import { isValidResponse } from '@/utils/isValidResponse'
-import SwalAlert from '@/utils/SwalAlert'
+import { SettingItem } from '@shared/types/bankType'
+import { getDictionary } from '@utils/getDictionary'
+import { isValidResponse } from '@utils/isValidResponse'
+import SwalAlert from '@utils/SwalAlert'
 import {
     Box,
     CircularProgress,
@@ -140,9 +140,9 @@ const Settings = ({ session, dictionary }: {
                 sx={{
                     position: 'absolute',
                     top: 0,
-                    left: 32, // align với padding của Paper (p: 4 = 32px)
+                    left: 32, // align vá»›i padding cá»§a Paper (p: 4 = 32px)
                     transform: 'translateY(-50%)',
-                    backgroundColor: '#fcfcfc', // khớp màu Paper
+                    backgroundColor: '#fcfcfc', // khá»›p mÃ u Paper
                     px: 1.5,
                     fontSize: '1rem',
                     color: 'primary.main',
@@ -295,3 +295,4 @@ const Settings = ({ session, dictionary }: {
 }
 
 export default Settings
+

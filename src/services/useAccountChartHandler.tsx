@@ -1,8 +1,8 @@
 import { Locale } from '@/configs/i18n'
 import { workflowService } from '@/servers/system-service'
-import { AccountChartType } from '@/types/bankType'
-import { PageData } from '@/types/systemTypes'
-import { isValidResponse } from '@/utils/isValidResponse'
+import { AccountChartType } from '@shared/types/bankType'
+import { PageData } from '@shared/types/systemTypes'
+import { isValidResponse } from '@utils/isValidResponse'
 import { SelectChangeEvent } from '@mui/material'
 import { Session } from 'next-auth'
 import { useEffect, useMemo, useState } from 'react'
@@ -35,7 +35,7 @@ export const useAccountChartHandler = (
     const [loading, setLoading] = useState(false)
     const [searchPayload, setSearchPayload] = useState<SearchForm>()
 
-    const [selected, setSelected] = useState<string[]>([]) // dùng account_number làm id
+    const [selected, setSelected] = useState<string[]>([]) // dÃ¹ng account_number lÃ m id
     const currentPageIds = useMemo(
         () => (accountChart?.items ?? []).map(x => x.accountnumber as string),
         [accountChart?.items]
@@ -152,12 +152,12 @@ export const useAccountChartHandler = (
     }
 
     // =========================
-    // 🔴 DELETE LOGIC
+    // ðŸ”´ DELETE LOGIC
     // =========================
 
     /**
-     * Xoá 1 hợp đồng theo contractNo.
-     * Trả về { ok, message } để UI hiển thị Swal/toast.
+     * XoÃ¡ 1 há»£p Ä‘á»“ng theo contractNo.
+     * Tráº£ vá» { ok, message } Ä‘á»ƒ UI hiá»ƒn thá»‹ Swal/toast.
      */
     const deleteAccountchart = async (accountnumber: string): Promise<{ ok: boolean; message: string }> => {
         if (!accountnumber) return { ok: false, message: 'Invalid account number' }
@@ -203,8 +203,8 @@ export const useAccountChartHandler = (
     }
 
     /**
-     * Xoá tất cả các contract đang chọn (selected).
-     * Trả về { ok, message, results } – trong đó results liệt kê từng id ok/failed.
+     * XoÃ¡ táº¥t cáº£ cÃ¡c contract Ä‘ang chá»n (selected).
+     * Tráº£ vá» { ok, message, results } â€“ trong Ä‘Ã³ results liá»‡t kÃª tá»«ng id ok/failed.
      */
     const deleteManySelected = async (): Promise<{
         ok: boolean
@@ -244,3 +244,4 @@ export const useAccountChartHandler = (
         deleteManySelected
     }
 }
+

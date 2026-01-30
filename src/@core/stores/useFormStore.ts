@@ -2,7 +2,7 @@
 import { create } from 'zustand';
 import { devtools, subscribeWithSelector } from 'zustand/middleware';
 import { produce } from 'immer';
-import type { PageData } from '@/types/systemTypes';
+import type { PageData } from '@shared/types/systemTypes';
 
 type FormState = {
   // Form-specific state indexed by form_id
@@ -161,3 +161,4 @@ export const useFormSearchText = (formId: string) =>
 
 export const useFormIsModify = (formId: string) =>
   useFormStore((state) => state.forms[formId]?.ismodify ?? false);
+

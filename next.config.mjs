@@ -56,8 +56,8 @@ const nextConfig = {
   },
   // TODO: below line is added to resolve twice event dispatch in the calendar reducer
   reactStrictMode: true,
-  cacheComponents: true,
-  reactCompiler: true,
+  // cacheComponents: true,
+  // reactCompiler: true,
 }
 
 export default nextConfig

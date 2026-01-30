@@ -1,7 +1,7 @@
 'use client'
 
 import JsonEditorComponent from "@/@core/components/jSONEditor";
-import { getDictionary } from "@/utils/getDictionary";
+import { getDictionary } from "@utils/getDictionary";
 import CloseIcon from "@mui/icons-material/Close";
 import { Box, IconButton, Typography } from "@mui/material";
 import React from "react";
@@ -46,8 +46,8 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ content, onClose, dicti
 
             <Box
                 sx={{
-                    bgcolor: "primary.main", // Màu xanh (nền chính)
-                    color: "white", // Màu trắng cho chữ
+                    bgcolor: "primary.main", // MÃ u xanh (ná»n chÃ­nh)
+                    color: "white", // MÃ u tráº¯ng cho chá»¯
                     p: 2, // Padding
                 }}
             >
@@ -84,3 +84,4 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ content, onClose, dicti
 };
 
 export default PreviewContent;
+

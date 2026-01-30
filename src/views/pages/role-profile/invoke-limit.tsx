@@ -1,7 +1,7 @@
 'use client';
 
-import { PageDefaultResponse } from '@/types/bankType';
-import { PageData, Role } from '@/types/systemTypes';
+import { PageDefaultResponse } from '@shared/types/bankType';
+import { PageData, Role } from '@shared/types/systemTypes';
 import ChecklistIcon from '@mui/icons-material/Checklist';
 import EditIcon from '@mui/icons-material/Edit';
 import SearchIcon from '@mui/icons-material/Search';
@@ -23,9 +23,9 @@ export type InvokeLimitItem = {
 
 type Props = {
     roles: PageData<Role>;
-    /** Tải limits theo roleId (server). Nếu không truyền, dùng demoData */
+    /** Táº£i limits theo roleId (server). Náº¿u khÃ´ng truyá»n, dÃ¹ng demoData */
     loadLimits?: (roleId: Role['id']) => Promise<InvokeLimitItem[]>;
-    /** Lưu 1 item (khi autosave bật) */
+    /** LÆ°u 1 item (khi autosave báº­t) */
     saveLimit?: (roleId: Role['id'], item: InvokeLimitItem) => Promise<void>;
 };
 
@@ -39,7 +39,7 @@ export default function InvokeLimit({ roles, loadLimits, saveLimit }: Props) {
     const [editId, setEditId] = useState<string | number | null>(null);
     const [editValue, setEditValue] = useState<number | null>(null);
 
-    // Demo data if API chưa gắn
+    // Demo data if API chÆ°a gáº¯n
     const demoData: InvokeLimitItem[] = useMemo(() => ([
         { id: 1, group: 'Mobile', caption: 'Internal transfer', currency: 'LAK', value: null },
         { id: 2, group: 'Mobile', caption: 'Loan repayment', currency: 'LAK', value: null },
@@ -57,15 +57,15 @@ export default function InvokeLimit({ roles, loadLimits, saveLimit }: Props) {
         }
     };
 
-    // Load lần đầu theo role đầu tiên
+    // Load láº§n Ä‘áº§u theo role Ä‘áº§u tiÃªn
     useEffect(() => {
         if (selectedRoleId != null) fetchLimits(selectedRoleId);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleSelectRole = (roleId: Role['id']) => {
-        setSelectedRoleId(roleId);     // sáng lên ngay
-        fetchLimits(roleId);           // gọi API ngay khi click
+        setSelectedRoleId(roleId);     // sÃ¡ng lÃªn ngay
+        fetchLimits(roleId);           // gá»i API ngay khi click
     };
 
     const filtered = rows.filter(r =>
@@ -257,7 +257,7 @@ export default function InvokeLimit({ roles, loadLimits, saveLimit }: Props) {
                                 [...Array(6)].map((_, i) => (
                                     <TableRow key={`sk-${i}`}>
                                         <TableCell colSpan={4}>
-                                            <Typography variant="body2" sx={{ opacity: 0.6 }}>Loading…</Typography>
+                                            <Typography variant="body2" sx={{ opacity: 0.6 }}>Loadingâ€¦</Typography>
                                         </TableCell>
                                     </TableRow>
                                 ))
@@ -344,3 +344,4 @@ export default function InvokeLimit({ roles, loadLimits, saveLimit }: Props) {
     );
 
 }
+

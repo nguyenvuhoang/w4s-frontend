@@ -1,9 +1,9 @@
-﻿'use client';
+'use client';
 
 import { WORKFLOWCODE } from '@/data/WorkflowCode';
 import { workflowService } from '@/servers/system-service';
-import { PageContentProps } from '@/types';
-import SwalAlert from '@/utils/SwalAlert';
+import { PageContentProps } from '@shared/types';
+import SwalAlert from '@utils/SwalAlert';
 import { RHFSelect } from '@/views/accounting/component/RHFSelect';
 import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper';
 import AutoAwesomeMosaicIcon from '@mui/icons-material/AutoAwesomeMosaic';
@@ -317,3 +317,5 @@ const AccountChartAddContent = ({
 };
 
 export default AccountChartAddContent;
+
+

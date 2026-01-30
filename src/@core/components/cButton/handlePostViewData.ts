@@ -1,4 +1,4 @@
-import { generatePathNameView } from "@/utils/generatePathNameView";
+import { generatePathNameView } from "@utils/generatePathNameView";
 
 export const handlePostViewData = async (
     txFo_: any,
@@ -24,3 +24,4 @@ export const handlePostViewData = async (
         return false;
     }
 };
+

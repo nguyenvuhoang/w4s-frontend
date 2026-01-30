@@ -2,11 +2,11 @@
 
 import { WORKFLOWCODE } from '@/data/WorkflowCode'
 import { systemServiceApi, workflowService } from '@/servers/system-service'
-import { ConnectionCoreInfo, CoreConfigData } from '@/types/bankType'
-import { formatDateTime } from '@/utils/formatDateTime'
-import { getDictionary } from '@/utils/getDictionary'
-import { isValidResponse } from '@/utils/isValidResponse'
-import SwalAlert from '@/utils/SwalAlert'
+import { ConnectionCoreInfo, CoreConfigData } from '@shared/types/bankType'
+import { formatDateTime } from '@utils/formatDateTime'
+import { getDictionary } from '@utils/getDictionary'
+import { isValidResponse } from '@utils/isValidResponse'
+import SwalAlert from '@utils/SwalAlert'
 import { Global } from '@emotion/react'
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance'
 import ComputerIcon from '@mui/icons-material/Computer'
@@ -100,7 +100,7 @@ const CoreSetting = ({ session, dictionary, configdata }: Props) => {
                 isfallbackenabled: true,
                 mode: data.core_mode || 'O9',
                 retrypolicyjson: JSON.stringify({ retries: 3, delay: 2000 }),
-                switchedreason: configdata.switched_reason || 'Chuyển sang DEV để bắt đầu test tích hợp',
+                switchedreason: configdata.switched_reason || 'Chuyá»ƒn sang DEV Ä‘á»ƒ báº¯t Ä‘áº§u test tÃ­ch há»£p',
                 timeoutseconds: 30,
                 usecache: true,
                 coresystemname: configdata.core_system_name || 'Optimal9 Core Banking System'
@@ -123,7 +123,7 @@ const CoreSetting = ({ session, dictionary, configdata }: Props) => {
 
             SwalAlert('success', `${dictionary['common'].datachange.replace("{0}", configdata.active_core_code)}`, 'center');
         } catch (err: any) {
-            console.error('❌ Save failed:', err);
+            console.error('âŒ Save failed:', err);
             SwalAlert('error', `${dictionary['common'].savefailed}`, 'center');
         } finally {
             setLoading(false);
@@ -460,3 +460,4 @@ const CoreSetting = ({ session, dictionary, configdata }: Props) => {
 }
 
 export default CoreSetting
+

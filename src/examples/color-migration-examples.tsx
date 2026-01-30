@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Example Migration Script for Updating Colors
  * 
  * This file demonstrates how to migrate from hardcoded colors to the centralized config.

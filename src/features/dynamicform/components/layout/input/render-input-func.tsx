@@ -1,7 +1,7 @@
 'use client';
 
 import { Locale } from '@/configs/i18n';
-import { FormInput, RuleStrong } from '@/types/systemTypes';
+import { FormInput, RuleStrong } from '@shared/types/systemTypes';
 import AcUnitIcon from '@mui/icons-material/AcUnit';
 import ClearIcon from '@mui/icons-material/Clear';
 import SearchIcon from '@mui/icons-material/Search';
@@ -10,7 +10,7 @@ import { Dispatch, SetStateAction, useState } from 'react';
 import { disableField } from '../rule/disableField';
 import { isFieldHidden } from '../rule/isFieldHidden';
 import { isFieldRequired } from '../rule/isFieldRequired';
-import { generateDynamicJson } from '@/utils/generateDynamicJson';
+import { generateDynamicJson } from '@utils/generateDynamicJson';
 import { workflowService } from '@/servers/system-service';
 import { Session } from 'next-auth';
 import { Controller, useForm } from 'react-hook-form';
@@ -44,7 +44,7 @@ const RenderInputFunc = ({ input, gridProps, language, rules, ismodify, session,
             if (key in formdata) {
                 formMethods.setValue(key, formdata[key]);
             } else {
-                console.warn(`Key "${key}" không tồn tại trong formdata.`);
+                console.warn(`Key "${key}" khÃ´ng tá»“n táº¡i trong formdata.`);
             }
         });
     };
@@ -70,7 +70,7 @@ const RenderInputFunc = ({ input, gridProps, language, rules, ismodify, session,
                         const formdata = response.payload.dataresponse.data;
                         fillDataForForm(formdata, rule.config.component_result);
                     } else {
-                        console.warn('tx.input không tồn tại trong txFo:', tx);
+                        console.warn('tx.input khÃ´ng tá»“n táº¡i trong txFo:', tx);
                     }
                 }
             }
@@ -159,3 +159,4 @@ const RenderInputFunc = ({ input, gridProps, language, rules, ismodify, session,
 };
 
 export default RenderInputFunc;
+

@@ -1,8 +1,8 @@
 import Application from "@/@core/lib/libSupport";
 import { portalServiceApi } from "@/servers/portal-service";
-import { getDictionary } from "@/utils/getDictionary";
-import { isValidResponse } from "@/utils/isValidResponse";
-import SwalAlert from "@/utils/SwalAlert";
+import { getDictionary } from "@utils/getDictionary";
+import { isValidResponse } from "@utils/isValidResponse";
+import SwalAlert from "@utils/SwalAlert";
 import { Session } from "next-auth";
 
 export const handlePostAddData = async (
@@ -51,3 +51,4 @@ export const handlePostAddData = async (
         return false;
     }
 };
+

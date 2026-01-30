@@ -6,7 +6,7 @@ import { useIdleTimer } from 'react-idle-timer'
 
 // Component Imports
 import { Locale } from '@/configs/i18n'
-import { getLocalizedUrl } from '@/utils/i18n'
+import { getLocalizedUrl } from '@utils/i18n'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
@@ -91,3 +91,4 @@ export default function IdleTimer({ children, locale }: ChildrenType & { locale:
     </>
   )
 }
+

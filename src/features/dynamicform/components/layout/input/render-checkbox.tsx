@@ -3,8 +3,8 @@
 
 import { getDataConfig } from '@/@core/components/jSelect/supFunc';
 import { Locale } from '@/configs/i18n';
-import { FormInput, RuleStrong } from '@/types/systemTypes';
-import { getDictionary } from '@/utils/getDictionary';
+import { FormInput, RuleStrong } from '@shared/types/systemTypes';
+import { getDictionary } from '@utils/getDictionary';
 import CheckIcon from '@mui/icons-material/Check';
 import { Box, Checkbox, FormControlLabel, Grid } from '@mui/material';
 import { Session } from 'next-auth';
@@ -83,10 +83,10 @@ const RenderCheckBoxDefault = ({
       .filter(opt => opt.value !== '');
   }, [selectData, input]);
 
-  // tính selected ban đầu (từ view data hoặc từ form)
+  // tÃ­nh selected ban Ä‘áº§u (tá»« view data hoáº·c tá»« form)
   const selectedKey = input.config.key_selected;
   const initialSelectedValues = useMemo(() => {
-    // 1) từ renderviewdata (chế độ view)
+    // 1) tá»« renderviewdata (cháº¿ Ä‘á»™ view)
     if (renderviewdata?.[input?.default?.code]) {
       const data = renderviewdata[input.default.code];
       return Array.isArray(data)
@@ -97,12 +97,12 @@ const RenderCheckBoxDefault = ({
         : [];
     }
 
-    // 2) từ form hiện tại
+    // 2) tá»« form hiá»‡n táº¡i
     const v = formMethods.getValues(columnKey);
     if (Array.isArray(v)) return v.map(String);
 
     if (v && typeof v === 'object') {
-      // trường hợp cũ: object { val1:true, val2:false, ... }
+      // trÆ°á»ng há»£p cÅ©: object { val1:true, val2:false, ... }
       return Object.entries(v)
         .filter(([, isOn]) => Boolean(isOn))
         .map(([k]) => String(k));
@@ -116,7 +116,7 @@ const RenderCheckBoxDefault = ({
   const required = isFieldRequired(input);
   const disabled = disableField(rules, columnKey, ismodify);
 
-  // set initial vào form **một lần**, tránh ghi đè khi user đã thay đổi
+  // set initial vÃ o form **má»™t láº§n**, trÃ¡nh ghi Ä‘Ã¨ khi user Ä‘Ã£ thay Ä‘á»•i
   useEffect(() => {
     const current = formMethods.getValues(columnKey);
     const isUnset =
@@ -135,7 +135,7 @@ const RenderCheckBoxDefault = ({
       <Controller
         name={columnKey}
         control={formMethods.control}
-        // dùng giá trị hiện tại trong form (nếu có), fallback sang initialSelectedValues
+        // dÃ¹ng giÃ¡ trá»‹ hiá»‡n táº¡i trong form (náº¿u cÃ³), fallback sang initialSelectedValues
         defaultValue={
           formMethods.getValues(columnKey) ?? initialSelectedValues ?? []
         }
@@ -234,3 +234,4 @@ const RenderCheckBoxDefault = ({
 };
 
 export default RenderCheckBoxDefault;
+

@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { Box, Divider, Typography } from '@mui/material'
 import React from 'react'

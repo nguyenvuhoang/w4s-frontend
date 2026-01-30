@@ -1,5 +1,5 @@
 import { env } from '@/env.mjs';
-import { FODataArrayResponse, SystemDataRequest } from "@/types/systemTypes";
+import { FODataArrayResponse, SystemDataRequest } from "@shared/types/systemTypes";
 import http from "../../lib/http";
 
 /**
@@ -50,3 +50,4 @@ export const logService = {
                 }
             }),
 }
+

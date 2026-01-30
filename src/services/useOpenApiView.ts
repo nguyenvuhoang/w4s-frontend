@@ -1,8 +1,8 @@
 'use client'
 
 import { useMemo, useCallback } from 'react'
-import { ResponseDefaultData } from '@/types'
-import { OpenAPIType } from '@/types/systemTypes'
+import { ResponseDefaultData } from '@shared/types'
+import { OpenAPIType } from '@shared/types/systemTypes'
 
 export type ClientStatus = 'ACTIVE' | 'REVOKED' | 'EXPIRED' | 'INACTIVE'
 
@@ -105,7 +105,7 @@ export default function useOpenApiView(
         return 'ACTIVE'
     }, [client])
 
-    // 4) Auth details cho card phải
+    // 4) Auth details cho card pháº£i
     const authDetails: AuthDetails = useMemo(
         () => ({
             accessTokenTtl: client.AccessTokenTtlSeconds,
@@ -117,7 +117,7 @@ export default function useOpenApiView(
         [client]
     )
 
-    // 5) Secrets (nếu sau dùng multi-secret thì map list thật vào đây)
+    // 5) Secrets (náº¿u sau dÃ¹ng multi-secret thÃ¬ map list tháº­t vÃ o Ä‘Ã¢y)
     const maskSecret = useCallback((s?: string | null) => (s ? `${s.slice(0, 4)}***` : '-'), [])
     const secrets: SecretRow[] = useMemo(
         () => [
@@ -152,3 +152,5 @@ export default function useOpenApiView(
 
     return { client, status, authDetails, secrets, maskSecret, fmtDate, fmtDateTime, copy }
 }
+
+

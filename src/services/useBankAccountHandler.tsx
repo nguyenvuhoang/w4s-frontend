@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import SwalAlert from '@/utils/SwalAlert';
+import SwalAlert from '@utils/SwalAlert';
 import { WORKFLOWCODE } from '@/data/WorkflowCode';
 import { workflowService } from '@/servers/system-service';
-import { Contract } from '@/types/bankType';
+import { Contract } from '@shared/types/bankType';
 import { Session } from 'next-auth';
 
 export const useBankAccountHandler = ({
@@ -59,3 +59,4 @@ export const useBankAccountHandler = ({
 
     return { loading, handleSync };
 };
+

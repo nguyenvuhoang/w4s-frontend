@@ -5,9 +5,9 @@ import { env } from '@/env.mjs';
 import Image from 'next/image';
 import { Grid, Autoplay } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { FavoriteFeature } from '@/types/bankType';
+import { FavoriteFeature } from '@shared/types/bankType';
 import { Box, Typography } from '@mui/material';
-import { getDictionary } from '@/utils/getDictionary';
+import { getDictionary } from '@utils/getDictionary';
 
 const SettingSwipper = ({
     dictionary,
@@ -52,3 +52,4 @@ const SettingSwipper = ({
 }
 
 export default SettingSwipper;
+

@@ -1,6 +1,6 @@
 'use client'
 
-import { getDictionary } from '@/utils/getDictionary'
+import { getDictionary } from '@utils/getDictionary'
 import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper'
 import TextsmsIcon from '@mui/icons-material/Textsms'
 import {
@@ -74,3 +74,4 @@ const SystemCodeContent = ({
 }
 
 export default SystemCodeContent
+

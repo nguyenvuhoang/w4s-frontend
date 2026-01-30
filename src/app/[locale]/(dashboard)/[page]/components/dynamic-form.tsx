@@ -1,9 +1,9 @@
 import WrapperContentPage from "@/@layouts/styles/shared/WrapperContentPage";
-import NoData from "@/components/layout/shared/card/nodata";
+import NoData from "@components/layout/shared/card/nodata";
 import { Locale } from "@/configs/i18n";
-import { FormDesignDetail } from "@/types/systemTypes";
-import { getDictionary } from "@/utils/getDictionary";
-import { getLocalizedName } from "@/utils/getLocalizedName";
+import { FormDesignDetail } from "@shared/types/systemTypes";
+import { getDictionary } from "@utils/getDictionary";
+import { getLocalizedName } from "@utils/getLocalizedName";
 import DynamicPageGeneric from "@features/dynamicform/components/dynamic-page-generic";
 import {
     Box,

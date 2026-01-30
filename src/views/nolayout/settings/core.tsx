@@ -1,7 +1,7 @@
 'use client'
 
-import { CoreConfigData } from '@/types/bankType';
-import { getDictionary } from '@/utils/getDictionary';
+import { CoreConfigData } from '@shared/types/bankType';
+import { getDictionary } from '@utils/getDictionary';
 import CoreSetting from '@/views/components/console-admin/Core';
 import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper';
 import HubIcon from '@mui/icons-material/Hub';
@@ -37,3 +37,4 @@ const CoreBankingConnectionSettingContent = ({
 }
 
 export default CoreBankingConnectionSettingContent
+

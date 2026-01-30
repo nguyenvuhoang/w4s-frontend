@@ -3,8 +3,8 @@
 import { handleAdvanceSearchAPI } from '@/@core/components/cButton/handleAdvanceSearchAPI';
 import { Locale } from '@/configs/i18n';
 import { formService } from '@/servers/system-service';
-import { FormInput, PageData } from '@/types/systemTypes';
-import { getDictionary } from '@/utils/getDictionary';
+import { FormInput, PageData } from '@shared/types/systemTypes';
+import { getDictionary } from '@utils/getDictionary';
 import SavedSearchIcon from '@mui/icons-material/SavedSearch';
 import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
 import AddBoxIcon from '@mui/icons-material/AddBox';
@@ -196,3 +196,4 @@ const RenderMultiValueDefault = ({
 };
 
 export default RenderMultiValueDefault;
+

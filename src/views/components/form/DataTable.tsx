@@ -1,4 +1,4 @@
-﻿// components/table/DataTable.tsx
+// components/table/DataTable.tsx
 'use client';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Skeleton } from '@mui/material';
 import { ReactNode } from 'react';

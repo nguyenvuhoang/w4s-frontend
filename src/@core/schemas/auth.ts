@@ -1,4 +1,4 @@
-import { getDictionary } from '@/utils/getDictionary';
+import { getDictionary } from '@utils/getDictionary';
 import { nonEmpty, object, pipe, string } from 'valibot';
 
 export const createLoginSchema = (dictionary: Awaited<ReturnType<typeof getDictionary>>) => {
@@ -14,3 +14,4 @@ export const createLoginSchema = (dictionary: Awaited<ReturnType<typeof getDicti
     ),
   });
 };
+

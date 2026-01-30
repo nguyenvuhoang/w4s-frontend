@@ -1,7 +1,7 @@
 import { auth } from '@/auth'
-import Spinner from '@/components/spinners'
+import Spinner from '@components/spinners'
 import { Locale } from '@/configs/i18n'
-import { getDictionary } from '@/utils/getDictionary'
+import { getDictionary } from '@utils/getDictionary'
 import ConsoleAdminContent from '@/views/nolayout/console-admin/console-admin-content'
 import { Suspense } from 'react'
 

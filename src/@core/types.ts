@@ -1,4 +1,4 @@
-﻿import type { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import type { InferInput } from 'valibot'
 import { createLoginSchema } from './schemas/auth'
 import { Locale } from '@/configs/i18n'

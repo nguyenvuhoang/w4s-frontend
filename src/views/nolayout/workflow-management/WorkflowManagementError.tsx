@@ -1,6 +1,6 @@
 'use client'
 
-import { getDictionary } from '@/utils/getDictionary'
+import { getDictionary } from '@utils/getDictionary'
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
 import {
     Alert,
@@ -48,7 +48,7 @@ const WorkflowManagementError = ({ executionId, errorInfo, errorMessage, diction
                 >
                     <TableHead>
                         <TableRow>
-                            <TableCell sx={{ width: 48 }}>☐</TableCell>
+                            <TableCell sx={{ width: 48 }}>â˜</TableCell>
                             {[
                                 'Workflow ID',
                                 'Workflow Name',
@@ -102,3 +102,4 @@ const WorkflowManagementError = ({ executionId, errorInfo, errorMessage, diction
 }
 
 export default WorkflowManagementError
+

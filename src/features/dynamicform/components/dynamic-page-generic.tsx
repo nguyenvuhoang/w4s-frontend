@@ -1,9 +1,9 @@
 'use client';
 
-import LoadingSubmit from "@/components/LoadingSubmit";
+import LoadingSubmit from "@components/LoadingSubmit";
 import { Locale } from "@/configs/i18n";
-import { FormDesignDetail } from "@/types/systemTypes";
-import { getDictionary } from "@/utils/getDictionary";
+import { FormDesignDetail } from "@shared/types/systemTypes";
+import { getDictionary } from "@utils/getDictionary";
 import {
     Box
 } from '@mui/material';
@@ -67,3 +67,4 @@ const DynamicPageGeneric = ({
 };
 
 export default DynamicPageGeneric;
+

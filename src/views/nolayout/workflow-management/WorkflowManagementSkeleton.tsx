@@ -1,6 +1,6 @@
 'use client'
 
-import { getDictionary } from '@/utils/getDictionary'
+import { getDictionary } from '@utils/getDictionary'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
@@ -77,7 +77,7 @@ const WorkflowManagementSkeleton = ({ dictionary }: WorkflowManagementSkeletonPr
                 >
                     <TableHead>
                         <TableRow>
-                            <TableCell sx={{ width: 48 }}>☐</TableCell>
+                            <TableCell sx={{ width: 48 }}>â˜</TableCell>
                             {[
                                 'Workflow ID',
                                 'Workflow Name',
@@ -119,3 +119,4 @@ const WorkflowManagementSkeleton = ({ dictionary }: WorkflowManagementSkeletonPr
 }
 
 export default WorkflowManagementSkeleton
+

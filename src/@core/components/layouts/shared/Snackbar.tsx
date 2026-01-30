@@ -1,6 +1,6 @@
 'use client';
 
-import { getDictionary } from '@/utils/getDictionary';
+import { getDictionary } from '@utils/getDictionary';
 import { Alert, Snackbar } from '@mui/material';
 import React from 'react';
 
@@ -40,3 +40,4 @@ const SnackbarComponent = ({ toastOpen, handleCloseToast, toastMessage, toastSev
 };
 
 export default SnackbarComponent;
+

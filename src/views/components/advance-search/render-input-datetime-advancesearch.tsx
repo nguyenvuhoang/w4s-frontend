@@ -1,8 +1,8 @@
-﻿/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import { Locale } from '@/configs/i18n';
-import { FormInput } from '@/types/systemTypes';
+import { FormInput } from '@shared/types/systemTypes';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import { Grid } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -101,3 +101,4 @@ const RenderInputDateTimeAdvanceSearch = ({
 };
 
 export default RenderInputDateTimeAdvanceSearch;
+

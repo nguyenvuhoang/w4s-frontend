@@ -1,7 +1,7 @@
 'use client'
 
 import { Locale } from '@/configs/i18n'
-import { getLocalizedUrl } from '@/utils/i18n'
+import { getLocalizedUrl } from '@utils/i18n'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
@@ -39,7 +39,7 @@ const useLogout = ({
           throw new Error('Logout failed')
         }
 
-        // Clear any local storage tokens và gọi API xóa cookie app ở server
+        // Clear any local storage tokens vÃ  gá»i API xÃ³a cookie app á»Ÿ server
         if (typeof window !== 'undefined') {
           localStorage.removeItem('token')
           localStorage.removeItem('refresh_token')
@@ -71,3 +71,4 @@ const useLogout = ({
   )
 }
 export default useLogout
+

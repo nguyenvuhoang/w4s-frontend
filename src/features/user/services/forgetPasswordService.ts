@@ -1,7 +1,7 @@
 import { WORKFLOWCODE } from "@/data/WorkflowCode";
 import { dataService, workflowService } from "@/servers/system-service";
-import { isValidResponse } from "@/utils/isValidResponse";
-import SwalAlert from "@/utils/SwalAlert";
+import { isValidResponse } from "@utils/isValidResponse";
+import SwalAlert from "@utils/SwalAlert";
 
 export async function handleResetPassword({ data, setLoading, dictionary, router }: any) {
     try {
@@ -81,3 +81,4 @@ export async function handleResetPassword({ data, setLoading, dictionary, router
         } catch (_) { }
     }
 }
+

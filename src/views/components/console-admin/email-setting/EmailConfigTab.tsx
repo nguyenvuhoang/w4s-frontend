@@ -13,7 +13,7 @@ import {
 import { Controller } from 'react-hook-form';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { getDictionary } from '@/utils/getDictionary';
+import { getDictionary } from '@utils/getDictionary';
 import { useState } from 'react';
 
 const EmailConfigTab = ({
@@ -151,3 +151,4 @@ const EmailConfigTab = ({
 };
 
 export default EmailConfigTab;
+

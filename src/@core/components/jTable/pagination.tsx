@@ -1,6 +1,6 @@
-﻿'use client'
+'use client'
 
-import { getDictionary } from '@/utils/getDictionary'
+import { getDictionary } from '@utils/getDictionary'
 import { Box, FormControl, InputLabel, MenuItem, Pagination, Select, SelectChangeEvent, TextField, Typography } from '@mui/material'
 import React from 'react'
 

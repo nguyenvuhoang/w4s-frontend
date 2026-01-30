@@ -1,6 +1,6 @@
 // Type Imports
-import type { VerticalMenuDataType } from '@/types/menuTypes'
-import type { getDictionary } from '@/utils/getDictionary'
+import type { VerticalMenuDataType } from '@shared/types/menuTypes'
+import type { getDictionary } from '@utils/getDictionary'
 
 const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>): VerticalMenuDataType[] => [
   // This is how you will normally render submenu
@@ -197,3 +197,4 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
 ]
 
 export default verticalMenuData
+

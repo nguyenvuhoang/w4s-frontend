@@ -4,9 +4,9 @@
 import type { Locale } from '@/configs/i18n'
 import { WORKFLOWCODE } from '@/data/WorkflowCode'
 import { workflowService } from '@/servers/system-service'
-import { encrypt } from '@/utils/O9Extension'
-import { getDictionary } from '@/utils/getDictionary'
-import { getLocalizedUrl } from '@/utils/i18n'
+import { encrypt } from '@utils/O9Extension'
+import { getDictionary } from '@utils/getDictionary'
+import { getLocalizedUrl } from '@utils/i18n'
 import type { ErrorType, FormData } from '@core/types'
 import { handleLogin } from '@features/auth/services/login'
 import { useRouter } from 'next/navigation'
@@ -70,12 +70,12 @@ export const useLoginHandler = ({
         setLoading(false)
     }
     /**
-         * Hàm xác thực mật khẩu người dùng
-            * @param username Tên đăng nhập của người dùng
-            * @param password Mật khẩu của người dùng
-            * @return Trả về true nếu xác thực thành công, false nếu thất bại
-            * @description Hàm này sẽ mã hóa mật khẩu kết hợp với tên đăng nhập, sau đó gọi hàm handleLogin để xác thực.
-            * Nếu xác thực thành công, trả về true, nếu có lỗi hoặc xác thực không thành công, trả về false.
+         * HÃ m xÃ¡c thá»±c máº­t kháº©u ngÆ°á»i dÃ¹ng
+            * @param username TÃªn Ä‘Äƒng nháº­p cá»§a ngÆ°á»i dÃ¹ng
+            * @param password Máº­t kháº©u cá»§a ngÆ°á»i dÃ¹ng
+            * @return Tráº£ vá» true náº¿u xÃ¡c thá»±c thÃ nh cÃ´ng, false náº¿u tháº¥t báº¡i
+            * @description HÃ m nÃ y sáº½ mÃ£ hÃ³a máº­t kháº©u káº¿t há»£p vá»›i tÃªn Ä‘Äƒng nháº­p, sau Ä‘Ã³ gá»i hÃ m handleLogin Ä‘á»ƒ xÃ¡c thá»±c.
+            * Náº¿u xÃ¡c thá»±c thÃ nh cÃ´ng, tráº£ vá» true, náº¿u cÃ³ lá»—i hoáº·c xÃ¡c thá»±c khÃ´ng thÃ nh cÃ´ng, tráº£ vá» false.
             */
 
     const verifyPassword = async (token: string, usercode: string, password: string): Promise<boolean> => {
@@ -119,3 +119,4 @@ export const useLoginHandler = ({
         verifyPassword
     }
 }
+

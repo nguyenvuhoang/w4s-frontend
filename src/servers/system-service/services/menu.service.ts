@@ -1,5 +1,5 @@
 import { env } from '@/env.mjs';
-import { MenuDataResponse, SubmitDataFormRequest, SystemSearchDataRequest } from "@/types/systemTypes";
+import { MenuDataResponse, SubmitDataFormRequest, SystemSearchDataRequest } from "@shared/types/systemTypes";
 import http from "../../lib/http";
 
 /**
@@ -89,3 +89,4 @@ export const menuService = {
                 }
             }),
 }
+

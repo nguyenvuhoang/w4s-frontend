@@ -1,6 +1,6 @@
 import { Locale } from '@/configs/i18n'
-import { MenuItem, PageData } from '@/types/systemTypes'
-import SwalAlert from '@/utils/SwalAlert'
+import { MenuItem, PageData } from '@shared/types/systemTypes'
+import SwalAlert from '@utils/SwalAlert'
 import { SelectChangeEvent } from '@mui/material'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
@@ -125,7 +125,7 @@ export const useMenuManagement = (initialData: MenuItem[], options?: MenuManagem
         try {
             const [{ menuService }, { isValidResponse: validate }] = await Promise.all([
                 import('@/servers/system-service'),
-                import('@/utils/isValidResponse')
+                import('@utils/isValidResponse')
             ])
             
             const response = await menuService.loadMenu({
@@ -201,7 +201,7 @@ export const useMenuManagement = (initialData: MenuItem[], options?: MenuManagem
 
         try {
             const { menuService } = await import('@/servers/system-service')
-            const { isValidResponse } = await import('@/utils/isValidResponse')
+            const { isValidResponse } = await import('@utils/isValidResponse')
 
             // Build search text from form data
             const searchParts: string[] = []
@@ -298,7 +298,7 @@ export const useMenuManagement = (initialData: MenuItem[], options?: MenuManagem
             }
 
             const { menuService } = await import('@/servers/system-service')
-            const { isValidResponse } = await import('@/utils/isValidResponse')
+            const { isValidResponse } = await import('@utils/isValidResponse')
 
             const submitApi = await menuService.createMenu({
                 sessiontoken: options?.sessionToken as string,
@@ -444,7 +444,7 @@ export const useMenuManagement = (initialData: MenuItem[], options?: MenuManagem
             }
 
             const { menuService } = await import('@/servers/system-service')
-            const { isValidResponse } = await import('@/utils/isValidResponse')
+            const { isValidResponse } = await import('@utils/isValidResponse')
 
             const submitApi = await menuService.updateMenu({
                 sessiontoken: options?.sessionToken as string,
@@ -500,7 +500,7 @@ export const useMenuManagement = (initialData: MenuItem[], options?: MenuManagem
             }
 
             const { menuService } = await import('@/servers/system-service')
-            const { isValidResponse } = await import('@/utils/isValidResponse')
+            const { isValidResponse } = await import('@utils/isValidResponse')
 
             const submitApi = await menuService.deleteMenu({
                 sessiontoken: options.sessionToken,
@@ -612,3 +612,4 @@ export const useMenuManagement = (initialData: MenuItem[], options?: MenuManagem
         clearEditError: () => setEditError(null)
     }
 }
+

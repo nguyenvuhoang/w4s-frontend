@@ -1,0 +1,171 @@
+openapi: 3.0.3
+info:
+  title: LMPS Banking Integration API
+  version: 1.0.0
+  description: |
+    Specification for integration with Partner Bank (RTGS/Interbank).
+    **Assumptions:**
+    - All requests must use TLS 1.2+
+    - Auth: Mutual TLS (Client Cert) + API Key
+    - Signature: X-Signature header required containing JWS of the body.
+servers:
+  - url: https://api.banking-partner.com/gateway/v1
+    description: Production Gateway
+  - url: https://sandbox.banking-partner.com/gateway/v1
+    description: Sandbox Environment
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    BearerAuth:
+      type: http
+      scheme: bearer
+  
+  schemas:
+    TransferRequest:
+      type: object
+      required:
+        - amount
+        - currency
+        - debtorAccount
+        - creditorAccount
+        - creditorBankCode
+      properties:
+        amount:
+          type: number
+          format: decimal
+          example: 5000000
+        currency:
+          type: string
+          enum: [VND, USD]
+          default: VND
+        debtorAccount:
+          type: string
+          example: "0011002233"
+        creditorAccount:
+          type: string
+          example: "9988776655"
+        creditorBankCode:
+          type: string
+          example: "970405"
+          description: "CITAD or NAPAS Bin Code"
+        remark:
+          type: string
+          maxLength: 140
+          example: "Payment for Invoice #123"
+
+    TransferResponse:
+      type: object
+      properties:
+        ackId:
+          type: string
+          example: "REQ-20231025-0001"
+        bankRef:
+          type: string
+          example: "BNK-99999"
+        status:
+          type: string
+          enum: [PROCESSING, SUCCESS, REJECTED]
+          example: "PROCESSING"
+        fee:
+          type: number
+          example: 11000
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "ERR-001"
+        message:
+          type: string
+          example: "Invalid Signature"
+
+security:
+  - ApiKeyAuth: []
+
+paths:
+  /payments/transfer:
+    post:
+      summary: Initiate Transfer
+      tags: [Transfers]
+      parameters:
+        - in: header
+          name: X-Request-ID
+          required: true
+          schema: 
+            type: string
+            format: uuid
+        - in: header
+          name: X-Signature
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferRequest'
+      responses:
+        '200':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransferResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Gateway Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /accounts/inquiry:
+    post:
+      summary: Query Account Name
+      tags: [Inquiry]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accountNumber: { type: string }
+                bankCode: { type: string }
+      responses:
+        '200':
+          description: Account Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accountName: { type: string }
+                  status: { type: string }
+
+  /webhooks/payments/status:
+    post:
+      summary: Payment Status Callback (Webhook)
+      description: This endpoint is exposed BY US for the bank to call.
+      tags: [Webhooks]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                transactionRef: { type: string }
+                status: { type: string }
+      responses:
+        '200':
+          description: Acknowledged

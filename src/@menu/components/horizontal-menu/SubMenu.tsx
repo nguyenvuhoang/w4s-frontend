@@ -41,18 +41,18 @@ import {
 import type { CSSObject } from '@emotion/styled'
 
 // Type Imports
-import type { ChildrenType, RootStylesType, SubMenuItemElement } from '../../types'
+import type { ChildrenType, RootStylesType, SubMenuItemElement } from '@shared/types'
 import type { MenuItemProps } from './MenuItem'
 
 // Component Imports
 import SubMenuContent from './SubMenuContent'
 
 // Hook Imports
-import useHorizontalMenu from '../../hooks/useHorizontalMenu'
+import useHorizontalMenu from '@hooks/useHorizontalMenu'
 
 // Util Imports
-import { menuClasses } from '../../utils/menuClasses'
-import { confirmUrlInChildren, renderMenuIcon } from '../../utils/menuUtils'
+import { menuClasses } from '@utils/menuClasses'
+import { confirmUrlInChildren, renderMenuIcon } from '@utils/menuUtils'
 
 // Styled Component Imports
 import MenuButton, { menuButtonStyles } from './MenuButton'

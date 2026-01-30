@@ -2,7 +2,7 @@
 
 import { Locale } from '@/configs/i18n'
 import useChangePassword from '@features/user/hooks/useChangePassword'
-import { getDictionary } from '@/utils/getDictionary'
+import { getDictionary } from '@utils/getDictionary'
 import type { Mode } from '@core/types'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 import {
@@ -182,3 +182,4 @@ const textFieldStyle = {
 }
 
 export default ChangePasswordForm
+

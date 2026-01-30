@@ -10,7 +10,7 @@ import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
 
 // ** Types
-import { CalendarTypeMain } from '@/types/calendarTypes'
+import { CalendarTypeMain } from '@shared/types/calendarTypes'
 
 // ** Third Party Style Import
 import 'bootstrap-icons/font/bootstrap-icons.css'
@@ -164,14 +164,14 @@ const CalendarMain = (props: CalendarTypeMain) => {
 
         eventContentWrapper.classList.add('event-content-wrapper');
 
-        // Kiểm tra nếu calendar là "HOLIDAY"
+        // Kiá»ƒm tra náº¿u calendar lÃ  "HOLIDAY"
         if (event.extendedProps.calendar === "Holiday") {
 
           const eventDescription = document.createElement('div');
 
           eventDescription.classList.add('event-description');
 
-          eventDescription.innerHTML = event._def.title; // Render HTML từ description
+          eventDescription.innerHTML = event._def.title; // Render HTML tá»« description
 
           eventContentWrapper.appendChild(eventDescription);
         } else {
@@ -243,3 +243,4 @@ const CalendarMain = (props: CalendarTypeMain) => {
 }
 
 export default CalendarMain
+

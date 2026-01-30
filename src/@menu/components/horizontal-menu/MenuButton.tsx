@@ -7,13 +7,13 @@ import classnames from 'classnames'
 import { css } from '@emotion/react'
 
 // Type Imports
-import type { ChildrenType, MenuButtonProps } from '../../types'
+import type { ChildrenType, MenuButtonProps } from '@shared/types'
 
 // Component Imports
 import { RouterLink } from '../RouterLink'
 
 // Util Imports
-import { menuClasses } from '../../utils/menuClasses'
+import { menuClasses } from '@utils/menuClasses'
 
 type MenuButtonStylesProps = Partial<ChildrenType> & {
   level: number

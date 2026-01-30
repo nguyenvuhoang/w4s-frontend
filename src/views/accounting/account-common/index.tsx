@@ -1,6 +1,6 @@
-﻿'use client';
+'use client';
 
-import { PageContentProps } from '@/types';
+import { PageContentProps } from '@shared/types';
 import { RHFSelect } from '@/views/accounting/component/RHFSelect';
 import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper';
 import AutoAwesomeMosaicIcon from '@mui/icons-material/AutoAwesomeMosaic';
@@ -18,7 +18,7 @@ import { FormProvider, useForm, useWatch } from 'react-hook-form';
 
 import { WORKFLOWCODE } from '@/data/WorkflowCode';
 import { systemServiceApi } from '@/servers/system-service';
-import SwalAlert from '@/utils/SwalAlert';
+import SwalAlert from '@utils/SwalAlert';
 import { FormValues } from '../component/FormValues';
 import { RHFText } from '../component/RHFText';
 
@@ -318,3 +318,5 @@ const AccountCommonManagementContent = ({
 };
 
 export default AccountCommonManagementContent;
+
+

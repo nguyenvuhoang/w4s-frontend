@@ -1,5 +1,5 @@
 import { Locale } from '@/configs/i18n';
-import { FormInput, RuleStrong } from '@/types/systemTypes';
+import { FormInput, RuleStrong } from '@shared/types/systemTypes';
 import { Grid, Typography } from '@mui/material';
 
 type Props = {
@@ -80,3 +80,4 @@ const RenderLabelDefault = ({ input, gridProps, formData, language, rules }: Pro
 };
 
 export default RenderLabelDefault;
+

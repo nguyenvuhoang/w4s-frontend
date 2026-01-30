@@ -3,7 +3,7 @@
 // React Imports
 import React from 'react'
 import { Children, cloneElement, forwardRef, useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
-import  type {
+import type {
   AnchorHTMLAttributes,
   ForwardRefRenderFunction,
   KeyboardEvent,
@@ -121,9 +121,10 @@ const StyledSubMenu = styled.li<StyledSubMenuProps>`
 
   &.${menuClasses.open} > .${menuClasses.subMenuContent} {
     display: block;
-    position: absolute;
-    top: 0;
-    left: 100%;
+    position: ${({ isCollapsed, level, isPopoutWhenCollapsed }) =>
+    isCollapsed && level === 0 && isPopoutWhenCollapsed ? 'absolute' : 'relative'};
+    ${({ isCollapsed, level, isPopoutWhenCollapsed }) =>
+    isCollapsed && level === 0 && isPopoutWhenCollapsed && 'top: 0; left: 100%;'}
     background-color: white !important;
   }
 
@@ -160,7 +161,7 @@ const SubMenu: ForwardRefRenderFunction<HTMLLIElement, SubMenuProps> = (props, r
   const [active, setActive] = useState<boolean>(false)
 
   // Refs
-  const contentRef = useRef<HTMLDivElement>(null)
+  const contentRef = useRef<HTMLUListElement>(null)
 
   // Hooks
   const id = useId()
@@ -308,7 +309,7 @@ const SubMenu: ForwardRefRenderFunction<HTMLLIElement, SubMenuProps> = (props, r
     if (confirmUrlInChildren(children, pathname)) {
       setActive(true)
 
-      if (openSubmenusRef?.current.findIndex(submenu => submenu.id === id) === -1) {
+      if (openSubmenusRef?.current.findIndex((submenu: { id: string }) => submenu.id === id) === -1) {
         openSubmenusRef?.current.push({ level, label, active: true, id })
       }
     } else {
@@ -332,8 +333,7 @@ const SubMenu: ForwardRefRenderFunction<HTMLLIElement, SubMenuProps> = (props, r
       className={classnames(menuClasses.subMenuContent, contentClassName)}
       rootStyles={{
         ...(isCollapsed && level === 0 && isPopoutWhenCollapsed && floatingStyles),
-        ...getSubMenuItemStyles('subMenuContent'),
-        display: 'none'
+        ...getSubMenuItemStyles('subMenuContent')
       }}
     >
       {childNodes.map(node =>
@@ -444,7 +444,7 @@ const SubMenu: ForwardRefRenderFunction<HTMLLIElement, SubMenuProps> = (props, r
         {isCollapsed && level === 0 && isPopoutWhenCollapsed ? (
           <FloatingPortal>{openWhenCollapsed && submenuContent}</FloatingPortal>
         ) : (
-          <></>
+          submenuContent
         )}
       </StyledSubMenu>
     </>

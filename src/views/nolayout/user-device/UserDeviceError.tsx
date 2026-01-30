@@ -1,7 +1,7 @@
 'use client'
 
 import { Alert, AlertTitle, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
-import type { getDictionary } from '@/utils/getDictionary'
+import type { getDictionary } from '@utils/getDictionary'
 
 type Dictionary = Awaited<ReturnType<typeof getDictionary>>
 
@@ -53,3 +53,4 @@ const UserDeviceError = ({ dictionary, execute_id, errorinfo, message }: UserDev
 }
 
 export default UserDeviceError
+

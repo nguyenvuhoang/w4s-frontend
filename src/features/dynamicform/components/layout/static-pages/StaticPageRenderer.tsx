@@ -1,7 +1,7 @@
 'use client';
 /* eslint-disable */
 
-import { PageContentProps } from '@/types';
+import { PageContentProps } from '@shared/types';
 import { getStaticPage, hasStaticPage } from './index';
 
 interface StaticPageRendererProps extends PageContentProps {
@@ -50,3 +50,4 @@ const StaticPageRenderer = ({
 
 export default StaticPageRenderer;
 export { hasStaticPage };
+

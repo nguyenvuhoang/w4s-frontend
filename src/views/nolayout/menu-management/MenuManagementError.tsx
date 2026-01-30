@@ -1,6 +1,6 @@
 'use client';
 
-import { getDictionary } from '@/utils/getDictionary';
+import { getDictionary } from '@utils/getDictionary';
 import { Box, Button, Paper, Typography } from '@mui/material';
 import Image from 'next/image';
 
@@ -91,3 +91,4 @@ export default function MenuManagementError({ errorinfo, dictionary, execute_id 
     </Box>
   );
 }
+

@@ -3,7 +3,7 @@ import { Box, NoSsr } from "@mui/material";
 // Util Imports
 import { env } from "@/env.mjs";
 import ForgetPasswordForm from "@features/user/components/ForgetPasswordForm";
-import { getDictionary } from "@/utils/getDictionary";
+import { getDictionary } from "@utils/getDictionary";
 import { Typography } from "@mui/material";
 import { Session } from "next-auth";
 import Footer from "../../shared/Footer";

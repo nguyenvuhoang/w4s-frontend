@@ -1,8 +1,8 @@
 /**
  * Secure API Wrapper
  * 
- * HTTP client wrapper với tích hợp mã hóa end-to-end.
- * Tự động mã hóa request và giải mã response khi cần.
+ * HTTP client wrapper vá»›i tÃ­ch há»£p mÃ£ hÃ³a end-to-end.
+ * Tá»± Ä‘á»™ng mÃ£ hÃ³a request vÃ  giáº£i mÃ£ response khi cáº§n.
  * 
  * @module servers/lib/secure-api
  */
@@ -21,7 +21,7 @@ import {
 import type {
   SecureRequestConfig,
   SecureApiConfig
-} from '@/types/encryption';
+} from '@shared/types/encryption';
 
 /**
  * Default configuration cho secure API
@@ -40,16 +40,16 @@ interface SecureRequestOptions {
   baseUrl?: string;
   /** Custom headers */
   headers?: Record<string, string>;
-  /** Có mã hóa request không */
+  /** CÃ³ mÃ£ hÃ³a request khÃ´ng */
   encrypt?: boolean;
-  /** Có expect encrypted response không */
+  /** CÃ³ expect encrypted response khÃ´ng */
   expectEncryptedResponse?: boolean;
   /** Timeout (ms) */
   timeout?: number;
 }
 
 /**
- * Tạo encrypted request body với metadata
+ * Táº¡o encrypted request body vá»›i metadata
  */
 async function createSecurePayload(
   data: unknown,
@@ -59,7 +59,7 @@ async function createSecurePayload(
   payload.nonce = generateNonce();
 
   if (includeSignature) {
-    // Tạo HMAC signature từ encrypted data
+    // Táº¡o HMAC signature tá»« encrypted data
     const signatureData = `${payload.data}:${payload.iv}:${payload.timestamp}:${payload.nonce}`;
     payload.signature = await createHMAC(signatureData, process.env.NEXT_PUBLIC_HMAC_SECRET || 'o24-hmac-secret');
   }
@@ -68,33 +68,33 @@ async function createSecurePayload(
 }
 
 /**
- * Giải mã response từ server nếu cần
+ * Giáº£i mÃ£ response tá»« server náº¿u cáº§n
  */
 async function parseSecureResponse<T>(responseData: unknown): Promise<T> {
   if (isEncryptedPayload(responseData)) {
     return decrypt<T>(responseData.data, responseData.iv);
   }
-  
-  // Response không encrypted, trả về trực tiếp
+
+  // Response khÃ´ng encrypted, tráº£ vá» trá»±c tiáº¿p
   if (typeof responseData === 'object' && responseData !== null) {
     const data = responseData as Record<string, unknown>;
     return (data.dataresponse || data.data || data) as T;
   }
-  
+
   return responseData as T;
 }
 
 /**
- * Secure POST request với mã hóa tự động
+ * Secure POST request vá»›i mÃ£ hÃ³a tá»± Ä‘á»™ng
  * 
  * @param url - API endpoint
- * @param data - Data cần gửi (sẽ được mã hóa nếu options.encrypt = true)
+ * @param data - Data cáº§n gá»­i (sáº½ Ä‘Æ°á»£c mÃ£ hÃ³a náº¿u options.encrypt = true)
  * @param sessiontoken - Session token cho authentication
  * @param options - Request options
  * 
  * @example
  * ```typescript
- * // Gửi request được mã hóa
+ * // Gá»­i request Ä‘Æ°á»£c mÃ£ hÃ³a
  * const response = await securePost<ResponseType>(
  *   '/system-service',
  *   sensitiveData,
@@ -123,20 +123,20 @@ export async function securePost<T>(
     ...customHeaders
   };
 
-  // Mã hóa request nếu cần
+  // MÃ£ hÃ³a request náº¿u cáº§n
   if (shouldEncrypt) {
     requestBody = await createSecurePayload(data, true);
     headers['X-Encrypted-Request'] = 'true';
     headers['X-Encryption-Algorithm'] = 'AES-256-GCM';
   }
 
-  // Gọi API thông qua http wrapper
+  // Gá»i API thÃ´ng qua http wrapper
   const response = await http.post<T>(url, requestBody, {
     baseUrl,
     headers
   });
 
-  // Giải mã response nếu cần
+  // Giáº£i mÃ£ response náº¿u cáº§n
   let payload = response.payload;
   if (expectEncryptedResponse && isEncryptedPayload(payload)) {
     payload = await parseSecureResponse<T>(payload);
@@ -149,11 +149,11 @@ export async function securePost<T>(
 }
 
 /**
- * Tạo secure request body theo chuẩn workflow của dự án
- * Kết hợp createDefaultBody với mã hóa
+ * Táº¡o secure request body theo chuáº©n workflow cá»§a dá»± Ã¡n
+ * Káº¿t há»£p createDefaultBody vá»›i mÃ£ hÃ³a
  * 
  * @param workflowid - Workflow ID
- * @param fields - Fields data (sẽ được mã hóa)
+ * @param fields - Fields data (sáº½ Ä‘Æ°á»£c mÃ£ hÃ³a)
  * 
  * @example
  * ```typescript
@@ -198,8 +198,8 @@ export async function createSecureBody(
 }
 
 /**
- * Secure API Post với workflow pattern
- * Wrapper cho apiPost với mã hóa tự động
+ * Secure API Post vá»›i workflow pattern
+ * Wrapper cho apiPost vá»›i mÃ£ hÃ³a tá»± Ä‘á»™ng
  * 
  * @example
  * ```typescript
@@ -221,18 +221,18 @@ export async function secureApiPost<T>(
   encryptFields: boolean = true
 ): Promise<{ status: number; payload: T }> {
   const body = await createSecureBody(workflowid, fields, encryptFields);
-  
+
   return securePost<T>(url, body, sessiontoken, {
     headers: headerOverrides,
-    encrypt: false // Body đã được encrypt ở level fields
+    encrypt: false // Body Ä‘Ã£ Ä‘Æ°á»£c encrypt á»Ÿ level fields
   });
 }
 
 /**
- * Utility function để mã hóa form data trước khi submit
+ * Utility function Ä‘á»ƒ mÃ£ hÃ³a form data trÆ°á»›c khi submit
  * 
  * @param formData - Form data object
- * @param sensitiveFields - List các field cần mã hóa
+ * @param sensitiveFields - List cÃ¡c field cáº§n mÃ£ hÃ³a
  * 
  * @example
  * ```typescript
@@ -259,21 +259,21 @@ export async function encryptFormData<T extends Record<string, unknown>>(
 }
 
 /**
- * Mã hóa toàn bộ object và trả về encrypted payload
+ * MÃ£ hÃ³a toÃ n bá»™ object vÃ  tráº£ vá» encrypted payload
  */
 export async function encryptObject<T>(data: T): Promise<EncryptedPayload> {
   return createSecurePayload(data, true);
 }
 
 /**
- * Giải mã encrypted payload
+ * Giáº£i mÃ£ encrypted payload
  */
 export async function decryptObject<T>(payload: EncryptedPayload): Promise<T> {
   return decrypt<T>(payload.data, payload.iv);
 }
 
 /**
- * Export các utility functions từ crypto module
+ * Export cÃ¡c utility functions tá»« crypto module
  */
 export {
   encrypt,
@@ -281,3 +281,4 @@ export {
   isEncryptedPayload,
   generateNonce
 };
+

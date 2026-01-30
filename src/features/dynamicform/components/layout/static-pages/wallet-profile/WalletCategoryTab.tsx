@@ -1,6 +1,6 @@
 'use client';
 
-import { PageContentProps } from '@/types';
+import { PageContentProps } from '@shared/types';
 import {
     Box,
     Card,
@@ -68,10 +68,10 @@ const WalletCategoryTab = ({
   // Get group label
   const getGroupLabel = (group: string): string => {
     const labels: Record<string, Record<string, string>> = {
-      EXPENSE: { vi: 'Chi tiêu', en: 'Expense' },
-      INCOME: { vi: 'Thu nhập', en: 'Income' },
+      EXPENSE: { vi: 'Chi tiÃªu', en: 'Expense' },
+      INCOME: { vi: 'Thu nháº­p', en: 'Income' },
       LOAN: { vi: 'Vay/Cho vay', en: 'Loan' },
-      OTHER: { vi: 'Khác', en: 'Other' },
+      OTHER: { vi: 'KhÃ¡c', en: 'Other' },
     };
     return labels[group]?.[locale] || labels[group]?.['en'] || group;
   };
@@ -246,3 +246,4 @@ const WalletCategoryTab = ({
 };
 
 export default WalletCategoryTab;
+

@@ -1,6 +1,6 @@
 'use client'
 
-import { getDictionary } from '@/utils/getDictionary'
+import { getDictionary } from '@utils/getDictionary'
 import { Add, Delete } from '@mui/icons-material'
 import {
   Box, Checkbox, FormControlLabel, Grid, IconButton,
@@ -31,7 +31,7 @@ const RenderTableDynamicItem = ({ input, dictionary, formMethods, gridProps }: P
     { key: 'isactive', label: 'Is Active' }
   ]
 
-  // ✅ watch the whole array so UI re-renders when any row changes (including isdeleted)
+  // âœ… watch the whole array so UI re-renders when any row changes (including isdeleted)
   const rows = useWatch({
     control: formMethods.control,
     name: fieldName
@@ -177,7 +177,7 @@ const RenderTableDynamicItem = ({ input, dictionary, formMethods, gridProps }: P
                                   size="small"
                                   fullWidth
                                   value={field.value ?? ''}
-                                  disabled={isMainKey} // 🔒 lock default keys
+                                  disabled={isMainKey} // ðŸ”’ lock default keys
                                 />
                               )
                             }
@@ -219,3 +219,4 @@ const RenderTableDynamicItem = ({ input, dictionary, formMethods, gridProps }: P
 }
 
 export default RenderTableDynamicItem
+

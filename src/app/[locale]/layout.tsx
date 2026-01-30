@@ -1,14 +1,7 @@
-import ClientCss from "@/components/theme/clientcss";
-import { cn } from "@/utils";
+import ClientCss from "@components/theme/clientcss";
+import { cn } from "@utils";
 import type { Locale } from '@configs/i18n';
 import type { ChildrenType } from '@core/types';
-import localFont from "next/font/local";
-
-
-const quicksand = localFont({
-  src: "./../fonts/Quicksand-Regular.woff",
-  variable: "--font-quicksand-sans",
-});
 
 export const metadata = {
   title: 'EMI Portal',
@@ -18,7 +11,6 @@ export const metadata = {
 type Params = Promise<{
   locale: Locale
 }>
-
 
 const RootLayout = async ({ children, params }: ChildrenType & { params: Params }) => {
   const { locale } = await params
@@ -32,7 +24,7 @@ const RootLayout = async ({ children, params }: ChildrenType & { params: Params 
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
       </head>
 
-      <body className={cn('flex is-full min-bs-full flex-auto flex-col', quicksand.variable)} suppressHydrationWarning>
+      <body className={cn('flex is-full min-bs-full flex-auto flex-col')} style={{ fontFamily: 'Quicksand, sans-serif' }} suppressHydrationWarning>
         <ClientCss />
         {children}
       </body>

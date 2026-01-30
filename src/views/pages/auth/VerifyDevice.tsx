@@ -5,10 +5,10 @@ import { Box, NoSsr } from '@mui/material'
 import Image from 'next/image'
 // Util Imports
 import { authenticate } from '@/actions'
-import LoadingSubmit from '@/components/LoadingSubmit'
-import { getDeviceInfo } from '@/utils/getDeviceInfo'
-import { getDictionary } from '@/utils/getDictionary'
-import { getLocalizedUrl } from '@/utils/i18n'
+import LoadingSubmit from '@components/LoadingSubmit'
+import { getDeviceInfo } from '@utils/getDeviceInfo'
+import { getDictionary } from '@utils/getDictionary'
+import { getLocalizedUrl } from '@utils/i18n'
 import { Button, TextField, Typography } from '@mui/material'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
@@ -118,7 +118,7 @@ const VerifyDevice = ({ dictionary, locale }: {
 
         } catch (error) {
             console.error('Verify error:', error)
-            alert('Đã xảy ra lỗi khi xác minh.')
+            alert('ÄÃ£ xáº£y ra lá»—i khi xÃ¡c minh.')
         }
         finally {
             setLoading(false)
@@ -251,7 +251,7 @@ const VerifyDevice = ({ dictionary, locale }: {
                                                 }}
                                             >
                                                 <Typography variant="h5" color="primary.main" sx={{ mb: 2 }}>
-                                                    ✅ {dictionary['auth'].verifycodesuccess}
+                                                    âœ… {dictionary['auth'].verifycodesuccess}
                                                 </Typography>
                                                 <Typography variant="body2" color="text.secondary">
                                                     {dictionary['auth'].verifycontinue}
@@ -261,7 +261,7 @@ const VerifyDevice = ({ dictionary, locale }: {
                                     )}
 
 
-                                    {/* Nút xác nhận */}
+                                    {/* NÃºt xÃ¡c nháº­n */}
                                     <Button
                                         variant="contained"
                                         color="primary"
@@ -279,7 +279,7 @@ const VerifyDevice = ({ dictionary, locale }: {
                                         }}
                                     >
                                         <Link replace href="/login" style={{ textDecoration: 'none', color: "green", fontSize: '14px' }}>
-                                            ← {dictionary['auth'].backtologin}
+                                            â† {dictionary['auth'].backtologin}
                                         </Link>
                                     </Typography>
                                 </Box>
@@ -296,3 +296,4 @@ const VerifyDevice = ({ dictionary, locale }: {
 }
 
 export default VerifyDevice
+

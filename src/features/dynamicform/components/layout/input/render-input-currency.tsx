@@ -1,15 +1,15 @@
 'use client';
 
 import { Locale } from '@/configs/i18n';
-import { FormInput, RuleStrong } from '@/types/systemTypes';
+import { FormInput, RuleStrong } from '@shared/types/systemTypes';
 import AcUnitIcon from '@mui/icons-material/AcUnit';
 import { Grid, InputAdornment, TextField } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { isFieldHidden } from '../rule/isFieldHidden';
 import { isFieldRequired } from '../rule/isFieldRequired';
 import { disableField } from '../rule/disableField';
-import { formatCurrency } from '@/utils/formatCurrency';
-import { evaluateDefault } from '@/utils/evaluateDefault';
+import { formatCurrency } from '@utils/formatCurrency';
+import { evaluateDefault } from '@utils/evaluateDefault';
 
 type Props = {
     input: FormInput;
@@ -105,3 +105,4 @@ const RenderInputCurrency = ({
 };
 
 export default RenderInputCurrency;
+

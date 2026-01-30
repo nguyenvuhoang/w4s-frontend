@@ -1,6 +1,6 @@
 'use client'
 
-import { getDictionary } from '@/utils/getDictionary'
+import { getDictionary } from '@utils/getDictionary'
 import { Add, Save, Edit, Delete, Restore, Close } from '@mui/icons-material'
 import {
     Box,
@@ -347,3 +347,4 @@ const ViewTableItem = ({ input, control, dictionary, setValue }: Props) => {
 }
 
 export default ViewTableItem
+

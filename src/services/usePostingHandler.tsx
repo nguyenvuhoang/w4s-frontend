@@ -2,8 +2,8 @@
 
 import { WORKFLOWCODE } from '@/data/WorkflowCode';
 import { workflowService } from '@/servers/system-service';
-import { PostingType } from '@/types/bankType';
-import SwalAlert from '@/utils/SwalAlert';
+import { PostingType } from '@shared/types/bankType';
+import SwalAlert from '@utils/SwalAlert';
 import { Session } from 'next-auth';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -71,3 +71,4 @@ export const usePostingHandler = ({
         postingData
     };
 };
+

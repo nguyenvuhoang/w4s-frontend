@@ -1,8 +1,8 @@
 import { Locale } from '@/configs/i18n'
 import { workflowService, codeService } from '@/servers/system-service'
-import { ContractType } from '@/types/bankType'
-import { PageData } from '@/types/systemTypes'
-import { isValidResponse } from '@/utils/isValidResponse'
+import { ContractType } from '@shared/types/bankType'
+import { PageData } from '@shared/types/systemTypes'
+import { isValidResponse } from '@utils/isValidResponse'
 import { SelectChangeEvent } from '@mui/material'
 import { Session } from 'next-auth'
 import { useEffect, useMemo, useState } from 'react'
@@ -37,7 +37,7 @@ export const useContractHandler = (
         { value: '1', label: 'Level 1' },
         { value: '2', label: 'Level 2' }
     ])
-    const [selected, setSelected] = useState<string[]>([]) // dùng contractnumber làm id
+    const [selected, setSelected] = useState<string[]>([]) // dÃ¹ng contractnumber lÃ m id
     const currentPageIds = useMemo(
         () => (contracts?.items ?? []).map(x => x.contractnumber),
         [contracts?.items]
@@ -202,12 +202,12 @@ export const useContractHandler = (
     }
 
     // =========================
-    // 🔴 DELETE LOGIC
+    // ðŸ”´ DELETE LOGIC
     // =========================
 
     /**
-     * Xoá 1 hợp đồng theo contractNo.
-     * Trả về { ok, message } để UI hiển thị Swal/toast.
+     * XoÃ¡ 1 há»£p Ä‘á»“ng theo contractNo.
+     * Tráº£ vá» { ok, message } Ä‘á»ƒ UI hiá»ƒn thá»‹ Swal/toast.
      */
     const deleteContract = async (contractNo: string): Promise<{ ok: boolean; message: string }> => {
         if (!contractNo) return { ok: false, message: 'Invalid contract number' }
@@ -230,17 +230,17 @@ export const useContractHandler = (
                 return { ok: false, message: msg }
             }
 
-            // Có backend trả error trong payload?
+            // CÃ³ backend tráº£ error trong payload?
             const errArr = (resp as any)?.payload?.dataresponse?.error
             if (Array.isArray(errArr) && errArr.length > 0) {
                 const msg = errArr[0]?.info || 'Delete contract failed'
                 return { ok: false, message: msg }
             }
 
-            // Refresh lại danh sách theo filter hiện tại
+            // Refresh láº¡i danh sÃ¡ch theo filter hiá»‡n táº¡i
             const payload = searchPayload ?? defaultPayload
 
-            // Nếu trang hiện tại chỉ còn 1 record và xoá nó => lùi về trang trước (tránh trống trang)
+            // Náº¿u trang hiá»‡n táº¡i chá»‰ cÃ²n 1 record vÃ  xoÃ¡ nÃ³ => lÃ¹i vá» trang trÆ°á»›c (trÃ¡nh trá»‘ng trang)
             const willBeEmptyPage = (contracts?.items?.length ?? 0) === 1
             const nextPage = willBeEmptyPage ? Math.max((page ?? 1) - 1, 0) : page
 
@@ -258,8 +258,8 @@ export const useContractHandler = (
     }
 
     /**
-     * Xoá tất cả các contract đang chọn (selected).
-     * Trả về { ok, message, results } – trong đó results liệt kê từng id ok/failed.
+     * XoÃ¡ táº¥t cáº£ cÃ¡c contract Ä‘ang chá»n (selected).
+     * Tráº£ vá» { ok, message, results } â€“ trong Ä‘Ã³ results liá»‡t kÃª tá»«ng id ok/failed.
      */
     const deleteManySelected = async (): Promise<{
         ok: boolean
@@ -273,7 +273,7 @@ export const useContractHandler = (
         const results: { id: string; ok: boolean; message: string }[] = []
         try {
             for (const id of selected) {
-                // tuần tự (nếu muốn song song: Promise.allSettled, nhưng cẩn trọng rate-limit/backend)
+                // tuáº§n tá»± (náº¿u muá»‘n song song: Promise.allSettled, nhÆ°ng cáº©n trá»ng rate-limit/backend)
                 // eslint-disable-next-line no-await-in-loop
                 const r = await deleteContract(id)
                 results.push({ id, ...r })
@@ -305,3 +305,4 @@ export const useContractHandler = (
         deleteManySelected
     }
 }
+

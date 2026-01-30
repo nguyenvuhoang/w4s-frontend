@@ -1,6 +1,6 @@
 'use client'
 
-import { getDictionary } from '@/utils/getDictionary';
+import { getDictionary } from '@utils/getDictionary';
 import EmailSetting from '@/views/components/console-admin/EmailSetting';
 import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
@@ -34,3 +34,4 @@ const EmailSettingContent = ({
 }
 
 export default EmailSettingContent
+

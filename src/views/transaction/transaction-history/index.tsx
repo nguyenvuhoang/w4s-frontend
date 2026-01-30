@@ -1,13 +1,13 @@
 'use client'
 
 import PaginationPage from '@/@core/components/jTable/pagination'
-import EmptyListNotice from '@/components/layout/shared/EmptyListNotice'
+import EmptyListNotice from '@components/layout/shared/EmptyListNotice'
 import { Locale } from '@/configs/i18n'
 import { SearchForm, useTransactionHistoryHandler } from '@/services/useTransactionHistoryHandler'
-import { PageContentProps } from '@/types'
-import { Transaction } from '@/types/bankType'
-import { PageData } from '@/types/systemTypes'
-import { getDictionary } from '@/utils/getDictionary'
+import { PageContentProps } from '@shared/types'
+import { Transaction } from '@shared/types/bankType'
+import { PageData } from '@shared/types/systemTypes'
+import { getDictionary } from '@utils/getDictionary'
 import CancelIcon from '@mui/icons-material/Cancel'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
@@ -34,12 +34,12 @@ import {
 import { Session } from 'next-auth'
 import { Controller, useForm } from 'react-hook-form'
 // date picker
-import { formatAmount } from '@/utils/formatAmount'
-import { formatDateShort } from '@/utils/formatDateShort'
+import { formatAmount } from '@utils/formatAmount'
+import { formatDateShort } from '@utils/formatDateShort'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/navigation'
-import { formatDateTime } from '@/utils/formatDateTime'
+import { formatDateTime } from '@utils/formatDateTime'
 
 type PageProps = PageContentProps & {
   transactionhistorydata: PageData<Transaction>
@@ -483,3 +483,5 @@ const TransactionHistoryContent = ({ dictionary, transactionhistorydata, session
 }
 
 export default TransactionHistoryContent
+
+

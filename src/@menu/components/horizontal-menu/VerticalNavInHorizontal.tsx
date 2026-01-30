@@ -1,5 +1,5 @@
 // Type Imports
-import type { BreakpointType, ChildrenType } from '../../types'
+import type { BreakpointType, ChildrenType } from '@shared/types'
 import type { VerticalNavProps } from '../vertical-menu/VerticalNav'
 
 // Component Imports

@@ -1,6 +1,6 @@
 import ResolvedProps from '@/@core/components/ResolvedProps';
-import { generateAuthMetadata } from '@/components/layout/AuthLayout';
-import SessionLayout from '@/components/layout/SessionLayout';
+import { generateAuthMetadata } from '@components/layout/AuthLayout';
+import SessionLayout from '@components/layout/SessionLayout';
 import { Locale } from '@/configs/i18n';
 import { Metadata } from 'next';
 import AccountChartAddWrapper from './AccountChartAddWrapper';

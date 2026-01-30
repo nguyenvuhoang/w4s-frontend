@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import DataObjectIcon from '@mui/icons-material/DataObject';
 import { Modal } from '@mui/material';
 import PreviewContent from './PreviewContent';
-import { getDictionary } from '@/utils/getDictionary';
+import { getDictionary } from '@utils/getDictionary';
 
 type Props = {
     dictionary: Awaited<ReturnType<typeof getDictionary>>
@@ -61,3 +61,4 @@ const EditJson = ({ dictionary }: Props) => {
 }
 
 export default EditJson
+

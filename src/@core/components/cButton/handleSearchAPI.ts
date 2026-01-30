@@ -1,6 +1,6 @@
 import { Locale } from "@/configs/i18n";
 import { systemServiceApi } from "@/servers/system-service";
-import SwalAlert from "@/utils/SwalAlert";
+import SwalAlert from "@utils/SwalAlert";
 import { Session } from "next-auth";
 
 export const handleSearchAPI = async (session: Session | null, txFo_: any, pageIndex: number, pageSize: number, searchtext?: string, parameters?: { [key: string]: any }, language?: Locale) => {
@@ -31,3 +31,4 @@ export const handleSearchAPI = async (session: Session | null, txFo_: any, pageI
         console.log(error);
     }
 };
+

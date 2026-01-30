@@ -4,7 +4,7 @@
 import type { HTMLAttributes, ReactElement } from 'react'
 
 // Hook Imports
-import useVerticalNav from '../../hooks/useVerticalNav'
+import useVerticalNav from '@hooks/useVerticalNav'
 
 // Icon Imports
 import CloseIcon from '../../svg/Close'

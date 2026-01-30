@@ -27,13 +27,13 @@ import {
 } from '@mui/material'
 import * as MuiIcons from '@mui/icons-material'
 import { Controller, useForm } from 'react-hook-form'
-import { MenuItem } from '@/types/systemTypes'
-import { IconPicker } from '@/components/IconPicker'
+import { MenuItem } from '@shared/types/systemTypes'
+import { IconPicker } from '@components/IconPicker'
 import type { Locale } from '@configs/i18n'
-import { getDictionary } from '@/utils/getDictionary'
+import { getDictionary } from '@utils/getDictionary'
 import { systemServiceApi } from '@/servers/system-service'
 import { Session } from 'next-auth'
-import { isValidResponse } from '@/utils/isValidResponse'
+import { isValidResponse } from '@utils/isValidResponse'
 import { value } from 'valibot'
 
 type MenuFormData = {
@@ -124,11 +124,11 @@ export const MenuFormModal = ({
     // Command options for type C (Command/Button)
     const commandOptions = [
         { value: '001', label: '001. View', label_en: 'View', label_vi: 'Xem' },
-        { value: '002', label: '002. Modify', label_en: 'Modify', label_vi: 'Sửa' },
-        { value: '003', label: '003. Delete', label_en: 'Delete', label_vi: 'Xóa' },
-        { value: '004', label: '004. Approve', label_en: 'Approve', label_vi: 'Duyệt' },
-        { value: '005', label: '005. Reject', label_en: 'Reject', label_vi: 'Từ chối' },
-        { value: '006', label: '006. Add', label_en: 'Add', label_vi: 'Thêm' }
+        { value: '002', label: '002. Modify', label_en: 'Modify', label_vi: 'Sá»­a' },
+        { value: '003', label: '003. Delete', label_en: 'Delete', label_vi: 'XÃ³a' },
+        { value: '004', label: '004. Approve', label_en: 'Approve', label_vi: 'Duyá»‡t' },
+        { value: '005', label: '005. Reject', label_en: 'Reject', label_vi: 'Tá»« chá»‘i' },
+        { value: '006', label: '006. Add', label_en: 'Add', label_vi: 'ThÃªm' }
     ]
 
     // Get used command options for the selected parent
@@ -189,7 +189,7 @@ export const MenuFormModal = ({
 
     // Function to detect if text is Vietnamese
     const isVietnamese = (text: string): boolean => {
-        const vietnameseChars = /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ]/
+        const vietnameseChars = /[Ã Ã¡áº¡áº£Ã£Ã¢áº§áº¥áº­áº©áº«Äƒáº±áº¯áº·áº³áºµÃ¨Ã©áº¹áº»áº½Ãªá»áº¿á»‡á»ƒá»…Ã¬Ã­á»‹á»‰Ä©Ã²Ã³á»á»ÃµÃ´á»“á»‘á»™á»•á»—Æ¡á»á»›á»£á»Ÿá»¡Ã¹Ãºá»¥á»§Å©Æ°á»«á»©á»±á»­á»¯á»³Ã½á»µá»·á»¹Ä‘Ã€Ãáº áº¢ÃƒÃ‚áº¦áº¤áº¬áº¨áºªÄ‚áº°áº®áº¶áº²áº´ÃˆÃ‰áº¸áººáº¼ÃŠá»€áº¾á»†á»‚á»„ÃŒÃá»Šá»ˆÄ¨Ã’Ã“á»Œá»ŽÃ•Ã”á»’á»á»˜á»”á»–Æ á»œá»šá»¢á»žá» Ã™Ãšá»¤á»¦Å¨Æ¯á»ªá»¨á»°á»¬á»®á»²Ãá»´á»¶á»¸Ä]/
         return vietnameseChars.test(text)
     }
 
@@ -250,7 +250,7 @@ export const MenuFormModal = ({
     }
 
     const handleFormSubmit = (data: MenuFormData) => {
-        // Chỉ pass data ra ngoài, parent sẽ handle API call
+        // Chá»‰ pass data ra ngoÃ i, parent sáº½ handle API call
         onSubmit(data)
     }
 
@@ -807,3 +807,4 @@ export const MenuFormModal = ({
         </Dialog>
     )
 }
+

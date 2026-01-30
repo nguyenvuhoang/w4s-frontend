@@ -6,12 +6,12 @@ import React, { Dispatch, memo, useCallback } from 'react';
 import PaginationPage from '@/@core/components/jTable/pagination';
 import { StyledHeaderCell, StyledTableRow } from '@/@core/components/jTable/style';
 import { CustomCheckboxIcon } from '@/@core/components/mui/CustomCheckboxIcon';
-import PreviewContent from '@/components/forms/previewcontent';
+import PreviewContent from '@components/forms/previewcontent';
 import { Locale } from '@/configs/i18n';
-import { FormInput, PageData, RuleStrong } from '@/types/systemTypes';
-import { generateCellTable } from '@/utils/generateCellTable';
-import { getDictionary } from '@/utils/getDictionary';
-import { getNestedValue } from '@/utils/getNestedValue';
+import { FormInput, PageData, RuleStrong } from '@shared/types/systemTypes';
+import { generateCellTable } from '@utils/generateCellTable';
+import { getDictionary } from '@utils/getDictionary';
+import { getNestedValue } from '@utils/getNestedValue';
 import {
   Box,
   Checkbox,
@@ -27,7 +27,7 @@ import {
 } from '@mui/material';
 
 import { useUserStore } from '@/@core/stores/useUserStore';
-import SwalAlert from '@/utils/SwalAlert';
+import SwalAlert from '@utils/SwalAlert';
 import { Column, useRenderTableSearch } from '@features/dynamicform/hooks/useRenderTableSearch';
 
 // ============================================================================
@@ -253,3 +253,4 @@ const RenderTableSearchAdvance = ({
 };
 
 export default memo(RenderTableSearchAdvance);
+

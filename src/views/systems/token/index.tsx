@@ -1,12 +1,12 @@
 'use client';
 
-import Spinner from '@/components/spinners';
+import Spinner from '@components/spinners';
 import { Locale } from '@/configs/i18n';
 import { coreGetWayServiceApi } from '@/servers/coregateway-service';
-import { PageData } from '@/types/systemTypes';
-import { formatDateTime } from '@/utils/formatDateTime';
-import { getDictionary } from '@/utils/getDictionary';
-import { isValidResponse } from '@/utils/isValidResponse';
+import { PageData } from '@shared/types/systemTypes';
+import { formatDateTime } from '@utils/formatDateTime';
+import { getDictionary } from '@utils/getDictionary';
+import { isValidResponse } from '@utils/isValidResponse';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import {
@@ -104,7 +104,7 @@ const TokenInformation = ({ dictionary, session, locale, tokendata: initialToken
                 ...newToken,
                 value: tokenvalue,
             });
-            setCountdown(30); // Bắt đầu đếm ngược khi token hợp lệ
+            setCountdown(30); // Báº¯t Ä‘áº§u Ä‘áº¿m ngÆ°á»£c khi token há»£p lá»‡
         } catch (error) {
             console.error('Error generating token:', error);
             setNewToken({ ...newToken, value: 'Error generating token' });
@@ -295,3 +295,4 @@ const TokenInformation = ({ dictionary, session, locale, tokendata: initialToken
 };
 
 export default TokenInformation;
+

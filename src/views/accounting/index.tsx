@@ -1,10 +1,10 @@
 'use client';
 
 import { Locale } from '@/configs/i18n';
-import { PageContentProps } from '@/types';
-import { AccountChartType } from '@/types/bankType';
-import { PageData } from '@/types/systemTypes';
-import { getDictionary } from '@/utils/getDictionary';
+import { PageContentProps } from '@shared/types';
+import { AccountChartType } from '@shared/types/bankType';
+import { PageData } from '@shared/types/systemTypes';
+import { getDictionary } from '@utils/getDictionary';
 import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper';
 import { Session } from 'next-auth';
 
@@ -13,10 +13,10 @@ import { useForm } from 'react-hook-form';
 
 import PaginationPage from '@/@core/components/jTable/pagination';
 import { CustomCheckboxIcon } from '@/@core/components/mui/CustomCheckboxIcon';
-import AdvancedSearchPanel from '@/components/AdvancedSearchPanel';
-import NoData from '@/components/layout/shared/card/nodata';
+import AdvancedSearchPanel from '@components/AdvancedSearchPanel';
+import NoData from '@components/layout/shared/card/nodata';
 import { useAccountChartHandler } from '@/services/useAccountChartHandler';
-import SwalAlert from '@/utils/SwalAlert';
+import SwalAlert from '@utils/SwalAlert';
 
 // MUI
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
@@ -26,7 +26,7 @@ import { SelectOption } from '../components/form/DynamicAdvancedFilters';
 import { FormField } from '../components/form/FormField';
 import { ListActionsBar } from '../components/form/ListActionsBar';
 import { useRowSelection } from '../components/form/useRowSelection';
-import { getLocalizedUrl } from '@/utils/i18n';
+import { getLocalizedUrl } from '@utils/i18n';
 import AccountAdvancedFilters from './component/AccountAdvancedFilters';
 
 type SearchForm = {
@@ -49,6 +49,16 @@ type PageProps = PageContentProps & {
     session: Session | null;
     locale: Locale;
     accountClassificationOptions: SelectOption[];
+};
+
+type AccountChartRow = {
+    accountlevel: number | string;
+    accountnumber: string;
+    currency: string;
+    accountname: string;
+    classification: string;
+    balanceside: string;
+    group: string;
 };
 
 const BankAccountDefinitionContent = ({
@@ -77,20 +87,20 @@ const BankAccountDefinitionContent = ({
 
     const { selected, hasSelection, selectedId, toggleOne } = useRowSelection<string>(() => '');
 
-    const columns: Column<ReturnType<typeof mapRow>>[] = useMemo(
+    const columns: Column<AccountChartRow>[] = useMemo(
         () => [
-            { key: 'accountlevel', header: 'Account level', width: 120, accessor: r => r.accountlevel },
-            { key: 'accountnumber', header: 'Account number', width: 260, accessor: r => r.accountnumber },
-            { key: 'currency', header: 'Currency', width: 110, accessor: r => r.currency },
-            { key: 'accountname', header: 'Account name', accessor: r => r.accountname },
-            { key: 'classification', header: 'Classification', width: 220, accessor: r => r.classification },
-            { key: 'balanceside', header: 'Balance side', width: 130, accessor: r => r.balanceside },
-            { key: 'group', header: 'Group', width: 110, accessor: r => r.group }
+            { key: 'accountlevel', header: 'Account level', width: 120, accessor: (r: AccountChartRow) => r.accountlevel },
+            { key: 'accountnumber', header: 'Account number', width: 260, accessor: (r: AccountChartRow) => r.accountnumber },
+            { key: 'currency', header: 'Currency', width: 110, accessor: (r: AccountChartRow) => r.currency },
+            { key: 'accountname', header: 'Account name', accessor: (r: AccountChartRow) => r.accountname },
+            { key: 'classification', header: 'Classification', width: 220, accessor: (r: AccountChartRow) => r.classification },
+            { key: 'balanceside', header: 'Balance side', width: 130, accessor: (r: AccountChartRow) => r.balanceside },
+            { key: 'group', header: 'Group', width: 110, accessor: (r: AccountChartRow) => r.group }
         ],
         []
     );
 
-    const mapRow = (r: any) => ({
+    const mapRow = (r: any): AccountChartRow => ({
         accountlevel: r.accountlevel ?? 1,
         accountnumber: r.accountnumber ?? '-',
         currency: r.currency ?? 'LAK',
@@ -222,10 +232,10 @@ const BankAccountDefinitionContent = ({
                         rows={rows}
                         loading={loading}
                         rowsPerPage={rowsPerPage || 5}
-                        rowKey={(r, i) => `${r.accountnumber}-${i}`}
-                        onRowDoubleClick={(r) => handleRowDblClick(r.accountnumber)}
+                        rowKey={(r: AccountChartRow, i: number) => `${r.accountnumber}-${i}`}
+                        onRowDoubleClick={(r: AccountChartRow) => handleRowDblClick(r.accountnumber)}
                         empty={<NoData text={dictionary['common'].nodata} width={100} height={100} />}
-                        selectionCell={(row) => {
+                        selectionCell={(row: AccountChartRow) => {
                             const id = row.accountnumber;
                             const checked = selected.includes(id);
                             const isDisabledRow = hasSelection && id !== selectedId;
@@ -273,3 +283,5 @@ const BankAccountDefinitionContent = ({
 };
 
 export default BankAccountDefinitionContent;
+
+

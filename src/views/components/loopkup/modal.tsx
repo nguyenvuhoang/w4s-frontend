@@ -1,11 +1,11 @@
 'use client'
 
 import WrapperContentPage from '@/@layouts/styles/shared/WrapperContentPage'
-import NoData from '@/components/layout/shared/card/nodata'
-import LoadingSubmit from '@/components/LoadingSubmit'
+import NoData from '@components/layout/shared/card/nodata'
+import LoadingSubmit from '@components/LoadingSubmit'
 import { Locale } from '@/configs/i18n'
-import { FormInput, PageData } from '@/types/systemTypes'
-import { getDictionary } from '@/utils/getDictionary'
+import { FormInput, PageData } from '@shared/types/systemTypes'
+import { getDictionary } from '@utils/getDictionary'
 import { Box, Button, Modal } from '@mui/material'
 import { Session } from 'next-auth'
 import { Dispatch, SetStateAction, useState } from 'react'
@@ -137,3 +137,4 @@ const LookupModal = ({
 }
 
 export default LookupModal
+

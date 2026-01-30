@@ -1,10 +1,10 @@
 'use client';
 
-import ActionButtonGroup from '@/components/ActionButtonGroup';
-import LoadingSubmit from '@/components/LoadingSubmit';
-import { PageContentProps } from '@/types';
+import ActionButtonGroup from '@components/ActionButtonGroup';
+import LoadingSubmit from '@components/LoadingSubmit';
 import AutoAwesomeMosaicIcon from '@mui/icons-material/AutoAwesomeMosaic';
 import { Box, Card, CardContent, Grid, Typography } from '@mui/material';
+import { PageContentProps } from '@shared/types';
 
 import ContentWrapper from '../content-wrapper';
 import { useDynamicRenderer } from '../hooks/useDynamicRenderer';
@@ -174,3 +174,5 @@ const DynamicFormRenderer = ({
 };
 
 export default DynamicFormRenderer;
+
+

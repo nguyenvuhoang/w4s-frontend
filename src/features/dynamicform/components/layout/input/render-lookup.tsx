@@ -4,8 +4,8 @@ import { handleSearchAPI } from '@/@core/components/cButton/handleSearchAPI';
 import Application from '@/@core/lib/libSupport';
 import { Locale } from '@/configs/i18n';
 import { formService } from '@/servers/system-service';
-import { FormInput, PageData, RuleStrong } from '@/types/systemTypes';
-import { getDictionary } from '@/utils/getDictionary';
+import { FormInput, PageData, RuleStrong } from '@shared/types/systemTypes';
+import { getDictionary } from '@utils/getDictionary';
 import AcUnitIcon from '@mui/icons-material/AcUnit';
 import SearchIcon from '@mui/icons-material/Search';
 import { Grid, IconButton, InputAdornment, TextField } from '@mui/material';
@@ -151,3 +151,4 @@ const RenderLookupDefault = ({
 };
 
 export default RenderLookupDefault;
+

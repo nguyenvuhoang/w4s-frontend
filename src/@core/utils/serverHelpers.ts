@@ -1,7 +1,7 @@
 import themeConfig from '@configs/themeConfig';
 import type { Settings } from '@core/contexts/settingsContext';
 import { cookies } from 'next/headers';
-import { SystemMode } from '../types';
+import { SystemMode } from '@core/types';
 
 export const getSettingsFromCookie = async (): Promise<Settings> => {
     const cookieStore = await cookies()

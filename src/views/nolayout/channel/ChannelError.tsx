@@ -1,7 +1,7 @@
 'use client'
 
 import { Alert, AlertTitle, Box } from '@mui/material'
-import type { getDictionary } from '@/utils/getDictionary'
+import type { getDictionary } from '@utils/getDictionary'
 
 type Dictionary = Awaited<ReturnType<typeof getDictionary>>
 
@@ -26,3 +26,4 @@ const ChannelError = ({ dictionary, execute_id, errorinfo, message }: ChannelErr
 }
 
 export default ChannelError
+

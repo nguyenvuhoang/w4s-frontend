@@ -3,9 +3,9 @@
 import PaginationPage from '@/@core/components/jTable/pagination'
 import { Locale } from '@/configs/i18n'
 import { languageData } from '@/data/meta'
-import { AccountActivity, UserAccount } from '@/types/bankType'
-import { PageData } from '@/types/systemTypes'
-import { getDictionary } from '@/utils/getDictionary'
+import { AccountActivity, UserAccount } from '@shared/types/bankType'
+import { PageData } from '@shared/types/systemTypes'
+import { getDictionary } from '@utils/getDictionary'
 import {
     Email,
     Lock,
@@ -528,3 +528,4 @@ const AccountSettingContent = ({ userdata, useractivity, dictionary, locale, ses
 }
 
 export default AccountSettingContent
+

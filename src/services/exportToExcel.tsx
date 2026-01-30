@@ -1,8 +1,8 @@
 import ExcelJS from 'exceljs'
 import { saveAs } from 'file-saver'
 import dayjs from 'dayjs'
-import { SMSContentType } from '@/types/bankType'
-import { getBase64FromPublic } from '@/utils/getBase64FromPublic'
+import { SMSContentType } from '@shared/types/bankType'
+import { getBase64FromPublic } from '@utils/getBase64FromPublic'
 
 export const exportToExcel = async (data: SMSContentType[]) => {
     const workbook = new ExcelJS.Workbook()
@@ -12,20 +12,20 @@ export const exportToExcel = async (data: SMSContentType[]) => {
 
     const now = dayjs().format('DD/MM/YYYY HH:mm:ss')
 
-    // 🟢 1. Load logo
+    // ðŸŸ¢ 1. Load logo
     const logoBase64 = await getBase64FromPublic('/images/logobank/psvblogo.png')
     const imageId = workbook.addImage({
         base64: logoBase64,
         extension: 'png'
     })
 
-    // 🟢 2. Add logo A1:A4
+    // ðŸŸ¢ 2. Add logo A1:A4
     worksheet.addImage(imageId, {
         tl: { col: 0, row: 0 },
-        ext: { width: 160, height: 70 } // Tăng kích thước logo
+        ext: { width: 160, height: 70 } // TÄƒng kÃ­ch thÆ°á»›c logo
     })
 
-    // 🟢 3. Merge và tạo tiêu đề từ B1 đến F1
+    // ðŸŸ¢ 3. Merge vÃ  táº¡o tiÃªu Ä‘á» tá»« B1 Ä‘áº¿n F1
     worksheet.mergeCells('A1:E1')
     const titleCell = worksheet.getCell('A1')
     titleCell.value = 'PSVB SMS Gateway Report'
@@ -35,7 +35,7 @@ export const exportToExcel = async (data: SMSContentType[]) => {
     worksheet.getRow(1).height = 45
 
 
-    // 🟢 4. Export date
+    // ðŸŸ¢ 4. Export date
     worksheet.mergeCells('B2:F2')
     const dateCell = worksheet.getCell('B2')
     dateCell.value = `Export Date: ${now}`
@@ -44,7 +44,7 @@ export const exportToExcel = async (data: SMSContentType[]) => {
     worksheet.getRow(2).height = 20
 
 
-    // 🟢 5. Header row (Row 4)
+    // ðŸŸ¢ 5. Header row (Row 4)
     const headerRow = worksheet.getRow(3)
     headerRow.getCell(1).value = 'Phone'
     headerRow.getCell(2).value = 'Provider'
@@ -68,7 +68,7 @@ export const exportToExcel = async (data: SMSContentType[]) => {
     }
     headerRow.height = 24
 
-    // 🟢 6. Cấu hình column chính xác (từ B đến F)
+    // ðŸŸ¢ 6. Cáº¥u hÃ¬nh column chÃ­nh xÃ¡c (tá»« B Ä‘áº¿n F)
     worksheet.columns = [
         { key: 'phonenumber', width: 18 },
         { key: 'smsproviderid', width: 12 },
@@ -77,7 +77,7 @@ export const exportToExcel = async (data: SMSContentType[]) => {
         { key: 'messagecontent', width: 50 }
     ]
 
-    // 🟢 7. Add dữ liệu từ row 5
+    // ðŸŸ¢ 7. Add dá»¯ liá»‡u tá»« row 5
     data.forEach(item => {
         const row = worksheet.addRow({
             phonenumber: item.phonenumber,
@@ -99,12 +99,12 @@ export const exportToExcel = async (data: SMSContentType[]) => {
         row.height = 20
     })
 
-    // 🟢 8. Ẩn cột dư từ G trở đi
+    // ðŸŸ¢ 8. áº¨n cá»™t dÆ° tá»« G trá»Ÿ Ä‘i
     for (let col = 6; col <= 50; col++) {
         worksheet.getColumn(col).hidden = true
     }
 
-    // 🟢 9. Export file
+    // ðŸŸ¢ 9. Export file
     const buffer = await workbook.xlsx.writeBuffer()
     const blob = new Blob([buffer], {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -112,3 +112,4 @@ export const exportToExcel = async (data: SMSContentType[]) => {
 
     saveAs(blob, `[PSVB-SMS-REPORT]-${dayjs().format('YYYYMMDD-HHmmss')}.xlsx`)
 }
+

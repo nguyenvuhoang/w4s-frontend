@@ -1,10 +1,10 @@
 "use client";
 
-import SearchInput from "@/components/forms/search-input/page";
+import SearchInput from "@components/forms/search-input/page";
 import { Locale } from "@/configs/i18n";
 import { WORKFLOWCODE } from "@/data/WorkflowCode";
 import { workflowService } from "@/servers/system-service";
-import { getDictionary } from "@/utils/getDictionary";
+import { getDictionary } from "@utils/getDictionary";
 import {
   Box,
   Button,
@@ -499,3 +499,4 @@ const WorkflowManagementContent = ({
 };
 
 export default WorkflowManagementContent;
+

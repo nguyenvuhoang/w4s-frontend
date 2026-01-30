@@ -1,5 +1,5 @@
 // stores/useUserStore.ts
-import { UserInRole } from '@/types/systemTypes'
+import { UserInRole } from '@shared/types/systemTypes'
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 
@@ -32,3 +32,4 @@ export const useUserStore = create<UserStore>()(
 export const useUserName = () => useUserStore((state) => state.name)
 export const useUserRole = () => useUserStore((state) => state.role)
 export const useUserAvatar = () => useUserStore((state) => state.avatar)
+

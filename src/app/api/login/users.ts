@@ -1,6 +1,6 @@
 // ** Fake user data and data type
 
-import { ResponseArray } from "@/types"
+import { ResponseArray } from "@shared/types"
 
 // ** Please remove below user data and data type in production and verify user with Real Database
 export type Users = {
@@ -13,3 +13,4 @@ export type Users = {
 export type UserTable = {
   fo: ResponseArray<Users>
 }
+

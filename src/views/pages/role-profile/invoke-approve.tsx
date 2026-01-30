@@ -1,8 +1,8 @@
 import SnackbarComponent from '@/@core/components/layouts/shared/Snackbar';
 import { Locale } from '@/configs/i18n';
-import { MenuItem } from '@/types/systemTypes';
-import { getDictionary } from '@/utils/getDictionary';
-import { getLocalizedName } from '@/utils/getLocalizedName';
+import { MenuItem } from '@shared/types/systemTypes';
+import { getDictionary } from '@utils/getDictionary';
+import { getLocalizedName } from '@utils/getLocalizedName';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FolderIcon from '@mui/icons-material/Folder';
@@ -80,7 +80,7 @@ const InvokeApprove = ({ locale, session, dictionary, tabvalue }: Props) => {
                                         item.parent_id === parent.command_id && item.group_menu_visible === "1"
                                 );
 
-                                // Có children -> Accordion như cũ
+                                // CÃ³ children -> Accordion nhÆ° cÅ©
                                 if (children.length > 0) {
                                     return (
                                         <Accordion
@@ -91,7 +91,7 @@ const InvokeApprove = ({ locale, session, dictionary, tabvalue }: Props) => {
                                         >
                                             <AccordionSummary sx={{ pl: 5, color: '#225087' }} expandIcon={<ExpandMoreIcon />}>
                                                 <ListItemIcon>
-                                                    {/* Parent có children dùng RootIcon */}
+                                                    {/* Parent cÃ³ children dÃ¹ng RootIcon */}
                                                     <AccountTreeIcon sx={{ color: '#225087' }} />
                                                 </ListItemIcon>
                                                 <Typography fontWeight="bold" sx={{ color: '#225087', mx: 2 }}>
@@ -133,7 +133,7 @@ const InvokeApprove = ({ locale, session, dictionary, tabvalue }: Props) => {
                                     );
                                 }
 
-                                // KHÔNG có children -> render ListItem trực tiếp để tick quyền cho PARENT
+                                // KHÃ”NG cÃ³ children -> render ListItem trá»±c tiáº¿p Ä‘á»ƒ tick quyá»n cho PARENT
                                 return (
                                     <List key={parent.command_id} sx={{ pl: 0 }}>
                                         <ListItem

@@ -1,6 +1,6 @@
-﻿'use client';
+'use client';
 
-import { PageContentProps } from '@/types';
+import { PageContentProps } from '@shared/types';
 
 import StaticPageRenderer, { hasStaticPage } from './static-pages/StaticPageRenderer';
 import { DynamicFormRenderer } from './dynamic-pages';
@@ -47,3 +47,4 @@ const LayoutRenderer = ({
 };
 
 export default LayoutRenderer;
+

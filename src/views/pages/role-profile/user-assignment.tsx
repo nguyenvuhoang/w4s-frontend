@@ -2,9 +2,9 @@
 
 import SnackbarComponent from '@/@core/components/layouts/shared/Snackbar';
 import { useUserAssignment } from '@/services/useUserAssignment';
-import { UserAccount } from '@/types/bankType';
-import { PageData, Role } from '@/types/systemTypes';
-import { getDictionary } from '@/utils/getDictionary';
+import { UserAccount } from '@shared/types/bankType';
+import { PageData, Role } from '@shared/types/systemTypes';
+import { getDictionary } from '@utils/getDictionary';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -68,7 +68,7 @@ const UserAssignment = ({ dictionary, role, userdata, session }: Props) => {
                 </Typography>
             </Stack>
             <Grid container spacing={2} sx={{ flexGrow: 1 }}>
-                {/* Bảng bên trái */}
+                {/* Báº£ng bÃªn trÃ¡i */}
                 <Grid size={5}>
                     <Box sx={{ mb: 2 }}>
                         <FormControl fullWidth>
@@ -268,7 +268,7 @@ const UserAssignment = ({ dictionary, role, userdata, session }: Props) => {
                     </TableContainer>
                 </Grid>
 
-                {/* Nút di chuyển giữa hai bảng */}
+                {/* NÃºt di chuyá»ƒn giá»¯a hai báº£ng */}
                 <Grid size={2} display="flex" alignItems="center" justifyContent="center" flexDirection="column">
                     {selectedLeft.length > 0 && (
                         <Button
@@ -314,7 +314,7 @@ const UserAssignment = ({ dictionary, role, userdata, session }: Props) => {
                 </Grid>
 
 
-                {/* Bảng bên phải */}
+                {/* Báº£ng bÃªn pháº£i */}
                 <Grid size={5}>
                     <Box sx={{ mb: 2 }}>
                         <FormControl fullWidth>

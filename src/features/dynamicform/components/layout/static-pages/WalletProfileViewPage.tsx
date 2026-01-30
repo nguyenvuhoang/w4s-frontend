@@ -1,8 +1,8 @@
 'use client';
 
-import TabPanel from '@/components/tab/tab-panel';
-import LoadingSubmit from '@/components/LoadingSubmit';
-import { PageContentProps } from '@/types';
+import TabPanel from '@components/tab/tab-panel';
+import LoadingSubmit from '@components/LoadingSubmit';
+import { PageContentProps } from '@shared/types';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import {
     Box,
@@ -148,3 +148,5 @@ const WalletProfileViewPage = ({
 };
 
 export default WalletProfileViewPage;
+
+

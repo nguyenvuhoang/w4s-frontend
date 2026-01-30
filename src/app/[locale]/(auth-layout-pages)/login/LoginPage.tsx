@@ -1,5 +1,5 @@
-import AuthLayout from '@/components/layout/AuthLayout';
-import Spinner from '@/components/spinners';
+import AuthLayout from '@components/layout/AuthLayout';
+import Spinner from '@components/spinners';
 import { Locale } from '@/configs/i18n';
 import { Suspense } from 'react';
 import Login from './components/Login';

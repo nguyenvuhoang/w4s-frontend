@@ -2,11 +2,11 @@
 
 import TransferTemplate from '@/@core/svg/TransferTemplate';
 import { bankServiceApi } from '@/servers/bank-service';
-import { FormValues } from '@/types';
-import { TemplateTransfer } from '@/types/bankType';
-import { formatAmount } from '@/utils/formatAmount';
-import { formatCurrency } from '@/utils/formatCurrency';
-import { getDictionary } from '@/utils/getDictionary';
+import { FormValues } from '@shared/types';
+import { TemplateTransfer } from '@shared/types/bankType';
+import { formatAmount } from '@utils/formatAmount';
+import { formatCurrency } from '@utils/formatCurrency';
+import { getDictionary } from '@utils/getDictionary';
 import CloseIcon from '@mui/icons-material/Close';
 import SearchIcon from '@mui/icons-material/Search';
 import { IconButton, InputAdornment, TextField } from '@mui/material';
@@ -240,3 +240,5 @@ const TransferTemplateButton = ({
 };
 
 export default TransferTemplateButton;
+
+

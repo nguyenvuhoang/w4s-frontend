@@ -3,13 +3,13 @@ import styled from '@emotion/styled'
 import type { CSSObject } from '@emotion/styled'
 
 // Type Imports
-import type { MenuItemProps } from '../../components/horizontal-menu/MenuItem'
+import type { MenuItemProps } from '@components/horizontal-menu/MenuItem'
 
 // Util Imports
-import { menuClasses } from '../../utils/menuClasses'
+import { menuClasses } from '@utils/menuClasses'
 
 // Style Imports
-import { menuButtonStyles } from '../../components/horizontal-menu/MenuButton'
+import { menuButtonStyles } from '@components/horizontal-menu/MenuButton'
 
 type StyledHorizontalMenuItemProps = Pick<MenuItemProps, 'rootStyles' | 'disabled'> & {
   level: number

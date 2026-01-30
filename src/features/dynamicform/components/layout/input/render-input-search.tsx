@@ -1,7 +1,7 @@
 'use client';
 
 import { Locale } from '@/configs/i18n';
-import { FormInput, RuleStrong } from '@/types/systemTypes';
+import { FormInput, RuleStrong } from '@shared/types/systemTypes';
 import ClearIcon from '@mui/icons-material/Clear';
 import SearchIcon from '@mui/icons-material/Search';
 import { Grid, IconButton, InputAdornment, TextField } from '@mui/material';
@@ -44,7 +44,7 @@ const RenderInputSearch = ({ input, gridProps, language, rules, ismodify, search
             <TextField
                 fullWidth
                 size="small"
-                value={localValue} // Sử dụng giá trị cục bộ thay vì giá trị từ props
+                value={localValue} // Sá»­ dá»¥ng giÃ¡ trá»‹ cá»¥c bá»™ thay vÃ¬ giÃ¡ trá»‹ tá»« props
                 variant="outlined"
                 type={input.config.is_password === 'true' ? 'password' : 'text'}
                 label={input.lang?.title?.[language] || input.default?.name || 'Text Input'}
@@ -94,3 +94,4 @@ const RenderInputSearch = ({ input, gridProps, language, rules, ismodify, search
 };
 
 export default RenderInputSearch;
+

@@ -1,5 +1,5 @@
 import { env } from '@/env.mjs';
-import { BODataResponse, SearchDataRequest, SearchDataResponse, UpdateDataRequest, ViewDataRequest, ViewDataResponse } from "@/types/systemTypes";
+import { BODataResponse, SearchDataRequest, SearchDataResponse, UpdateDataRequest, ViewDataRequest, ViewDataResponse } from "@shared/types/systemTypes";
 import { apiPost, createDefaultBody } from '../../lib/api';
 
 /**
@@ -14,7 +14,7 @@ export const dataService = {
     searchData: ({ sessiontoken, workflowid, commandname, searchtext, pageSize, pageIndex, parameters, logtype, language }: SearchDataRequest) => {
         // Validate commandname to prevent empty calls
         if (!commandname || commandname.trim() === '') {
-            console.warn('⚠️ searchData called with empty commandname, skipping API call');
+            console.warn('âš ï¸ searchData called with empty commandname, skipping API call');
             return Promise.resolve({
                 status: 400,
                 payload: {
@@ -85,7 +85,7 @@ export const dataService = {
     viewData: ({ sessiontoken, workflowid, commandname, parameters }: ViewDataRequest) => {
         // Validate commandname to prevent empty calls
         if (!commandname || commandname.trim() === '') {
-            console.warn('⚠️ viewData called with empty commandname, skipping API call');
+            console.warn('âš ï¸ viewData called with empty commandname, skipping API call');
             return Promise.resolve({
                 status: 400,
                 payload: {
@@ -116,7 +116,7 @@ export const dataService = {
     advanceSearchData: ({ sessiontoken, workflowid, commandname, advanccesearch, pageSize, pageIndex, language }: SearchDataRequest) => {
         // Validate commandname to prevent empty calls
         if (!commandname || commandname.trim() === '') {
-            console.warn('⚠️ advanceSearchData called with empty commandname, skipping API call');
+            console.warn('âš ï¸ advanceSearchData called with empty commandname, skipping API call');
             return Promise.resolve({
                 status: 400,
                 payload: {
@@ -147,3 +147,4 @@ export const dataService = {
         )
     },
 }
+

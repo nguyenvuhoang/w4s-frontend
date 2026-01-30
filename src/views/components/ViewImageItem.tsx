@@ -2,7 +2,7 @@
 
 import SnackbarComponent from '@/@core/components/layouts/shared/Snackbar';
 import { cdnServiceApi } from '@/servers/cnd-service';
-import { getDictionary } from '@/utils/getDictionary';
+import { getDictionary } from '@utils/getDictionary';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import EditIcon from '@mui/icons-material/Edit';
 import { Box, Button, CircularProgress, IconButton, Typography } from '@mui/material';
@@ -300,3 +300,4 @@ const ViewImageItem = ({ input, onChangeValue, dictionary, session }: ViewImageI
 };
 
 export default ViewImageItem;
+

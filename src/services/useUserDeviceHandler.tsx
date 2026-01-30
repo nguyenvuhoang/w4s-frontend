@@ -1,9 +1,9 @@
 import { Locale } from "@/configs/i18n";
 import { WORKFLOWCODE } from "@/data/WorkflowCode";
 import { workflowService } from "@/servers/system-service";
-import { UserDeviceType } from "@/types/bankType";
-import { PageData } from "@/types/systemTypes";
-import { isValidResponse } from "@/utils/isValidResponse";
+import { UserDeviceType } from "@shared/types/bankType";
+import { PageData } from "@shared/types/systemTypes";
+import { isValidResponse } from "@utils/isValidResponse";
 import { SelectChangeEvent } from "@mui/material";
 import { Session } from "next-auth";
 import { useEffect, useMemo, useState } from "react";
@@ -156,3 +156,4 @@ export const useUserDeviceHandler = (
     currentPageIds,
   };
 };
+

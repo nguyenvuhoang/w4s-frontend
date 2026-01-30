@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Box, Button, Modal, Tab, Tabs, Select, MenuItem, Grid, Typography, FormHelperText } from '@mui/material';
 import { Control, Controller, FieldErrors, UseFormSetValue, UseFormTrigger } from 'react-hook-form';
-import { FormValues } from '@/types';
-import { getDictionary } from '@/utils/getDictionary';
+import { FormValues } from '@shared/types';
+import { getDictionary } from '@utils/getDictionary';
 
 type Purpose = {
     id: number;
@@ -319,3 +319,5 @@ const TransferPurposeModal = ({ control, dictionary, errors, setValue, trigger, 
 };
 
 export default TransferPurposeModal;
+
+

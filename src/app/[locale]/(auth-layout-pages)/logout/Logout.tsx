@@ -1,6 +1,6 @@
 import { Locale } from '@/configs/i18n'
 import LogoutLogic from '@features/auth/hooks/useLogout'
-import { getDictionary } from '@/utils/getDictionary'
+import { getDictionary } from '@utils/getDictionary'
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded'
 import LockRoundedIcon from '@mui/icons-material/LockRounded'
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded'

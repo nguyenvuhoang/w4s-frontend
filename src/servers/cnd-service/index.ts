@@ -1,5 +1,5 @@
 import { env } from "@/env.mjs";
-import { FilesDataResponse } from "@/types/systemTypes";
+import { FilesDataResponse } from "@shared/types/systemTypes";
 import { apiPostForm } from "../lib/api"; 
 
 interface FileDataRequest {
@@ -20,3 +20,4 @@ export const cdnServiceApi = {
             folderUpload
         ),
 };
+

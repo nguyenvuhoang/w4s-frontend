@@ -2,7 +2,7 @@
 
 import JsonEditorComponent from '@/@core/components/jSONEditor';
 import { Locale } from '@/configs/i18n';
-import { getDictionary } from '@/utils/getDictionary';
+import { getDictionary } from '@utils/getDictionary';
 import { Grid, NoSsr, Typography } from '@mui/material';
 import { Session } from 'next-auth';
 import { useMemo, useState } from 'react';
@@ -37,7 +37,7 @@ const ViewAreaItem = ({ input, dictionary, session, locale, control }: ViewImage
     return parseJSON(rawValue);
   }, [input]);
 
-  // Trạng thái JSON hiện tại trong editor
+  // Tráº¡ng thÃ¡i JSON hiá»‡n táº¡i trong editor
   const [jsonContent, setJsonContent] = useState<object>(initialJson);
 
   return (
@@ -59,3 +59,4 @@ const ViewAreaItem = ({ input, dictionary, session, locale, control }: ViewImage
 };
 
 export default ViewAreaItem;
+

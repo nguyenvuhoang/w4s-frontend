@@ -1,10 +1,10 @@
-﻿'use client';
+'use client';
 
 import { dataService, systemServiceApi } from '@/servers/system-service';
-import { MailTemplate } from '@/types/bankType';
-import { getDictionary } from '@/utils/getDictionary';
-import { isValidResponse } from '@/utils/isValidResponse';
-import SwalAlert from '@/utils/SwalAlert';
+import { MailTemplate } from '@shared/types/bankType';
+import { getDictionary } from '@utils/getDictionary';
+import { isValidResponse } from '@utils/isValidResponse';
+import SwalAlert from '@utils/SwalAlert';
 import { Box, Paper, Tab, Tabs, Typography } from '@mui/material';
 import { Session } from 'next-auth';
 import { SyntheticEvent, useCallback, useEffect, useState } from 'react';
@@ -239,3 +239,4 @@ const EmailSetting = ({ session, dictionary }: {
 };
 
 export default EmailSetting;
+

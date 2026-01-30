@@ -5,7 +5,7 @@ import CancelIcon from '@mui/icons-material/Cancel'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
-import { MenuItem } from '@/types/systemTypes'
+import { MenuItem } from '@shared/types/systemTypes'
 import { Locale } from '@configs/i18n'
 import { MenuItemWithChildren } from '../hooks/useMenuTree'
 
@@ -147,3 +147,4 @@ export const MenuTableRow = ({
         </TableRow>
     )
 }
+

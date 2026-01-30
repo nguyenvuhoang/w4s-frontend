@@ -1,9 +1,9 @@
 // hooks/useContractHandler.ts
 import { Locale } from '@/configs/i18n'
 import { workflowService, codeService } from '@/servers/system-service'
-import { ContractType } from '@/types/bankType'
-import { PageData } from '@/types/systemTypes'
-import { isValidResponse } from '@/utils/isValidResponse'
+import { ContractType } from '@shared/types/bankType'
+import { PageData } from '@shared/types/systemTypes'
+import { isValidResponse } from '@utils/isValidResponse'
 import { SelectChangeEvent } from '@mui/material'
 import { Session } from 'next-auth'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -213,3 +213,4 @@ export const useContractApproveHandler = (
         contractLevelOptions
     }
 }
+

@@ -2,7 +2,7 @@
 import { useContext } from 'react';
 
 // Context Imports
-import HorizontalNavContext from '../contexts/horizontalNavContext';
+import HorizontalNavContext from '@contexts/horizontalNavContext';
 
 
 const useHorizontalNav = () => {

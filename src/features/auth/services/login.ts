@@ -1,6 +1,6 @@
 
-import { getDeviceInfo } from '@/utils/getDeviceInfo';
-import { getLocalizedUrl } from '@/utils/i18n';
+import { getDeviceInfo } from '@utils/getDeviceInfo';
+import { getLocalizedUrl } from '@utils/i18n';
 import { ErrorType, FormData } from '@core/types';
 import Cookies from 'js-cookie';
 
@@ -17,7 +17,7 @@ interface LoginServiceResult {
 export const handleLogin = async (
   data: FormData,
   locale: string,
-  dictionary: Awaited<ReturnType<typeof import('@/utils/getDictionary').getDictionary>>,
+  dictionary: Awaited<ReturnType<typeof import('@utils/getDictionary').getDictionary>>,
 ): Promise<LoginServiceResult> => {
 
 
@@ -75,3 +75,4 @@ export const handleLogin = async (
     }
   }
 }
+

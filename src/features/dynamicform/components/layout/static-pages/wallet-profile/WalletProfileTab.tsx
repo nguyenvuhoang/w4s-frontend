@@ -1,7 +1,7 @@
 'use client';
 
-import { PageContentProps } from '@/types';
-import { formatDateTime } from '@/utils/formatDateTime';
+import { PageContentProps } from '@shared/types';
+import { formatDateTime } from '@utils/formatDateTime';
 import {
   Avatar,
   Box,
@@ -212,4 +212,6 @@ const WalletProfileTab = ({
 };
 
 export default WalletProfileTab;
+
+
 

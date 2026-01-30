@@ -1,8 +1,8 @@
 import Application from "@/@core/lib/libSupport";
 import { portalServiceApi } from "@/servers/portal-service";
-import { getDictionary } from "@/utils/getDictionary";
-import { removeUnderscores } from "@/utils/removeUnderscores";
-import SwalAlert from "@/utils/SwalAlert";
+import { getDictionary } from "@utils/getDictionary";
+import { removeUnderscores } from "@utils/removeUnderscores";
+import SwalAlert from "@utils/SwalAlert";
 import { Session } from "next-auth";
 
 export const handlePostUpdateData = async (
@@ -29,3 +29,4 @@ export const handlePostUpdateData = async (
         Application.AppException("#CBUTTON.onClick", String(error), "Error");
     }
 };
+

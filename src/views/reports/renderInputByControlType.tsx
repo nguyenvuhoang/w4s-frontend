@@ -1,8 +1,8 @@
 'use client'
 
-import RenderInputDefault from "@/components/reports/render-input";
-import RenderSelectDefault from "@/components/reports/render-select";
-import { ReportParam } from "@/types/bankType";
+import RenderInputDefault from "@components/reports/render-input";
+import RenderSelectDefault from "@components/reports/render-select";
+import { ReportParam } from "@shared/types/bankType";
 import { Session } from "next-auth";
 import { FieldValues, UseFormReturn } from "react-hook-form";
 
@@ -36,3 +36,4 @@ export const renderInputByControlType = (
             return null;
     }
 };
+

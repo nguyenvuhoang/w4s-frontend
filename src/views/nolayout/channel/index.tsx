@@ -3,11 +3,11 @@
 import { Locale } from '@/configs/i18n';
 import { WORKFLOWCODE } from '@/data/WorkflowCode';
 import { workflowService } from '@/servers/system-service';
-import { PageContentProps } from '@/types';
-import { ChannelType } from '@/types/bankType';
-import { getDictionary } from '@/utils/getDictionary';
-import { isValidResponse } from '@/utils/isValidResponse';
-import SwalAlert from '@/utils/SwalAlert';
+import { PageContentProps } from '@shared/types';
+import { ChannelType } from '@shared/types/bankType';
+import { getDictionary } from '@utils/getDictionary';
+import { isValidResponse } from '@utils/isValidResponse';
+import SwalAlert from '@utils/SwalAlert';
 import CancelIcon from '@mui/icons-material/Cancel';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import {
@@ -88,7 +88,7 @@ const ChannelContent = ({ dictionary, channelData, session }: PageProps) => {
                         sessiontoken: session?.user?.token as string,
                         workflowid: WORKFLOWCODE.BO_UPDATE_CHANNEL_STATUS,
                         input: {
-                            channel_action: channelid, // (giữ nguyên theo API của bạn)
+                            channel_action: channelid, // (giá»¯ nguyÃªn theo API cá»§a báº¡n)
                             isopen: isOpen
                         },
                     });
@@ -138,7 +138,7 @@ const ChannelContent = ({ dictionary, channelData, session }: PageProps) => {
                     {channels.map((ch, idx) => (
                         <Tab
                             key={ch.id}
-                            label={`${ch.channel_id} — ${ch.channel_name}`}
+                            label={`${ch.channel_id} â€” ${ch.channel_name}`}
                             {...a11yProps(idx)}
                             sx={{
                                 textTransform: 'none',
@@ -157,7 +157,7 @@ const ChannelContent = ({ dictionary, channelData, session }: PageProps) => {
                             <CardContent>
                                 <Box display="flex" alignItems="center" justifyContent="space-between" mb={1}>
                                     <Typography variant="h6" fontWeight={600}>
-                                        {ch.channel_id} — {ch.channel_name}
+                                        {ch.channel_id} â€” {ch.channel_name}
                                     </Typography>
 
                                     <Box display="flex" alignItems="center" gap={1} flexWrap="wrap">
@@ -174,7 +174,7 @@ const ChannelContent = ({ dictionary, channelData, session }: PageProps) => {
                                         />
 
 
-                                        {/* Nút hành động Open / Close */}
+                                        {/* NÃºt hÃ nh Ä‘á»™ng Open / Close */}
                                         <Box display="flex" gap={1} ml={2}>
                                             <Button
                                                 size="small"
@@ -312,3 +312,5 @@ const ChannelContent = ({ dictionary, channelData, session }: PageProps) => {
 };
 
 export default ChannelContent;
+
+

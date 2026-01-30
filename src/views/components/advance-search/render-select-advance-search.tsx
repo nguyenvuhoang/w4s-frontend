@@ -3,13 +3,13 @@
 
 import { getDataConfig } from '@/@core/components/jSelect/supFunc';
 import { Locale } from '@/configs/i18n';
-import { FormInput, RuleStrong } from '@/types/systemTypes';
+import { FormInput, RuleStrong } from '@shared/types/systemTypes';
 import { FormControl, Grid, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import { Session } from 'next-auth';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { disableField } from '../../../features/dynamicform/components/layout/rule/disableField';
 import { isFieldHidden } from '../../../features/dynamicform/components/layout/rule/isFieldHidden';
-import { generateParams } from '@/utils/generateParams';
+import { generateParams } from '@utils/generateParams';
 
 type Props = {
     input: FormInput;
@@ -54,7 +54,7 @@ const RenderSelectAdvanceSearch = ({
         if (setAdvancedSearch) {
             setAdvancedSearch((prev: Record<string, string>) => ({
                 ...prev,
-                [input.default.code]: selectedValue, // Cập nhật giá trị mới vào advancedsearch
+                [input.default.code]: selectedValue, // Cáº­p nháº­t giÃ¡ trá»‹ má»›i vÃ o advancedsearch
             }));
         }
     }
@@ -82,7 +82,7 @@ const RenderSelectAdvanceSearch = ({
     const hidden = isFieldHidden(rules, columnKey);
     const disable = disableField(rules, columnKey, ismodify)
 
-    // Nếu bị ẩn, không render TextField
+    // Náº¿u bá»‹ áº©n, khÃ´ng render TextField
     if (hidden) {
         return null;
     }
@@ -112,7 +112,7 @@ const RenderSelectAdvanceSearch = ({
                         },
                     }}
                 >
-                    {/* Hiển thị các tùy chọn */}
+                    {/* Hiá»ƒn thá»‹ cÃ¡c tÃ¹y chá»n */}
                     {options.map((option: { value: string; label: string }, index: number) => (
                         <MenuItem key={index} value={option.value}>
                             {option.label}
@@ -126,3 +126,4 @@ const RenderSelectAdvanceSearch = ({
 };
 
 export default RenderSelectAdvanceSearch;
+

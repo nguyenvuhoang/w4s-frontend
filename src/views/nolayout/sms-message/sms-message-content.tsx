@@ -1,13 +1,13 @@
 'use client'
 
 import PaginationPage from '@/@core/components/jTable/pagination';
-import PreviewContent from '@/components/forms/previewcontent';
-import NoData from '@/components/layout/shared/card/nodata';
+import PreviewContent from '@components/forms/previewcontent';
+import NoData from '@components/layout/shared/card/nodata';
 import { useSMSMessageHandler } from '@/services/useSMSMessageHandler';
-import { SMSContentType } from '@/types/bankType';
-import { PageData } from '@/types/systemTypes';
-import { getDictionary } from '@/utils/getDictionary';
-import { maskText } from '@/utils/maskText';
+import { SMSContentType } from '@shared/types/bankType';
+import { PageData } from '@shared/types/systemTypes';
+import { getDictionary } from '@utils/getDictionary';
+import { maskText } from '@utils/maskText';
 import * as Icons from '@mui/icons-material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
@@ -403,3 +403,4 @@ const SMSMessageContent = ({
 }
 
 export default SMSMessageContent
+

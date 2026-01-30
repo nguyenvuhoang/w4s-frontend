@@ -2,7 +2,7 @@
 
 import { Locale } from '@/configs/i18n'
 import { env } from '@/env.mjs'
-import { getDictionary } from '@/utils/getDictionary'
+import { getDictionary } from '@utils/getDictionary'
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
 import { Box, Typography } from '@mui/material'
 import { Session } from 'next-auth'
@@ -89,3 +89,4 @@ const RenderReportDetail = ({ reportcode, session, dictionary, locale }: Props) 
 }
 
 export default RenderReportDetail;
+

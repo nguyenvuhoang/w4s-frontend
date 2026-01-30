@@ -2,7 +2,7 @@
 
 import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Alert, AlertTitle, Typography } from '@mui/material'
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
-import { getDictionary } from '@/utils/getDictionary'
+import { getDictionary } from '@utils/getDictionary'
 
 interface TransactionHistoryErrorProps {
     executionId?: string
@@ -113,3 +113,4 @@ const TransactionHistoryError = ({ executionId, errorInfo, errorMessage, diction
 }
 
 export default TransactionHistoryError
+

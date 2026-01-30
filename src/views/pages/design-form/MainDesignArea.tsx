@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import LayoutBuilder from './LayoutBuilder';
 import HeaderArea from './HeaderArea';
-import { DeviceView } from '@/types';
-import { getDictionary } from '@/utils/getDictionary';
+import { DeviceView } from '@shared/types';
+import { getDictionary } from '@utils/getDictionary';
 
 type Props = {
     views: any[];
@@ -31,3 +31,5 @@ const MainDesignArea = ({ views, setViews, dictionary }: Props) => {
 };
 
 export default MainDesignArea;
+
+

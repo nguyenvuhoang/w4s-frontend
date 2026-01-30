@@ -2,8 +2,8 @@
 
 import { Locale } from '@/configs/i18n';
 import { cdnServiceApi } from '@/servers/cnd-service';
-import { FormInput, RuleStrong } from '@/types/systemTypes';
-import { getDictionary } from '@/utils/getDictionary';
+import { FormInput, RuleStrong } from '@shared/types/systemTypes';
+import { getDictionary } from '@utils/getDictionary';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -225,7 +225,7 @@ const RenderImageUpload = ({
               ...(disabled && { opacity: 0.6, pointerEvents: 'none' })
             }}
           >
-            {/* Label + required asterisk (giữ style tương tự) */}
+            {/* Label + required asterisk (giá»¯ style tÆ°Æ¡ng tá»±) */}
             <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
               <Typography variant="subtitle2">
                 {labelText}
@@ -287,7 +287,7 @@ const RenderImageUpload = ({
                 </Stack>
               )}
 
-              {/* hàng chọn ảnh */}
+              {/* hÃ ng chá»n áº£nh */}
               <Stack
                 direction="row"
                 spacing={2}
@@ -343,3 +343,4 @@ const RenderImageUpload = ({
 };
 
 export default RenderImageUpload;
+

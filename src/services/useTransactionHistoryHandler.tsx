@@ -1,9 +1,9 @@
 // hooks/useContractHandler.ts
 import { Locale } from '@/configs/i18n'
 import { codeService, systemServiceApi } from '@/servers/system-service'
-import { Transaction } from '@/types/bankType'
-import { PageData } from '@/types/systemTypes'
-import { isValidResponse } from '@/utils/isValidResponse'
+import { Transaction } from '@shared/types/bankType'
+import { PageData } from '@shared/types/systemTypes'
+import { isValidResponse } from '@utils/isValidResponse'
 import { SelectChangeEvent } from '@mui/material'
 import { Session } from 'next-auth'
 import { useEffect, useMemo, useState } from 'react'
@@ -62,7 +62,7 @@ export const useTransactionHistoryHandler = (
 
     // ====== helpers ======
     const normalizePayload = (p: SearchForm) => {
-        // Ensure empty strings don’t get sent as weird values; keep your current param names.
+        // Ensure empty strings donâ€™t get sent as weird values; keep your current param names.
         return {
             refnumber: p.refnumber?.trim() || '',
             transactionref: p.transactionref?.trim() || '',
@@ -264,3 +264,4 @@ export const useTransactionHistoryHandler = (
         toggleOne
     }
 }
+

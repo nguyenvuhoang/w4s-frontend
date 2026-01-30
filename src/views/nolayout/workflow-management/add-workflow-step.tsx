@@ -1,6 +1,6 @@
 "use client";
 
-import { getDictionary } from "@/utils/getDictionary";
+import { getDictionary } from "@utils/getDictionary";
 import ContentWrapper from "@features/dynamicform/components/layout/content-wrapper";
 import SchemaIcon from "@mui/icons-material/Schema";
 import {
@@ -94,12 +94,12 @@ const AddWorkflowStepContent = ({
 
     setErrors(newErrors);
 
-    return Object.keys(newErrors).length === 0; // ✅ true = valid, false = có lỗi
+    return Object.keys(newErrors).length === 0; // âœ… true = valid, false = cÃ³ lá»—i
   };
 
   const handleChange = (field: string, value: any) => {
     setForm((prev) => ({ ...prev, [field]: value }));
-    setErrors((prev) => ({ ...prev, [field]: "" })); // Xóa lỗi khi người dùng nhập lại
+    setErrors((prev) => ({ ...prev, [field]: "" })); // XÃ³a lá»—i khi ngÆ°á»i dÃ¹ng nháº­p láº¡i
   };
   const handleSave = async (wfStep: object) => {
     try {
@@ -203,11 +203,11 @@ const AddWorkflowStepContent = ({
           sx={{
             "& .MuiOutlinedInput-root": {
               "& fieldset": {
-                borderWidth: "1px", // độ dày viền mặc định
-                borderColor: "#e6e6e9", // màu viền bình thường
+                borderWidth: "1px", // Ä‘á»™ dÃ y viá»n máº·c Ä‘á»‹nh
+                borderColor: "#e6e6e9", // mÃ u viá»n bÃ¬nh thÆ°á»ng
               },
               "& .MuiInputBase-input": {
-                color: "#000000", // màu text khi nhập
+                color: "#000000", // mÃ u text khi nháº­p
               },
             },
           }}
@@ -222,7 +222,7 @@ const AddWorkflowStepContent = ({
               },
               "& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline":
                 {
-                  borderColor: "#e6e6e9", // viền khi disable
+                  borderColor: "#e6e6e9", // viá»n khi disable
                 },
             }}
           >
@@ -476,3 +476,4 @@ const AddWorkflowStepContent = ({
 };
 
 export default AddWorkflowStepContent;
+

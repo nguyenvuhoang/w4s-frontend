@@ -1,11 +1,11 @@
 'use client';
 
-import Spinner from '@/components/spinners';
+import Spinner from '@components/spinners';
 import { Locale } from '@/configs/i18n';
 import { reportService } from '@/servers/system-service';
-import { Report } from '@/types/bankType';
-import { PageData } from '@/types/systemTypes';
-import { getDictionary } from '@/utils/getDictionary';
+import { Report } from '@shared/types/bankType';
+import { PageData } from '@shared/types/systemTypes';
+import { getDictionary } from '@utils/getDictionary';
 import { Box, InputAdornment, Pagination, Table, TableBody, TableCell, TableFooter, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import { Session } from 'next-auth';
 import { useRouter } from 'next/navigation';
@@ -222,3 +222,4 @@ const ReportPageContent = ({ dictionary, reports, session, locale }: {
 };
 
 export default ReportPageContent;
+

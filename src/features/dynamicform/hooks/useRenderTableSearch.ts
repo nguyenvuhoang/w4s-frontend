@@ -7,11 +7,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { handleSearchAPI } from '@/@core/components/cButton/handleSearchAPI';
 import Application from '@/@core/lib/libSupport';
 import { useUserStore } from '@/@core/stores/useUserStore';
-import { useRowSelection } from '@/contexts/RowSelectionContext';
-import { FormInput, PageData, RuleStrong } from '@/types/systemTypes';
-import { getDictionary } from '@/utils/getDictionary';
-import { getNestedValue } from '@/utils/getNestedValue';
-import SwalAlert from '@/utils/SwalAlert';
+import { useRowSelection } from '@contexts/RowSelectionContext';
+import { FormInput, PageData, RuleStrong } from '@shared/types/systemTypes';
+import { getDictionary } from '@utils/getDictionary';
+import { getNestedValue } from '@utils/getNestedValue';
+import SwalAlert from '@utils/SwalAlert';
 
 // ============================================================================
 // Types
@@ -323,3 +323,4 @@ export const useRenderTableSearch = ({
     handleRowDoubleClick,
   };
 };
+

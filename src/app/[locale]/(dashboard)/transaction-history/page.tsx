@@ -1,13 +1,13 @@
 import { auth } from '@/auth';
-import { generateAuthMetadata } from '@/components/layout/AuthLayout';
+import { generateAuthMetadata } from '@components/layout/AuthLayout';
 import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper';
 import BackupTableIcon from '@mui/icons-material/BackupTable';
 import { Locale } from '@/configs/i18n';
 import { systemServiceApi } from '@/servers/system-service';
-import { Transaction } from '@/types/bankType';
-import { PageData } from '@/types/systemTypes';
-import { getDictionary } from '@/utils/getDictionary';
-import { isValidResponse } from '@/utils/isValidResponse';
+import { Transaction } from '@shared/types/bankType';
+import { PageData } from '@shared/types/systemTypes';
+import { getDictionary } from '@utils/getDictionary';
+import { isValidResponse } from '@utils/isValidResponse';
 import TransactionHistoryContent from '@/views/transaction/transaction-history';
 import TransactionHistorySkeleton from '@/views/transaction/transaction-history/TransactionHistorySkeleton';
 import TransactionHistoryError from '@/views/transaction/transaction-history/TransactionHistoryError';

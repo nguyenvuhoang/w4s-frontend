@@ -1,6 +1,6 @@
 'use client'
 
-import { getDictionary } from '@/utils/getDictionary'
+import { getDictionary } from '@utils/getDictionary'
 import Settings from '@/views/components/console-admin/Settings';
 import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper'
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
@@ -34,3 +34,4 @@ const ServiceSettingsContent = ({
 }
 
 export default ServiceSettingsContent
+

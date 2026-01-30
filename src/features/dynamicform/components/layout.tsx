@@ -3,11 +3,11 @@
 import { useUserStore } from '@/@core/stores/useUserStore';
 import { Locale } from '@/configs/i18n';
 import { portalServiceApi } from '@/servers/portal-service';
-import { FormInput, FormLayout, PageData, RuleStrong, UserInRole } from '@/types/systemTypes';
-import { generatePathName } from '@/utils/generatePathName';
-import { generatePathNameView } from '@/utils/generatePathNameView';
-import { getDictionary } from '@/utils/getDictionary';
-import { getLocalizedUrl } from '@/utils/i18n';
+import { FormInput, FormLayout, PageData, RuleStrong, UserInRole } from '@shared/types/systemTypes';
+import { generatePathName } from '@utils/generatePathName';
+import { generatePathNameView } from '@utils/generatePathNameView';
+import { getDictionary } from '@utils/getDictionary';
+import { getLocalizedUrl } from '@utils/i18n';
 import { Session } from 'next-auth';
 import { usePathname, useRouter } from 'next/navigation';
 import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react';
@@ -57,7 +57,7 @@ const isComponentHidden = (
             entry?.layout?.install === false ||
             entry?.view?.install === false
         ) {
-            return true; // 1 role cấm là ẩn
+            return true; // 1 role cáº¥m lÃ  áº©n
         }
     }
 

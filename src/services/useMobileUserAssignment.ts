@@ -3,8 +3,8 @@
 import { STORECOMMAND } from "@/data/StoreCommand";
 import { WORKFLOWCODE } from "@/data/WorkflowCode";
 import { dataService, workflowService } from "@/servers/system-service";
-import { UserMobileAccount } from "@/types/bankType";
-import { PageData, Role } from "@/types/systemTypes";
+import { UserMobileAccount } from "@shared/types/bankType";
+import { PageData, Role } from "@shared/types/systemTypes";
 import { SelectChangeEvent } from "@mui/material";
 import { Session } from "next-auth";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -888,3 +888,4 @@ export function useMobileUserAssignment({
         handleCloseToast,
     };
 }
+

@@ -1,6 +1,6 @@
 
 
-import { RoleChannel } from '@/types/systemTypes'
+import { RoleChannel } from '@shared/types/systemTypes'
 import SelectAppEntry from '@features/applications/components/SelectAppEntry'
 import { Box, Grid } from '@mui/material'
 
@@ -38,3 +38,4 @@ const SelectAppContent = ({ channelData }: Props) => {
 }
 
 export default SelectAppContent
+

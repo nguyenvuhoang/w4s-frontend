@@ -1,8 +1,8 @@
 import Application from "@/@core/lib/libSupport";
 import { workflowService } from "@/servers/system-service";
-import { RuleStrong } from "@/types/systemTypes";
-import { generateDefaultString } from "@/utils/generateDefaultString";
-import SwalAlert from "@/utils/SwalAlert";
+import { RuleStrong } from "@shared/types/systemTypes";
+import { generateDefaultString } from "@utils/generateDefaultString";
+import SwalAlert from "@utils/SwalAlert";
 import { Session } from "next-auth";
 
 export const generateControlValue = async (sessiontoken: Session | null, columnKey: string, rules: RuleStrong[]): Promise<string> => {
@@ -42,3 +42,4 @@ export const generateControlValue = async (sessiontoken: Session | null, columnK
     }
     return '';
 };
+

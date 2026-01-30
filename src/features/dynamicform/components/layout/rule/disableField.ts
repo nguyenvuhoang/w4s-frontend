@@ -1,4 +1,4 @@
-import { RuleStrong } from "@/types/systemTypes";
+import { RuleStrong } from "@shared/types/systemTypes";
 
 export const disableField = (
     rules: RuleStrong[],
@@ -49,3 +49,4 @@ export const disableField = (
     }
     return false;
 };
+

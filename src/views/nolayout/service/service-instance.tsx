@@ -1,6 +1,6 @@
 'use client'
 
-import { getDictionary } from '@/utils/getDictionary';
+import { getDictionary } from '@utils/getDictionary';
 import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import {
@@ -33,3 +33,4 @@ const ServiceInstanceContent = ({
 }
 
 export default ServiceInstanceContent
+

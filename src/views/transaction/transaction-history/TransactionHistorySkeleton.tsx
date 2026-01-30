@@ -2,7 +2,7 @@
 
 import { Box, Button, Checkbox, FormControlLabel, Grid, Paper, Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
-import { getDictionary } from '@/utils/getDictionary'
+import { getDictionary } from '@utils/getDictionary'
 
 interface TransactionHistorySkeletonProps {
     dictionary: Awaited<ReturnType<typeof getDictionary>>
@@ -103,3 +103,4 @@ const TransactionHistorySkeleton = ({ dictionary }: TransactionHistorySkeletonPr
 }
 
 export default TransactionHistorySkeleton
+

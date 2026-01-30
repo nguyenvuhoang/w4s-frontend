@@ -1,7 +1,7 @@
 'use client';
 
-import { PageContentProps } from '@/types';
-import { getDictionary } from '@/utils/getDictionary';
+import { PageContentProps } from '@shared/types';
+import { getDictionary } from '@utils/getDictionary';
 import * as Icons from '@mui/icons-material';
 import { Button } from '@mui/material';
 
@@ -179,3 +179,5 @@ const RenderInputItem = ({
 };
 
 export default RenderInputItem;
+
+

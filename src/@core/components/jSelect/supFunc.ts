@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { systemServiceApi } from '@/servers/system-service';
 import { Session } from 'next-auth';
 import { Locale } from '@/configs/i18n';
-import { replaceAtFields } from '@/utils/replaceAtFields';
+import { replaceAtFields } from '@utils/replaceAtFields';
 
 const getDataNull = (config: any) => {
     if (config.data_mode === 'cdlist') {
@@ -47,7 +47,7 @@ export const getDataConfig = async (
         case 'learnapi':
             const txFoArray = JSON.parse(config.txFo);
             const updatedData = replaceAtFields(txFoArray, parameter);
-            // ép language vào parameters
+            // Ã©p language vÃ o parameters
             if (updatedData.fields?.parameters && 'language' in updatedData.fields.parameters) {
                 updatedData.fields.parameters.language = language;
             }
@@ -124,3 +124,4 @@ export const useReportConfig = (
 
     return data;
 };
+

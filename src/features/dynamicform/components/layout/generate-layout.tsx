@@ -1,14 +1,14 @@
 import { auth } from '@/auth';
-import PageError from '@/components/PageError';
+import PageError from '@components/PageError';
 import { Locale } from '@/configs/i18n';
 import { siteConfig } from '@/data/meta';
 import { formService, workflowService } from '@/servers/system-service';
-import { FormInputData } from '@/types';
-import { applyViewDataToForm } from '@/utils/applyViewDataToForm';
-import { getDictionary } from '@/utils/getDictionary';
-import { isValidResponse } from '@/utils/isValidResponse';
-import { replaceParameterPlaceholders } from '@/utils/replaceParameterPlaceholders';
-import { getServerMode } from '@/utils/serverHelpers';
+import { FormInputData } from '@shared/types';
+import { applyViewDataToForm } from '@utils/applyViewDataToForm';
+import { getDictionary } from '@utils/getDictionary';
+import { isValidResponse } from '@utils/isValidResponse';
+import { replaceParameterPlaceholders } from '@utils/replaceParameterPlaceholders';
+import { getServerMode } from '@utils/serverHelpers';
 import type { Mode } from '@core/types';
 import { Metadata } from 'next';
 import { Session } from 'next-auth';
@@ -107,3 +107,5 @@ const GenerateLayout = async ({ children, params }: SessionLayoutProps) => {
 };
 
 export default GenerateLayout;
+
+

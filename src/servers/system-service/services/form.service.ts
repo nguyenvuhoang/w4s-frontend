@@ -1,6 +1,6 @@
 import { WORKFLOWCODE } from '@/data/WorkflowCode';
 import { env } from '@/env.mjs';
-import { FormDataResponse, SystemDataListResponse, SystemDataRequest, SystemDataResponse } from "@/types/systemTypes";
+import { FormDataResponse, SystemDataListResponse, SystemDataRequest, SystemDataResponse } from "@shared/types/systemTypes";
 import { apiPost, createDefaultBody } from '../../lib/api';
 import http from "../../lib/http";
 
@@ -71,3 +71,4 @@ export const formService = {
         ),
 
 }
+

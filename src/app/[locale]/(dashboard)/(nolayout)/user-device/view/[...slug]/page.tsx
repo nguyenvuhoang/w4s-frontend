@@ -1,10 +1,10 @@
 import { auth } from '@/auth'
-import Spinner from '@/components/spinners'
+import Spinner from '@components/spinners'
 import { Locale } from '@/configs/i18n'
 import { WORKFLOWCODE } from '@/data/WorkflowCode'
 import { systemServiceApi } from '@/servers/system-service'
-import { getDictionary } from '@/utils/getDictionary'
-import { isValidResponse } from '@/utils/isValidResponse'
+import { getDictionary } from '@utils/getDictionary'
+import { isValidResponse } from '@utils/isValidResponse'
 import UserDeviceViewContent from '@/views/nolayout/user-device/view'
 import { Suspense } from 'react'
 

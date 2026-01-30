@@ -1,7 +1,7 @@
 'use client'
 
 import { usePostingHandler } from '@/services/usePostingHandler'
-import { getDictionary } from '@/utils/getDictionary'
+import { getDictionary } from '@utils/getDictionary'
 import {
     Grid,
     Paper,
@@ -31,7 +31,7 @@ const ViewPostingItem = ({ input, control, dictionary, session }: Props) => {
         dictionary
     })
 
-    // Tách debit / credit từ postingData
+    // TÃ¡ch debit / credit tá»« postingData
     const debit = useMemo(
         () => (postingData || []).filter(x => x.dorc === 'D'),
         [postingData]
@@ -206,3 +206,4 @@ const ViewPostingItem = ({ input, control, dictionary, session }: Props) => {
 }
 
 export default ViewPostingItem
+

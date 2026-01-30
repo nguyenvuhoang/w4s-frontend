@@ -1,6 +1,6 @@
 import { WORKFLOWCODE } from '@/data/WorkflowCode'
 import { workflowService } from '@/servers/system-service'
-import { encrypt } from '@/utils/O9Extension'
+import { encrypt } from '@utils/O9Extension'
 
 export async function changePassword(
   sessionToken: string,
@@ -24,3 +24,4 @@ export async function changePassword(
 }
 
 export default { changePassword }
+

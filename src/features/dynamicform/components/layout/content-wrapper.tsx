@@ -1,6 +1,6 @@
-﻿'use client'
+'use client'
 
-import { getDictionary } from '@/utils/getDictionary'
+import { getDictionary } from '@utils/getDictionary'
 import { Box, Divider, Typography } from '@mui/material'
 import React from 'react'
 
@@ -102,3 +102,4 @@ const ContentWrapper = ({
 }
 
 export default ContentWrapper
+

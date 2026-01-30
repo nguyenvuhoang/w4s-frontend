@@ -1,11 +1,11 @@
 import { auth } from '@/auth';
-import { generateAuthMetadata } from '@/components/layout/AuthLayout';
-import Spinner from '@/components/spinners';
+import { generateAuthMetadata } from '@components/layout/AuthLayout';
+import Spinner from '@components/spinners';
 import { Locale } from '@/configs/i18n';
 import { systemServiceApi } from '@/servers/system-service';
-import { LanguageDataMobileType, PageLanguageResponse } from '@/types/bankType';
-import { getDictionary } from '@/utils/getDictionary';
-import { isValidResponse } from '@/utils/isValidResponse';
+import { LanguageDataMobileType, PageLanguageResponse } from '@shared/types/bankType';
+import { getDictionary } from '@utils/getDictionary';
+import { isValidResponse } from '@utils/isValidResponse';
 import LanguageManagementContent from '@/views/language-management';
 import { Metadata } from 'next';
 

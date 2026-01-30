@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import Logout from '@features/auth/hooks/useLogout';
-import { getDictionary } from '@/utils/getDictionary';
+import { getDictionary } from '@utils/getDictionary';
 import { Locale } from '@/configs/i18n';
 import React from 'react';
 
@@ -22,3 +22,4 @@ export default async function RequireSession({ locale, dictionary, children }: R
 
   return <>{children}</>;
 }
+

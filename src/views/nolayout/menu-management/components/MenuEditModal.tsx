@@ -30,9 +30,9 @@ import RestartAltIcon from '@mui/icons-material/RestartAlt'
 import SaveIcon from '@mui/icons-material/Save'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import { Controller, useForm } from 'react-hook-form'
-import { MenuItem } from '@/types/systemTypes'
+import { MenuItem } from '@shared/types/systemTypes'
 import type { Locale } from '@configs/i18n'
-import { getDictionary } from '@/utils/getDictionary'
+import { getDictionary } from '@utils/getDictionary'
 
 type MenuFormData = {
     application_code: string
@@ -593,3 +593,4 @@ export const MenuEditModal = ({
         </Dialog>
     )
 }
+

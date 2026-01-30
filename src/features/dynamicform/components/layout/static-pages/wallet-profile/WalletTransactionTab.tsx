@@ -1,6 +1,6 @@
 'use client';
 
-import { PageContentProps } from '@/types';
+import { PageContentProps } from '@shared/types';
 import {
   Card,
   CardContent,
@@ -73,22 +73,22 @@ const WalletTransactionTab = ({
     const lowerCategory = category?.toLowerCase() || '';
     const lowerName = name?.toLowerCase() || '';
 
-    if (lowerCategory.includes('ăn') || lowerCategory.includes('thực phẩm') || lowerName.includes('thực phẩm')) {
+    if (lowerCategory.includes('Äƒn') || lowerCategory.includes('thá»±c pháº©m') || lowerName.includes('thá»±c pháº©m')) {
       return { icon: <RestaurantIcon />, color: '#ff9800', bgColor: alpha('#ff9800', 0.1) };
     }
-    if (lowerCategory.includes('di chuyển') || lowerName.includes('gửi xe')) {
+    if (lowerCategory.includes('di chuyá»ƒn') || lowerName.includes('gá»­i xe')) {
       return { icon: <DirectionsCarIcon />, color: '#2196f3', bgColor: alpha('#2196f3', 0.1) };
     }
-    if (lowerName.includes('xăng') || lowerName.includes('gas')) {
+    if (lowerName.includes('xÄƒng') || lowerName.includes('gas')) {
       return { icon: <LocalGasStationIcon />, color: '#9c27b0', bgColor: alpha('#9c27b0', 0.1) };
     }
-    if (lowerCategory.includes('giải trí') || lowerName.includes('phim')) {
+    if (lowerCategory.includes('giáº£i trÃ­') || lowerName.includes('phim')) {
       return { icon: <MovieIcon />, color: '#e91e63', bgColor: alpha('#e91e63', 0.1) };
     }
-    if (lowerCategory.includes('tiện ích') || lowerName.includes('điện') || lowerName.includes('nước')) {
+    if (lowerCategory.includes('tiá»‡n Ã­ch') || lowerName.includes('Ä‘iá»‡n') || lowerName.includes('nÆ°á»›c')) {
       return { icon: <ElectricBoltIcon />, color: '#ffeb3b', bgColor: alpha('#ffeb3b', 0.15) };
     }
-    if (lowerCategory.includes('mua sắm') || lowerCategory.includes('shopping')) {
+    if (lowerCategory.includes('mua sáº¯m') || lowerCategory.includes('shopping')) {
       return { icon: <ShoppingCartIcon />, color: '#4caf50', bgColor: alpha('#4caf50', 0.1) };
     }
     return { icon: <PaymentsIcon />, color: '#225087', bgColor: alpha('#225087', 0.1) };
@@ -99,21 +99,21 @@ const WalletTransactionTab = ({
     switch (status?.toUpperCase()) {
       case 'SUCCESS':
         return {
-          label: dictionary['wallet']?.success || 'Thành công',
+          label: dictionary['wallet']?.success || 'ThÃ nh cÃ´ng',
           icon: <CheckCircleIcon sx={{ fontSize: 14 }} />,
           color: '#4caf50',
           bgColor: alpha('#4caf50', 0.1),
         };
       case 'PENDING':
         return {
-          label: dictionary['wallet']?.pending || 'Đang xử lý',
+          label: dictionary['wallet']?.pending || 'Äang xá»­ lÃ½',
           icon: <PendingIcon sx={{ fontSize: 14 }} />,
           color: '#ff9800',
           bgColor: alpha('#ff9800', 0.1),
         };
       case 'FAILED':
         return {
-          label: dictionary['wallet']?.failed || 'Thất bại',
+          label: dictionary['wallet']?.failed || 'Tháº¥t báº¡i',
           icon: <ErrorIcon sx={{ fontSize: 14 }} />,
           color: '#f44336',
           bgColor: alpha('#f44336', 0.1),
@@ -140,7 +140,7 @@ const WalletTransactionTab = ({
           </Typography>
           {transactions.length > 0 && (
             <Chip
-              label={`${transactions.length} ${dictionary['wallet']?.transactions || 'giao dịch'}`}
+              label={`${transactions.length} ${dictionary['wallet']?.transactions || 'giao dá»‹ch'}`}
               size="small"
               sx={{ bgcolor: alpha('#225087', 0.1), color: '#225087' }}
             />
@@ -163,7 +163,7 @@ const WalletTransactionTab = ({
               <ReceiptLongIcon sx={{ fontSize: 32 }} />
               <Box>
                 <Typography variant="body2" sx={{ opacity: 0.8, color: 'white' }}>
-                  {dictionary['wallet']?.totalSpending || 'Tổng chi tiêu'}
+                  {dictionary['wallet']?.totalSpending || 'Tá»•ng chi tiÃªu'}
                 </Typography>
                 <Typography variant="h5" sx={{ fontWeight: 700, color: 'white' }}>
                   {formatCurrency(totalSpending)} {transactions[0]?.currency || 'VND'}
@@ -311,3 +311,4 @@ const WalletTransactionTab = ({
 };
 
 export default WalletTransactionTab;
+

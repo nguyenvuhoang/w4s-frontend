@@ -27,12 +27,12 @@ const StyledVerticalMenuItem = styled.li<StyledVerticalMenuItemProps>`
 
   > .${menuClasses.button} {
     ${({ level, disabled, isCollapsed, isPopoutWhenCollapsed }) =>
-      menuButtonStyles({
-        level,
-        disabled,
-        isCollapsed,
-        isPopoutWhenCollapsed
-      })};
+    menuButtonStyles({
+      level,
+      disabled,
+      isCollapsed,
+      isPopoutWhenCollapsed
+    })};
     ${({ buttonStyles }) => buttonStyles};
   }
 `

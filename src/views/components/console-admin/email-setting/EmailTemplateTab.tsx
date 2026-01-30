@@ -1,8 +1,8 @@
-﻿import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Modal, Button } from '@mui/material';
+import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Modal, Button } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import React, { useState } from 'react';
-import { MailTemplate } from '@/types/bankType';
-import { getDictionary } from '@/utils/getDictionary';
+import { MailTemplate } from '@shared/types/bankType';
+import { getDictionary } from '@utils/getDictionary';
 import AddIcon from '@mui/icons-material/Add';
 
 const EmailTemplateTab = ({ dictionary, templates, loading }: {
@@ -81,3 +81,4 @@ const EmailTemplateTab = ({ dictionary, templates, loading }: {
 };
 
 export default EmailTemplateTab;
+

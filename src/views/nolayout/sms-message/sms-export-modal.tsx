@@ -1,6 +1,6 @@
 'use client'
 
-import { getDictionary } from '@/utils/getDictionary'
+import { getDictionary } from '@utils/getDictionary'
 import * as Icons from '@mui/icons-material'
 import {
   Box,
@@ -129,3 +129,4 @@ const SMSExportModal: FC<SMSExportModalProps> = ({ open, onClose, onExport, dict
 }
 
 export default SMSExportModal
+

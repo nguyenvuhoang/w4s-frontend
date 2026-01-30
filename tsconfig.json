@@ -39,7 +39,32 @@
         "./src/views/*"
       ],
       "@components/*": [
-        "./src/components/*"
+        "./src/@menu/components/*",
+        "./src/shared/components/*"
+      ],
+      "@components": [
+        "./src/shared/components"
+      ],
+      "@utils/*": [
+        "./src/@menu/utils/*",
+        "./src/shared/utils/*"
+      ],
+      "@utils": [
+        "./src/shared/utils"
+      ],
+      "@hooks/*": [
+        "./src/@menu/hooks/*",
+        "./src/shared/hooks/*"
+      ],
+      "@hooks": [
+        "./src/shared/hooks"
+      ],
+      "@contexts/*": [
+        "./src/@menu/contexts/*",
+        "./src/shared/contexts/*"
+      ],
+      "@contexts": [
+        "./src/shared/contexts"
       ],
       "@layouts/*": [
         "./src/@layouts/*"
@@ -52,6 +77,12 @@
       ],
       "@features/*": [
         "./src/features/*"
+      ],
+      "@shared/*": [
+        "./src/shared/*"
+      ],
+      "@shared": [
+        "./src/shared"
       ]
     }
   },

@@ -1,4 +1,4 @@
-﻿// components/ListActionsBar.tsx
+// components/ListActionsBar.tsx
 'use client';
 import { Box, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
@@ -6,7 +6,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
-import { actionButtonColors, actionButtonSx } from '@/components/forms/button-color/actionButtonSx';
+import { actionButtonColors, actionButtonSx } from '@components/forms/button-color/actionButtonSx';
 
 export function ListActionsBar({
     onAdd, onView, onModify, onDelete, onSearch,
@@ -43,3 +43,4 @@ export function ListActionsBar({
         </Box>
     );
 }
+

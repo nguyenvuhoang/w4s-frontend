@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { DataGrid, DataGridProps } from '@mui/x-data-grid';
 

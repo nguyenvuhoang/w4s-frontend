@@ -1,8 +1,8 @@
 'use client';
 
 import { Locale } from '@/configs/i18n';
-import { FormInput, FormView, PageData, RuleStrong } from '@/types/systemTypes';
-import { getDictionary } from '@/utils/getDictionary';
+import { FormInput, FormView, PageData, RuleStrong } from '@shared/types/systemTypes';
+import { getDictionary } from '@utils/getDictionary';
 import { Box, Grid, Tab, Tabs } from '@mui/material';
 import { Session } from 'next-auth';
 import { Dispatch, SetStateAction } from 'react';
@@ -176,3 +176,4 @@ const RenderTabs: React.FC<Props> = ({
 };
 
 export default RenderTabs;
+

@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import { i18n } from '@/configs/i18n';
-import { constructValidLocaleUrl, extractLocaleFromPath, isValidLocale } from '@/utils/locale';
+import { constructValidLocaleUrl, extractLocaleFromPath, isValidLocale } from '@utils/locale';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 

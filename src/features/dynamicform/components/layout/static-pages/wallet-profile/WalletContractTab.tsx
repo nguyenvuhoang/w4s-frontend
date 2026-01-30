@@ -1,7 +1,7 @@
 'use client';
 
-import { PageContentProps } from '@/types';
-import { formatDateTime } from '@/utils/formatDateTime';
+import { PageContentProps } from '@shared/types';
+import { formatDateTime } from '@utils/formatDateTime';
 import {
     Card,
     CardContent,
@@ -106,3 +106,5 @@ const WalletContractTab = ({
 };
 
 export default WalletContractTab;
+
+

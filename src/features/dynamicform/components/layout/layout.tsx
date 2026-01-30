@@ -1,8 +1,8 @@
 'use client';
 
 import { Locale } from '@/configs/i18n';
-import { FormInput, FormLayout, PageData, RuleStrong } from '@/types/systemTypes';
-import { getDictionary } from '@/utils/getDictionary';
+import { FormInput, FormLayout, PageData, RuleStrong } from '@shared/types/systemTypes';
+import { getDictionary } from '@utils/getDictionary';
 import { Box } from '@mui/material';
 import { Session } from 'next-auth';
 import { Dispatch, SetStateAction } from 'react';
@@ -175,3 +175,4 @@ const RenderLayout: React.FC<Props> = ({
 };
 
 export default RenderLayout;
+

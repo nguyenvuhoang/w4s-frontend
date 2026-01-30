@@ -1,6 +1,6 @@
 'use client'
 
-import { getDictionary } from '@/utils/getDictionary'
+import { getDictionary } from '@utils/getDictionary'
 import {
     Box,
     Card,
@@ -64,3 +64,4 @@ const NotificationConfigurationContent = ({ session, dictionary }: {
 }
 
 export default NotificationConfigurationContent
+

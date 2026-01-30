@@ -1,5 +1,5 @@
 import { env } from '@/env.mjs';
-import { FODataArrayResponse, ReportDataRequest, ReportDetailDataRequest } from "@/types/systemTypes";
+import { FODataArrayResponse, ReportDataRequest, ReportDetailDataRequest } from "@shared/types/systemTypes";
 import http from "../../lib/http";
 
 /**
@@ -71,3 +71,4 @@ export const reportService = {
                 }
             }),
 }
+

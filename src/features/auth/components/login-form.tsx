@@ -2,10 +2,10 @@
 
 import LanguageDropdown from '@/@core/components/layouts/shared/LanguageDropdown'
 import { createLoginSchema } from '@/@core/schemas/auth'
-import LoginLoading from '@/components/LoginLoading'
+import LoginLoading from '@components/LoginLoading'
 import type { Locale } from '@/configs/i18n'
 import { useLoginHandler } from '@features/auth/hooks/useLoginHandler'
-import { getDictionary } from '@/utils/getDictionary'
+import { getDictionary } from '@utils/getDictionary'
 import type { FormData } from '@core/types'
 import { valibotResolver } from '@hookform/resolvers/valibot'
 import { Box, Button, TextField, Typography } from '@mui/material'
@@ -46,7 +46,7 @@ const LoginForm = ({ locale, dictionary }: {
             <Box className="relative">
                 {loading && <LoginLoading loadingtext={dictionary['common'].loading} />}
 
-                <Box className="body-content body-content-width-small">
+                <Box className="body-content body-content-width-small mb-5">
                     <form
                         noValidate
                         onSubmit={handleSubmit(onSubmit)}
@@ -143,3 +143,4 @@ const LoginForm = ({ locale, dictionary }: {
 }
 
 export default LoginForm
+

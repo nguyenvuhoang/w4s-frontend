@@ -16,10 +16,10 @@ import type {
   RenderExpandIconParams,
   RenderExpandedMenuItemIcon,
   RootStylesType
-} from '../../types'
+} from '@shared/types'
 
 // Util Imports
-import { menuClasses } from '../../utils/menuClasses'
+import { menuClasses } from '@utils/menuClasses'
 
 // Styled Component Imports
 import StyledHorizontalMenu from '../../styles/horizontal/StyledHorizontalMenu'

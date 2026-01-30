@@ -1,9 +1,9 @@
 import { auth } from '@/auth'
-import AuthorizedLayout from '@/components/layout/AuthorizedLayout'
-import PageError from '@/components/PageError'
+import AuthorizedLayout from '@components/layout/AuthorizedLayout'
+import PageError from '@components/PageError'
 import { i18n, Locale } from '@/configs/i18n'
 import { formService } from '@/servers/system-service'
-import { isValidResponse } from '@/utils/isValidResponse'
+import { isValidResponse } from '@utils/isValidResponse'
 import DynamicForm from './components/dynamic-form'
 
 type Params = Promise<{

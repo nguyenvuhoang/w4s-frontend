@@ -1,6 +1,6 @@
 'use client';
 
-import { getDictionary } from '@/utils/getDictionary';
+import { getDictionary } from '@utils/getDictionary';
 import { NoSsr } from '@mui/material';
 import { Session } from 'next-auth';
 import { useState } from 'react';
@@ -34,3 +34,4 @@ const DesignForm = ({ dictionary }: {
 };
 
 export default DesignForm;
+

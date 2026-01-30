@@ -19,13 +19,13 @@ import type {
   RootStylesType,
   RenderExpandIconParams,
   RenderExpandedMenuItemIcon
-} from '../../types'
+} from '@shared/types'
 
 // Hook Imports
-import useVerticalNav from '../../hooks/useVerticalNav'
+import useVerticalNav from '@hooks/useVerticalNav'
 
 // Util Imports
-import { menuClasses } from '../../utils/menuClasses'
+import { menuClasses } from '@utils/menuClasses'
 
 // Styled Component Imports
 import StyledVerticalMenu from '../../styles/vertical/StyledVerticalMenu'

@@ -1,9 +1,9 @@
 import { auth } from '@/auth'
-import Spinner from '@/components/spinners'
+import Spinner from '@components/spinners'
 import { Locale } from '@/configs/i18n'
 import { coreGetWayServiceApi } from '@/servers/coregateway-service'
-import { getDictionary } from '@/utils/getDictionary'
-import { isValidResponse } from '@/utils/isValidResponse'
+import { getDictionary } from '@utils/getDictionary'
+import { isValidResponse } from '@utils/isValidResponse'
 import TokenInformation from '@/views/systems/token'
 import { Suspense } from 'react'
 

@@ -430,7 +430,8 @@ sup {
 }
 
 .title {
-  font-family: "Quicksand";
+  font-family: 'Quicksand', sans-serif;
+
 }
 
 .level-tertiary {
@@ -821,11 +822,11 @@ SWIPE
       rgba(98, 159, 13, 0.75) 85.34%);
   border: none;
   color: white;
-  font-family: "Quicksand";
+  font-family: sans-serif;
 }
 
 .swal2-cancel {
-  font-family: "Quicksand";
+  font-family: sans-serif;
 }
 
 .text-account sup {
@@ -1066,7 +1067,7 @@ nz-comment-content {
 }
 
 .text-14-medium {
-  font-family: "Quicksand" !important;
+  font-family: sans-serif !important;
 }
 
 .gradient-icon {

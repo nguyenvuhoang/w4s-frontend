@@ -2,7 +2,7 @@
 
 import LanguageDropdown from '@/@core/components/layouts/shared/LanguageDropdown'
 import { Locale } from '@/configs/i18n'
-import { getDictionary } from '@/utils/getDictionary'
+import { getDictionary } from '@utils/getDictionary'
 import ContactInfoModal from '@/views/components/contact-modal'
 import Link from 'next/link'
 
@@ -54,3 +54,4 @@ const LoginFooter = ({ dictionary, locale }: {
 }
 
 export default LoginFooter
+

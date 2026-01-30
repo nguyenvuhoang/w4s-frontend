@@ -3,8 +3,8 @@
 import { handleGetCodeList } from '@/@core/components/cButton/handleGetCodeList';
 import { handleSearchAPI } from '@/@core/components/cButton/handleSearchAPI';
 import { Locale } from '@/configs/i18n';
-import { PageContentProps } from '@/types';
-import { createTxFo } from '@/utils/createTxFo';
+import { PageContentProps } from '@shared/types';
+import { createTxFo } from '@utils/createTxFo';
 import AccountChartAddContent from '@/views/accounting/account-chart-add-content';
 
 

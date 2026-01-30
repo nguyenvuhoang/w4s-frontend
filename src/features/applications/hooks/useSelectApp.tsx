@@ -1,7 +1,7 @@
 'use client'
 
 import { Locale } from '@/configs/i18n'
-import { RoleChannel } from '@/types/systemTypes'
+import { RoleChannel } from '@shared/types/systemTypes'
 import Cookies from 'js-cookie'
 import * as React from 'react'
 import { useState } from 'react'
@@ -31,3 +31,4 @@ export default function useSelectApp() {
 
     return { handleSelect, loading, selectedId }
 }
+

@@ -1,6 +1,6 @@
 import { Locale } from "@/configs/i18n";
 import { codeService } from "@/servers/system-service";
-import SwalAlert from "@/utils/SwalAlert";
+import SwalAlert from "@utils/SwalAlert";
 import { Session } from "next-auth";
 
 export const handleGetCodeList = async (session: Session | null, codegroup: string, codename: string, language: Locale) => {
@@ -27,3 +27,4 @@ export const handleGetCodeList = async (session: Session | null, codegroup: stri
         console.log(error);
     }
 };
+

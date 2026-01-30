@@ -1,7 +1,7 @@
 'use client'
 
 import { Locale } from '@/configs/i18n';
-import { FormInput, RuleStrong } from '@/types/systemTypes';
+import { FormInput, RuleStrong } from '@shared/types/systemTypes';
 import AcUnitIcon from '@mui/icons-material/AcUnit';
 import { Grid, InputAdornment, TextField } from '@mui/material';
 import { Session } from 'next-auth';
@@ -11,7 +11,7 @@ import { disableField } from '../rule/disableField';
 import { generateControlValue } from '../rule/generateControlValue';
 import { isFieldHidden } from '../rule/isFieldHidden';
 import { isFieldRequired } from '../rule/isFieldRequired';
-import { getDictionary } from '@/utils/getDictionary';
+import { getDictionary } from '@utils/getDictionary';
 
 type Props = {
     session: Session | null;
@@ -165,3 +165,4 @@ const RenderInputDefault = ({
 };
 
 export default RenderInputDefault;
+

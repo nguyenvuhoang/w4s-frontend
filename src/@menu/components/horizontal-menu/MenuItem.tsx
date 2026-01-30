@@ -14,7 +14,7 @@ import type { CSSObject } from '@emotion/styled'
 import { useFloatingTree } from '@floating-ui/react'
 
 // Type Imports
-import type { ChildrenType, MenuItemElement, MenuItemExactMatchUrlProps, RootStylesType } from '../../types'
+import type { ChildrenType, MenuItemElement, MenuItemExactMatchUrlProps, RootStylesType } from '@shared/types'
 
 // Context Imports
 import { HorizontalSubMenuContext } from './SubMenu'
@@ -23,12 +23,12 @@ import { HorizontalSubMenuContext } from './SubMenu'
 import MenuButton from './MenuButton'
 
 // Hook Imports
-import useHorizontalMenu from '../../hooks/useHorizontalMenu'
-import useVerticalNav from '../../hooks/useVerticalNav'
+import useHorizontalMenu from '@hooks/useHorizontalMenu'
+import useVerticalNav from '@hooks/useVerticalNav'
 
 // Util Imports
-import { renderMenuIcon } from '../../utils/menuUtils'
-import { menuClasses } from '../../utils/menuClasses'
+import { renderMenuIcon } from '@utils/menuUtils'
+import { menuClasses } from '@utils/menuClasses'
 
 // Styled Component Imports
 import StyledMenuLabel from '../../styles/StyledMenuLabel'

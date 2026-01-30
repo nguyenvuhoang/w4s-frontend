@@ -1,6 +1,6 @@
 'use client'
 
-import { getDictionary } from '@/utils/getDictionary';
+import { getDictionary } from '@utils/getDictionary';
 import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper';
 import ScreenshotMonitorIcon from '@mui/icons-material/ScreenshotMonitor';
 import {
@@ -31,3 +31,4 @@ const MonitoringHealthContent = ({
 }
 
 export default MonitoringHealthContent
+

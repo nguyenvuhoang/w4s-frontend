@@ -9,18 +9,18 @@ import classnames from 'classnames'
 import type { CSSObject } from '@emotion/styled'
 
 // Type Imports
-import type { BreakpointType, ChildrenType } from '../../types'
+import type { BreakpointType, ChildrenType } from '@shared/types'
 import type { VerticalNavProps } from '../vertical-menu/VerticalNav'
 
 // Component Imports
 import VerticalNavInHorizontal from './VerticalNavInHorizontal'
 
 // Hook Imports
-import useMediaQuery from '../../hooks/useMediaQuery'
-import useHorizontalNav from '../../hooks/useHorizontalNav'
+import useMediaQuery from '@hooks/useMediaQuery'
+import useHorizontalNav from '@hooks/useHorizontalNav'
 
 // Util Imports
-import { horizontalNavClasses } from '../../utils/menuClasses'
+import { horizontalNavClasses } from '@utils/menuClasses'
 
 // Styled Component Imports
 import StyledHorizontalNav from '../../styles/horizontal/StyledHorizontalNav'

@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { MenuItem } from '@/types/systemTypes'
+import { MenuItem } from '@shared/types/systemTypes'
 
 export type MenuItemWithChildren = MenuItem & {
     children?: MenuItemWithChildren[]
@@ -101,3 +101,4 @@ export const useMenuTree = (items: MenuItem[]) => {
         parentChildMap
     }
 }
+
