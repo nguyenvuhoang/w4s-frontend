@@ -109,7 +109,12 @@ const Navigation = (props: Props) => {
 
   const handleMenuItemClick = (item: VerticalSubMenuDataType) => {
     // If the same item is clicked, toggle visibility. If a new item is clicked, show it.
-    if (clickedItem && (clickedItem.id === item.id || clickedItem.label === item.label)) {
+    const isSameItem = clickedItem && (
+      (item.id && clickedItem.id === item.id) ||
+      (item.label && clickedItem.label === item.label)
+    );
+
+    if (isSameItem) {
       setIsSubNavVisible(prev => !prev)
     } else {
       setIsSubNavVisible(true)
@@ -144,6 +149,7 @@ const Navigation = (props: Props) => {
         collapsedWidth={71}
         backgroundColor='#225087'
         data-mui-color-scheme='dark'
+        style={{ '--menu-inactive-color': 'rgba(255, 255, 255, 0.85)' } as any}
       >
         <div className='flex flex-col h-full'>
           {/* Nav Header including Logo & nav toggle icons  */}
@@ -158,6 +164,7 @@ const Navigation = (props: Props) => {
             scrollMenu={scrollMenu}
             onMenuItemClick={handleMenuItemClick}
             menudata={menudata}
+            activeItem={clickedItem}
           />
           <div className='mt-auto pli-6 pbs-4 pbe-6 flex flex-col items-start gap-1 text-white'>
             <ModeDropdown />
@@ -174,17 +181,16 @@ const Navigation = (props: Props) => {
             id={subNavId}
             customStyles={navigationCustomStyles(verticalNavOptions, theme)}
             collapsedWidth={71}
-            backgroundColor='#F3F5F7'
-            className='!z-30'
-            {...(isSemiDark &&
-              !isDark && {
-              'data-mui-color-scheme': 'dark'
-            })}
+            backgroundColor='#FFFFFF'
+            className='!z-40 text-gray-900'
             style={{
               position: 'absolute',
               left: '300px',
-              height: '100vh'
-            }}
+              height: '100vh',
+              '--menu-inactive-color': 'rgba(0, 0, 0, 0.6)',
+              boxShadow: '10px 0 50px rgba(0,0,0,0.15)',
+              borderLeft: '1px solid #e0e0e0'
+            } as any}
           >
             <NavHeader>
               <Link
@@ -192,16 +198,22 @@ const Navigation = (props: Props) => {
                 className='flex items-center justify-center space-x-1'
               >
                 <i className='ri-information-2-line text-[#A1C038] w-7 h-7' />
-                <span className='text-gray-600 font-sans italic'>{dictionary['common'].description_feature}</span>
+                <span className='text-gray-500 font-sans italic'>{dictionary['common'].description_feature}</span>
               </Link>
             </NavHeader>
             <StyledBoxForShadow ref={shadowRef} />
-            <VerticalSubMenu dictionary={dictionary} scrollMenu={scrollMenu} parentItem={clickedItem} setIsSubNavVisible={setIsSubNavVisible} />
+            <VerticalSubMenu
+              key={clickedItem?.id || (typeof clickedItem?.label === 'string' ? clickedItem.label : 'submenu')}
+              dictionary={dictionary}
+              scrollMenu={scrollMenu}
+              parentItem={clickedItem}
+              setIsSubNavVisible={setIsSubNavVisible}
+            />
           </VeriticalSubNav>
         </>
       }
-      <div className={`-sxl:hidden custom-backdrop ${isSubNavVisible ? ' show-backdrop' : ''}`}></div>
-      <div className="sxl:hidden custom-backdrop"></div>
+      <div className={`-sxl:hidden custom-backdrop ${isSubNavVisible ? ' show-backdrop' : ''}`} style={{ zIndex: 10 } as any}></div>
+      <div className="sxl:hidden custom-backdrop" style={{ zIndex: 10 } as any}></div>
     </>
   );
 }

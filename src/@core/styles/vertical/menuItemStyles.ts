@@ -17,20 +17,30 @@ const menuItemStyles = (verticalNavOptions: VerticalNavState, theme: Theme): Men
   const collapsedNotHovered = isCollapsed && !isHovered
 
   return {
-    root: ({ level }) => ({
+    root: ({ level, active, ...rest }) => ({
       ...(!isPopoutWhenCollapsed || popoutExpanded || (popoutCollapsed && level === 0)
         ? {
-          marginBlockStart: theme.spacing(2),
-          color: 'rgba(255, 255, 255, 0.85) !important'
+          marginBlockStart: '4px',
+          color: (active || (rest as any).open) ? '#066a4c !important' : 'var(--menu-inactive-color, rgba(255, 255, 255, 0.85)) !important'
         }
         : {
           marginBlockStart: 0,
-          color: 'rgba(255, 255, 255, 0.85) !important'
+          color: (active || (rest as any).open) ? '#066a4c !important' : 'var(--menu-inactive-color, rgba(255, 255, 255, 0.85)) !important'
         }),
+      transition: 'all 0.3s ease !important',
       [`&.${menuClasses.subMenuRoot}.${menuClasses.open} > .${menuClasses.button}, &.${menuClasses.subMenuRoot} > .${menuClasses.button}.${menuClasses.active}`]:
       {
-        backgroundImage: 'linear-gradient(290deg, #EAF6FF 9.78%, #F3FFE9 109.56%) !important',
-        color: '#066a4c !important'
+        backgroundImage: 'linear-gradient(90deg, #EAF6FF 0%, #F3FFE9 100%) !important',
+        color: '#066a4c !important',
+        borderRadius: '16px !important',
+        marginInline: '12px !important',
+        boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.05) !important',
+        [`& .${menuClasses.icon}`]: {
+          color: '#066a4c !important'
+        },
+        [`& .${menuClasses.label}`]: {
+          color: '#066a4c !important'
+        }
       },
       [`&.${menuClasses.disabled} > .${menuClasses.button}`]: {
         color: 'rgba(255, 255, 255, 0.3) !important'
@@ -38,31 +48,36 @@ const menuItemStyles = (verticalNavOptions: VerticalNavState, theme: Theme): Men
       [`&:not(.${menuClasses.subMenuRoot}) > .${menuClasses.button}.${menuClasses.active}`]: {
         ...(popoutCollapsed && level > 0
           ? {
-            backgroundImage: 'linear-gradient(290deg, #EAF6FF 9.78%, #F3FFE9 109.56%) !important',
+            backgroundImage: 'linear-gradient(90deg, #EAF6FF 0%, #F3FFE9 100%) !important',
             color: '#066a4c !important',
+            borderRadius: '16px !important',
+            marginInline: '12px !important',
             [`& .${menuClasses.icon}`]: {
               color: 'var(--mui-palette-primary-main)'
             }
           }
           : {
             color: '#066a4c !important',
-            backgroundImage: 'linear-gradient(290deg, #EAF6FF 9.78%, #F3FFE9 109.56%) !important',
-            boxShadow: 'var(--mui-customShadows-xs)',
+            backgroundImage: 'linear-gradient(90deg, #EAF6FF 0%, #F3FFE9 100%) !important',
+            boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1) !important',
+            borderRadius: '16px !important',
+            marginInline: '12px !important',
             [`& .${menuClasses.icon}`]: {
               color: '#066a4c !important'
             }
           })
       }
     }),
-    button: ({ level, active }) => ({
-      paddingBlock: '8px',
-      ...(!active && {
-        color: 'rgba(255, 255, 255, 0.85) !important',
+    button: ({ level, active, ...rest }) => ({
+      paddingBlock: '10px',
+      transition: 'all 0.2s ease-in-out !important',
+      ...(!active && !(rest as any).open && {
+        color: 'var(--menu-inactive-color, rgba(255, 255, 255, 0.85)) !important',
         [`& .${menuClasses.icon}`]: {
-          color: 'rgba(255, 255, 255, 0.85) !important'
+          color: 'var(--menu-inactive-color, rgba(255, 255, 255, 0.85)) !important'
         },
         [`& .${menuClasses.label}`]: {
-          color: 'rgba(255, 255, 255, 0.85) !important'
+          color: 'var(--menu-inactive-color, rgba(255, 255, 255, 0.85)) !important'
         }
       }),
       ...(!(isCollapsed && !isHovered) && {
@@ -78,7 +93,7 @@ const menuItemStyles = (verticalNavOptions: VerticalNavState, theme: Theme): Men
       }),
       ...(!active && {
         '&:hover, &:focus-visible': {
-          backgroundColor: 'var(--mui-palette-action-hover)'
+          backgroundColor: 'rgba(255, 255, 255, 0.08) !important'
         },
         '&[aria-expanded="true"]': {
           backgroundColor: 'var(--mui-palette-action-selected)'
@@ -87,14 +102,14 @@ const menuItemStyles = (verticalNavOptions: VerticalNavState, theme: Theme): Men
     }),
     icon: ({ level }) => ({
       transition: `margin-inline-end ${transitionDuration}ms ease-in-out`,
+      color: 'rgba(255, 255, 255, 0.85) !important',
       ...(level === 0 && {
         fontSize: '1.375rem',
-        marginInlineEnd: theme.spacing(2),
-        color: 'rgba(255, 255, 255, 0.85) !important'
+        marginInlineEnd: theme.spacing(2)
       }),
       ...(level > 0 && {
-        fontSize: '0.5rem',
-        color: 'rgba(255, 255, 255, 0.6) !important',
+        fontSize: '0.75rem',
+        color: 'rgba(255, 255, 255, 0.7) !important',
         marginInlineEnd: theme.spacing(4)
       }),
       ...(level === 1 &&
@@ -118,11 +133,12 @@ const menuItemStyles = (verticalNavOptions: VerticalNavState, theme: Theme): Men
     prefix: {
       marginInlineEnd: theme.spacing(2)
     },
-    label: ({ level, active }) => ({
-      color: active ? '#066a4c !important' : 'rgba(255, 255, 255, 0.85) !important',
+    label: ({ level, active, ...rest }) => ({
+      color: (active || (rest as any).open) ? '#066a4c !important' : 'var(--menu-inactive-color, rgba(255, 255, 255, 0.85)) !important',
+      fontWeight: (active || (rest as any).open) ? 600 : 400,
       ...((!isPopoutWhenCollapsed || popoutExpanded || (popoutCollapsed && level === 0)) && {
         transition: `opacity ${transitionDuration}ms ease-in-out`,
-        ...(collapsedNotHovered && {
+        ...(((rest as any).collapsedNotHovered || collapsedNotHovered) && !active && !(rest as any).open && {
           opacity: 0
         })
       })
@@ -130,18 +146,19 @@ const menuItemStyles = (verticalNavOptions: VerticalNavState, theme: Theme): Men
     suffix: {
       marginInlineStart: theme.spacing(2)
     },
-    subMenuExpandIcon: {
+    subMenuExpandIcon: ({ active, open }) => ({
       fontSize: '1.375rem',
       marginInlineStart: theme.spacing(2),
-      color: 'rgba(255, 255, 255, 0.7) !important',
+      color: (active || open) ? '#066a4c !important' : 'var(--menu-inactive-color, rgba(255, 255, 255, 0.7)) !important',
       '& i, & svg': {
         fontSize: 'inherit'
       }
-    },
+    }),
 
     subMenuContent: ({ level }) => ({
       zIndex: 'calc(var(--drawer-z-index) + 1)',
       backgroundColor: popoutCollapsed ? 'var(--mui-palette-background-paper)' : 'transparent',
+      paddingBlock: '4px',
       ...(popoutCollapsed &&
         level === 0 && {
         paddingBlock: theme.spacing(2),

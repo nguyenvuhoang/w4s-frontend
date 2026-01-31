@@ -33,16 +33,29 @@ export const GenerateSubMenu = ({ menuData, dictionary, setIsSubNavVisible }: Pr
             const hasChildren = nestedChildren.length > 0;
 
             return (
-              <div key={index} className="flex flex-col p-4 space-y-4 bg-backgroundPrimary box shadow-small !rounded-xl h-full items-start" style={{ width: '100%' }}>
+              <div key={index} className="flex flex-col p-4 space-y-4 bg-white border border-gray-100 shadow-sm transition-all duration-200 hover:shadow-md hover:border-gray-200 !rounded-2xl h-full items-start" style={{ width: '100%' }}>
                 <Link
                   href={submenu.href || '#'}
                   onClick={() => !hasChildren && setIsSubNavVisible(false)}
-                  className='flex items-start self-stretch w-full h-full gap-2 items-start hover:text-[#2b630d] hover:opacity-50'
+                  className='flex items-start self-stretch w-full h-full gap-2 items-start hover:text-[#066a4c] transition-colors'
                 >
-                  <div className="flex self-stretch gap-2 items-start">
-                    <Image src={`${env.NEXT_PUBLIC_API_IMAGE}/sub/${submenu.prefix}/${submenu.icon}.svg`} alt={index.toString()} width={28} height={28} />
+                  <div className="flex self-stretch gap-2 items-start bg-gray-50 p-2 rounded-lg">
+                    <Image
+                      src={`${env.NEXT_PUBLIC_API_IMAGE}/sub/${submenu.prefix}/${submenu.icon}.svg`}
+                      alt={typeof submenu.label === 'string' ? submenu.label : ''}
+                      width={24}
+                      height={24}
+                      className="object-contain"
+                      onError={(e: any) => {
+                        e.currentTarget.style.display = 'none';
+                        if (e.currentTarget.nextSibling) {
+                          (e.currentTarget.nextSibling as HTMLElement).style.display = 'block';
+                        }
+                      }}
+                    />
+                    <i className="ri-list-settings-line text-[#066a4c] text-xl hidden" />
                   </div>
-                  <div className="text-14-semibold text-textBasePrimary">
+                  <div className="text-14-semibold text-[#066a4c] mt-1">
                     {submenu.label}
                   </div>
                 </Link>

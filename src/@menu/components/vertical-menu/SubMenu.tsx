@@ -76,6 +76,7 @@ export type SubMenuProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'prefix
     component?: string | ReactElement
     contentClassName?: string
     onOpenChange?: (open: boolean) => void
+    active?: boolean
 
     /**
      * @ignore
@@ -125,11 +126,6 @@ const StyledSubMenu = styled.li<StyledSubMenuProps>`
     isCollapsed && level === 0 && isPopoutWhenCollapsed ? 'absolute' : 'relative'};
     ${({ isCollapsed, level, isPopoutWhenCollapsed }) =>
     isCollapsed && level === 0 && isPopoutWhenCollapsed && 'top: 0; left: 100%;'}
-    background-color: white !important;
-  }
-
-  &.${menuClasses.subMenuContent} {
-    background-color: white !important;
   }
 
 `
@@ -148,6 +144,7 @@ const SubMenu: ForwardRefRenderFunction<HTMLLIElement, SubMenuProps> = (props, r
     defaultOpen,
     level = 0,
     disabled = false,
+    active: activeProp,
     rootStyles,
     component,
     onOpenChange,
@@ -158,7 +155,7 @@ const SubMenu: ForwardRefRenderFunction<HTMLLIElement, SubMenuProps> = (props, r
 
   // States
   const [openWhenCollapsed, setOpenWhenCollapsed] = useState<boolean>(false)
-  const [active, setActive] = useState<boolean>(false)
+  const [active, setActive] = useState<boolean>(activeProp ?? false)
 
   // Refs
   const contentRef = useRef<HTMLUListElement>(null)
@@ -306,6 +303,11 @@ const SubMenu: ForwardRefRenderFunction<HTMLLIElement, SubMenuProps> = (props, r
   }, [])
 
   useEffect(() => {
+    if (activeProp !== undefined) {
+      setActive(activeProp)
+      return
+    }
+
     if (confirmUrlInChildren(children, pathname)) {
       setActive(true)
 
@@ -316,7 +318,7 @@ const SubMenu: ForwardRefRenderFunction<HTMLLIElement, SubMenuProps> = (props, r
       setActive(false)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname])
+  }, [pathname, activeProp])
 
   const submenuContent = (
     <SubMenuContent

@@ -37,6 +37,7 @@ type Props = {
   scrollMenu: (container: any, isPerfectScrollbar: boolean) => void
   onMenuItemClick: (item: VerticalSubMenuDataType) => void
   menudata: VerticalSubMenuDataType[]
+  activeItem?: VerticalSubMenuDataType | null
 }
 
 const RenderExpandIcon = ({ open, transitionDuration }: RenderExpandIconProps) => (
@@ -44,7 +45,7 @@ const RenderExpandIcon = ({ open, transitionDuration }: RenderExpandIconProps) =
   </StyledVerticalNavExpandIcon>
 )
 
-const VerticalMenu = ({ dictionary, scrollMenu, onMenuItemClick, menudata }: Props) => {
+const VerticalMenu = ({ dictionary, scrollMenu, onMenuItemClick, menudata, activeItem }: Props & { activeItem?: VerticalSubMenuDataType | null }) => {
   // Hooks
   const theme = useTheme()
   const verticalNavOptions = useVerticalNav()
@@ -77,7 +78,7 @@ const VerticalMenu = ({ dictionary, scrollMenu, onMenuItemClick, menudata }: Pro
         renderExpandedMenuItemIcon={{ icon: <i className='ri-circle-fill' /> }}
         menuSectionStyles={menuSectionStyles(verticalNavOptions, theme)}
       >
-        <GenerateVerticalMenu menuData={menudata} onMenuItemClick={onMenuItemClick} />
+        <GenerateVerticalMenu menuData={menudata} onMenuItemClick={onMenuItemClick} activeItem={activeItem} />
       </Menu>
     </ScrollWrapper>
   );

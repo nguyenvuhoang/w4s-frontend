@@ -43,6 +43,7 @@ export type MenuItemProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'prefi
     target?: string
     rel?: string
     component?: string | ReactElement
+    active?: boolean
     onActiveChange?: (active: boolean) => void
 
     /**
@@ -63,6 +64,7 @@ const MenuItem: ForwardRefRenderFunction<HTMLLIElement, MenuItemProps> = (props,
     disabled = false,
     exactMatch = true,
     activeUrl,
+    active: activeProp,
     component,
     onActiveChange,
     rootStyles,
@@ -70,7 +72,7 @@ const MenuItem: ForwardRefRenderFunction<HTMLLIElement, MenuItemProps> = (props,
   } = props
 
   // States
-  const [active, setActive] = useState(false)
+  const [active, setActive] = useState(activeProp ?? false)
 
   // Hooks
   const pathname = usePathname()
@@ -120,6 +122,11 @@ const MenuItem: ForwardRefRenderFunction<HTMLLIElement, MenuItemProps> = (props,
         // Type guard: ensure props is not unknown
         (component as ReactElement<{ href?: string }>).props.href)
 
+    if (activeProp !== undefined) {
+      setActive(activeProp)
+      return
+    }
+
     if (href) {
       // Check if the current url matches any of the children urls
       if (exactMatch ? pathname === href : activeUrl && pathname.includes(activeUrl)) {
@@ -129,7 +136,7 @@ const MenuItem: ForwardRefRenderFunction<HTMLLIElement, MenuItemProps> = (props,
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname])
+  }, [pathname, activeProp])
 
   // Call the onActiveChange callback when the active state changes.
   useUpdateEffect(() => {

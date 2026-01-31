@@ -29,7 +29,7 @@ import { MenuSection, MenuItem as VerticalMenuItem, SubMenu as VerticalSubMenu }
 import { getLocalizedUrl } from '@utils/i18n';
 
 // Generate Vertical menu from the menu data array
-export const GenerateVerticalMenu = ({ menuData, onMenuItemClick }: { menuData: VerticalMenuDataType[], onMenuItemClick?: (item: VerticalSubMenuDataType) => void }) => {
+export const GenerateVerticalMenu = ({ menuData, onMenuItemClick, activeItem }: { menuData: VerticalMenuDataType[], onMenuItemClick?: (item: VerticalSubMenuDataType) => void, activeItem?: VerticalSubMenuDataType | null }) => {
   // Hooks
   const { locale } = useParams()
 
@@ -71,7 +71,13 @@ export const GenerateVerticalMenu = ({ menuData, onMenuItemClick }: { menuData: 
         if (validChildren.length === 0) return null;
 
         // Prop destructuring to remove non-DOM and internal props from being spread to the DOM
-        const { icon, prefix, suffix, href, command_type, isSection, workflow_id, is_active, parent_id, ...validRest } = subMenuItem as any;
+        const {
+          active: dataActive,
+          open: dataOpen,
+          children: dataChildren,
+          icon, prefix, suffix, href, command_type, isSection, workflow_id, is_active, parent_id, is_agreement, is_required, is_check_permission, is_external,
+          ...validRest
+        } = subMenuItem as any;
 
         const DynamicIcon = icon && (Icons as any)[icon] ? (Icons as any)[icon] : Icons.AccountBalance;
 
@@ -82,22 +88,40 @@ export const GenerateVerticalMenu = ({ menuData, onMenuItemClick }: { menuData: 
             suffix as ReactNode
           );
 
+        // Safety check for active state: match by ID or Label, but ensure both exist
+        const isOpen = activeItem && (
+          (subMenuItem.id && activeItem.id === subMenuItem.id) ||
+          (subMenuItem.label && activeItem.label === subMenuItem.label)
+        );
+
+        // Render as a MenuItem instead of SubMenu to prevent accordion effect
+        // but still pass the children to the side panel via onClick
         return (
-          <VerticalSubMenu
+          <VerticalMenuItem
             key={index}
             suffix={subMenuSuffix}
             {...validRest}
-            onClick={() => onMenuItemClick?.(subMenuItem)}
-            {...(DynamicIcon && { icon: <DynamicIcon sx={{ fontSize: 24, color: "#225087" }} /> })}
+            active={!!isOpen}
+            onClick={(e: any) => {
+              e.preventDefault();
+              onMenuItemClick?.(subMenuItem);
+            }}
+            {...(DynamicIcon && { icon: <DynamicIcon sx={{ fontSize: 24, color: "inherit" }} /> })}
           >
-            {renderMenuItems(validChildren)}
-          </VerticalSubMenu>
+            {subMenuItem.label}
+          </VerticalMenuItem>
         );
       }
 
 
       // If the current item is neither a section nor a sub menu, return a MenuItem component
-      const { label, excludeLang, icon, prefix, suffix, command_type, isSection, workflow_id, is_active, parent_id, ...validRest } = menuItem as any;
+      const {
+        label,
+        active: dataActive,
+        open: dataOpen,
+        children: dataChildren,
+        excludeLang, icon, prefix, suffix, command_type, isSection, workflow_id, is_active, parent_id, is_agreement, is_required, is_check_permission, is_external, ...validRest
+      } = menuItem as any;
 
       // Localize the href
       const href = validRest.href?.startsWith('http')
@@ -119,7 +143,7 @@ export const GenerateVerticalMenu = ({ menuData, onMenuItemClick }: { menuData: 
           suffix={menuItemSuffix}
           {...validRest}
           href={href}
-          {...(DynamicIcon && { icon: <DynamicIcon sx={{ fontSize: 24, color: "#225087" }} /> })}
+          {...(DynamicIcon && { icon: <DynamicIcon sx={{ fontSize: 24, color: "inherit" }} /> })}
         >
           {label}
         </VerticalMenuItem>
@@ -175,7 +199,7 @@ export const GenerateHorizontalMenu = ({ menuData }: { menuData: HorizontalMenuD
             key={index}
             suffix={subMenuSuffix}
             {...validRest}
-            {...(DynamicIcon && { icon: <DynamicIcon sx={{ fontSize: 24, color: "#225087" }} /> })}
+            {...(DynamicIcon && { icon: <DynamicIcon sx={{ fontSize: 24, color: "inherit" }} /> })}
           >
             {renderMenuItems(validChildren)}
           </HorizontalSubMenu>
@@ -204,7 +228,7 @@ export const GenerateHorizontalMenu = ({ menuData }: { menuData: HorizontalMenuD
           suffix={menuItemSuffix}
           {...validRest}
           href={href}
-          {...(DynamicIcon && { icon: <DynamicIcon sx={{ fontSize: 24, color: "#225087" }} /> })}
+          {...(DynamicIcon && { icon: <DynamicIcon sx={{ fontSize: 24, color: "inherit" }} /> })}
         >
           {label}
         </HorizontalMenuItem>
