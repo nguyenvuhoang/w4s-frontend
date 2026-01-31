@@ -27,7 +27,7 @@ export const GenerateSubMenu = ({ menuData, dictionary, setIsSubNavVisible }: Pr
 
     return (
       <div className='space-y-6'>
-        <div id="generate-menu" className="grid grid-cols-2 gap-2">
+        <div id="generate-menu" className="grid grid-cols-2 gap-4">
           {validChildren.map((submenu, index: number) => {
             const nestedChildren = (submenu as any).children || (submenu as any).items || (submenu as any).submenus || [];
             const hasChildren = nestedChildren.length > 0;
@@ -61,15 +61,16 @@ export const GenerateSubMenu = ({ menuData, dictionary, setIsSubNavVisible }: Pr
                 </Link>
 
                 {hasChildren && (
-                  <div className="flex flex-col w-full space-y-2 mt-2 pl-2 border-l-2 border-gray-100">
+                  <div className="flex flex-col w-full space-y-1 mt-3 pl-1 border-l-2 border-[#066a4c]/10 ml-2">
                     {nestedChildren.map((child: any, childIdx: number) => (
                       <Link
                         key={childIdx}
                         href={child.href || '#'}
                         onClick={() => setIsSubNavVisible(false)}
-                        className="text-12-medium text-gray-500 hover:text-[#2b630d] transition-colors"
+                        className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-13-medium text-gray-600 hover:text-[#066a4c] hover:bg-[#F3FFE9] transition-all group/nested"
                       >
-                        • {child.label}
+                        <div className="w-1.5 h-1.5 rounded-full bg-gray-300 group-hover/nested:bg-[#066a4c] transition-colors" />
+                        <span>{child.label}</span>
                       </Link>
                     ))}
                   </div>
