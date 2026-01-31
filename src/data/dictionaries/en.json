@@ -403,7 +403,8 @@
     "savings": "Saving",
     "insurance": "Insurance",
     "investment": "Investment",
-    "statebudget": "State budget"
+    "statebudget": "State budget",
+    "system_settings": "System Settings"
   },
   "footer": {
     "termandservice": "Terms of service",

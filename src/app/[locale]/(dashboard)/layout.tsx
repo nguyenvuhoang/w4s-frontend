@@ -1,5 +1,5 @@
 // src/app/[locale]/(dashboard)/(portal)/layout.tsx
-import Navbar from '@/@layouts/components/vertical/Navbar'
+import Navbar from '@components/layout/vertical/Navbar'
 import HorizontalLayout from '@/@layouts/HorizontalLayout'
 import LayoutWrapper from '@/@layouts/LayoutWrapper'
 import VerticalLayout from '@/@layouts/VerticalLayout'
@@ -131,36 +131,6 @@ async function PortalLayoutContent({ children, params }: ChildrenType & { params
 
     const usercommand = menupayload.data?.data as any[] ?? []
 
-    // Mock API Manager Menu
-    usercommand.push({
-        label: 'API Manager',
-        icon: 'ri-dashboard-flow',
-        command_type: 'M',
-        children: [
-            { label: 'Overview', href: '/api-manager/overview', icon: 'ri-bar-chart-2-line', command_type: 'M' },
-            { label: 'APIs', href: '/api-manager/apis', icon: 'ri-api-line', command_type: 'M' },
-            { label: 'Products', href: '/api-manager/products', icon: 'ri-box-3-line', command_type: 'M' },
-            { label: 'Subscriptions', href: '/api-manager/subscriptions', icon: 'ri-vip-crown-line', command_type: 'M' },
-            { label: 'Consumers', href: '/api-manager/consumers', icon: 'ri-user-star-line', command_type: 'M' },
-            { label: 'Credentials', href: '/api-manager/credentials', icon: 'ri-key-2-line', command_type: 'M' },
-            { label: 'Policies', href: '/api-manager/policies', icon: 'ri-shield-check-line', command_type: 'M' },
-            {
-                label: 'Gateway',
-                icon: 'ri-server-line',
-                command_type: 'M',
-                children: [
-                    { label: 'Routes', href: '/api-manager/gateway/routes', command_type: 'M' },
-                    { label: 'Upstreams', href: '/api-manager/gateway/upstreams', command_type: 'M' }
-                ]
-            },
-            { label: 'Quota', href: '/api-manager/quota', icon: 'ri-speed-mini-fill', command_type: 'M' },
-            { label: 'Analytics', href: '/api-manager/analytics', icon: 'ri-line-chart-line', command_type: 'M' },
-            { label: 'Logs', href: '/api-manager/logs', icon: 'ri-file-list-line', command_type: 'M' },
-            { label: 'Environments', href: '/api-manager/environments', icon: 'ri-cloud-line', command_type: 'M' },
-            { label: 'Settings', href: '/api-manager/settings', icon: 'ri-settings-4-line', command_type: 'M' },
-        ]
-    });
-
     return (
         <Providers initialAvatar={avatar}>
             <AuthGuard locale={locale} dictionary={dictionary}>
@@ -171,7 +141,7 @@ async function PortalLayoutContent({ children, params }: ChildrenType & { params
                         verticalLayout={
                             <VerticalLayout
                                 navigation={<Navigation dictionary={dictionary} menudata={usercommand} />}
-                                navbar={null}
+                                navbar={<Navbar menuData={usercommand} />}
                                 footer={<></>}
                             >
                                 {children}

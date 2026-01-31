@@ -1,30 +1,25 @@
 // Third-party Imports
 import classnames from 'classnames'
 
-// Type Imports
-
-// Component Imports
-import LanguageDropdown from '@components/layout/shared/LanguageDropdown'
-import LayoutToggle from '@components/layout/shared/LayoutToggle'
-import ModeDropdown from '@components/layout/shared/ModeDropdown'
-
 // Util Imports
 import { verticalLayoutClasses } from '@layouts/utils/layoutClasses'
-import Logout from '../shared/Logout'
+import { Box } from '@mui/material'
+import AISearch from '../shared/AISearch'
 
+interface Props {
+  menuData?: any[]
+}
 
-
-const NavbarContent = () => {
+const NavbarContent = ({ menuData }: Props) => {
   return (
     <>
-      <div className='absolute top-0 right-0 flex items-center z-10 pt-4 pr-10'>
+      <Box className='absolute top-0 right-0 flex items-center z-10 pt-4 pr-10'>
         {/* Components moved to vertical menu */}
-      </div>
+      </Box>
 
-      <div className={classnames(verticalLayoutClasses.navbarContent, 'flex items-center justify-between gap-6 is-full relative')}>
-
-      </div>
-
+      <Box className={classnames(verticalLayoutClasses.navbarContent, 'flex items-center justify-between gap-6 is-full relative')}>
+        <AISearch menuData={menuData || []} />
+      </Box>
     </>
   )
 }

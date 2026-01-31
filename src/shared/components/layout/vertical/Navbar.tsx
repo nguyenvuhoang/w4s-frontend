@@ -2,10 +2,10 @@
 import LayoutNavbar from '@layouts/components/vertical/Navbar'
 import NavbarContent from './NavbarContent'
 
-const Navbar = () => {
+const Navbar = ({ menuData }: { menuData?: any[] }) => {
   return (
     <LayoutNavbar>
-      <NavbarContent />
+      <NavbarContent menuData={menuData} />
     </LayoutNavbar>
   )
 }

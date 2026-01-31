@@ -55,7 +55,7 @@ export const menuService = {
     updateMenu: ({ sessiontoken, language, fields }: SubmitDataFormRequest) =>
         http.post<MenuDataResponse>('/system-service',
             {
-                learn_api: "CTH_UPDATE_MENU",
+                learn_api: "CTH_MODIFY_MENU",
                 fields: {
                     ...fields
                 }

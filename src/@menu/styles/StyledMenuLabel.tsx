@@ -20,7 +20,6 @@ const StyledMenuLabel = styled.span<StyledMenuLabelProps>((props) => {
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;
-        color: ${props.active ? '#066a4c !important' : theme.palette.primary.light};
       `
     };
     ${props.rootStyles};

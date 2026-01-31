@@ -29,7 +29,7 @@ const Header = ({ menu, avatar, name, dictionary, roleChannel }:
     <>
       <LayoutHeader>
         <Navbar>
-          <NavbarContent avatar={avatar} name={name} dictionary={dictionary} roleChannel={roleChannel} />
+          <NavbarContent avatar={avatar} name={name} dictionary={dictionary} roleChannel={roleChannel} menu={menu} />
         </Navbar>
         {!isBreakpointReached && <Navigation menu={menu} />}
       </LayoutHeader>

@@ -18,6 +18,9 @@ export type Settings = {
     contentWidth?: LayoutComponentWidth
     footerContentWidth?: LayoutComponentWidth
     primaryColor?: string
+    logoUrl?: string
+    fontFamily?: string
+    brandingName?: string
 }
 
 type UpdateSettingsOptions = {
@@ -51,6 +54,9 @@ export const SettingsProvider = (props: Props) => {
         contentWidth: themeConfig.contentWidth,
         footerContentWidth: themeConfig.footer.contentWidth,
         primaryColor: primaryColorConfig[0].main,
+        logoUrl: themeConfig.logoUrl,
+        fontFamily: themeConfig.fontFamily,
+        brandingName: themeConfig.templateName
     }
 
     const updatedInitialSettings = {
@@ -58,9 +64,19 @@ export const SettingsProvider = (props: Props) => {
         mode: props.mode || themeConfig.mode
     }
 
+    // Merge cookie settings with updated initial settings to ensure new fields are present
+    const cookieWithDefaults = useMemo(() => {
+        return {
+            ...updatedInitialSettings,
+            ...(props.settingsCookie || {})
+        }
+    }, [props.settingsCookie, updatedInitialSettings])
+
     const [settingsCookie, updateSettingsCookie] = useObjectCookie<Settings>(
-        themeConfig.settingsCookieName, JSON.stringify(props.settingsCookie) !== '{}' ? props.settingsCookie : updatedInitialSettings
+        themeConfig.settingsCookieName,
+        JSON.stringify(props.settingsCookie) !== '{}' ? cookieWithDefaults : updatedInitialSettings
     )
+
     // State
     const [_settingsState, _updateSettingsState] = useState<Settings>(
         JSON.stringify(settingsCookie) !== '{}' ? settingsCookie : updatedInitialSettings

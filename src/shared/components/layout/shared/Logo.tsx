@@ -1,36 +1,23 @@
 'use client'
 
 // React Imports
-import { useEffect, useRef } from 'react'
 import type { CSSProperties } from 'react'
-
-// Third-party Imports
-import styled from '@emotion/styled'
-
-// Type Imports
-import type { VerticalNavContextProps } from '@menu/contexts/verticalNavContext'
+import { useEffect, useRef } from 'react'
 
 // Component Imports
 import LogoBank from '@core/svg/Logo'
 
 
 // Hook Imports
-import useVerticalNav from '@menu/hooks/useVerticalNav'
 import { useSettings } from '@core/hooks/useSettings'
-
-type LogoTextProps = {
-  isHovered?: VerticalNavContextProps['isHovered']
-  isCollapsed?: VerticalNavContextProps['isCollapsed']
-  transitionDuration?: VerticalNavContextProps['transitionDuration']
-  color?: CSSProperties['color']
-}
+import useVerticalNav from '@menu/hooks/useVerticalNav'
 
 const Logo = ({ color }: { color?: CSSProperties['color'] }) => {
   // Refs
   const logoTextRef = useRef<HTMLSpanElement>(null)
 
   // Hooks
-  const { isHovered, transitionDuration } = useVerticalNav()
+  const { isHovered } = useVerticalNav()
   const { settings } = useSettings()
 
   // Vars
@@ -53,7 +40,11 @@ const Logo = ({ color }: { color?: CSSProperties['color'] }) => {
 
   return (
     <div className='flex items-center min-bs-[24px]'>
-      <LogoBank width="64" height="64" />
+      {settings.logoUrl ? (
+        <img src={settings.logoUrl} alt="Logo" style={{ height: '40px', width: 'auto' }} />
+      ) : (
+        <LogoBank width="64" height="64" />
+      )}
     </div>
   )
 }

@@ -183,7 +183,7 @@ export const GenerateHorizontalMenu = ({ menuData }: { menuData: HorizontalMenuD
       // ✅ If it has children (submenu case)
       if (validChildren.length > 0) {
         // Prop destructuring to remove non-DOM and internal props
-        const { icon, prefix, suffix, command_type, isSection, workflow_id, is_active, parent_id, ...validRest } = subMenuItem as any;
+        const { active: dataActive, open: dataOpen, children: dataChildren, icon, prefix, suffix, command_type, isSection, workflow_id, is_active, parent_id, ...validRest } = subMenuItem as any;
 
         const DynamicIcon = icon && (Icons as any)[icon] ? (Icons as any)[icon] : Icons.AccountBalance;
 
@@ -207,7 +207,7 @@ export const GenerateHorizontalMenu = ({ menuData }: { menuData: HorizontalMenuD
       }
 
       // 🧾 Otherwise, treat it as a normal menu item (no children)
-      const { label, excludeLang, icon, prefix, suffix, command_type, isSection, workflow_id, is_active, parent_id, ...validRest } = menuItem as any;
+      const { label, active: dataActive, open: dataOpen, children: dataChildren, excludeLang, icon, prefix, suffix, command_type, isSection, workflow_id, is_active, parent_id, ...validRest } = menuItem as any;
 
       const href = validRest.href?.startsWith("http")
         ? validRest.href

@@ -8,6 +8,13 @@ import Link from 'next/link'
 import { getDictionary } from '@utils/getDictionary'
 import { env } from '@/env.mjs'
 
+// Next Imports
+import { useParams } from 'next/navigation'
+
+// Util Imports
+import { getLocalizedUrl } from '@utils/i18n'
+import type { Locale } from '@configs/i18n'
+
 
 type Props = {
   dictionary: Awaited<ReturnType<typeof getDictionary>>
@@ -16,6 +23,8 @@ type Props = {
 }
 // Generate Vertical menu from the menu data array
 export const GenerateSubMenu = ({ menuData, dictionary, setIsSubNavVisible }: Props) => {
+  // Hooks
+  const { locale } = useParams()
 
   const renderSubMenuItems = (data: VerticalSubMenuDataType | null) => {
     const subMenuItem = data as VerticalSubMenuDataType
@@ -35,7 +44,7 @@ export const GenerateSubMenu = ({ menuData, dictionary, setIsSubNavVisible }: Pr
             return (
               <div key={index} className="flex flex-col p-4 space-y-4 bg-white border border-gray-100 shadow-sm transition-all duration-200 hover:shadow-md hover:border-gray-200 !rounded-2xl h-full items-start" style={{ width: '100%' }}>
                 <Link
-                  href={submenu.href || '#'}
+                  href={getLocalizedUrl(submenu.href || '#', locale as Locale)}
                   onClick={() => !hasChildren && setIsSubNavVisible(false)}
                   className='flex items-start self-stretch w-full h-full gap-2 items-start hover:text-[#066a4c] transition-colors'
                 >
@@ -65,7 +74,7 @@ export const GenerateSubMenu = ({ menuData, dictionary, setIsSubNavVisible }: Pr
                     {nestedChildren.map((child: any, childIdx: number) => (
                       <Link
                         key={childIdx}
-                        href={child.href || '#'}
+                        href={getLocalizedUrl(child.href || '#', locale as Locale)}
                         onClick={() => setIsSubNavVisible(false)}
                         className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-13-medium text-gray-600 hover:text-[#066a4c] hover:bg-[#F3FFE9] transition-all group/nested"
                       >
@@ -88,7 +97,7 @@ export const GenerateSubMenu = ({ menuData, dictionary, setIsSubNavVisible }: Pr
                   {subMenuItem.utilities.map((utilitiesmenu, index) => {
                     return (
                       <Link key={index}
-                        href={`/${utilitiesmenu.href}`}
+                        href={getLocalizedUrl(utilitiesmenu.href || '#', locale as Locale)}
                         onClick={() => setIsSubNavVisible(false)}
                         className='flex items-start py-3 space-x-3 cursor-pointer hover:text-[#2b630d] hover:opacity-50'
                       >

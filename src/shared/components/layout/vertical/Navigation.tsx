@@ -9,6 +9,7 @@ import { useParams } from 'next/navigation'
 
 // MUI Imports
 import { styled, useColorScheme, useTheme } from '@mui/material/styles'
+import { Box, IconButton } from '@mui/material'
 
 // Type Imports
 import type { getDictionary } from '@utils/getDictionary'
@@ -151,7 +152,7 @@ const Navigation = (props: Props) => {
         data-mui-color-scheme='dark'
         style={{ '--menu-inactive-color': 'rgba(255, 255, 255, 0.85)' } as any}
       >
-        <div className='flex flex-col h-full'>
+        <Box className='flex flex-col h-full'>
           {/* Nav Header including Logo & nav toggle icons  */}
           <NavHeader>
             <Link href={getLocalizedUrl('/', locale as Locale)}>
@@ -166,13 +167,17 @@ const Navigation = (props: Props) => {
             menudata={menudata}
             activeItem={clickedItem}
           />
-          <div className='mt-auto pli-6 pbs-4 pbe-6 flex flex-col items-start gap-1 text-white'>
-            <ModeDropdown />
+          <Box className='mt-auto pli-6 pbs-4 pbe-6 flex flex-col items-start gap-1 text-white'>
+            <Link href={getLocalizedUrl('/system-settings', locale as Locale)}>
+              <IconButton size='small' color='inherit' title={dictionary['navigation'].system_settings || 'System Settings'} className='text-white'>
+                <i className='ri-settings-3-line text-[22px] text-white' />
+              </IconButton>
+            </Link>
             <LanguageDropdown />
             <LayoutToggle />
             <Logout />
-          </div>
-        </div>
+          </Box>
+        </Box>
       </VerticalNav>
       {/* Submenu Vertical Menu */}
       {isSubNavVisible &&

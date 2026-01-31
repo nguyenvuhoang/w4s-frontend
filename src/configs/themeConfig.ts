@@ -25,6 +25,8 @@ export type Config = {
     compactContentWidth: number
     footer: Footer
     disableRipple: boolean
+    logoUrl?: string
+    fontFamily?: string
 }
 const themeConfig: Config = {
     templateName: 'ANHBEN',
@@ -50,5 +52,7 @@ const themeConfig: Config = {
         detached: true //! true, false (This will not work in the Horizontal Layout)
     },
     disableRipple: false, // true, false
+    logoUrl: '', // Default logo from SVG
+    fontFamily: 'var(--font-quicksand-sans), Quicksand, sans-serif'
 }
 export default themeConfig
