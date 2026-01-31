@@ -19,7 +19,7 @@ const Logout = (props: Props) => {
         <div className='flex items-center gap-4'>
             <div className='flex items-center gap-2'>
                 <IconButton
-                    className='flex gap-1 p-2 rounded-full cursor-pointer flag text-white text-[28px]'
+                    className='flex gap-1 p-2 rounded-full cursor-pointer flag text-[22px] text-white'
                     onClick={handleUserLogout}
                 >
                     <i className='ri-logout-box-r-line' />

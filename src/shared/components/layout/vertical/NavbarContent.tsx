@@ -18,11 +18,7 @@ const NavbarContent = () => {
   return (
     <>
       <div className='absolute top-0 right-0 flex items-center z-10 pt-4 pr-10'>
-        <LayoutToggle />
-        <LanguageDropdown />
-        <ModeDropdown />
-        {/* <NotificationsDropdown notifications={notifications} /> */}
-        <Logout />
+        {/* Components moved to vertical menu */}
       </div>
 
       <div className={classnames(verticalLayoutClasses.navbarContent, 'flex items-center justify-between gap-6 is-full relative')}>

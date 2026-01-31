@@ -1,7 +1,7 @@
 # PowerShell Script to Replace Hardcoded Colors with brandColorConfig
 # This script helps migrate existing code to use the centralized color configuration
 
-Write-Host "🎨 EMI Portal Color Migration Script" -ForegroundColor Green
+Write-Host "🎨 Enterprise Console Color Migration Script" -ForegroundColor Green
 Write-Host "=====================================" -ForegroundColor Green
 Write-Host ""
 

@@ -43,7 +43,7 @@ cp ecosystem.config.js dist-deploy/
 # Tạo start script
 cat > dist-deploy/start.sh << 'EOF'
 #!/bin/bash
-echo "Starting EMI Portal Production Server..."
+echo "Starting Enterprise Console Production Server..."
 node server.js
 EOF
 chmod +x dist-deploy/start.sh
@@ -51,7 +51,7 @@ chmod +x dist-deploy/start.sh
 # Tạo PM2 start script
 cat > dist-deploy/start-pm2.sh << 'EOF'
 #!/bin/bash
-echo "Starting EMI Portal with PM2..."
+echo "Starting Enterprise Console with PM2..."
 pm2 start ecosystem.config.js --env production
 pm2 save
 EOF
@@ -60,7 +60,7 @@ chmod +x dist-deploy/start-pm2.sh
 # Tạo systemd service file
 cat > dist-deploy/emi-portal.service << 'EOF'
 [Unit]
-Description=EMI Portal Next.js Application
+Description=Enterprise Console Next.js Application
 After=network.target
 
 [Service]

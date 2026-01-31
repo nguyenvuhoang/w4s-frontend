@@ -64,7 +64,7 @@ const LanguageDropdown = () => {
   // Hooks
   const pathName = usePathname()
   const { settings } = useSettings()
-  const { lang } = useParams()
+  const { locale: currentLocale } = useParams()
 
   const handleClose = () => {
     setOpen(false)
@@ -76,8 +76,8 @@ const LanguageDropdown = () => {
 
   return (
     <>
-      <IconButton ref={anchorRef} onClick={handleToggle} sx={{ color: 'white', fontSize: 28 }}>
-        <Image alt='language' src={`/images/icon/language.svg`} width={24} height={24} />
+      <IconButton ref={anchorRef} onClick={handleToggle} className='text-[22px] text-white'>
+        <i className='ri-global-line' />
       </IconButton>
 
       <Popper
@@ -103,7 +103,7 @@ const LanguageDropdown = () => {
                       component={Link}
                       href={getLocalePath(pathName, locale.langCode)}
                       onClick={handleClose}
-                      selected={lang === locale.langCode}
+                      selected={currentLocale === locale.langCode}
                       className='pli-4'
                     >
                       {locale.langName}

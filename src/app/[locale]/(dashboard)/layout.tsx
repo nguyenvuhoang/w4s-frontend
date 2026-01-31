@@ -171,7 +171,7 @@ async function PortalLayoutContent({ children, params }: ChildrenType & { params
                         verticalLayout={
                             <VerticalLayout
                                 navigation={<Navigation dictionary={dictionary} menudata={usercommand} />}
-                                navbar={<Navbar><></></Navbar>}
+                                navbar={null}
                                 footer={<></>}
                             >
                                 {children}

@@ -1,7 +1,7 @@
-# EMI Portal Monorepo Setup Script
+# Enterprise Console Monorepo Setup Script
 # Run this script to initialize the monorepo structure
 
-Write-Host "🚀 EMI Portal Monorepo Setup" -ForegroundColor Cyan
+Write-Host "🚀 Enterprise Console Monorepo Setup" -ForegroundColor Cyan
 Write-Host "================================" -ForegroundColor Cyan
 Write-Host ""
 

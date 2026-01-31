@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# EMI Portal Monorepo Setup Script
+# Enterprise Console Monorepo Setup Script
 # Run this script to initialize the monorepo structure
 
-echo "🚀 EMI Portal Monorepo Setup"
+echo "🚀 Enterprise Console Monorepo Setup"
 echo "================================"
 echo ""
 

@@ -16,7 +16,7 @@ const navigationCustomStyles = (verticalNavOptions: VerticalNavState, theme: The
   const collapsedNotHovered = isCollapsed && !isHovered
 
   return {
-    color: 'var(--mui-palette-text-primary)',
+    color: '#fff',
     zIndex: 'var(--drawer-z-index) !important',
     [`& .${verticalNavClasses.header}`]: {
       paddingBlock: theme.spacing(5),
@@ -57,7 +57,7 @@ const navigationCustomStyles = (verticalNavOptions: VerticalNavState, theme: The
       }
     },
     [`& .${menuClasses.menuSectionContent}`]: {
-      color: 'var(--mui-palette-text-disabled)'
+      color: 'rgba(255, 255, 255, 0.5)'
     },
     [`& .${menuClasses.root}`]: {
       paddingBlock: theme.spacing(1),

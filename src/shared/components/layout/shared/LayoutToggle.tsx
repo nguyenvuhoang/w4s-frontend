@@ -25,7 +25,7 @@ const LayoutToggle = () => {
             onClose={() => setTooltipOpen(false)}
             open={tooltipOpen}
         >
-            <IconButton onClick={handleToggle} className='text-white text-[28px]'>
+            <IconButton onClick={handleToggle} className='text-[22px] text-white'>
                 <i className={isHorizontal ? 'ri-layout-left-line' : 'ri-layout-top-line'} />
             </IconButton>
         </Tooltip>

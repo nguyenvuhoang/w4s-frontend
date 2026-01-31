@@ -4,8 +4,8 @@ import type { Locale } from '@configs/i18n';
 import type { ChildrenType } from '@core/types';
 
 export const metadata = {
-  title: 'EMI Portal',
-  description: 'EMI Portal'
+  title: 'Enterprise Console',
+  description: 'Enterprise Console'
 }
 
 type Params = Promise<{

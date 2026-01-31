@@ -18,7 +18,7 @@ const menuSectionStyles = (verticalNavOptions: VerticalNavState, theme: Theme): 
     root: {
       marginBlockStart: theme.spacing(6.75),
       [`& .${menuClasses.menuSectionContent}`]: {
-        color: 'var(--mui-palette-text-disabled)',
+        color: 'rgba(255, 255, 255, 0.7) !important',
         paddingInline: '0 !important',
         paddingBlock: `${theme.spacing(collapsedNotHovered ? 3.825 : 1.75)} !important`,
         marginBlockEnd: theme.spacing(2),
@@ -31,7 +31,7 @@ const menuSectionStyles = (verticalNavOptions: VerticalNavState, theme: Theme): 
           content: '""',
           blockSize: 1,
           inlineSize: collapsedNotHovered ? '1.375rem' : '0.875rem',
-          backgroundColor: 'var(--mui-palette-divider)'
+          backgroundColor: 'rgba(255, 255, 255, 0.3)'
         },
         ...(collapsedNotHovered && {
           paddingInline: '12px !important'
@@ -41,7 +41,7 @@ const menuSectionStyles = (verticalNavOptions: VerticalNavState, theme: Theme): 
             content: '""',
             blockSize: 1,
             flexGrow: 1,
-            backgroundColor: 'var(--mui-palette-divider)'
+            backgroundColor: 'rgba(255, 255, 255, 0.3)'
           }
         }),
 
@@ -51,6 +51,7 @@ const menuSectionStyles = (verticalNavOptions: VerticalNavState, theme: Theme): 
           fontSize: '13px',
           lineHeight: 1.38462,
           letterSpacing: '0.4px',
+          color: 'rgba(255, 255, 255, 0.5) !important',
           ...(collapsedNotHovered && {
             display: 'none'
           })

@@ -1,8 +1,8 @@
-# EMI Portal Scripts
+# Enterprise Console Scripts
 
 ## 📄 generate-page.mjs
 
-Tự động tạo boilerplate cho page mới trong EMI Portal với đầy đủ cấu trúc server/client components.
+Tự động tạo boilerplate cho page mới trong Enterprise Console với đầy đủ cấu trúc server/client components.
 
 ### 🚀 Usage
 
@@ -192,6 +192,6 @@ npm run generate:page my-page -- --view --skip-error
 
 ### 📚 Related Documentation
 
-- [EMI Portal Architecture](../document/COLOR_ARCHITECTURE_DIAGRAM.md)
+- [Enterprise Console Architecture](../document/COLOR_ARCHITECTURE_DIAGRAM.md)
 - [Component Guidelines](../document/COLOR_CONFIGURATION_GUIDE.md)
 - [Next.js App Router](https://nextjs.org/docs/app)

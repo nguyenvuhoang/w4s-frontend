@@ -63,8 +63,8 @@ const ModeDropdown = () => {
         open={tooltipOpen}
         slotProps={{ popper: { className: 'capitalize' } }}
       >
-        <IconButton onClick={handleToggle} className='text-white text-[28px]'>
-          {getModeIcon()}
+        <IconButton onClick={handleToggle} className='text-[22px] text-white'>
+          <i className={settings.mode === 'dark' ? 'ri-moon-clear-line' : settings.mode === 'system' ? 'ri-computer-line' : 'ri-sun-line'} />
         </IconButton>
       </Tooltip>
 

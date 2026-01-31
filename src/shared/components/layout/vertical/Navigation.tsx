@@ -18,6 +18,10 @@ import type { Locale } from '@configs/i18n'
 import Logo from '@components/layout/shared/Logo'
 import VerticalNav, { NavHeader } from '@menu/vertical-menu'
 import VerticalMenu from './VerticalMenu'
+import LanguageDropdown from '@components/layout/shared/LanguageDropdown'
+import LayoutToggle from '@components/layout/shared/LayoutToggle'
+import ModeDropdown from '@components/layout/shared/ModeDropdown'
+import Logout from '../shared/Logout'
 
 // Hook Imports
 import { useSettings } from '@core/hooks/useSettings'
@@ -138,25 +142,30 @@ const Navigation = (props: Props) => {
       <VerticalNav
         customStyles={navigationCustomStyles(verticalNavOptions, theme)}
         collapsedWidth={71}
-        backgroundColor='transparent'
-        {...(isSemiDark &&
-          !isDark && {
-          'data-mui-color-scheme': 'dark'
-        })}
+        backgroundColor='#225087'
+        data-mui-color-scheme='dark'
       >
-        {/* Nav Header including Logo & nav toggle icons  */}
-        <NavHeader>
-          <Link href={getLocalizedUrl('/', locale as Locale)}>
-            <Logo />
-          </Link>
-        </NavHeader>
-        <StyledBoxForShadow ref={shadowRef} />
-        <VerticalMenu
-          dictionary={dictionary}
-          scrollMenu={scrollMenu}
-          onMenuItemClick={handleMenuItemClick}
-          menudata={menudata}
-        />
+        <div className='flex flex-col h-full'>
+          {/* Nav Header including Logo & nav toggle icons  */}
+          <NavHeader>
+            <Link href={getLocalizedUrl('/', locale as Locale)}>
+              <Logo />
+            </Link>
+          </NavHeader>
+          <StyledBoxForShadow ref={shadowRef} />
+          <VerticalMenu
+            dictionary={dictionary}
+            scrollMenu={scrollMenu}
+            onMenuItemClick={handleMenuItemClick}
+            menudata={menudata}
+          />
+          <div className='mt-auto pli-6 pbs-4 pbe-6 flex flex-col items-start gap-1 text-white'>
+            <ModeDropdown />
+            <LanguageDropdown />
+            <LayoutToggle />
+            <Logout />
+          </div>
+        </div>
       </VerticalNav>
       {/* Submenu Vertical Menu */}
       {isSubNavVisible &&
