@@ -148,7 +148,8 @@ const HeaderArea = ({ selectedView, setSelectedView, dictionary }: Props) => {
                         display: 'flex',
                         alignItems: 'center',
                         gap: '8px',
-                        fontFamily: 'Quicksand'
+                        // Removed hardcoded fontFamily to inherit from theme
+
                     }}
                 >
                     {isPreviewMode ? <><AutoFixHighIcon /> EDIT</> : <><VisibilityIcon /> PREVIEW</>}

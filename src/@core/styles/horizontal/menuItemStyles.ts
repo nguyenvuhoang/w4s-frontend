@@ -21,29 +21,29 @@ const menuItemStyles = (theme: Theme, iconClass: string): MenuItemStyles => ({
     },
     ...(level === 0
       ? {
-          [`& .${menuClasses.button}.${menuClasses.active}`]: {
+        [`& .${menuClasses.button}.${menuClasses.active}`]: {
+          color: 'var(--mui-palette-primary-contrastText) !important',
+          backgroundColor: 'var(--mui-palette-primary-main) !important',
+          boxShadow: 'var(--mui-customShadows-xs)',
+          '& .MuiSvgIcon-root, & svg': {
             color: 'var(--mui-palette-primary-contrastText) !important',
-            backgroundColor: 'var(--mui-palette-primary-main) !important',
-            boxShadow: 'var(--mui-customShadows-xs)',
-            '& .MuiSvgIcon-root, & svg': {
-              color: 'var(--mui-palette-primary-contrastText) !important',
-              fill: 'var(--mui-palette-primary-contrastText) !important'
-            }
+            fill: 'var(--mui-palette-primary-contrastText) !important'
           }
         }
+      }
       : {
-          [`&:not([aria-expanded]) > .${menuClasses.button}.${menuClasses.active}`]: {
-            backgroundColor: 'var(--mui-palette-primary-main) !important',
+        [`&:not([aria-expanded]) > .${menuClasses.button}.${menuClasses.active}`]: {
+          backgroundColor: 'var(--mui-palette-primary-main) !important',
+          color: 'var(--mui-palette-primary-contrastText) !important',
+          '& .MuiSvgIcon-root, & svg': {
             color: 'var(--mui-palette-primary-contrastText) !important',
-            '& .MuiSvgIcon-root, & svg': {
-              color: 'var(--mui-palette-primary-contrastText) !important',
-              fill: 'var(--mui-palette-primary-contrastText) !important'
-            }
-          },
-          [`&[aria-expanded] > .${menuClasses.button}.${menuClasses.active}`]: {
-            backgroundColor: 'var(--mui-palette-action-selected) !important'
+            fill: 'var(--mui-palette-primary-contrastText) !important'
           }
-        }),
+        },
+        [`&[aria-expanded] > .${menuClasses.button}.${menuClasses.active}`]: {
+          backgroundColor: 'var(--mui-palette-action-selected) !important'
+        }
+      }),
     [`&.${menuClasses.disabled} > .${menuClasses.button}`]: {
       color: 'var(--mui-palette-text-disabled)',
       '& *': {
@@ -60,13 +60,13 @@ const menuItemStyles = (theme: Theme, iconClass: string): MenuItemStyles => ({
       paddingBlock: theme.spacing(1.75)
     },
     [`&:not(.${menuClasses.active}):hover, &:not(.${menuClasses.active}):focus-visible, &:not(.${menuClasses.active})[aria-expanded="true"]`]:
-      {
-        backgroundColor: 'var(--mui-palette-action-hover)'
-      }
+    {
+      backgroundColor: 'var(--mui-palette-action-hover)'
+    }
   },
   icon: ({ level }) => ({
     marginInlineEnd: theme.spacing(2),
-    ...(level < 2 ? { fontSize: '1.375rem' } : { fontSize: '0.5rem', color: 'var(--mui-palette-text-secondary)' }),
+    ...(level < 2 ? { fontSize: '1.375rem', color: 'var(--mui-palette-primary-main)' } : { fontSize: '0.5rem', color: 'var(--mui-palette-text-secondary)' }),
     '& > i, & > svg': {
       fontSize: 'inherit'
     },

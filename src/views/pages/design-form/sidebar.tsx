@@ -78,7 +78,8 @@ const SidebarControls = () => {
                         padding: '8px',
                         borderRadius: '5px',
                         border: '1px solid #ccc',
-                        fontFamily: 'Quicksand'
+                        // Removed hardcoded fontFamily to inherit from theme
+
                     }}
                 />
             </div>

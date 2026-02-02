@@ -29,7 +29,7 @@ export type Config = {
     fontFamily?: string
 }
 const themeConfig: Config = {
-    templateName: 'ANHBEN',
+    templateName: 'Enterprise Console',
     homePageUrl: '/dashboards',
     settingsCookieName: 'o24openui',
     mode: 'light', // 'system', 'light', 'dark'
@@ -53,6 +53,6 @@ const themeConfig: Config = {
     },
     disableRipple: false, // true, false
     logoUrl: '', // Default logo from SVG
-    fontFamily: 'var(--font-quicksand-sans), Quicksand, sans-serif'
+    fontFamily: 'Quicksand, sans-serif'
 }
 export default themeConfig

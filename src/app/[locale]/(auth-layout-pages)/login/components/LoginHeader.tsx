@@ -13,13 +13,21 @@ const LoginHeader = ({ appTitle, welcomeText }: LoginHeaderProps) => (
     <Typography
       variant='h2'
       className='text-primary'
-      sx={{ fontFamily: 'Quicksand' }}
+      sx={{}}
     >
       {appTitle}
     </Typography>
-    <Box className="text-primary" sx={{ fontFamily: 'Quicksand' }}>
+    <Typography
+      variant="body1"
+      className='text-primary'
+      sx={{
+        fontSize: '16px',
+        fontWeight: 500,
+        fontFamily: 'var(--app-font-family)'
+      }}
+    >
       {welcomeText}
-    </Box>
+    </Typography>
   </Box>
 );
 

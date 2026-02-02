@@ -43,10 +43,10 @@ const SavingProduct = ({ dictionary, savingDataList, locale }: Props) => {
                         />
                         <CardContent sx={{ display: 'flex', flexDirection: 'column' }}>
                             <Box sx={{ flexGrow: 1 }}>
-                                <Typography variant="h6" sx={{ fontFamily: 'Quicksand', color: '#218838' }} gutterBottom>
+                                <Typography variant="h6" sx={{ color: '#218838' }} gutterBottom>
                                     {saving.productname}
                                 </Typography>
-                                <Typography variant="body2" sx={{ fontFamily: 'Quicksand' }} gutterBottom>
+                                <Typography variant="body2" gutterBottom>
                                     {saving.description}
                                 </Typography>
                             </Box>

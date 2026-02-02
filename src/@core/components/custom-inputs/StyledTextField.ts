@@ -5,38 +5,47 @@ import { styled } from "@mui/material/styles";
 
 export const StyledTextField = styled(TextField)({
     [`& .${outlinedInputClasses.root} .${outlinedInputClasses.notchedOutline}`]: {
-        fontFamily: "Quicksand"
+        // Remove fontFamily to inherit from dynamic theme
+
     },
     [`&:hover .${outlinedInputClasses.root} .${outlinedInputClasses.notchedOutline}`]: {
         borderColor: "#ffffff",
-        fontFamily: "Quicksand"
+        // Remove fontFamily to inherit from dynamic theme
+
     },
     [`& .${outlinedInputClasses.root}.${outlinedInputClasses.focused} .${outlinedInputClasses.notchedOutline}`]: {
         borderColor: "#ffffff",
-        fontFamily: "Quicksand"
+        // Remove fontFamily to inherit from dynamic theme
+
     },
     [`& .${outlinedInputClasses.input}`]: {
         color: "white",
-        fontFamily: "Quicksand"
+        // Remove fontFamily to inherit from dynamic theme
+
     },
     [`&:hover .${outlinedInputClasses.input}`]: {
         color: "#ffffff",
-        fontFamily: "Quicksand"
+        // Remove fontFamily to inherit from dynamic theme
+
     },
     [`& .${outlinedInputClasses.root}.${outlinedInputClasses.focused} .${outlinedInputClasses.input}`]: {
         color: "white",
-        fontFamily: "Quicksand"
+        // Remove fontFamily to inherit from dynamic theme
+
     },
     [`& .${inputLabelClasses.outlined}`]: {
         color: "white",
-        fontFamily: "Quicksand"
+        // Remove fontFamily to inherit from dynamic theme
+
     },
     [`&:hover .${inputLabelClasses.outlined}`]: {
         color: "#ffffff",
-        fontFamily: "Quicksand"
+        // Remove fontFamily to inherit from dynamic theme
+
     },
     [`& .${inputLabelClasses.outlined}.${inputLabelClasses.focused}`]: {
         color: "#ffffff",
-        fontFamily: "Quicksand"
+        // Remove fontFamily to inherit from dynamic theme
+
     }
 });

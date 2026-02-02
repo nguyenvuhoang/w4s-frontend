@@ -167,7 +167,7 @@ const MobileLayout = ({ data, dictionary }: Props) => {
                             <HomeIcon sx={{ color: '#0B9150', fontSize: '36px' }} />
                             <Typography
                                 variant="caption"
-                                sx={{ color: '#0B9150', fontFamily: 'Quicksand', marginTop: '4px', fontSize: '14px' }}
+                                sx={{ color: '#0B9150', marginTop: '4px', fontSize: '14px' }}
                             >
                                 Home
                             </Typography>
@@ -185,7 +185,7 @@ const MobileLayout = ({ data, dictionary }: Props) => {
                             <MenuBookIcon sx={{ color: '#0B9150', fontSize: '36px' }} />
                             <Typography
                                 variant="caption"
-                                sx={{ color: '#0B9150', fontFamily: 'Quicksand', marginTop: '4px', fontSize: '14px' }}
+                                sx={{ color: '#0B9150', marginTop: '4px', fontSize: '14px' }}
                             >
                                 User guide
                             </Typography>
@@ -203,7 +203,7 @@ const MobileLayout = ({ data, dictionary }: Props) => {
                             <HistoryIcon sx={{ color: '#0B9150', fontSize: '36px' }} />
                             <Typography
                                 variant="caption"
-                                sx={{ color: '#0B9150', fontFamily: 'Quicksand', marginTop: '4px', fontSize: '14px' }}
+                                sx={{ color: '#0B9150', marginTop: '4px', fontSize: '14px' }}
                             >
                                 History
                             </Typography>
@@ -221,7 +221,7 @@ const MobileLayout = ({ data, dictionary }: Props) => {
                             <SettingsIcon sx={{ color: '#0B9150', fontSize: '36px' }} />
                             <Typography
                                 variant="caption"
-                                sx={{ color: '#0B9150', fontFamily: 'Quicksand', marginTop: '4px', fontSize: '14px' }}
+                                sx={{ color: '#0B9150', marginTop: '4px', fontSize: '14px' }}
                             >
                                 Setting
                             </Typography>

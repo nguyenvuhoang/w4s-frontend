@@ -1,8 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
+
 @font-face {
   font-family: 'Quicksand';
   src: url('/fonts/Quicksand-Regular.woff') format('woff');
   font-weight: normal;
   font-style: normal;
+}
+
+:root {
+  --app-font-family: 'Quicksand', sans-serif;
+}
+
+body {
+  font-family: var(--app-font-family);
 }
 
 @tailwind base;

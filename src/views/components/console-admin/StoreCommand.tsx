@@ -244,7 +244,8 @@ const StoreCommand = ({ session, dictionary }: {
                                                                     cursor: 'text',
                                                                     backgroundColor: updatedItemId === item.id ? '#e0f8e9' : 'transparent',
                                                                     fontSize: '0.875rem',
-                                                                    fontFamily: 'Quicksand, sans-serif',
+                                                                    // Removed hardcoded fontFamily to inherit from theme
+
                                                                     whiteSpace: 'nowrap',
                                                                     overflow: 'hidden',
                                                                     textOverflow: 'ellipsis',
@@ -267,7 +268,8 @@ const StoreCommand = ({ session, dictionary }: {
                                                         }}
                                                         sx={{
                                                             fontSize: '0.875rem',
-                                                            fontFamily: 'Quicksand, sans-serif'
+                                                            // Removed hardcoded fontFamily to inherit from theme
+
                                                         }}
                                                     />
                                                 </Box>
@@ -309,7 +311,6 @@ const StoreCommand = ({ session, dictionary }: {
                                                             cursor: 'text',
                                                             backgroundColor: updatedItemId === item.id ? '#e0f8e9' : 'transparent',
                                                             fontSize: '0.875rem',
-                                                            fontFamily: 'Quicksand, sans-serif',
                                                             whiteSpace: 'nowrap',
                                                             overflow: 'hidden',
                                                             textOverflow: 'ellipsis',

@@ -83,7 +83,6 @@ const FallbackSpinner = ({ sx, loadingtext }: { sx?: BoxProps['sx'], loadingtext
             fontSize: '14px',
             color: '#193B69',
             marginTop: 1,
-            fontFamily: 'Quicksand'
           }}
         >
           {loadingtext || 'Loading, please wait...'}

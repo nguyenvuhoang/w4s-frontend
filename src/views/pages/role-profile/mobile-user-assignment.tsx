@@ -32,6 +32,7 @@ import {
     Typography
 } from '@mui/material';
 import { Session } from 'next-auth';
+import { useSettings } from '@core/hooks/useSettings';
 
 type Props = {
     dictionary: Awaited<ReturnType<typeof getDictionary>>;
@@ -41,6 +42,8 @@ type Props = {
 };
 
 const MobileUserAssignment = ({ dictionary, role, userdata, session }: Props) => {
+    const { settings } = useSettings();
+
     const {
         loadingUsers,
         // selections
@@ -173,15 +176,15 @@ const MobileUserAssignment = ({ dictionary, role, userdata, session }: Props) =>
                         <Table stickyHeader>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell sx={{ fontWeight: 'bold', color: '#225087', borderRight: '1px solid #ddd', fontFamily: "Quicksand", background: '#225087' }}>
-                                        <Typography variant="caption" fontWeight="bold" color="white" sx={{ fontFamily: "Quicksand" }}>
+                                    <TableCell sx={{ fontWeight: 'bold', color: '#225087', borderRight: '1px solid #ddd', fontFamily: settings.fontFamily, background: '#225087' }}>
+                                        <Typography variant="caption" fontWeight="bold" color="white" sx={{ fontFamily: settings.fontFamily }}>
                                             {dictionary['common']?.nodot || 'No.'}
                                         </Typography>
                                     </TableCell>
                                     <TableCell sx={{ borderRight: '1px solid #ddd', background: '#225087' }} />
                                     <TableCell sx={{ borderRight: '1px solid #ddd', verticalAlign: 'top', py: 1.5, background: '#225087' }}>
                                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                                            <Typography variant="caption" fontWeight="bold" color="white" sx={{ fontFamily: "Quicksand" }}>
+                                            <Typography variant="caption" fontWeight="bold" color="white" sx={{ fontFamily: settings.fontFamily }}>
                                                 {dictionary['common']?.username || 'Username'}
                                             </Typography>
                                             <TextField
@@ -215,7 +218,7 @@ const MobileUserAssignment = ({ dictionary, role, userdata, session }: Props) =>
                                     </TableCell>
                                     <TableCell sx={{ borderRight: '1px solid #ddd', verticalAlign: 'top', py: 1.5, background: '#225087' }}>
                                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                                            <Typography variant="caption" fontWeight="bold" color="white" sx={{ fontFamily: "Quicksand" }}>
+                                            <Typography variant="caption" fontWeight="bold" color="white" sx={{ fontFamily: settings.fontFamily }}>
                                                 {dictionary['common']?.fullname || 'Full Name'}
                                             </Typography>
                                             <TextField
@@ -441,7 +444,7 @@ const MobileUserAssignment = ({ dictionary, role, userdata, session }: Props) =>
                                     <TableCell sx={{ background: '#225087', borderRight: '1px solid #ddd' }} />
                                     <TableCell sx={{ background: '#225087', borderRight: '1px solid #ddd', verticalAlign: 'top', py: 1.5 }}>
                                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                                            <Typography variant="caption" fontWeight="bold" color="white" sx={{ fontFamily: "Quicksand" }}>
+                                            <Typography variant="caption" fontWeight="bold" color="white" sx={{ fontFamily: settings.fontFamily }}>
                                                 {dictionary['common']?.username || 'Username'}
                                             </Typography>
                                             <TextField
@@ -475,7 +478,7 @@ const MobileUserAssignment = ({ dictionary, role, userdata, session }: Props) =>
                                     </TableCell>
                                     <TableCell sx={{ background: '#225087', borderRight: '1px solid #ddd', verticalAlign: 'top', py: 1.5 }}>
                                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                                            <Typography variant="caption" fontWeight="bold" color="white" sx={{ fontFamily: "Quicksand" }}>
+                                            <Typography variant="caption" fontWeight="bold" color="white" sx={{ fontFamily: settings.fontFamily }}>
                                                 {dictionary['common']?.fullname || 'Full Name'}
                                             </Typography>
                                             <TextField
@@ -523,12 +526,12 @@ const MobileUserAssignment = ({ dictionary, role, userdata, session }: Props) =>
                                             }}
                                         >
                                             <TableCell
-                                                sx={{ borderRight: '1px solid #ddd', color: '#225087', fontFamily: "Quicksand" }}
+                                                sx={{ borderRight: '1px solid #ddd', color: '#225087', fontFamily: settings.fontFamily }}
                                             >
                                                 {index + 1}
                                             </TableCell>
                                             <TableCell
-                                                sx={{ borderRight: '1px solid #ddd', color: '#225087', fontFamily: "Quicksand" }}
+                                                sx={{ borderRight: '1px solid #ddd', color: '#225087', fontFamily: settings.fontFamily }}
                                             >
                                                 <Checkbox
                                                     checked={selectedRight.includes(user.id)}
@@ -541,10 +544,10 @@ const MobileUserAssignment = ({ dictionary, role, userdata, session }: Props) =>
                                                     }}
                                                 />
                                             </TableCell>
-                                            <TableCell sx={{ borderRight: '1px solid #ddd', color: '#225087', fontFamily: "Quicksand" }}>
+                                            <TableCell sx={{ borderRight: '1px solid #ddd', color: '#225087', fontFamily: settings.fontFamily }}>
                                                 {user.user_name}
                                             </TableCell>
-                                            <TableCell sx={{ borderRight: '1px solid #ddd', color: '#225087', fontFamily: "Quicksand" }}>
+                                            <TableCell sx={{ borderRight: '1px solid #ddd', color: '#225087', fontFamily: settings.fontFamily }}>
                                                 {`${user.first_name || ''} ${user.middle_name || ''} ${user.last_name || ''}`.trim() + (user.phone ? ` (${user.phone})` : '')}
                                             </TableCell>
                                         </TableRow>

@@ -96,12 +96,12 @@ const ReportPageContent = ({ dictionary, reports, session, locale }: {
                         fontWeight: 'bold',
                     }}
                 >
-                    <Typography variant="h5" sx={{ fontFamily: 'Quicksand, sans-serif', color: "white", justifyContent: "center", textAlign: "center" }}>
+                    <Typography variant="h5" sx={{ color: "white", justifyContent: "center", textAlign: "center" }}>
                         {dictionary['report'].reportmenu}
                     </Typography>
                 </Box>
 
-                <Box sx={{ padding: '20px', display: 'flex', justifyContent: 'center'}}>
+                <Box sx={{ padding: '20px', display: 'flex', justifyContent: 'center' }}>
                     <TextField
                         label="Search Report Name"
                         variant="outlined"

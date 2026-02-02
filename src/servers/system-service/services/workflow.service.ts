@@ -1,8 +1,9 @@
 import { env } from '@/env.mjs';
-import { BODataResponse, FODataResponse, RunBoDynamicDataRequest, RunDynamicDataRequest, RunFoDataRequest, RunFoDynamicDataRequest, SearchDataRequest, ViewDataResponse } from "@shared/types/systemTypes";
+import { BODataResponse, FODataResponse, RunBoDynamicDataRequest, RunDynamicDataRequest, RunFoDataRequest, RunFoDynamicDataRequest, SearchDataRequest, SystemDataRequest, SystemSearchDataRequest, ViewDataResponse } from "@shared/types/systemTypes";
 import { apiPost, createDefaultBody } from '../../lib/api';
 import http from "../../lib/http";
 import Cookies from 'js-cookie';
+import { LEARNAPICODE } from '@/data/LearnAPICode';
 
 /**
  * Workflow Service
@@ -16,7 +17,6 @@ export const workflowService = {
     runBO: ({ sessiontoken, learnapi, workflowid, commandname, pageSize, pageIndex, parameters, issearch }: SearchDataRequest) => {
         // Validate commandname to prevent empty calls (only when issearch is true and commandname is expected)
         if (issearch && (!commandname || commandname.trim() === '')) {
-            console.warn('âš ï¸ runBO called with empty commandname for search operation, skipping API call');
             return Promise.resolve({
                 status: 400,
                 payload: {
@@ -28,7 +28,6 @@ export const workflowService = {
             } as any);
         }
 
-        const selectedApp = Cookies.get('selected_app') || 'PORTAL';
         return http.post<BODataResponse>('/system-service',
             {
                 bo: [
@@ -49,7 +48,7 @@ export const workflowService = {
                 baseUrl: process.env.NEXT_PUBLIC_API_URL,
                 headers: {
                     uid: `${sessiontoken}`,
-                    app: selectedApp
+                    app: env.NEXT_PUBLIC_APPLICATION_CODE || 'SYS'
                 }
             })
     },
@@ -59,7 +58,7 @@ export const workflowService = {
      */
     runFO: ({ sessiontoken, learnapi, workflowid }: RunFoDataRequest) =>
         (() => {
-            const selectedApp = Cookies.get('selected_app') || env.NEXT_PUBLIC_APPLICATION_CODE || 'BO';
+            const selectedApp = env.NEXT_PUBLIC_APPLICATION_CODE || 'BO';
             return http.post<FODataResponse>('/system-service',
                 {
                     bo: [
@@ -105,7 +104,7 @@ export const workflowService = {
      */
     runBODynamic: ({ sessiontoken, txFo, encrypt }: RunBoDynamicDataRequest & { encrypt?: boolean }) =>
         (() => {
-            const selectedApp = Cookies.get('selected_app') || env.NEXT_PUBLIC_APPLICATION_CODE || 'BO';
+            const selectedApp = env.NEXT_PUBLIC_APPLICATION_CODE || 'BO';
             return http.post<FODataResponse>('/system-service',
                 txFo,
                 {
@@ -127,5 +126,44 @@ export const workflowService = {
             sessiontoken as string,
             { lang: "en", app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'SYS' }
         ),
+
+    searchWorkflowDefinition: ({ sessiontoken, language, pageindex, pagesize, searchtext }: SystemSearchDataRequest) =>
+        http.post<BODataResponse>('/system-service',
+            {
+                learn_api: "LEARN_API_BO_SIMPLE_SEARCH_WF",
+                fields: {
+                    pageindex: pageindex,
+                    pagesize: pagesize,
+                    searchtext: searchtext
+                }
+            },
+            {
+                baseUrl: process.env.NEXT_PUBLIC_API_URL,
+                headers: {
+                    uid: `${sessiontoken}`,
+                    lang: language,
+                    app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
+                }
+            }),
+
+    searchWorkflowStepByWorkflowId: ({ sessiontoken, language, pageindex, pagesize, searchtext, workflowid }: SystemSearchDataRequest) =>
+        http.post<BODataResponse>('/system-service',
+            {
+                learn_api: LEARNAPICODE.LEARN_API_GET_WF_STEP_BY_WF_ID,
+                fields: {
+                    pageindex: pageindex,
+                    pagesize: pagesize,
+                    searchtext: searchtext,
+                    workflowid: workflowid
+                }
+            },
+            {
+                baseUrl: process.env.NEXT_PUBLIC_API_URL,
+                headers: {
+                    uid: `${sessiontoken}`,
+                    lang: language,
+                    app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
+                }
+            })
 }
 

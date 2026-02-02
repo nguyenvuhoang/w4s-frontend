@@ -45,7 +45,7 @@ const ViewAreaItem = ({ input, dictionary, session, locale, control }: ViewImage
       <Grid size={{ xs: 12 }} sx={{ marginBottom: '16px' }}>
         <Typography
           variant="subtitle1"
-          sx={{ marginBottom: '8px', fontFamily: 'Quicksand' }}
+          sx={{ marginBottom: '8px' }}
         >
           {input?.default?.name}
         </Typography>

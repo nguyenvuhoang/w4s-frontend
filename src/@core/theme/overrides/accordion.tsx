@@ -16,16 +16,16 @@ const accordion = (skin: Skin): Theme['components'] => ({
         transition: theme.transitions.create(['margin', 'border-radius', 'box-shadow']),
         ...(skin !== 'bordered'
           ? {
-              boxShadow: 'var(--mui-customShadows-xs)'
-            }
+            boxShadow: 'var(--mui-customShadows-xs)'
+          }
           : {
-              '&:not(.Mui-expanded) + &:not(.Mui-expanded)': {
-                borderBlockStart: 0
-              },
-              '&:not(.Mui-expanded):has(+ &:not(.Mui-expanded))': {
-                borderBlockEnd: 0
-              }
-            }),
+            '&:not(.Mui-expanded) + &:not(.Mui-expanded)': {
+              borderBlockStart: 0
+            },
+            '&:not(.Mui-expanded):has(+ &:not(.Mui-expanded))': {
+              borderBlockEnd: 0
+            }
+          }),
         '&:not(.Mui-expanded):has(+ .Mui-expanded)': {
           borderBottomLeftRadius: 'var(--mui-shape-borderRadius)',
           borderBottomRightRadius: 'var(--mui-shape-borderRadius)'
@@ -61,8 +61,7 @@ const accordion = (skin: Skin): Theme['components'] => ({
         },
         '& .MuiTypography-root': {
           color: 'inherit',
-          fontWeight: theme.typography.fontWeightMedium,
-          fontFamily: 'Quicksand !important'
+          fontWeight: theme.typography.fontWeightMedium
         }
       }),
       content: {

@@ -63,7 +63,8 @@ const tabs: Theme['components'] = {
         lineHeight: 1.4667,
         padding: theme.spacing(2, 5.5),
         minBlockSize: 38,
-        fontFamily: 'Quicksand !important',
+        // Remove fontFamily to inherit from dynamic theme
+
         '& > .MuiTab-iconWrapper': {
           fontSize: '1.125rem',
           ...(ownerState.iconPosition === 'top' && {

@@ -31,6 +31,7 @@ import {
 } from '@mui/material';
 import Button from '@mui/material/Button';
 import { Session } from 'next-auth';
+import { useSettings } from '@core/hooks/useSettings';
 
 
 type Props = {
@@ -42,6 +43,8 @@ type Props = {
 
 
 const UserAssignment = ({ dictionary, role, userdata, session }: Props) => {
+
+    const { settings } = useSettings();
 
     const {
         loadingUsers,
@@ -129,8 +132,8 @@ const UserAssignment = ({ dictionary, role, userdata, session }: Props) => {
                         <Table stickyHeader>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell sx={{ fontWeight: 'bold', color: '#225087', borderRight: '1px solid #ddd', fontFamily: "Quicksand", background: '#225087' }}>
-                                        <Typography variant="caption" fontWeight="bold" color="white" sx={{ fontFamily: "Quicksand" }}>
+                                    <TableCell sx={{ fontWeight: 'bold', color: '#225087', borderRight: '1px solid #ddd', fontFamily: settings.fontFamily, background: '#225087' }}>
+                                        <Typography variant="caption" fontWeight="bold" color="white" sx={{ fontFamily: settings.fontFamily }}>
                                             {dictionary['common'].nodot}
                                         </Typography>
                                     </TableCell>
@@ -138,7 +141,7 @@ const UserAssignment = ({ dictionary, role, userdata, session }: Props) => {
 
                                     <TableCell sx={{ borderRight: '1px solid #ddd', verticalAlign: 'top', py: 1.5, background: '#225087' }} >
                                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                                            <Typography variant="caption" fontWeight="bold" color="white" sx={{ fontFamily: "Quicksand" }}>
+                                            <Typography variant="caption" fontWeight="bold" color="white" sx={{ fontFamily: settings.fontFamily }}>
                                                 {dictionary['common'].username || 'Username'}
                                             </Typography>
                                             <TextField
@@ -173,7 +176,7 @@ const UserAssignment = ({ dictionary, role, userdata, session }: Props) => {
 
                                     <TableCell sx={{ borderRight: '1px solid #ddd', verticalAlign: 'top', py: 1.5, background: '#225087' }}>
                                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                                            <Typography variant="caption" fontWeight="bold" color="white" sx={{ fontFamily: "Quicksand" }}>
+                                            <Typography variant="caption" fontWeight="bold" color="white" sx={{ fontFamily: settings.fontFamily }}>
                                                 {dictionary['common'].fullname || 'Full Name'}
                                             </Typography>
                                             <TextField
@@ -382,7 +385,7 @@ const UserAssignment = ({ dictionary, role, userdata, session }: Props) => {
                                     <TableCell sx={{ background: '#225087', borderRight: '1px solid #ddd' }} />
                                     <TableCell sx={{ background: '#225087', borderRight: '1px solid #ddd', verticalAlign: 'top', py: 1.5 }}>
                                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                                            <Typography variant="caption" fontWeight="bold" color="white" sx={{ fontFamily: "Quicksand" }}>
+                                            <Typography variant="caption" fontWeight="bold" color="white" sx={{ fontFamily: settings.fontFamily }}>
                                                 {dictionary['common'].username || 'Username'}
                                             </Typography>
                                             <TextField
@@ -417,7 +420,7 @@ const UserAssignment = ({ dictionary, role, userdata, session }: Props) => {
                                     </TableCell>
                                     <TableCell sx={{ background: '#225087', borderRight: '1px solid #ddd', verticalAlign: 'top', py: 1.5 }}>
                                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                                            <Typography variant="caption" fontWeight="bold" color="white" sx={{ fontFamily: "Quicksand" }}>
+                                            <Typography variant="caption" fontWeight="bold" color="white" sx={{ fontFamily: settings.fontFamily }}>
                                                 {dictionary['common'].fullname || 'Full Name'}
                                             </Typography>
                                             <TextField
@@ -465,20 +468,20 @@ const UserAssignment = ({ dictionary, role, userdata, session }: Props) => {
                                         }}
                                     >
                                         <TableCell
-                                            sx={{ borderRight: '1px solid #ddd', color: '#225087', fontFamily: "Quicksand" }}
+                                            sx={{ borderRight: '1px solid #ddd', color: '#225087', fontFamily: settings.fontFamily }}
                                         >
                                             {index + 1}
                                         </TableCell>
                                         <TableCell
-                                            sx={{ borderRight: '1px solid #ddd', color: '#225087', fontFamily: "Quicksand" }}
+                                            sx={{ borderRight: '1px solid #ddd', color: '#225087', fontFamily: settings.fontFamily }}
                                         >
                                             <Checkbox
                                                 checked={selectedRight.includes(user.id)}
                                                 onChange={() => handleRightSelect(user.id)}
                                             />
                                         </TableCell>
-                                        <TableCell sx={{ borderRight: '1px solid #ddd', color: '#225087', fontFamily: "Quicksand" }}>{user.username}</TableCell>
-                                        <TableCell sx={{ borderRight: '1px solid #ddd', color: '#225087', fontFamily: "Quicksand" }}>{user.fullname}</TableCell>
+                                        <TableCell sx={{ borderRight: '1px solid #ddd', color: '#225087', fontFamily: settings.fontFamily }}>{user.username}</TableCell>
+                                        <TableCell sx={{ borderRight: '1px solid #ddd', color: '#225087', fontFamily: settings.fontFamily }}>{user.fullname}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>

@@ -87,7 +87,7 @@ const ContentWrapper = ({
                 <Box>
                     <Typography
                         variant="caption"
-                        sx={{ color: '#666', mt: 1, fontStyle: 'italic', fontFamily: 'QuickSand, sans-serif' }}
+                        sx={{ color: '#666', mt: 1, fontStyle: 'italic' }}
                     >
                         {issearch ? dictionary['common'].searchformlabel : dictionary['common'].modifyformlabel}
                     </Typography>

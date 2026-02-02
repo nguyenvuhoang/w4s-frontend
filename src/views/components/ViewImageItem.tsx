@@ -249,7 +249,8 @@ const ViewImageItem = ({ input, onChangeValue, dictionary, session }: ViewImageI
             fontStyle: 'italic',
             color: '#666',
             fontSize: '1rem',
-            fontFamily: 'QuickSand, sans-serif',
+            // Removed hardcoded fontFamily to inherit from theme
+
           }}
         >
           {input.default.name}
@@ -264,7 +265,8 @@ const ViewImageItem = ({ input, onChangeValue, dictionary, session }: ViewImageI
               color: '#333',
               fontSize: '0.85rem',
               wordBreak: 'break-all',
-              fontFamily: 'QuickSand, sans-serif',
+              // Removed hardcoded fontFamily to inherit from theme
+
             }}
           >
             <strong>{trackerCode}</strong>
@@ -277,7 +279,8 @@ const ViewImageItem = ({ input, onChangeValue, dictionary, session }: ViewImageI
                 display: 'block',
                 color: 'orange',
                 fontSize: '0.8rem',
-                fontFamily: 'QuickSand, sans-serif',
+                // Removed hardcoded fontFamily to inherit from theme
+
                 mt: 0.5,
               }}
             >

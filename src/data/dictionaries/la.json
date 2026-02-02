@@ -1,5 +1,8 @@
 {
   "common": {
+    "development": "ການພັດທະນາ",
+    "production": "ການຜະລິດ",
+    "staging": "ການທົດສອບ",
     "home": "ບ້ານ",
     "account_card_wallet": "ບັນຊີ/ບັດ/ກະເປົາເງິນ",
     "required": "ຕ້ອງການ",

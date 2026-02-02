@@ -50,7 +50,8 @@ const list: Theme['components'] = {
           color: 'white !important',
           '& .MuiTypography-root': {
             color: 'white !important',
-            fontFamily: 'Quicksand !important'
+            // Remove fontFamily to inherit from dynamic theme
+
 
           },
           '& + .MuiListItemSecondaryAction-root .MuiIconButton-root': {

@@ -1,5 +1,8 @@
 {
   "common": {
+    "development": "Phát triển",
+    "production": "Sản xuất",
+    "staging": "Kiểm thử",
     "home": "Trang chủ",
     "account_card_wallet": "Tài khoản/Thẻ/Ví",
     "required": "Bắt buộc",

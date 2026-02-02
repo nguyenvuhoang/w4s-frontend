@@ -1,10 +1,9 @@
 "use client";
 
-import SearchInput from "@components/forms/search-input/page";
 import { Locale } from "@/configs/i18n";
 import { WORKFLOWCODE } from "@/data/WorkflowCode";
 import { workflowService } from "@/servers/system-service";
-import { getDictionary } from "@utils/getDictionary";
+import SearchInput from "@components/forms/search-input/page";
 import {
   Box,
   Button,
@@ -12,12 +11,18 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Grid,
   Pagination,
+  Stack,
+  Typography,
+  useTheme,
 } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { getDictionary } from "@utils/getDictionary";
 import { Session } from "next-auth";
 import { useCallback, useEffect, useState } from "react";
 import WorkflowDefinition from "./workflow-definition";
+import { getLocalizedUrl } from "@/shared/utils/i18n";
 
 interface WorkflowInitialData {
   items?: any[];
@@ -55,6 +60,7 @@ const WorkflowManagementContent = ({
   const [resultDeleteWfStep, setResultDeleteWfStep] = useState<any>(null);
   const [openConfirm, setOpenConfirm] = useState(false);
   const [deleteType, setDeleteType] = useState<"wfdef" | "wfstep" | null>(null);
+  const theme = useTheme();
 
   const fetchData = useCallback(async () => {
     console.log("pageeeee: ", page);
@@ -66,24 +72,12 @@ const WorkflowManagementContent = ({
       searchText
     );
 
-    const res = await workflowService.runBODynamic({
-      sessiontoken: session?.user?.token,
-      txFo: {
-        bo: [
-          {
-            use_microservice: true,
-            input: {
-              workflowid: "",
-              learn_api: WORKFLOWCODE.WFDEF_SIMPLE_SEARCH,
-              fields: {
-                searchtext: searchText,
-                pageindex: page - 1,
-                pagesize: 10,
-              },
-            },
-          },
-        ],
-      },
+    const res = await workflowService.searchWorkflowDefinition({
+      sessiontoken: session?.user?.token as string,
+      pageindex: page - 1,
+      pagesize: 10,
+      searchtext: searchText,
+      language: locale as Locale,
     });
 
     if (res?.payload?.dataresponse?.data) {
@@ -110,20 +104,13 @@ const WorkflowManagementContent = ({
     console.log("calling loadWfStep with workflowid:", workflowid);
 
     try {
-      const res = await workflowService.runBODynamic({
-        sessiontoken: session?.user?.token,
-        txFo: {
-          bo: [
-            {
-              use_microservice: true,
-              input: {
-                workflowid: "",
-                learn_api: WORKFLOWCODE.WFSTEP_SEARCH_BY_WORKFLOW_ID,
-                fields: { workflowid: workflowid },
-              },
-            },
-          ],
-        },
+      const res = await workflowService.searchWorkflowStepByWorkflowId({
+        sessiontoken: session?.user?.token as string,
+        pageindex: page - 1,
+        pagesize: 10,
+        searchtext: searchText,
+        language: locale as Locale,
+        workflowid: workflowid
       });
 
       let data: any[] = [];
@@ -283,11 +270,12 @@ const WorkflowManagementContent = ({
   };
   return (
     <>
-      <Grid container spacing={2} sx={{ my: 5 }}>
-        <Grid
-          size={{ xs: 12, sm: 6, md: 4 }}
-          sx={{ borderColor: "#E0E0E0", borderWidth: 1, borderRadius: 1 }}
-        >
+      <Stack
+        direction={{ xs: "column", md: "row" }}
+        spacing={2}
+        sx={{ my: 3, alignItems: "center", justifyContent: "space-between" }}
+      >
+        <Box sx={{ width: { xs: "100%", md: 400 } }}>
           <SearchInput
             fullWidth
             size="small"
@@ -300,85 +288,52 @@ const WorkflowManagementContent = ({
               setPage(1);
             }}
           />
-        </Grid>
-        {/* Button Create Workflow Definition */}
-        <Grid sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+        </Box>
+
+        <Stack direction="row" spacing={2}>
           <Button
-            fullWidth
             variant="contained"
-            sx={{
-              backgroundColor: "#0B6E47",
-              "&:hover": {
-                bgcolor: "#095c3bff",
-              },
-            }}
+            color="primary"
+            startIcon={<AddIcon />}
             onClick={() =>
-              window.open("/workflow-management/add-workflow-definition")
+              window.open(getLocalizedUrl("/workflow-management/add-workflow-definition", locale as string))
             }
           >
             Add WfDef
           </Button>
-        </Grid>
 
-        {/* Button Create Workflow Step */}
-        <Grid sx={{ display: "flex", gap: 2, alignItems: "center" }}>
           <Button
-            fullWidth
             variant="contained"
-            sx={{
-              backgroundColor: "#3B3E58",
-              "&:hover": {
-                bgcolor: "#292c44ff",
-              },
-            }}
+            color="secondary" // Use secondary or info to differentiate
+            startIcon={<AddIcon />}
             onClick={() =>
-              window.open("/workflow-management/add-workflow-step")
+              window.open(getLocalizedUrl("/workflow-management/add-workflow-step", locale as string))
             }
           >
             Add WfStep
           </Button>
-        </Grid>
-        {/* Button Delte Workflow Def */}
-        <Grid sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+
           <Button
             disabled={selectedWfDef.length === 0}
-            fullWidth
-            variant="contained"
-            sx={{
-              backgroundColor: "#923458ff",
-              "&:hover": {
-                bgcolor: "#83264aff",
-              },
-              "&.Mui-disabled": {
-                bgcolor: "#804b5fff",
-              },
-            }}
+            variant="outlined"
+            color="error"
+            startIcon={<DeleteIcon />}
             onClick={() => handleOpenConfirm("wfdef")}
           >
             Delete WfDef
           </Button>
-        </Grid>
-        {/* Button Delte Workflow Step */}
-        <Grid sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+
           <Button
             disabled={selectedWfStep.length === 0}
-            fullWidth
-            variant="contained"
-            sx={{
-              backgroundColor: "#7b44a0ff",
-              "&:hover": {
-                bgcolor: "#7431a0ff",
-              },
-              "&.Mui-disabled": {
-                bgcolor: "#7f559bff",
-              },
-            }}
+            variant="outlined"
+            color="error"
+            startIcon={<DeleteIcon />}
             onClick={() => handleOpenConfirm("wfstep")}
           >
             Delete WfStep
           </Button>
-        </Grid>
-      </Grid>
+        </Stack>
+      </Stack>
       <Box sx={{ mt: 5, width: "100%" }}>
         <WorkflowDefinition
           items={wfDefDataState}
@@ -404,19 +359,7 @@ const WorkflowManagementContent = ({
           onChange={(_, value) => setPage(value)}
           color="primary"
           shape="rounded"
-          sx={{
-            "& .MuiPaginationItem-root": {
-              color: "#fff",
-              backgroundColor: "#555",
-            },
-            "& .MuiPaginationItem-root:hover": {
-              backgroundColor: "#666",
-            },
-            "& .MuiPaginationItem-root.Mui-selected": {
-              backgroundColor: "#048B47",
-              color: "#fff",
-            },
-          }}
+        /* Remove custom styling to let theme control it, or keep minimal if needed */
         />
       </Box>
       <Dialog open={openConfirm} onClose={() => setOpenConfirm(false)}>

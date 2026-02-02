@@ -24,7 +24,7 @@ const Center = ({ children }: { children: React.ReactNode }) => {
                         className="mx-auto"
                     />
                 </Box>
-                <Box className="space-y-12 text-center text-white body font-sans">
+                <Box className="space-y-12 text-center text-white body">
                     {children}
                 </Box>
             </Box>

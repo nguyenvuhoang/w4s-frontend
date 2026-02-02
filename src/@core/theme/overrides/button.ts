@@ -35,7 +35,6 @@ const button: Theme['components'] = {
         '&.Mui-disabled': {
           opacity: 0.45
         },
-        fontFamily: 'Quicksand',
         ...(ownerState.variant === 'text'
           ? {
             ...(ownerState.size === 'small' && {
@@ -130,7 +129,7 @@ const button: Theme['components'] = {
     },
     variants: [
       {
-        props: { variant: 'text', color: 'primary'},
+        props: { variant: 'text', color: 'primary' },
         style: {
           '&:not(.Mui-disabled):hover, &:not(.Mui-disabled):active, &.Mui-focusVisible:not(:has(span.MuiTouchRipple-root))':
           {

@@ -21,25 +21,25 @@ const menuItemStyles = (verticalNavOptions: VerticalNavState, theme: Theme): Men
       ...(!isPopoutWhenCollapsed || popoutExpanded || (popoutCollapsed && level === 0)
         ? {
           marginBlockStart: '4px',
-          color: (active || (rest as any).open) ? '#066a4c !important' : 'var(--menu-inactive-color, rgba(255, 255, 255, 0.85)) !important'
+          color: (active || (rest as any).open) ? 'var(--mui-palette-primary-main) !important' : 'var(--menu-inactive-color, rgba(255, 255, 255, 0.85)) !important'
         }
         : {
           marginBlockStart: 0,
-          color: (active || (rest as any).open) ? '#066a4c !important' : 'var(--menu-inactive-color, rgba(255, 255, 255, 0.85)) !important'
+          color: (active || (rest as any).open) ? 'var(--mui-palette-primary-main) !important' : 'var(--menu-inactive-color, rgba(255, 255, 255, 0.85)) !important'
         }),
       transition: 'all 0.3s ease !important',
       [`&.${menuClasses.subMenuRoot}.${menuClasses.open} > .${menuClasses.button}, &.${menuClasses.subMenuRoot} > .${menuClasses.button}.${menuClasses.active}`]:
       {
         backgroundImage: 'linear-gradient(90deg, #EAF6FF 0%, #F3FFE9 100%) !important',
-        color: '#066a4c !important',
+        color: 'var(--mui-palette-primary-main) !important',
         borderRadius: '16px !important',
         marginInline: '12px !important',
         boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.05) !important',
         [`& .${menuClasses.icon}`]: {
-          color: '#066a4c !important'
+          color: 'var(--mui-palette-primary-main) !important'
         },
         [`& .${menuClasses.label}`]: {
-          color: '#066a4c !important'
+          color: 'var(--mui-palette-primary-main) !important'
         }
       },
       [`&.${menuClasses.disabled} > .${menuClasses.button}`]: {
@@ -49,7 +49,7 @@ const menuItemStyles = (verticalNavOptions: VerticalNavState, theme: Theme): Men
         ...(popoutCollapsed && level > 0
           ? {
             backgroundImage: 'linear-gradient(90deg, #EAF6FF 0%, #F3FFE9 100%) !important',
-            color: '#066a4c !important',
+            color: 'var(--mui-palette-primary-main) !important',
             borderRadius: '16px !important',
             marginInline: '12px !important',
             [`& .${menuClasses.icon}`]: {
@@ -57,13 +57,13 @@ const menuItemStyles = (verticalNavOptions: VerticalNavState, theme: Theme): Men
             }
           }
           : {
-            color: '#066a4c !important',
+            color: 'var(--mui-palette-primary-main) !important',
             backgroundImage: 'linear-gradient(90deg, #EAF6FF 0%, #F3FFE9 100%) !important',
             boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1) !important',
             borderRadius: '16px !important',
             marginInline: '12px !important',
             [`& .${menuClasses.icon}`]: {
-              color: '#066a4c !important'
+              color: 'var(--mui-palette-primary-main) !important'
             }
           })
       }
@@ -134,7 +134,7 @@ const menuItemStyles = (verticalNavOptions: VerticalNavState, theme: Theme): Men
       marginInlineEnd: theme.spacing(2)
     },
     label: ({ level, active, ...rest }) => ({
-      color: (active || (rest as any).open) ? '#066a4c !important' : 'var(--menu-inactive-color, rgba(255, 255, 255, 0.85)) !important',
+      color: (active || (rest as any).open) ? 'var(--mui-palette-primary-main) !important' : 'var(--menu-inactive-color, rgba(255, 255, 255, 0.85)) !important',
       fontWeight: (active || (rest as any).open) ? 600 : 400,
       ...((!isPopoutWhenCollapsed || popoutExpanded || (popoutCollapsed && level === 0)) && {
         transition: `opacity ${transitionDuration}ms ease-in-out`,
@@ -149,7 +149,7 @@ const menuItemStyles = (verticalNavOptions: VerticalNavState, theme: Theme): Men
     subMenuExpandIcon: ({ active, open }) => ({
       fontSize: '1.375rem',
       marginInlineStart: theme.spacing(2),
-      color: (active || open) ? '#066a4c !important' : 'var(--menu-inactive-color, rgba(255, 255, 255, 0.7)) !important',
+      color: (active || open) ? 'var(--mui-palette-primary-main) !important' : 'var(--menu-inactive-color, rgba(255, 255, 255, 0.7)) !important',
       '& i, & svg': {
         fontSize: 'inherit'
       }

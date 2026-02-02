@@ -86,7 +86,8 @@ const input: Theme['components'] = {
   MuiInputLabel: {
     styleOverrides: {
       root: {
-        fontFamily: 'Quicksand, sans-serif',
+        // Remove fontFamily to inherit from dynamic theme
+
         color: '#006400',
         '&.MuiInputLabel-filled:not(.MuiInputLabel-shrink), &.MuiInputLabel-outlined:not(.MuiInputLabel-shrink)': {
           transform: 'translate(16px, 17px) scale(1)'
@@ -192,7 +193,8 @@ const input: Theme['components'] = {
         letterSpacing: 'unset',
         marginBlockStart: theme.spacing(1),
         marginInline: theme.spacing(4),
-        fontFamily: 'Quicksand, sans-serif',
+        // Remove fontFamily to inherit from dynamic theme
+
       })
     }
   }

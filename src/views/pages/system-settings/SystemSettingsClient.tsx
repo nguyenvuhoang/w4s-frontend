@@ -22,9 +22,10 @@ import {
 } from '@mui/material'
 import { useSettings } from '@core/hooks/useSettings'
 import primaryColorConfig from '@/configs/primaryColorConfig'
+import { env } from '@/env.mjs'
 
 const fontOptions = [
-    { label: 'Quicksand (Default)', value: 'var(--font-quicksand-sans), Quicksand, sans-serif' },
+    { label: 'Quicksand (Default)', value: 'Quicksand, sans-serif' },
     { label: 'Inter', value: 'Inter, sans-serif' },
     { label: 'Roboto', value: 'Roboto, sans-serif' },
     { label: 'Open Sans', value: '"Open Sans", sans-serif' },
@@ -43,7 +44,7 @@ const SystemSettingsClient = ({ presetLogos = [], serverSettings = {} }: SystemS
         logoUrl: serverSettings.logoUrl || settings.logoUrl || '',
         primaryColor: serverSettings.primaryColor || settings.primaryColor || primaryColorConfig[0].main,
         fontFamily: serverSettings.fontFamily || settings.fontFamily || fontOptions[0].value,
-        brandingName: serverSettings.brandingName || settings.brandingName || ''
+        brandingName: env.NEXT_PUBLIC_APPLICATION_TITLE || serverSettings.brandingName || settings.brandingName || ''
     })
 
     const [galleryOpen, setGalleryOpen] = useState(false)
@@ -136,11 +137,11 @@ const SystemSettingsClient = ({ presetLogos = [], serverSettings = {} }: SystemS
                         <Stack spacing={5}>
                             <TextField
                                 fullWidth
-                                label='Branding Name (Branch Name)'
+                                label='Branding Name'
                                 placeholder='Enterprise Console'
                                 value={formData.brandingName}
                                 onChange={handleChange('brandingName')}
-                                sx={{ fontFamily: 'Quicksand, sans-serif' }}
+                                sx={{}}
                             />
                             <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mt: 2 }}>
                                 <TextField
@@ -150,14 +151,14 @@ const SystemSettingsClient = ({ presetLogos = [], serverSettings = {} }: SystemS
                                     value={formData.logoUrl}
                                     onChange={handleChange('logoUrl')}
                                     helperText='Web URL, Base64, or pick from gallery'
-                                    sx={{ '& .MuiFormHelperText-root': { fontFamily: 'Quicksand, sans-serif' }, fontFamily: 'Quicksand, sans-serif' }}
+                                    sx={{ '& .MuiFormHelperText-root': {} }}
                                 />
                                 <Box sx={{ display: 'flex', gap: 2, width: '100%', mt: 2 }}>
                                     <Button
                                         variant='outlined'
                                         component='label'
                                         size='small'
-                                        sx={{ whiteSpace: 'nowrap', fontFamily: 'Quicksand, sans-serif' }}
+                                        sx={{ whiteSpace: 'nowrap' }}
                                     >
                                         Upload File
                                         <input type='file' hidden accept='image/*' onChange={handleFileUpload} />
@@ -166,7 +167,7 @@ const SystemSettingsClient = ({ presetLogos = [], serverSettings = {} }: SystemS
                                         variant='outlined'
                                         size='small'
                                         onClick={() => setGalleryOpen(true)}
-                                        sx={{ fontFamily: 'Quicksand, sans-serif' }}
+                                        sx={{}}
                                     >
                                         Choose from Gallery
                                     </Button>
@@ -274,7 +275,7 @@ const SystemSettingsClient = ({ presetLogos = [], serverSettings = {} }: SystemS
 
             {/* Logo Gallery Modal */}
             <Dialog open={galleryOpen} onClose={() => setGalleryOpen(false)} maxWidth='md' fullWidth>
-                <DialogTitle sx={{ fontFamily: 'Quicksand, sans-serif' }}>Logo Warehouse</DialogTitle>
+                <DialogTitle sx={{}}>Logo Warehouse</DialogTitle>
                 <DialogContent>
                     <Grid container spacing={4} sx={{ mt: 2 }}>
                         {presetLogos.map(logo => (
@@ -292,7 +293,7 @@ const SystemSettingsClient = ({ presetLogos = [], serverSettings = {} }: SystemS
                                     </Box>
                                     <Divider />
                                     <Box sx={{ p: 2, textAlign: 'center' }}>
-                                        <Typography variant='caption' sx={{ fontFamily: 'Quicksand, sans-serif' }}>{logo.name}</Typography>
+                                        <Typography variant='caption' sx={{}}>{logo.name}</Typography>
                                     </Box>
                                 </Card>
                             </Grid>

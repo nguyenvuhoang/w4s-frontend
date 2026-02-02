@@ -6,16 +6,19 @@ const formControlLabel: Theme['components'] = {
     styleOverrides: {
       root: ({ theme }) => ({
         marginInlineStart: theme.spacing(-2),
-        fontFamily: "Quicksand"
+        // Remove fontFamily to inherit from dynamic theme
+
       }),
       label: {
         '&, &.Mui-disabled': {
           color: 'rgb(12, 45, 28) !important',
-          fontFamily: "Quicksand"
+          // Remove fontFamily to inherit from dynamic theme
+
         },
         '&.Mui-disabled': {
           opacity: 0.45,
-          fontFamily: "Quicksand"
+          // Remove fontFamily to inherit from dynamic theme
+
         }
       }
     }

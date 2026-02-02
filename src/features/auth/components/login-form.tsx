@@ -114,7 +114,7 @@ const LoginForm = ({ locale, dictionary }: {
                                 color='primary'
                                 component={Link}
                                 href={`/` + locale + '/forgot-password'}
-                                sx={{ fontFamily: 'Quicksand, sans-serif' }}
+                                sx={{}}
                             >
                                 {`${dictionary['auth'].forgotpassword}?`}
                             </Typography>

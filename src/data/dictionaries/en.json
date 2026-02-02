@@ -1,5 +1,8 @@
 {
   "common": {
+    "development": "Development",
+    "production": "Production",
+    "staging": "Staging",
     "home": "Home",
     "account_card_wallet": "Account/Card/Wallet",
     "required": "required",

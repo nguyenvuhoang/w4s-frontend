@@ -2,7 +2,7 @@ import { auth } from '@/auth';
 import { generateAuthMetadata } from '@components/layout/AuthLayout';
 import { Locale } from '@/configs/i18n';
 import { WORKFLOWCODE } from '@/data/WorkflowCode';
-import { systemServiceApi } from '@/servers/system-service';
+import { systemServiceApi, workflowService } from '@/servers/system-service';
 import { getDictionary } from '@utils/getDictionary';
 import { isValidResponse } from '@utils/isValidResponse';
 import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper';
@@ -25,17 +25,12 @@ const WorkflowManagementData = async ({
   locale: Locale;
   dictionary: Awaited<ReturnType<typeof getDictionary>>;
 }) => {
-  const workflowDataApi = await systemServiceApi.runBODynamic({
+  const workflowDataApi = await workflowService.searchWorkflowDefinition({
     sessiontoken: session?.user?.token as string,
-    txFo: {
-      workflowid: '',
-      learn_api: WORKFLOWCODE.WFDEF_SIMPLE_SEARCH,
-      fields: {
-        searchtext: '',
-        pageindex: 0,
-        pagesize: 10
-      }
-    }
+    pageindex: 0,
+    pagesize: 10,
+    searchtext: '',
+    language: locale as Locale
   });
 
   if (

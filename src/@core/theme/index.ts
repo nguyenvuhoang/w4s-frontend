@@ -29,7 +29,7 @@ const theme = (settings: Settings, mode: SystemMode): Theme => {
       }
     },
     shadows: shadows(mode),
-    typography: typography(settings.fontFamily || 'var(--font-quicksand-sans), Quicksand, sans-serif'),
+    typography: typography(settings.fontFamily || 'Quicksand, sans-serif'),
     customShadows: customShadows(mode),
     mainColorChannels: {
       light: '38 43 67',

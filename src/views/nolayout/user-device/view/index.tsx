@@ -13,6 +13,7 @@ import DeviceUnknownIcon from "@mui/icons-material/DeviceUnknown";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import { Box, Grid, Paper, Typography } from "@mui/material";
 import { Session } from "next-auth";
+import { useSettings } from '@core/hooks/useSettings';
 
 const UserDeviceViewContent = ({
   session,
@@ -248,16 +249,20 @@ const LabelText = ({
 }: {
   label: string;
   value: React.ReactNode;
-}) => (
-  <Typography sx={{ mb: 1 }}>
-    <Box component="span" sx={{ fontWeight: 600, fontFamily: "Quicksand" }}>
-      {label}:
-    </Box>{" "}
-    <Box component="span" sx={{ fontWeight: 400, fontFamily: "Quicksand" }}>
-      {value}
-    </Box>
-  </Typography>
-);
+}) => {
+  const { settings } = useSettings();
+
+  return (
+    <Typography sx={{ mb: 1 }}>
+      <Box component="span" sx={{ fontWeight: 600, fontFamily: settings.fontFamily }}>
+        {label}:
+      </Box>{" "}
+      <Box component="span" sx={{ fontWeight: 400, fontFamily: settings.fontFamily }}>
+        {value}
+      </Box>
+    </Typography>
+  );
+};
 
 export default UserDeviceViewContent;
 

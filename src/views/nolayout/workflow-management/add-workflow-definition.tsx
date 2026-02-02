@@ -3,7 +3,6 @@
 import JsonEditorComponent from "@/@core/components/jSONEditor";
 import { WORKFLOWCODE } from "@/data/WorkflowCode";
 import { workflowService } from "@/servers/system-service";
-import { getDictionary } from "@utils/getDictionary";
 import ContentWrapper from "@features/dynamicform/components/layout/content-wrapper";
 import SchemaIcon from "@mui/icons-material/Schema";
 import {
@@ -19,6 +18,7 @@ import {
   TextField,
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
+import { getDictionary } from "@utils/getDictionary";
 import { Session } from "next-auth";
 import { useState } from "react";
 
@@ -200,9 +200,9 @@ const AddWorkflowDefinitionContent = ({
                 fontSize: "1.3rem",
               },
               "& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline":
-                {
-                  borderColor: "#e6e6e9", // viá»n khi disable
-                },
+              {
+                borderColor: "#e6e6e9", // viá»n khi disable
+              },
             }}
           >
             {/* WorkflowId + WorkflowName */}

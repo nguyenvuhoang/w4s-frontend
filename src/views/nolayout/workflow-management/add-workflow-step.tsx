@@ -1,195 +1,73 @@
 "use client";
 
-import { getDictionary } from "@utils/getDictionary";
+import JsonEditorComponent from "@/@core/components/jSONEditor";
+import { Locale } from "@/configs/i18n";
 import ContentWrapper from "@features/dynamicform/components/layout/content-wrapper";
 import SchemaIcon from "@mui/icons-material/Schema";
+import SearchIcon from "@mui/icons-material/Search";
 import {
   Alert,
   Box,
   Button,
   FormControlLabel,
   FormLabel,
+  Grid,
+  IconButton,
+  InputAdornment,
   MenuItem,
   Paper,
   Snackbar,
   Switch,
   TextField,
 } from "@mui/material";
+import { getDictionary } from "@utils/getDictionary";
 import { Session } from "next-auth";
-import { useState } from "react";
-import { workflowService } from "@/servers/system-service";
-import { WORKFLOWCODE } from "@/data/WorkflowCode";
-import Grid from "@mui/material/Grid";
-import JsonEditorComponent from "@/@core/components/jSONEditor";
-import { Label } from "recharts";
-import { set } from "lodash";
+import WorkflowSearchDialog from "./WorkflowSearchDialog";
+import { useAddWorkflowStep } from "./useAddWorkflowStep";
+import WorkflowStepList from "./WorkflowStepList";
 
 const AddWorkflowStepContent = ({
   session,
   dictionary,
+  locale,
 }: {
   session: Session | null;
   dictionary: Awaited<ReturnType<typeof getDictionary>>;
+  locale: Locale;
 }) => {
-  interface FormData {
-    WorkflowId: string;
-    StepCode: string;
-    StepOrder: number;
-    ServiceId: string;
-    Status: boolean;
-    Description: string;
-    SendingTemplate: Record<string, any>;
-    MappingResponse: Record<string, any>;
-    StepTimeOut: number;
-    SendingCondition: Record<string, any>;
-    ProcessingNumber: number;
-    IsReverse: boolean;
-    ShouldAwaitStep: boolean;
-    SubSendingTemplate: Record<string, any>;
-  }
+  const {
+    form,
+    errors,
+    saveSuccess,
+    snackbar,
+    openSearchDialog,
+    existingSteps,
+    setOpenSearchDialog,
+    handleChange,
+    handleSave,
+    clearForm,
+    handleCloseSnackbar
+  } = useAddWorkflowStep({ session, locale });
 
-  const [loading, setLoading] = useState(false);
-  const [snackbar, setSnackbar] = useState<{
-    open: boolean;
-    message: string;
-    severity: "success" | "error" | "info";
-  }>({ open: false, message: "", severity: "success" });
-  const [saveSuccess, setSaveSuccess] = useState(false);
   const services = ["CBG", "CMS", "CTH", "DTS", "NCH", "RPT", "STL", "LOG"];
-  const [form, setForm] = useState<FormData>({
-    WorkflowId: "",
-    StepCode: "",
-    StepOrder: 1,
-    ServiceId: "CBG",
-    Status: true,
-    Description: "",
-    SendingTemplate: {},
-    MappingResponse: {},
-    StepTimeOut: 60000,
-    SendingCondition: {},
-    ProcessingNumber: 0,
-    IsReverse: false,
-    ShouldAwaitStep: true,
-    SubSendingTemplate: {},
-  });
 
-  const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>(
-    {}
-  );
+  const fieldConfig = [
+    { name: 'workflow_id', label: 'Workflow ID', type: 'custom', col: 6, required: true },
+    { name: 'step_code', label: 'Step Code', type: 'text', col: 6, required: true },
+    { name: 'description', label: 'Description', type: 'text', col: 6 },
+    { name: 'service_id', label: 'Service ID', type: 'select', options: services, col: 6 },
+    { name: 'step_order', label: 'Step Order', type: 'number', col: 6, required: true, min: 1 },
+    { name: 'processing_number', label: 'Processing Number', type: 'number', col: 6, min: 0 },
+    { name: 'status', label: 'Status', type: 'switch', col: 2 },
+    { name: 'is_reverse', label: 'Is Reverse', type: 'switch', col: 2 },
+    { name: 'should_await_step', label: 'Should Await Step', type: 'switch', col: 2 },
+    { name: 'step_time_out', label: 'Step Time Out (ms)', type: 'number', col: 6 },
+    { name: 'sending_template', label: 'Sending Template', type: 'json', col: 6 },
+    { name: 'mapping_response', label: 'Mapping Response', type: 'json', col: 6 },
+    { name: 'sending_condition', label: 'Sending Condition', type: 'json', col: 6 },
+    { name: 'sub_sending_template', label: 'SubSendingTemplate', type: 'json', col: 6 },
+  ];
 
-  const validateForm = (): boolean => {
-    const newErrors: Partial<Record<keyof FormData, string>> = {};
-
-    if (!form.WorkflowId || form.WorkflowId.trim() === "") {
-      newErrors.WorkflowId = "WorkflowId is required";
-    }
-
-    if (!form.StepCode || form.StepCode.trim() === "") {
-      newErrors.StepCode = "StepCode is required";
-    }
-
-    if (!form.StepOrder || form.StepOrder < 1) {
-      newErrors.StepOrder = "StepOrder must be greater than 0";
-    }
-
-    setErrors(newErrors);
-
-    return Object.keys(newErrors).length === 0; // âœ… true = valid, false = cÃ³ lá»—i
-  };
-
-  const handleChange = (field: string, value: any) => {
-    setForm((prev) => ({ ...prev, [field]: value }));
-    setErrors((prev) => ({ ...prev, [field]: "" })); // XÃ³a lá»—i khi ngÆ°á»i dÃ¹ng nháº­p láº¡i
-  };
-  const handleSave = async (wfStep: object) => {
-    try {
-      if (validateForm()) {
-        const res = await createWfStep(wfStep);
-        const isInsertSuccess = res?.payload?.dataresponse?.errors?.length === 0;
-
-        if (isInsertSuccess) {
-          setSnackbar({
-            open: true,
-            message: "Add success!",
-            severity: "success",
-          });
-          setSaveSuccess(true);
-        } else {
-          setSnackbar({
-            open: true,
-            message:
-              "Add failed!\n" + res?.payload?.dataresponse?.errors[0]?.info,
-            severity: "error",
-          });
-          console.error(
-            "Add failed for WorkflowStep: ",
-            res?.payload?.dataresponse?.errors[0]?.info
-          );
-        }
-      } else {
-        console.log("Form invalid:", errors);
-        setSnackbar({
-          open: true,
-          message: "Missing require data!",
-          severity: "error",
-        });
-      }
-    } catch (err) {
-      setSnackbar({ open: true, message: "Add failed!", severity: "error" });
-      console.error("Error while saving WorkflowStep:", err);
-    }
-  };
-  const createWfStep = async (wfStep: object) => {
-    setLoading(true);
-    console.log("calling createWfStep with object:", wfStep);
-
-    try {
-      const res = await workflowService.runBODynamic({
-        sessiontoken: session?.user?.token,
-        txFo: {
-          bo: [
-            {
-              use_microservice: true,
-              input: {
-                workflowid: "",
-                learn_api: WORKFLOWCODE.WFSTEP_INSERT,
-                fields: { wfstep: wfStep },
-              },
-            },
-          ],
-        },
-      });
-      console.log("res: ", res);
-      return res;
-      // if (res?.payload?.dataresponse?.error?.length === 0) {
-      //   return true;
-      // }
-      // return false;
-    } catch (err) {
-      console.error("Error createWfStep:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-  const clearForm = () => {
-    setForm({
-      WorkflowId: "",
-      StepCode: "",
-      StepOrder: 1,
-      ServiceId: "CBG",
-      Status: true,
-      Description: "",
-      SendingTemplate: {},
-      MappingResponse: {},
-      StepTimeOut: 60000,
-      SendingCondition: {},
-      ProcessingNumber: 0,
-      IsReverse: false,
-      ShouldAwaitStep: true,
-      SubSendingTemplate: {},
-    });
-    setSaveSuccess(false);
-  };
   return (
     <ContentWrapper
       title={`${dictionary["addworkflowstep"].title}`}
@@ -198,251 +76,134 @@ const AddWorkflowStepContent = ({
       dictionary={dictionary}
     >
       <Box sx={{ mt: 5, width: "100%" }}>
+
+        {/* Existing Steps List */}
+        <WorkflowStepList steps={existingSteps} />
+
         <Paper
-          className="p-6 rounded-2xl shadow-md bg-white"
+          className="p-6 rounded-2xl shadow-md bg-white mt-5"
           sx={{
             "& .MuiOutlinedInput-root": {
-              "& fieldset": {
-                borderWidth: "1px", // Ä‘á»™ dÃ y viá»n máº·c Ä‘á»‹nh
-                borderColor: "#e6e6e9", // mÃ u viá»n bÃ¬nh thÆ°á»ng
-              },
-              "& .MuiInputBase-input": {
-                color: "#000000", // mÃ u text khi nháº­p
-              },
+              "& fieldset": { borderColor: "#e6e6e9" },
+              "& .MuiInputBase-input": { color: "#000000" },
             },
           }}
         >
-          <Grid
-            container
-            spacing={3}
-            sx={{
-              "& .MuiFormLabel-asterisk": {
-                color: "red",
-                fontSize: "1.3rem",
-              },
-              "& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline":
-                {
-                  borderColor: "#e6e6e9", // viá»n khi disable
-                },
-            }}
-          >
-            {/* WorkflowId + StepCode */}
-            <Grid size={{ xs: 6 }}>
-              <TextField
-                required
-                fullWidth
-                label="WorkflowId"
-                value={form.WorkflowId}
-                onChange={(e) => handleChange("WorkflowId", e.target.value)}
-                error={!!errors.WorkflowId}
-                helperText={errors.WorkflowId}
-                disabled={saveSuccess}
-              />
-            </Grid>
-            <Grid size={{ xs: 6 }}>
-              <TextField
-                required
-                fullWidth
-                label="StepCode"
-                value={form.StepCode}
-                onChange={(e) => handleChange("StepCode", e.target.value)}
-                error={!!errors.StepCode}
-                helperText={errors.StepCode}
-                disabled={saveSuccess}
-              />
-            </Grid>
+          <Grid container spacing={3}>
+            {fieldConfig.map((field) => {
+              const value = form[field.name as keyof typeof form];
+              const error = errors[field.name as keyof typeof errors];
 
-            {/* Description + ServiceId */}
-            <Grid size={{ xs: 6 }}>
-              <TextField
-                fullWidth
-                label="Description"
-                value={form.Description}
-                onChange={(e) => handleChange("Description", e.target.value)}
-                disabled={saveSuccess}
-              />
-            </Grid>
-            <Grid size={{ xs: 6 }}>
-              <TextField
-                select
-                fullWidth
-                label="ServiceId"
-                value={form.ServiceId}
-                onChange={(e) => handleChange("ServiceId", e.target.value)}
-                disabled={saveSuccess}
-              >
-                {services.map((c) => (
-                  <MenuItem key={c} value={c}>
-                    {c}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
+              if (field.type === 'custom' && field.name === 'workflow_id') {
+                return (
+                  <Grid size={{ xs: 12, md: field.col }} key={field.name}>
+                    <TextField
+                      required={field.required}
+                      fullWidth
+                      label={field.label}
+                      value={value ?? ""}
+                      onClick={() => setOpenSearchDialog(true)}
+                      slotProps={{
+                        input: {
+                          readOnly: true,
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton onClick={() => setOpenSearchDialog(true)}>
+                                <SearchIcon />
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        }
+                      }}
 
-            {/* StepOrder + ProcessingNumber */}
-            <Grid size={{ xs: 6 }}>
-              <TextField
-                required
-                fullWidth
-                type="number"
-                label="StepOrder"
-                value={form.StepOrder}
-                onChange={(e) =>
-                  handleChange("StepOrder", parseInt(e.target.value) || 1)
-                }
-                disabled={saveSuccess}
-                error={!!errors.StepOrder}
-                helperText={errors.StepOrder}
-                slotProps={{
-                  input: {
-                    inputProps: { min: 1 },
-                  },
-                }}
-              />
-            </Grid>
-            <Grid size={{ xs: 6 }}>
-              <TextField
-                fullWidth
-                type="number"
-                label="ProcessingNumber"
-                value={form.ProcessingNumber}
-                onChange={(e) =>
-                  handleChange(
-                    "ProcessingNumber",
-                    parseInt(e.target.value) || 0
-                  )
-                }
-                disabled={saveSuccess}
-                slotProps={{
-                  input: {
-                    inputProps: { min: 0 },
-                  },
-                }}
-              />
-            </Grid>
+                      error={!!error}
+                      helperText={error}
+                      disabled={saveSuccess}
+                    />
+                    <WorkflowSearchDialog
+                      open={openSearchDialog}
+                      onClose={() => setOpenSearchDialog(false)}
+                      onSelect={(wf) => handleChange("workflow_id", wf.workflow_id)}
+                      session={session}
+                      locale={locale}
+                      dictionary={dictionary}
+                    />
+                  </Grid>
+                );
+              }
 
-            {/* Status + IsReverse + ShouldAwaitStep + TimeOut*/}
-            <Grid size={{ xs: 2 }}>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={form.Status}
-                    onChange={(e) => handleChange("Status", e.target.checked)}
-                  />
-                }
-                label="Status"
-                disabled={saveSuccess}
-              />
-            </Grid>
-            <Grid size={{ xs: 2 }}>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={form.IsReverse}
-                    onChange={(e) =>
-                      handleChange("IsReverse", e.target.checked)
-                    }
-                  />
-                }
-                label="IsReverse"
-                disabled={saveSuccess}
-              />
-            </Grid>
-            <Grid size={{ xs: 2 }}>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={form.ShouldAwaitStep}
-                    onChange={(e) =>
-                      handleChange("ShouldAwaitStep", e.target.checked)
-                    }
-                  />
-                }
-                label="ShouldAwaitStep"
-                disabled={saveSuccess}
-              />
-            </Grid>
-            <Grid size={{ xs: 6 }}>
-              <TextField
-                fullWidth
-                type="number"
-                label="StepTimeOut (ms)"
-                value={form.StepTimeOut}
-                onChange={(e) =>
-                  handleChange("StepTimeOut", parseInt(e.target.value) || 0)
-                }
-                disabled={saveSuccess}
-              />
-            </Grid>
-            {/* SendingTemplate (JSON Editor) + MappingResponse (JSON Editor) */}
-            <Grid size={{ xs: 6 }}>
-              <FormLabel sx={{ mb: 1, color: "#187329", fontSize: "13px" }}>
-                SendingTemplate
-              </FormLabel>
-              <JsonEditorComponent
-                initialJson={JSON.parse(
-                  JSON.stringify(form.SendingTemplate ?? {})
-                )}
-                onChange={(newJson) => handleChange("SendingTemplate", newJson)}
-                height="300px"
-              />
-            </Grid>
-            <Grid size={{ xs: 6 }}>
-              <FormLabel sx={{ mb: 1, color: "#187329", fontSize: "13px" }}>
-                MappingResponse
-              </FormLabel>
-              <JsonEditorComponent
-                initialJson={JSON.parse(
-                  JSON.stringify(form.MappingResponse ?? {})
-                )}
-                onChange={(newJson) => handleChange("MappingResponse", newJson)}
-                height="300px"
-              />
-            </Grid>
-            {/* SendingCondition (JSON Editor) + SubSendingTemplate (JSON Editor) */}
-            <Grid size={{ xs: 6 }}>
-              <FormLabel sx={{ mb: 1, color: "#187329", fontSize: "13px" }}>
-                SendingCondition
-              </FormLabel>
-              <JsonEditorComponent
-                initialJson={JSON.parse(
-                  JSON.stringify(form.SendingCondition ?? {})
-                )}
-                onChange={(newJson) =>
-                  handleChange("SendingCondition", newJson)
-                }
-                height="300px"
-              />
-            </Grid>
-            <Grid size={{ xs: 6 }}>
-              <FormLabel sx={{ mb: 1, color: "#187329", fontSize: "13px" }}>
-                SubSendingTemplate
-              </FormLabel>
-              <JsonEditorComponent
-                initialJson={JSON.parse(
-                  JSON.stringify(form.SubSendingTemplate ?? {})
-                )}
-                onChange={(newJson) =>
-                  handleChange("SubSendingTemplate", newJson)
-                }
-                height="300px"
-              />
-            </Grid>
-            {/* Button Save + Clear */}
+              if (field.type === 'switch') {
+                return (
+                  <Grid size={{ xs: 12, md: field.col }} key={field.name}>
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={Boolean(value)}
+                          onChange={(e) => handleChange(field.name as any, e.target.checked)}
+                        />
+                      }
+                      label={field.label}
+                      disabled={saveSuccess}
+                    />
+                  </Grid>
+                );
+              }
+
+              if (field.type === 'json') {
+                return (
+                  <Grid size={{ xs: 12, md: field.col }} key={field.name}>
+                    <FormLabel sx={{ mb: 1, color: "#187329", fontSize: "13px" }}>
+                      {field.label}
+                    </FormLabel>
+                    <JsonEditorComponent
+                      initialJson={JSON.parse(JSON.stringify(value ?? {}))}
+                      onChange={(newJson) => handleChange(field.name as any, newJson)}
+                      height="300px"
+                    />
+                  </Grid>
+                );
+              }
+
+              return (
+                <Grid size={{ xs: 12, md: field.col }} key={field.name}>
+                  <TextField
+                    required={field.required}
+                    fullWidth
+                    select={field.type === 'select'}
+                    type={field.type === 'number' ? 'number' : 'text'}
+                    label={field.label}
+                    value={value ?? ""}
+                    onChange={(e) => {
+                      const val = field.type === 'number'
+                        ? (parseInt(e.target.value) || (field.min === 0 ? 0 : 1))
+                        : e.target.value;
+                      handleChange(field.name as any, val);
+                    }}
+                    error={!!error}
+                    helperText={error}
+                    disabled={saveSuccess}
+                    slotProps={field.type === 'number' ? {
+                      input: { inputProps: { min: field.min } }
+                    } : undefined}
+                  >
+                    {field.type === 'select' && field.options?.map((opt) => (
+                      <MenuItem key={opt} value={opt}>
+                        {opt}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+              );
+            })}
+
+            {/* Buttons */}
             <Grid size={{ xs: 12 }}>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  alignItems: "end",
-                  height: "100%",
-                }}
-              >
+              <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 2 }}>
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={() => handleSave(form)}
-                  sx={{ mr: 5, px: 10, py: 2 }}
+                  onClick={handleSave}
+                  sx={{ px: 5 }}
                   disabled={saveSuccess}
                 >
                   Save
@@ -450,8 +211,8 @@ const AddWorkflowStepContent = ({
                 <Button
                   variant="outlined"
                   color="secondary"
-                  sx={{ mr: 0, px: 10, py: 2 }}
-                  onClick={() => clearForm()}
+                  onClick={clearForm}
+                  sx={{ px: 5 }}
                 >
                   Clear
                 </Button>
@@ -459,14 +220,14 @@ const AddWorkflowStepContent = ({
             </Grid>
           </Grid>
         </Paper>
-        {/* Snackbar */}
+
         <Snackbar
           open={snackbar.open}
-          autoHideDuration={2000}
-          onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         >
-          <Alert severity={snackbar.severity} sx={{ width: "100%" }}>
+          <Alert severity={snackbar.severity} sx={{ width: "100%" }} onClose={handleCloseSnackbar}>
             {snackbar.message}
           </Alert>
         </Snackbar>
@@ -476,4 +237,3 @@ const AddWorkflowStepContent = ({
 };
 
 export default AddWorkflowStepContent;
-

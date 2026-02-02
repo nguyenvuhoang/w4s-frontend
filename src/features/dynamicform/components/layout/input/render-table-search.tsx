@@ -183,7 +183,8 @@ const RenderTableSearchAdvance = ({
                           key={column.code}
                           sx={{
                             fontSize: '0.875rem',
-                            fontFamily: 'Quicksand, sans-serif',
+                            // Removed hardcoded fontFamily to inherit from theme
+
                           }}
                         >
                           {generateCellTable(

@@ -8,7 +8,11 @@ const config: Config = {
   important: '#__next',
   plugins: [require('tailwindcss-logical'), require('./src/@core/tailwind/plugin.ts')],
   theme: {
-    extend: {}
+    extend: {
+      fontFamily: {
+        sans: ['var(--app-font-family)', 'Quicksand', 'sans-serif'],
+      },
+    }
   }
 };
 export default config;

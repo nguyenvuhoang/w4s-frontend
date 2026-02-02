@@ -34,18 +34,18 @@ const ForgetPassword = ({
               }}
             >
               {/* Title + Welcome */}
-              <Box className="space-y-12 text-center body font-sans">
+              <Box className="space-y-12 text-center">
                 <Box className="space-y-1 body-header">
                   <Typography
                     variant="h2"
-                    className="font-sans text-[#00502F]"
-                    sx={{ fontFamily: "Quicksand" }}
+                    className="text-[#00502F]"
+                    sx={{}}
                   >
                     {env.NEXT_PUBLIC_APPLICATION_TITLE}
                   </Typography>
                   <Box
                     className="text-16-medium text-[#00502F]"
-                    sx={{ fontFamily: "Quicksand" }}
+                    sx={{}}
                   >
                     {dictionary["auth"].forgotpassword}
                   </Box>
@@ -54,7 +54,7 @@ const ForgetPassword = ({
 
               <ForgetPasswordForm session={session} dictionary={dictionary} locale={locale} />
 
-              <Footer />
+              <Footer dictionary={dictionary} />
             </Box>
           </Box>
         </Background>

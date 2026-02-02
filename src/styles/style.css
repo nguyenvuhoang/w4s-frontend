@@ -1080,16 +1080,16 @@ nz-comment-content {
 /*Customize*/
 
 .jsoneditor-menu {
-  background-color: #0a6f47 !important;
-  color: white !important;
+  background-color: var(--mui-palette-primary-main) !important;
+  color: var(--mui-palette-primary-contrastText) !important;
 }
 
 .jsoneditor-menu button {
-  color: white !important;
+  color: var(--mui-palette-primary-contrastText) !important;
 }
 
 .jsoneditor-menu button:hover {
-  background-color: #085c3a !important;
+  background-color: var(--mui-palette-primary-dark) !important;
 }
 
 .control-button {

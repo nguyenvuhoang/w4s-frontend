@@ -243,7 +243,8 @@ const Settings = ({ session, dictionary }: {
                                                                 cursor: 'text',
                                                                 backgroundColor: updatedItemId === item.id ? '#e0f8e9' : 'transparent',
                                                                 fontSize: '0.875rem',
-                                                                fontFamily: 'Quicksand, sans-serif',
+                                                                // Removed hardcoded fontFamily to inherit from theme
+
                                                                 '&:hover': {
                                                                     backgroundColor: updatedItemId === item.id ? '#e0f8e9' : 'transparent'
                                                                 },
@@ -263,7 +264,8 @@ const Settings = ({ session, dictionary }: {
                                                     }}
                                                     sx={{
                                                         fontSize: '0.875rem',
-                                                        fontFamily: 'Quicksand, sans-serif'
+                                                        // Removed hardcoded fontFamily to inherit from theme
+
                                                     }}
                                                 />
                                             </TableCell>

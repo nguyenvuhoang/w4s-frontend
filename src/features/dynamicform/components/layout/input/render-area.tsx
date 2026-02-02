@@ -75,7 +75,7 @@ const RenderTextAreaDefault = ({ input, gridProps, formData, onChange, rendervie
             <Grid size={gridProps} sx={{ marginBottom: '16px' }}>
                 <Typography
                     variant="subtitle1"
-                    sx={{ marginBottom: '8px', fontFamily: 'Quicksand' }}
+                    sx={{ marginBottom: '8px' }}
                 >
                     {input.default.name}
                 </Typography>

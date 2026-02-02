@@ -95,7 +95,6 @@ const JLayout = ({
                                 borderColor: 'white',
                                 backgroundColor: 'rgba(255, 255, 255, 0.2)',
                             },
-                            fontFamily: 'Quicksand',
                         }}
                         variant="contained"
                     >

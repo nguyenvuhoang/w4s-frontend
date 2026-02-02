@@ -27,35 +27,35 @@ const Login = ({ dictionary, locale }: {
                             border: '1px solid rgba(15, 23, 42, 0.06)'
                         }}
                     >
-                    <Box
-                        sx={{
-                            position: 'relative',
-                            width: 200,
-                            height: 67,
-                            mx: 'auto', // center horizontally
-                            mb: 8
-                        }}
-                    >
-                        <Image
-                            src={lightlogo}
-                            alt="EMI Logo"
-                            width={200}
-                            height={67}
-                            style={{ objectFit: 'contain' }}
-                            className="mx-auto"
-                        />
-                    </Box>
-                    <Box className="space-y-12 text-center text-gray-800 body font-sans">
-                        <LoginHeader
-                            appTitle={env.NEXT_PUBLIC_APPLICATION_TITLE as string}
-                            welcomeText={dictionary['auth'].welcome}
-                        />
-                        <LoginForm
-                            locale={locale as Locale}
-                            dictionary={dictionary}
-                        />
-                        <Footer />
-                    </Box>
+                        <Box
+                            sx={{
+                                position: 'relative',
+                                width: 200,
+                                height: 67,
+                                mx: 'auto', // center horizontally
+                                mb: 8
+                            }}
+                        >
+                            <Image
+                                src={lightlogo}
+                                alt="EMI Logo"
+                                width={200}
+                                height={67}
+                                style={{ objectFit: 'contain' }}
+                                className="mx-auto"
+                            />
+                        </Box>
+                        <Box className="space-y-12 text-center text-gray-800">
+                            <LoginHeader
+                                appTitle={env.NEXT_PUBLIC_APPLICATION_TITLE as string}
+                                welcomeText={dictionary['auth'].welcome}
+                            />
+                            <LoginForm
+                                locale={locale as Locale}
+                                dictionary={dictionary}
+                            />
+                            <Footer dictionary={dictionary} />
+                        </Box>
                     </Box>
                 </Box>
             </Background>
