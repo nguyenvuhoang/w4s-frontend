@@ -96,7 +96,6 @@ const WorkflowManagementContent = ({
 
   const loadWfStep = async (workflowid: string) => {
     setLoading(true);
-    console.log("calling loadWfStep with workflowid:", workflowid);
 
     try {
       const res = await workflowService.searchWorkflowStepByWorkflowId({
@@ -111,7 +110,6 @@ const WorkflowManagementContent = ({
       let data: any[] = [];
       if (res?.payload?.dataresponse.data) {
         data = res.payload.dataresponse.data.items || [];
-        console.log("Workflow Step neeee:", data);
       }
 
       return data;

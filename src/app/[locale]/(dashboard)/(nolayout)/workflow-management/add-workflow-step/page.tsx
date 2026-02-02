@@ -19,7 +19,7 @@ const WorkflowStepPage = async ({ params }: { params: Params }) => {
 
   return (
     <Suspense fallback={<Spinner />}>
-      <AddWorkflowStepContent dictionary={dictionary} session={session} />
+      <AddWorkflowStepContent dictionary={dictionary} session={session} locale={locale} />
     </Suspense>
   );
 };

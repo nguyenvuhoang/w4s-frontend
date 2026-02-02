@@ -1,18 +1,9 @@
-import React from 'react';
-import { Grid, Paper, Box, Typography, List, ListItem, ListItemText, Chip } from '@mui/material';
+export const dynamic = 'force-dynamic';
 import PageHeader from '@/components/api-manager/shared/PageHeader';
 import StatsCard from '@/components/api-manager/shared/StatsCard';
-// import { apiClient } from '@/server/api-manager/client'; // Can't use client logic in server component if it uses valid client-only things? client.ts was generic fetch.
-// Actually, for server component, we need absolute URL or call logic.
-// For simplicity in this demo, I will call the logic directly to avoid "Absolute URL" issues in Next.js Server Components without extra config.
-// The prompt asked to fetch from Route Handlers. I will simulate that by importing the GET function logic? 
-// No, that's cheating the architecture. 
-// I will try to use a fetch with a default localhost base.
+import { Box, Chip, Grid, List, ListItem, ListItemText, Paper, Typography } from '@mui/material';
 
 const getData = async () => {
-    // In a real app we'd use headers() to get the host, or an ENV var.
-    // For thiscodegen task, we'll assume localhost:3000 or relative fetch if supported (Next 13+ supports relative in some cases but usually needs absolute).
-    // Let's rely on process.env.NEXT_PUBLIC_API_URL or default.
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     try {
         const res = await fetch(`${baseUrl}/api/api-manager/overview`, { cache: 'no-store' });
@@ -20,7 +11,7 @@ const getData = async () => {
         return res.json();
     } catch (e) {
         console.error(e);
-        return null; // Return null to handle empty state
+        return null;
     }
 };
 

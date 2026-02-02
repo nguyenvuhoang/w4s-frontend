@@ -80,6 +80,7 @@ export const AddWorkflowWizard = ({
                             dictionary={dictionary}
                             onSuccess={handleWorkflowDefinitionSuccess}
                             hideClear
+                            locale={locale}
                         />
                     )}
                     {activeStep === 1 && (

@@ -15,6 +15,7 @@ export interface ResponseDefaultData<T> extends ResponseError, ResponseSuccess<T
 export interface ResponseDefault<T> {
   data: T
   errors: ErrorInfo[]
+  executionid: string
 }
 
 export interface ResponseListDefault<T> {

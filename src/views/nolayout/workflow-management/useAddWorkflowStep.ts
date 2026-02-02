@@ -1,13 +1,14 @@
 import { Locale } from "@/configs/i18n";
-import { WORKFLOWCODE } from "@/data/WorkflowCode";
 import { workflowService } from "@/servers/system-service";
+import { convertKeysToSnakeCase } from "@/shared/utils/convertKeysToSnakeCase";
+import SwalAlert from "@/shared/utils/SwalAlert";
 import { Session } from "next-auth";
 import { useState } from "react";
-import { convertKeysToSnakeCase } from "@/shared/utils/convertKeysToSnakeCase";
 
 interface FormData {
     workflow_id: string;
     step_code: string;
+    step_suffix: string; // New field for code generation
     step_order: number;
     service_id: string;
     status: boolean;
@@ -30,6 +31,7 @@ interface UseAddWorkflowStepProps {
 const initialFormState: FormData = {
     workflow_id: "",
     step_code: "",
+    step_suffix: "",
     step_order: 1,
     service_id: "CBG",
     status: true,
@@ -50,11 +52,6 @@ export const useAddWorkflowStep = ({ session, locale }: UseAddWorkflowStepProps)
     const [loading, setLoading] = useState(false);
     const [saveSuccess, setSaveSuccess] = useState(false);
     const [openSearchDialog, setOpenSearchDialog] = useState(false);
-    const [snackbar, setSnackbar] = useState<{
-        open: boolean;
-        message: string;
-        severity: "success" | "error" | "info";
-    }>({ open: false, message: "", severity: "success" });
     const [existingSteps, setExistingSteps] = useState<any[]>([]);
 
     const fetchWorkflowSteps = async (workflowId: string) => {
@@ -100,7 +97,31 @@ export const useAddWorkflowStep = ({ session, locale }: UseAddWorkflowStepProps)
     };
 
     const handleChange = (field: keyof FormData, value: any) => {
-        setForm((prev) => ({ ...prev, [field]: value }));
+        setForm((prev) => {
+            const newForm = { ...prev, [field]: value };
+
+            // Auto-generate step_code based on service_id and step_suffix
+            if (field === "service_id" || field === "step_suffix") {
+                const serviceId = field === "service_id" ? (value as string) : prev.service_id;
+                const suffix = field === "step_suffix"
+                    ? (value as string | undefined)?.toUpperCase() ?? ""
+                    : (prev.step_suffix as string | undefined)?.toUpperCase() ?? "";
+
+                if (suffix) {
+                    // Clean suffix to only allow alphanumeric and underscores
+                    const cleanSuffix = suffix.replace(/[^A-Z0-9_]/g, "");
+                    // Update suffix if it was changed
+                    if (field === "step_suffix") {
+                        newForm.step_suffix = cleanSuffix;
+                    }
+                    newForm.step_code = `WF_STEP_${serviceId}_${cleanSuffix}`;
+                } else {
+                    newForm.step_code = "";
+                }
+            }
+
+            return newForm;
+        });
         setErrors((prev) => ({ ...prev, [field]: "" }));
 
         if (field === "workflow_id") {
@@ -110,52 +131,47 @@ export const useAddWorkflowStep = ({ session, locale }: UseAddWorkflowStepProps)
 
     const handleSave = async () => {
         if (!validateForm()) {
-            setSnackbar({
-                open: true,
-                message: "Missing required data!",
-                severity: "error",
-            });
+            SwalAlert("error", "Missing required data!");
             return;
         }
 
         setLoading(true);
         try {
-            const res = await workflowService.runBODynamic({
-                sessiontoken: session?.user?.token,
-                txFo: {
-                    bo: [{
-                        use_microservice: true,
-                        input: {
-                            workflowid: "",
-                            learn_api: WORKFLOWCODE.WFSTEP_INSERT,
-                            fields: { wfstep: convertKeysToSnakeCase(form) },
-                        },
-                    }],
+            // Exclude step_suffix from the API payload
+            const { step_suffix, ...wfStepData } = form;
+
+            // Convert json fields to jsonstring
+            const payload = {
+                ...wfStepData,
+                sending_template: JSON.stringify(wfStepData.sending_template),
+                mapping_response: JSON.stringify(wfStepData.mapping_response),
+                sending_condition: JSON.stringify(wfStepData.sending_condition),
+                sub_sending_template: JSON.stringify(wfStepData.sub_sending_template),
+            };
+
+            const res = await workflowService.createWorkflowStep({
+                sessiontoken: session?.user?.token as string,
+                fields: {
+                    list_step: [convertKeysToSnakeCase(payload)],
                 },
+                language: locale,
             });
 
             const isInsertSuccess = res?.payload?.dataresponse?.errors?.length === 0;
 
             if (isInsertSuccess) {
-                setSnackbar({
-                    open: true,
-                    message: "Add success!",
-                    severity: "success",
-                });
+                SwalAlert("success", "Add success!");
                 setSaveSuccess(true);
                 // Refresh existing steps after successful add
                 fetchWorkflowSteps(form.workflow_id);
             } else {
                 const errorInfo = res?.payload?.dataresponse?.errors?.[0]?.info || "Unknown error";
-                setSnackbar({
-                    open: true,
-                    message: `Add failed!\n${errorInfo}`,
-                    severity: "error",
-                });
+                const executionId = res?.payload?.dataresponse?.executionid || "Unknown execution id";
+                SwalAlert("error", `Add failed!\n${errorInfo}\nExecution ID: ${executionId}`);
             }
         } catch (err) {
             console.error("Error saving WorkflowStep:", err);
-            setSnackbar({ open: true, message: "Add failed!", severity: "error" });
+            SwalAlert("error", "Add failed!");
         } finally {
             setLoading(false);
         }
@@ -169,7 +185,7 @@ export const useAddWorkflowStep = ({ session, locale }: UseAddWorkflowStepProps)
     };
 
     const handleCloseSnackbar = () => {
-        setSnackbar((prev) => ({ ...prev, open: false }));
+        // No longer needed
     };
 
     return {
@@ -177,13 +193,11 @@ export const useAddWorkflowStep = ({ session, locale }: UseAddWorkflowStepProps)
         errors,
         loading,
         saveSuccess,
-        snackbar,
         openSearchDialog,
         existingSteps,
         setOpenSearchDialog,
         handleChange,
         handleSave,
-        clearForm,
-        handleCloseSnackbar
+        clearForm
     };
 };

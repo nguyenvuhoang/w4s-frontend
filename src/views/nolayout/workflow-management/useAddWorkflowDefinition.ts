@@ -14,7 +14,7 @@ export interface WorkflowDefinitionFormData {
     Status: boolean;
     IsReverse: boolean;
     TimeOut: number;
-    TemplateResponse: Record<string, any>;
+    Templateresponse: string;
     WorkflowEvent: string;
 }
 
@@ -32,7 +32,7 @@ const initialFormState: WorkflowDefinitionFormData = {
     Status: true,
     IsReverse: false,
     TimeOut: 60000,
-    TemplateResponse: {},
+    Templateresponse: "{}",
     WorkflowEvent: "",
 };
 

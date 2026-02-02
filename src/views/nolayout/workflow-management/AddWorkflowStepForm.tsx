@@ -42,14 +42,12 @@ export const AddWorkflowStepForm = ({
         form,
         errors,
         saveSuccess,
-        snackbar,
         openSearchDialog,
         existingSteps,
         setOpenSearchDialog,
         handleChange,
         handleSave,
         clearForm,
-        handleCloseSnackbar,
     } = useAddWorkflowStep({ session, locale });
 
     useEffect(() => {
@@ -59,15 +57,26 @@ export const AddWorkflowStepForm = ({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [initialWorkflowId]);
 
-    const services = ["CBG", "CMS", "CTH", "DTS", "NCH", "RPT", "STL", "LOG"];
+    const services = ["AI", "CBG", "CMS", "CTH", "EXT", "LOG", "NCH", "PMT", "RPT"];
 
     const fieldConfig = [
         { name: "workflow_id", label: "Workflow ID", type: "custom", col: 6, required: true },
-        { name: "step_code", label: "Step Code", type: "text", col: 6, required: true },
-        { name: "description", label: "Description", type: "text", col: 6 },
         { name: "service_id", label: "Service ID", type: "select", options: services, col: 6 },
+        { name: "step_suffix", label: "Code Name (Suffix)", type: "text", col: 6, required: true },
+        { name: "step_code", label: "Step Code", type: "text", col: 6, required: true, readOnly: true },
+        { name: "description", label: "Description", type: "text", col: 6 },
         { name: "step_order", label: "Step Order", type: "number", col: 6, required: true, min: 1 },
-        { name: "processing_number", label: "Processing Number", type: "number", col: 6, min: 0 },
+        {
+            name: "processing_number",
+            label: "Processing Number",
+            type: "select",
+            col: 6,
+            options: [
+                { label: "Version1", value: 1 },
+                { label: "StoredProcedure", value: 2 },
+                { label: "ExecuteCommand", value: 5 }
+            ]
+        },
         { name: "status", label: "Status", type: "switch", col: 2 },
         { name: "is_reverse", label: "Is Reverse", type: "switch", col: 2 },
         { name: "should_await_step", label: "Should Await Step", type: "switch", col: 2 },
@@ -186,19 +195,25 @@ export const AddWorkflowStepForm = ({
                                     helperText={error}
                                     disabled={saveSuccess}
                                     slotProps={
-                                        field.type === "number"
-                                            ? {
-                                                input: { inputProps: { min: field.min } },
+                                        {
+                                            input: {
+                                                readOnly: (field as any).readOnly,
+                                                inputProps: field.type === "number" ? { min: field.min } : undefined
                                             }
-                                            : undefined
+                                        }
                                     }
                                 >
                                     {field.type === "select" &&
-                                        field.options?.map((opt) => (
-                                            <MenuItem key={opt} value={opt}>
-                                                {opt}
-                                            </MenuItem>
-                                        ))}
+                                        field.options?.map((opt: any) => {
+                                            const isObject = typeof opt === 'object' && opt !== null;
+                                            const value = isObject ? opt.value : opt;
+                                            const label = isObject ? opt.label : opt;
+                                            return (
+                                                <MenuItem key={value} value={value}>
+                                                    {label}
+                                                </MenuItem>
+                                            );
+                                        })}
                                 </TextField>
                             </Grid>
                         );
@@ -229,16 +244,7 @@ export const AddWorkflowStepForm = ({
                 </Grid>
             </Paper>
 
-            <Snackbar
-                open={snackbar.open}
-                autoHideDuration={6000}
-                onClose={handleCloseSnackbar}
-                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-            >
-                <Alert severity={snackbar.severity} sx={{ width: "100%" }} onClose={handleCloseSnackbar}>
-                    {snackbar.message}
-                </Alert>
-            </Snackbar>
+
         </Box>
     );
 };

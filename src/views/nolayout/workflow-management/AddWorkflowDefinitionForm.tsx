@@ -204,8 +204,8 @@ export const AddWorkflowDefinitionForm = ({
                     <Grid size={{ xs: 12 }}>
                         <FormLabel sx={{ mb: 1, color: "#187329", fontSize: "13px" }}>TemplateResponse</FormLabel>
                         <JsonEditorComponent
-                            initialJson={JSON.parse(JSON.stringify(form.TemplateResponse ?? {}))}
-                            onChange={(newJson) => handleChange("TemplateResponse", newJson)}
+                            initialJson={JSON.parse(JSON.stringify(form.Templateresponse ?? {}))}
+                            onChange={(newJson) => handleChange("Templateresponse", newJson)}
                             height="300px"
                         />
                     </Grid>

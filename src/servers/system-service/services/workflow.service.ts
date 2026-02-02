@@ -179,6 +179,22 @@ export const workflowService = {
                     uid: `${sessiontoken}`,
                     app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
                 }
+            }),
+
+    createWorkflowStep: ({ sessiontoken, fields }: SystemSearchDataRequest) =>
+        http.post<BODataResponse>('/system-service',
+            {
+                learn_api: LEARNAPICODE.LEARN_API_BO_INSERT_WF_STEPS,
+                fields: {
+                    ...fields
+                }
+            },
+            {
+                baseUrl: process.env.NEXT_PUBLIC_API_URL,
+                headers: {
+                    uid: `${sessiontoken}`,
+                    app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
+                }
             })
 }
 
