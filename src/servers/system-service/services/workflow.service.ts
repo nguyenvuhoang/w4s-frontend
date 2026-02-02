@@ -1,9 +1,8 @@
+import { LEARNAPICODE } from '@/data/LearnAPICode';
 import { env } from '@/env.mjs';
-import { BODataResponse, FODataResponse, RunBoDynamicDataRequest, RunDynamicDataRequest, RunFoDataRequest, RunFoDynamicDataRequest, SearchDataRequest, SystemDataRequest, SystemSearchDataRequest, ViewDataResponse } from "@shared/types/systemTypes";
+import { BODataResponse, FODataResponse, RunBoDynamicDataRequest, RunDynamicDataRequest, RunFoDataRequest, RunFoDynamicDataRequest, SearchDataRequest, SystemSearchDataRequest, ViewDataResponse } from "@shared/types/systemTypes";
 import { apiPost, createDefaultBody } from '../../lib/api';
 import http from "../../lib/http";
-import Cookies from 'js-cookie';
-import { LEARNAPICODE } from '@/data/LearnAPICode';
 
 /**
  * Workflow Service
@@ -162,6 +161,22 @@ export const workflowService = {
                 headers: {
                     uid: `${sessiontoken}`,
                     lang: language,
+                    app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
+                }
+            }),
+
+    createWorkflowDefinition: ({ sessiontoken, fields }: SystemSearchDataRequest) =>
+        http.post<BODataResponse>('/system-service',
+            {
+                learn_api: LEARNAPICODE.LEARN_API_BO_INSERT_WF_DEF,
+                fields: {
+                    ...fields
+                }
+            },
+            {
+                baseUrl: process.env.NEXT_PUBLIC_API_URL,
+                headers: {
+                    uid: `${sessiontoken}`,
                     app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
                 }
             })

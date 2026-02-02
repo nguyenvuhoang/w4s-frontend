@@ -1,17 +1,17 @@
 // src/app/[locale]/(dashboard)/(portal)/layout.tsx
-import Navbar from '@components/layout/vertical/Navbar'
 import HorizontalLayout from '@/@layouts/HorizontalLayout'
 import LayoutWrapper from '@/@layouts/LayoutWrapper'
 import VerticalLayout from '@/@layouts/VerticalLayout'
-import GlobalSignalRLogoutListener from '@components/GlobalSignalRLogoutListener'
-import Navigation from '@components/layout/vertical/Navigation'
-import Providers from '@components/Providers'
-import Spinner from '@components/spinners'
 import AuthGuard from '@/hocs/AuthGuard'
 import IdleTimer from '@/hocs/IdleTimer'
 import ErrorPage from '@/views/Error'
+import GlobalSignalRLogoutListener from '@components/GlobalSignalRLogoutListener'
 import HorizontalFooter from '@components/layout/horizontal/Footer'
 import HeaderHorizontal from '@components/layout/horizontal/Header'
+import Navbar from '@components/layout/vertical/Navbar'
+import Navigation from '@components/layout/vertical/Navigation'
+import Providers from '@components/Providers'
+import Spinner from '@components/spinners'
 import { Skeleton } from '@mui/material'
 import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
@@ -19,19 +19,19 @@ import { Suspense } from 'react'
 import { InitUserStore } from '@/@core/stores/InitUserStore'
 import { auth } from '@/auth'
 import { WORKFLOWCODE } from '@/data/WorkflowCode'
+import { env } from '@/env.mjs'
 import { AUTHENTICATION_ERROR_STATUS, BAD_REQUEST } from '@/servers/lib/http'
 import { formService, workflowService } from '@/servers/system-service'
-import { getDictionary } from '@utils/getDictionary'
-import { getLocalizedUrl } from '@utils/i18n'
-import { isValidResponse } from '@utils/isValidResponse'
 import type { Locale } from '@configs/i18n'
 import { i18n } from '@configs/i18n'
 import type { ChildrenType } from '@core/types'
+import { getDictionary } from '@utils/getDictionary'
+import { getLocalizedUrl } from '@utils/i18n'
+import { isValidResponse } from '@utils/isValidResponse'
+import { isTokenError } from '@/shared/utils/isTokenError'
+import { handleApiError } from '@/shared/utils/handleApiError'
 import { unstable_cache as cache } from 'next/cache'
-import { cookies } from 'next/headers'
 import ChangePassword from '../(auth-layout-pages)/change-password/components'
-import SelectAppContent from '../../../features/applications/components/SelectAppContent'
-import { env } from '@/env.mjs'
 
 const getDictionaryCached = cache(
     async (locale: Locale) => getDictionary(locale),
@@ -86,12 +86,7 @@ async function PortalLayoutContent({ children, params }: ChildrenType & { params
 
     if (!isValidResponse(systemData) || (datapayload.errors?.length ?? 0) > 0) {
         const e = datapayload.errors?.[0]
-        return (
-            <ErrorPage
-                error={e ? `ExecutionID:${e.execute_id} - ${e.info}` : 'Unknown server error'}
-                side="server"
-            />
-        )
+        return handleApiError({ locale, error: e })
     }
 
     const datainput = datapayload.data
@@ -121,12 +116,7 @@ async function PortalLayoutContent({ children, params }: ChildrenType & { params
     const menupayload = menudata?.payload?.dataresponse
     if (!isValidResponse(menudata) || (menupayload?.errors?.length ?? 0) > 0) {
         const e = menupayload?.errors?.[0]
-        return (
-            <ErrorPage
-                error={e ? `ExecutionID:${e.execute_id} - ${e.info}` : 'Unknown server error'}
-                side="server"
-            />
-        )
+        return handleApiError({ locale, error: e })
     }
 
     const usercommand = menupayload.data?.data as any[] ?? []

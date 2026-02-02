@@ -138,7 +138,7 @@ const SystemSettingsClient = ({ presetLogos = [], serverSettings = {} }: SystemS
                             <TextField
                                 fullWidth
                                 label='Branding Name'
-                                placeholder='Enterprise Console'
+                                placeholder='Admin Console'
                                 value={formData.brandingName}
                                 onChange={handleChange('brandingName')}
                                 sx={{}}

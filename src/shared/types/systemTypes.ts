@@ -31,6 +31,7 @@ export interface SystemSearchDataRequest {
     pagesize?: number
     searchtext?: string
     [key: string]: any;
+    fields?: { [key: string]: any }
 }
 export interface SubmitDataFormRequest {
     sessiontoken: string

@@ -3,6 +3,7 @@ import { WORKFLOWCODE } from "@/data/WorkflowCode";
 import { workflowService } from "@/servers/system-service";
 import { Session } from "next-auth";
 import { useState } from "react";
+import { convertKeysToSnakeCase } from "@/shared/utils/convertKeysToSnakeCase";
 
 interface FormData {
     workflow_id: string;
@@ -127,7 +128,7 @@ export const useAddWorkflowStep = ({ session, locale }: UseAddWorkflowStepProps)
                         input: {
                             workflowid: "",
                             learn_api: WORKFLOWCODE.WFSTEP_INSERT,
-                            fields: { wfstep: form },
+                            fields: { wfstep: convertKeysToSnakeCase(form) },
                         },
                     }],
                 },

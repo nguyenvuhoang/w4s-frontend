@@ -45,14 +45,14 @@ Copy-Item "ecosystem.config.js" "dist-deploy/"
 # Tao start script
 @"
 @echo off
-echo Starting Enterprise Console Production Server...
+echo Starting Admin Console Production Server...
 node server.js
 "@ | Out-File -FilePath "dist-deploy/start.bat" -Encoding ASCII
 
 # Tao PM2 start script
 @"
 @echo off
-echo Starting Enterprise Console with PM2...
+echo Starting Admin Console with PM2...
 pm2 start ecosystem.config.js --env production
 pm2 save
 "@ | Out-File -FilePath "dist-deploy/start-pm2.bat" -Encoding ASCII

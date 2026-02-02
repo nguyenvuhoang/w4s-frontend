@@ -1,7 +1,7 @@
-# Enterprise Console Monorepo Setup Script
+# Admin Console Monorepo Setup Script
 # Run this script to initialize the monorepo structure
 
-Write-Host "🚀 Enterprise Console Monorepo Setup" -ForegroundColor Cyan
+Write-Host "🚀 Admin Console Monorepo Setup" -ForegroundColor Cyan
 Write-Host "================================" -ForegroundColor Cyan
 Write-Host ""
 

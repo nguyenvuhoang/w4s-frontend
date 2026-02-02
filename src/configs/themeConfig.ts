@@ -29,7 +29,7 @@ export type Config = {
     fontFamily?: string
 }
 const themeConfig: Config = {
-    templateName: 'Enterprise Console',
+    templateName: 'Admin Console',
     homePageUrl: '/dashboards',
     settingsCookieName: 'o24openui',
     mode: 'light', // 'system', 'light', 'dark'

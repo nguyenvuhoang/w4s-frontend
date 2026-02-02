@@ -190,16 +190,26 @@ const request = async <Response>(
     if (payload) {
       const dataresponse = (payload as any)?.dataresponse;
 
-      if (dataresponse?.error?.[0]) {
-        const errorcode = dataresponse.error[0].code;
+      if (dataresponse?.error?.[0] || dataresponse?.errors?.[0]) {
+        const error = dataresponse.error?.[0] || dataresponse.errors?.[0];
+        const errorcode = error?.code;
+        const errorinfo = error?.info?.toLowerCase() || '';
 
-        if (errorcode === '401') {
+        // Check for 401 or token-related errors
+        const isTokenError = 
+          errorcode === '401' || 
+          errorinfo.includes('invalid.token') ||
+          errorinfo.includes('invalid token') ||
+          errorinfo.includes('token expired') ||
+          errorinfo.includes('unauthorized');
+
+        if (isTokenError) {
           try {
             await fetch(`/api/logout`, {
               method: 'POST',
               body: JSON.stringify({ 
                 force: true, 
-                reason: 'server_side_401' 
+                reason: 'server_side_token_error' 
               }),
               headers: {
                 'Content-Type': 'application/json'
@@ -207,6 +217,12 @@ const request = async <Response>(
             });
           } catch (error) {
             console.log(`ðŸŸ¢ ==========Error Logout: ==> ${error}`);
+          }
+          
+          // Return with requireLogout flag
+          return {
+            status: 401,
+            payload: { ...decryptedPayload, requireLogout: true }
           }
         }
       }

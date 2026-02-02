@@ -1209,5 +1209,31 @@
     "startDate": "Ngày bắt đầu",
     "endDate": "Ngày kết thúc",
     "signedDate": "Ngày ký"
+  },
+  "zalo": {
+    "app_info": "Thông tin ứng dụng",
+    "app_id": "ID ứng dụng",
+    "app_secret": "Khóa bí mật của ứng dụng",
+    "display_name": "Tên hiển thị",
+    "app_domain": "Miền ứng dụng",
+    "contact_phone": "Điện thoại liên hệ",
+    "contact_email": "Email liên hệ",
+    "app_icon": "Icon ứng dụng",
+    "choose_file": "Chọn tập tin",
+    "no_file_chosen": "Chưa chọn tập tin",
+    "app_icon_desc": "Khi tải lên tập tin này, hãy đảm bảo rằng bạn có quyền sử dụng hình ảnh và ảnh không chứa nội dung nhạy cảm.",
+    "category": "Danh mục",
+    "dev_tools": "Công cụ phát triển",
+    "utilities": "Tiện ích",
+    "business": "Kinh doanh",
+    "description": "Mô tả",
+    "save_changes": "Lưu thay đổi",
+    "security": "Bảo mật",
+    "app_secret_proof_desc": "Yêu cầu kiểm tra app secret proof khi gọi api có sử dụng access token",
+    "register_token": "Đăng ký Token",
+    "active": "Đang hoạt động",
+    "inactive": "Ngừng hoạt động",
+    "app_name_placeholder": "Nhập tên hiển thị",
+    "description_placeholder": "Nhập mô tả ứng dụng"
   }
 }

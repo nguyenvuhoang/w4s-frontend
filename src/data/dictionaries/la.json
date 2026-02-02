@@ -1210,5 +1210,31 @@
     "startDate": "Start Date",
     "endDate": "End Date",
     "signedDate": "Signed Date"
+  },
+  "zalo": {
+    "app_info": "Application Information",
+    "app_id": "App ID",
+    "app_secret": "App Secret",
+    "display_name": "Display Name",
+    "app_domain": "App Domain",
+    "contact_phone": "Contact Phone",
+    "contact_email": "Contact Email",
+    "app_icon": "App Icon",
+    "choose_file": "Choose File",
+    "no_file_chosen": "No file chosen",
+    "app_icon_desc": "When uploading this file, make sure you have the right to use the image and the image does not contain sensitive content.",
+    "category": "Category",
+    "dev_tools": "Development Tools",
+    "utilities": "Utilities",
+    "business": "Business",
+    "description": "Description",
+    "save_changes": "Save Changes",
+    "security": "Security",
+    "app_secret_proof_desc": "Require app secret proof when calling api using access token",
+    "register_token": "Register Token",
+    "active": "Active",
+    "inactive": "Inactive",
+    "app_name_placeholder": "Enter display name",
+    "description_placeholder": "Enter app description"
   }
 }

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Generate Enterprise Console Page Structure
+ * Generate Admin Console Page Structure
  * 
  * Usage:
  *   node scripts/generate-page.mjs user-management
@@ -273,7 +273,7 @@ export default function ${pageNamePascal}ViewContent({ locale, id }: Props) {
 }
 
 // ========== GENERATE ==========
-console.log('🚀 Generating Enterprise Console Page Structure...\n')
+console.log('🚀 Generating Admin Console Page Structure...\n')
 console.log(`📄 Page: ${pageNameKebab}`)
 console.log(`📦 Type: ${flags.type}`)
 console.log(`🔧 View subpage: ${flags.view ? 'Yes' : 'No'}\n`)

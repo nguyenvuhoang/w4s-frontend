@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Enterprise Console Monorepo Setup Script
+# Admin Console Monorepo Setup Script
 # Run this script to initialize the monorepo structure
 
-echo "🚀 Enterprise Console Monorepo Setup"
+echo "🚀 Admin Console Monorepo Setup"
 echo "================================"
 echo ""
 

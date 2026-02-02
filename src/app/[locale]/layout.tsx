@@ -6,8 +6,8 @@ import type { ChildrenType } from '@core/types';
 import { getSettingsFromCookie } from "@core/utils/serverHelpers";
 
 export const metadata = {
-  title: 'Enterprise Console',
-  description: 'Enterprise Console'
+  title: 'Admin Console',
+  description: 'Admin Console'
 }
 
 type Params = Promise<{

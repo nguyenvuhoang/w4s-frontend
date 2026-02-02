@@ -91,9 +91,9 @@ For open source projects, say how it is licensed.
 ## Project status
 If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
 =======
-# Enterprise Console - Full Template
+# Admin Console - Full Template
 
-Complete enterprise-grade Next.js 16 banking/financial portal with comprehensive features from Enterprise Console.
+Complete enterprise-grade Next.js 16 banking/financial portal with comprehensive features from Admin Console.
 
 ## 🚀 Features
 
@@ -444,7 +444,7 @@ pm2 start ecosystem.config.js
 
 ## 📄 License
 
-Private - Enterprise Console
+Private - Admin Console
 
 ## 🤝 Support
 

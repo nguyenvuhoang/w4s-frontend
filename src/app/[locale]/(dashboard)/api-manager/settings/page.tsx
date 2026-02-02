@@ -12,7 +12,7 @@ export default function SettingsPage() {
             <Paper sx={{ p: 3, maxWidth: 800 }}>
                 <Typography variant="h6" gutterBottom>Global Configuration</Typography>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 2 }}>
-                    <TextField fullWidth label="System Name" defaultValue="Enterprise API Gateway" />
+                    <TextField fullWidth label="System Name" defaultValue="Admin API Gateway" />
                     <TextField fullWidth label="Admin Contact Email" defaultValue="admin@company.com" />
 
                     <FormControlLabel control={<Switch defaultChecked />} label="Enable Global Rate Limiting" />

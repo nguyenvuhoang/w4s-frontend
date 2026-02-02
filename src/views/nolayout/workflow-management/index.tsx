@@ -3,7 +3,11 @@
 import { Locale } from "@/configs/i18n";
 import { WORKFLOWCODE } from "@/data/WorkflowCode";
 import { workflowService } from "@/servers/system-service";
+import { convertKeysToSnakeCase } from "@/shared/utils/convertKeysToSnakeCase";
+import { getLocalizedUrl } from "@/shared/utils/i18n";
 import SearchInput from "@components/forms/search-input/page";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Box,
   Button,
@@ -13,16 +17,12 @@ import {
   DialogTitle,
   Pagination,
   Stack,
-  Typography,
-  useTheme,
+  useTheme
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { getDictionary } from "@utils/getDictionary";
 import { Session } from "next-auth";
 import { useCallback, useEffect, useState } from "react";
 import WorkflowDefinition from "./workflow-definition";
-import { getLocalizedUrl } from "@/shared/utils/i18n";
 
 interface WorkflowInitialData {
   items?: any[];
@@ -41,16 +41,12 @@ const WorkflowManagementContent = ({
   locale?: Locale;
   initialData?: WorkflowInitialData;
 }) => {
-  // const [jsonView, setJsonView] = useState<{ title: string, content: string } | null>(null);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [wfDefDataState, setWfDefdataState] = useState<any[]>(initialData?.items || []);
-  // const [wfStepDataState, setWfStepdataState] = useState([]);
   const [totalPages, setTotalPages] = useState(
     Math.ceil((initialData?.total_count || 0) / (initialData?.page_size || 10)) || 1
   );
-  // const totalPages = Math.ceil(wfDefDataState.total_count / (wfDefDataState.page_size ?? 10));
-  const [expandedRow, setExpandedRow] = useState<string | null>(null);
   const [searchText, setSearchText] = useState("");
   const [selectedWfDef, setSelectedWfDef] = useState<string[]>([]);
   const [selectedWfStep, setSelectedWfStep] = useState<string[]>([]);
@@ -60,7 +56,6 @@ const WorkflowManagementContent = ({
   const [resultDeleteWfStep, setResultDeleteWfStep] = useState<any>(null);
   const [openConfirm, setOpenConfirm] = useState(false);
   const [deleteType, setDeleteType] = useState<"wfdef" | "wfstep" | null>(null);
-  const theme = useTheme();
 
   const fetchData = useCallback(async () => {
     console.log("pageeeee: ", page);
@@ -142,7 +137,7 @@ const WorkflowManagementContent = ({
               input: {
                 workflowid: "",
                 learn_api: WORKFLOWCODE.WFDEF_UPDATE,
-                fields: { wfdef: wfDef },
+                fields: { wfdef: convertKeysToSnakeCase(wfDef) },
               },
             },
           ],
@@ -171,7 +166,7 @@ const WorkflowManagementContent = ({
               input: {
                 workflowid: "",
                 learn_api: WORKFLOWCODE.WFSTEP_UPDATE,
-                fields: { wfstep: wfStep },
+                fields: { wfstep: convertKeysToSnakeCase(wfStep) },
               },
             },
           ],
@@ -200,7 +195,7 @@ const WorkflowManagementContent = ({
               input: {
                 workflowid: "",
                 learn_api: WORKFLOWCODE.WFDEF_DELETE,
-                fields: { listWfDef: selectedWfDef },
+                fields: { listWfDef: convertKeysToSnakeCase(selectedWfDef) },
               },
             },
           ],
@@ -235,7 +230,7 @@ const WorkflowManagementContent = ({
               input: {
                 workflowid: "",
                 learn_api: WORKFLOWCODE.WFSTEP_DELETE,
-                fields: { listWfStep: selectedWfStep },
+                fields: { listWfStep: convertKeysToSnakeCase(selectedWfStep) },
               },
             },
           ],
@@ -296,21 +291,10 @@ const WorkflowManagementContent = ({
             color="primary"
             startIcon={<AddIcon />}
             onClick={() =>
-              window.open(getLocalizedUrl("/workflow-management/add-workflow-definition", locale as string))
+              window.open(getLocalizedUrl("/workflow-management/add", locale as string))
             }
           >
-            Add WfDef
-          </Button>
-
-          <Button
-            variant="contained"
-            color="secondary" // Use secondary or info to differentiate
-            startIcon={<AddIcon />}
-            onClick={() =>
-              window.open(getLocalizedUrl("/workflow-management/add-workflow-step", locale as string))
-            }
-          >
-            Add WfStep
+            Add Workflow
           </Button>
 
           <Button
