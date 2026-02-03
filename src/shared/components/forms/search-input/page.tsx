@@ -19,8 +19,11 @@ const SearchInput: React.FC<SearchInputProps> = ({
     ...props
 }) => {
     const handleClear = () => {
-        onChange('');
-        if (onClear) onClear();
+        if (onClear) {
+            onClear();
+        } else {
+            onChange('');
+        }
     };
 
     return (

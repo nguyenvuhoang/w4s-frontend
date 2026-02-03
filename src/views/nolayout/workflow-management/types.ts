@@ -8,6 +8,15 @@ export type WorkflowDefinitionType = {
     Timeout: number;
     TemplateResponse: string;
     WorkflowEvent: string;
+    workflow_id: string;
+    workflow_name: string;
+    description: string;
+    channel_id: string;
+    status: boolean;
+    is_reverse: boolean;
+    timeout: number;
+    template_response: string;
+    workflow_event: string;
 };
 
 export type WorkflowStepType = {

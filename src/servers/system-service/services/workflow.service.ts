@@ -199,7 +199,7 @@ export const workflowService = {
     updateWorkflowDefinition: ({ sessiontoken, fields }: SystemSearchDataRequest) =>
         http.post<BODataResponse>('/system-service',
             {
-                learn_api: LEARNAPICODE.LEARN_API_BO_UDPATE_WF,
+                learn_api: LEARNAPICODE.LEARN_API_BO_UPDATE_WF,
                 fields: {
                     ...fields
                 }

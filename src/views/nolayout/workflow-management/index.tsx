@@ -15,11 +15,19 @@ import {
   DialogContent,
   DialogTitle,
   Pagination,
-  Stack
+  Paper,
+  Skeleton,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow
 } from "@mui/material";
 import { getDictionary } from "@utils/getDictionary";
 import { Session } from "next-auth";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import WorkflowDefinition from "./workflow-definition";
 
 interface WorkflowInitialData {
@@ -46,6 +54,8 @@ const WorkflowManagementContent = ({
     Math.ceil((initialData?.total_count || 0) / (initialData?.page_size || 10)) || 1
   );
   const [searchText, setSearchText] = useState("");
+  const [inputValue, setInputValue] = useState("");
+  const hasSearched = useRef(false);
   const [selectedWfDef, setSelectedWfDef] = useState<string[]>([]);
   const [selectedWfStep, setSelectedWfStep] = useState<string[]>([]);
   const [actionDeleteWfDef, setActionDeleteWfDef] = useState(false);
@@ -73,7 +83,8 @@ const WorkflowManagementContent = ({
   }, [page, searchText, session?.user?.token, locale]);
 
   useEffect(() => {
-    if (initialData && page === 1 && searchText === "") {
+    // Skip initial load if we have initialData and haven't searched yet
+    if (initialData && page === 1 && searchText === "" && !hasSearched.current) {
       return;
     }
     fetchData();
@@ -173,9 +184,21 @@ const WorkflowManagementContent = ({
             variant="outlined"
             label={dictionary["common"].search || "Search Workflow"}
             placeholder="Enter workflow code"
-            value={searchText}
+            value={inputValue}
             onChange={(val) => {
-              setSearchText(val);
+              setInputValue(val);
+            }}
+            onKeyDown={(e: React.KeyboardEvent) => {
+              if (e.key === 'Enter') {
+                hasSearched.current = true;
+                setSearchText(inputValue);
+                setPage(1);
+              }
+            }}
+            onClear={() => {
+              hasSearched.current = true;
+              setInputValue("");
+              setSearchText("");
               setPage(1);
             }}
           />
@@ -205,21 +228,52 @@ const WorkflowManagementContent = ({
         </Stack>
       </Stack>
       <Box sx={{ mt: 5, width: "100%" }}>
-        <WorkflowDefinition
-          items={wfDefDataState}
-          loadWfStep={loadWfStep}
-          updateWorkflow={updateWorkflow}
-          selectedWfDef={selectedWfDef}
-          setSelectedWfDef={setSelectedWfDef}
-          selectedWfStep={selectedWfStep}
-          setSelectedWfStep={setSelectedWfStep}
-          actionDeleteWfDef={actionDeleteWfDef}
-          setActionDeleteWfDef={setActionDeleteWfDef}
-          resultDeleteWfDef={resultDeleteWfDef}
-          actionDeleteWfStep={false}
-          setActionDeleteWfStep={() => { }}
-          resultDeleteWfStep={null}
-        />
+        {loading ? (
+          <TableContainer component={Paper} sx={{ borderRadius: 2, boxShadow: 3 }}>
+            <Table size="small" sx={{ border: '1px solid #d0d0d0' }}>
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ width: 48, backgroundColor: '#225087', color: 'white' }}>☐</TableCell>
+                  {['Workflow ID', 'Workflow Name', 'Description', 'Status', 'Created Date', 'Modified Date'].map((header, index) => (
+                    <TableCell key={`header-${index}`} sx={{ backgroundColor: '#225087', color: 'white', fontWeight: 600 }}>
+                      {header}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {[...Array(5)].map((_, rowIndex) => (
+                  <TableRow key={`skeleton-row-${rowIndex}`}>
+                    <TableCell>
+                      <Skeleton variant="rectangular" width={20} height={20} />
+                    </TableCell>
+                    {[...Array(6)].map((_, colIndex) => (
+                      <TableCell key={`skeleton-cell-${rowIndex}-${colIndex}`}>
+                        <Skeleton variant="text" width="80%" height={24} animation="wave" />
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        ) : (
+          <WorkflowDefinition
+            items={wfDefDataState}
+            loadWfStep={loadWfStep}
+            updateWorkflow={updateWorkflow}
+            selectedWfDef={selectedWfDef}
+            setSelectedWfDef={setSelectedWfDef}
+            selectedWfStep={selectedWfStep}
+            setSelectedWfStep={setSelectedWfStep}
+            actionDeleteWfDef={actionDeleteWfDef}
+            setActionDeleteWfDef={setActionDeleteWfDef}
+            resultDeleteWfDef={resultDeleteWfDef}
+            actionDeleteWfStep={false}
+            setActionDeleteWfStep={() => { }}
+            resultDeleteWfStep={null}
+          />
+        )}
       </Box>
       <Box display="flex" justifyContent="center" my={5}>
         <Pagination
