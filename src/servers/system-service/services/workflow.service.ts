@@ -195,6 +195,36 @@ export const workflowService = {
                     uid: `${sessiontoken}`,
                     app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
                 }
+            }),
+    updateWorkflowDefinition: ({ sessiontoken, fields }: SystemSearchDataRequest) =>
+        http.post<BODataResponse>('/system-service',
+            {
+                learn_api: LEARNAPICODE.LEARN_API_BO_UDPATE_WF,
+                fields: {
+                    ...fields
+                }
+            },
+            {
+                baseUrl: process.env.NEXT_PUBLIC_API_URL,
+                headers: {
+                    uid: `${sessiontoken}`,
+                    app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
+                }
+            }),
+    deleteWorkflowDefinition: ({ sessiontoken, fields }: SystemSearchDataRequest) =>
+        http.post<BODataResponse>('/system-service',
+            {
+                learn_api: LEARNAPICODE.LEARN_API_BO_DELETE_WF,
+                fields: {
+                    ...fields
+                }
+            },
+            {
+                baseUrl: process.env.NEXT_PUBLIC_API_URL,
+                headers: {
+                    uid: `${sessiontoken}`,
+                    app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
+                }
             })
 }
 

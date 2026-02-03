@@ -1,7 +1,6 @@
 "use client";
 
 import { Locale } from "@/configs/i18n";
-import { WORKFLOWCODE } from "@/data/WorkflowCode";
 import { workflowService } from "@/servers/system-service";
 import { convertKeysToSnakeCase } from "@/shared/utils/convertKeysToSnakeCase";
 import { getLocalizedUrl } from "@/shared/utils/i18n";
@@ -16,8 +15,7 @@ import {
   DialogContent,
   DialogTitle,
   Pagination,
-  Stack,
-  useTheme
+  Stack
 } from "@mui/material";
 import { getDictionary } from "@utils/getDictionary";
 import { Session } from "next-auth";
@@ -52,21 +50,10 @@ const WorkflowManagementContent = ({
   const [selectedWfStep, setSelectedWfStep] = useState<string[]>([]);
   const [actionDeleteWfDef, setActionDeleteWfDef] = useState(false);
   const [resultDeleteWfDef, setResultDeleteWfDef] = useState<any>(null);
-  const [actionDeleteWfStep, setActionDeleteWfStep] = useState(false);
-  const [resultDeleteWfStep, setResultDeleteWfStep] = useState<any>(null);
   const [openConfirm, setOpenConfirm] = useState(false);
-  const [deleteType, setDeleteType] = useState<"wfdef" | "wfstep" | null>(null);
 
   const fetchData = useCallback(async () => {
-    console.log("pageeeee: ", page);
     setLoading(true);
-    console.log(
-      "calling fetchData with page:",
-      page,
-      "searchText:",
-      searchText
-    );
-
     const res = await workflowService.searchWorkflowDefinition({
       sessiontoken: session?.user?.token as string,
       pageindex: page - 1,
@@ -77,17 +64,15 @@ const WorkflowManagementContent = ({
 
     if (res?.payload?.dataresponse?.data) {
       const data = res.payload.dataresponse.data.items;
-      console.log("Workflow Data:", data);
       const total_count = res.payload.dataresponse.data.total_count || 0;
       const page_size = res.payload.dataresponse.data.page_size || 10;
       setTotalPages(Math.ceil(total_count / page_size));
       setWfDefdataState(data);
     }
     setLoading(false);
-  }, [page, searchText, session?.user?.token]);
+  }, [page, searchText, session?.user?.token, locale]);
 
   useEffect(() => {
-    // Skip initial fetch if we have initialData and it's the first page with no search
     if (initialData && page === 1 && searchText === "") {
       return;
     }
@@ -96,22 +81,20 @@ const WorkflowManagementContent = ({
 
   const loadWfStep = async (workflowid: string) => {
     setLoading(true);
-
     try {
       const res = await workflowService.searchWorkflowStepByWorkflowId({
         sessiontoken: session?.user?.token as string,
-        pageindex: page - 1,
+        pageindex: 0,
         pagesize: 10,
-        searchtext: searchText,
+        searchtext: "",
         language: locale as Locale,
         workflowid: workflowid
       });
 
       let data: any[] = [];
-      if (res?.payload?.dataresponse.data) {
+      if (res?.payload?.dataresponse?.data) {
         data = res.payload.dataresponse.data.items || [];
       }
-
       return data;
     } catch (err) {
       console.error("Error loadWfStep:", err);
@@ -121,59 +104,20 @@ const WorkflowManagementContent = ({
     }
   };
 
-  const updateWfDef = async (wfDef: object) => {
+  const updateWorkflow = async (wfDef: any, listStep: any[]) => {
     setLoading(true);
-    console.log("calling updateWfDef with object:", wfDef);
-
     try {
-      const res = await workflowService.runBODynamic({
-        sessiontoken: session?.user?.token,
-        txFo: {
-          bo: [
-            {
-              use_microservice: true,
-              input: {
-                workflowid: "",
-                learn_api: WORKFLOWCODE.WFDEF_UPDATE,
-                fields: { wfdef: convertKeysToSnakeCase(wfDef) },
-              },
-            },
-          ],
+      const res = await workflowService.updateWorkflowDefinition({
+        sessiontoken: session?.user?.token as string,
+        fields: {
+          ...convertKeysToSnakeCase(wfDef),
+          list_step: listStep.map(step => convertKeysToSnakeCase(step))
         },
+        language: locale as Locale,
       });
-      console.log("res: ", res);
       return res;
     } catch (err) {
-      console.error("Error updateWfDef:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updateWfStep = async (wfStep: object) => {
-    setLoading(true);
-    console.log("calling updateWfStep with object:", wfStep);
-
-    try {
-      const res = await workflowService.runBODynamic({
-        sessiontoken: session?.user?.token,
-        txFo: {
-          bo: [
-            {
-              use_microservice: true,
-              input: {
-                workflowid: "",
-                learn_api: WORKFLOWCODE.WFSTEP_UPDATE,
-                fields: { wfstep: convertKeysToSnakeCase(wfStep) },
-              },
-            },
-          ],
-        },
-      });
-      console.log("res: ", res);
-      return res;
-    } catch (err) {
-      console.error("Error updateWfStep:", err);
+      console.error("Error updateWorkflow:", err);
     } finally {
       setLoading(false);
     }
@@ -181,23 +125,15 @@ const WorkflowManagementContent = ({
 
   const deleteWfDef = async () => {
     setLoading(true);
-    console.log("selected wfDef to delete:", selectedWfDef);
-
     try {
-      const res = await workflowService.runBODynamic({
-        sessiontoken: session?.user?.token,
-        txFo: {
-          bo: [
-            {
-              use_microservice: true,
-              input: {
-                workflowid: "",
-                learn_api: WORKFLOWCODE.WFDEF_DELETE,
-                fields: { listWfDef: convertKeysToSnakeCase(selectedWfDef) },
-              },
-            },
-          ],
+      const [workflowId, channelId] = selectedWfDef[0].split("#");
+      const res = await workflowService.deleteWorkflowDefinition({
+        sessiontoken: session?.user?.token as string,
+        fields: {
+          workflow_id: workflowId,
+          channel_id: channelId
         },
+        language: locale as Locale,
       });
       setResultDeleteWfDef(res);
       setActionDeleteWfDef(true);
@@ -214,53 +150,15 @@ const WorkflowManagementContent = ({
     }
   };
 
-  const deleteWfStep = async () => {
-    setLoading(true);
-    console.log("selected wfStep to delete:", selectedWfStep);
-
-    try {
-      const res = await workflowService.runBODynamic({
-        sessiontoken: session?.user?.token,
-        txFo: {
-          bo: [
-            {
-              use_microservice: true,
-              input: {
-                workflowid: "",
-                learn_api: WORKFLOWCODE.WFSTEP_DELETE,
-                fields: { listWfStep: convertKeysToSnakeCase(selectedWfStep) },
-              },
-            },
-          ],
-        },
-      });
-      setResultDeleteWfStep(res);
-      setActionDeleteWfStep(true);
-
-      const isDeleteSuccess = res?.payload?.dataresponse?.errors?.length === 0;
-      if (isDeleteSuccess) {
-        setSelectedWfStep([]);
-      }
-    } catch (err) {
-      console.error("Error delete WfStep:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleOpenConfirm = (type: "wfdef" | "wfstep") => {
-    setDeleteType(type);
+  const handleOpenConfirm = () => {
     setOpenConfirm(true);
   };
 
   const handleDelete = () => {
     setOpenConfirm(false);
-    if (deleteType === "wfdef") {
-      deleteWfDef();
-    } else if (deleteType === "wfstep") {
-      deleteWfStep();
-    }
+    deleteWfDef();
   };
+
   return (
     <>
       <Stack
@@ -300,19 +198,9 @@ const WorkflowManagementContent = ({
             variant="outlined"
             color="error"
             startIcon={<DeleteIcon />}
-            onClick={() => handleOpenConfirm("wfdef")}
+            onClick={() => handleOpenConfirm()}
           >
             Delete WfDef
-          </Button>
-
-          <Button
-            disabled={selectedWfStep.length === 0}
-            variant="outlined"
-            color="error"
-            startIcon={<DeleteIcon />}
-            onClick={() => handleOpenConfirm("wfstep")}
-          >
-            Delete WfStep
           </Button>
         </Stack>
       </Stack>
@@ -320,8 +208,7 @@ const WorkflowManagementContent = ({
         <WorkflowDefinition
           items={wfDefDataState}
           loadWfStep={loadWfStep}
-          updateWfDef={updateWfDef}
-          updateWfStep={updateWfStep}
+          updateWorkflow={updateWorkflow}
           selectedWfDef={selectedWfDef}
           setSelectedWfDef={setSelectedWfDef}
           selectedWfStep={selectedWfStep}
@@ -329,9 +216,9 @@ const WorkflowManagementContent = ({
           actionDeleteWfDef={actionDeleteWfDef}
           setActionDeleteWfDef={setActionDeleteWfDef}
           resultDeleteWfDef={resultDeleteWfDef}
-          actionDeleteWfStep={actionDeleteWfStep}
-          setActionDeleteWfStep={setActionDeleteWfStep}
-          resultDeleteWfStep={resultDeleteWfStep}
+          actionDeleteWfStep={false}
+          setActionDeleteWfStep={() => { }}
+          resultDeleteWfStep={null}
         />
       </Box>
       <Box display="flex" justifyContent="center" my={5}>
@@ -341,7 +228,6 @@ const WorkflowManagementContent = ({
           onChange={(_, value) => setPage(value)}
           color="primary"
           shape="rounded"
-        /* Remove custom styling to let theme control it, or keep minimal if needed */
         />
       </Box>
       <Dialog open={openConfirm} onClose={() => setOpenConfirm(false)}>
@@ -363,14 +249,13 @@ const WorkflowManagementContent = ({
           }}
         >
           <p>
-            Do you want to <strong>delete</strong> the following{" "}
-            {deleteType === "wfdef" ? "workflow definition" : "workflow step"}?
+            Do you want to <strong>delete</strong> the following workflow definition?
           </p>
 
           <Box sx={{ p: 0, mt: 2 }}>
-            {(deleteType === "wfdef" ? selectedWfDef : selectedWfStep).map(
+            {selectedWfDef.map(
               (wf, idx, arr) => {
-                const [workflowId, secondField, thirdField] = wf.split("#");
+                const [workflowId, secondField] = wf.split("#");
                 const isLast = idx === arr.length - 1;
                 return (
                   <Box
@@ -382,17 +267,7 @@ const WorkflowManagementContent = ({
                   >
                     WorkflowId: <strong>{workflowId}</strong>
                     <br />
-                    {deleteType === "wfdef" ? (
-                      <>
-                        ChannelId: <strong>{secondField}</strong>
-                      </>
-                    ) : (
-                      <>
-                        StepCode: <strong>{secondField}</strong>
-                        <br />
-                        StepOrder: <strong>{thirdField}</strong>
-                      </>
-                    )}
+                    ChannelId: <strong>{secondField}</strong>
                   </Box>
                 );
               }
@@ -424,4 +299,3 @@ const WorkflowManagementContent = ({
 };
 
 export default WorkflowManagementContent;
-

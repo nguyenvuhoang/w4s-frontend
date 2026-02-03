@@ -239,6 +239,7 @@ const RenderInput: React.FC<RenderInputProps> = ({
           setIsModify={setIsModify}
           searchtext={searchtext}
           roleTask={roleTask}
+          datasearch={datasearch}
         />
       );
     case 'jTableSearch':
@@ -270,7 +271,7 @@ const RenderInput: React.FC<RenderInputProps> = ({
         />
       );
     }
-    
+
 
     default:
       return <div key={uniqueKey}>Unsupported input type: {input.inputtype}</div>;

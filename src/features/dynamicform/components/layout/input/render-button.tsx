@@ -34,6 +34,7 @@ export type RenderButtonDefaultProps = {
   searchtext?: string;
   formMethods: ReturnType<typeof useForm>;
   roleTask?: any;
+  datasearch?: PageData<any>;
 };
 
 // ============================================================================
@@ -56,6 +57,7 @@ const RenderButtonDefault = ({
   searchtext,
   formMethods,
   roleTask,
+  datasearch,
 }: RenderButtonDefaultProps) => {
   // All logic is encapsulated in the custom hook
   const {
@@ -79,7 +81,7 @@ const RenderButtonDefault = ({
     searchtext,
     formMethods,
     roleTask,
-    
+    datasearch,
   });
 
   // Early return for hidden buttons

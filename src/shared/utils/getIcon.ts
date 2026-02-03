@@ -13,7 +13,7 @@ import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 
 import React, { JSX } from 'react';
 
-type IconKey = 'btn_delete' | 'btn_view' | 'btn_select' | 'btn_print' | 'view' | 'delete' | 'btn_add' | 'btn_update' | 'btn_clear' | 'add' | 'update' | 'clear' | 'upload' | 'search' | 'download_zip' | 'upload_zip' | 'advanced_search_button' | 'save' | 'modify' | 'apply' | 'preview';
+type IconKey = 'btn_delete' | 'btn_view' | 'btn_select' | 'btn_print' | 'view' | 'delete' | 'btn_add' | 'btn_update' | 'btn_clear' | 'add' | 'update' | 'clear' | 'upload' | 'search' | 'download_zip' | 'upload_zip' | 'advanced_search_button' | 'save' | 'modify' | 'apply' | 'preview' | 'export' | 'import';
 
 const ICON_CONVERT: Record<IconKey, { color: string; icon: JSX.Element }> = {
     btn_delete: { color: "error", icon: React.createElement(DeleteOutlineSharpIcon) },
@@ -37,6 +37,8 @@ const ICON_CONVERT: Record<IconKey, { color: string; icon: JSX.Element }> = {
     save: { color: "primary", icon: React.createElement(CheckCircleOutlineSharpIcon) },
     apply: { color: "primary", icon: React.createElement(SaveOutlinedIcon) },
     preview: { color: "primary", icon: React.createElement(VisibilitySharpIcon) },
+    export: { color: "primary", icon: React.createElement(SystemUpdateAltIcon) },
+    import: { color: "primary", icon: React.createElement(FileUploadIcon) },
 };
 
 export function getIcon(input: { [x: string]: any; inputtype?: string; default?: any; config?: any }): JSX.Element | null {

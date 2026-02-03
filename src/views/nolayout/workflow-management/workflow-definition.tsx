@@ -33,8 +33,7 @@ import WorkflowStepTable from "./WorkflowStepTable";
 const WorkflowDefinition = ({
   items,
   loadWfStep,
-  updateWfDef,
-  updateWfStep,
+  updateWorkflow,
   selectedWfDef,
   setSelectedWfDef,
   selectedWfStep,
@@ -48,8 +47,7 @@ const WorkflowDefinition = ({
 }: {
   items: any[];
   loadWfStep: (workflowId: string) => Promise<WorkflowStepType[]>;
-  updateWfDef: (wfDef: object) => Promise<any>;
-  updateWfStep: (wfStep: object) => Promise<any>;
+  updateWorkflow: (wfDef: WorkflowDefinitionType, listStep: WorkflowStepType[]) => Promise<any>;
   selectedWfDef: string[];
   setSelectedWfDef: React.Dispatch<React.SetStateAction<string[]>>;
   selectedWfStep: string[];
@@ -70,6 +68,7 @@ const WorkflowDefinition = ({
     dirtyRows,
     snackbar,
     wfStepsMap,
+    setWfStepsMap,
     setSnackbar,
     handleRowClick,
     handleChange,
@@ -78,21 +77,16 @@ const WorkflowDefinition = ({
     handleCopy,
     getRowKey,
     handleSelectOne,
+    openWorkflowId,
   } = useWorkflowDefinition({
     items,
     loadWfStep,
-    updateWfDef,
-    updateWfStep,
+    updateWorkflow,
     selectedWfDef,
     setSelectedWfDef,
-    selectedWfStep,
-    setSelectedWfStep,
     actionDeleteWfDef,
     setActionDeleteWfDef,
     resultDeleteWfDef,
-    actionDeleteWfStep,
-    setActionDeleteWfStep,
-    resultDeleteWfStep,
   });
 
   const nonEditableFields: (keyof WorkflowDefinitionType)[] = [
@@ -308,9 +302,9 @@ const WorkflowDefinition = ({
                         }}>
                           <WorkflowStepTable
                             steps={wfStepsMap}
-                            updateWfStep={updateWfStep}
-                            selectedWfStep={selectedWfStep}
-                            setSelectedWfStep={setSelectedWfStep}
+                            setWfStepsMap={setWfStepsMap}
+                            wfDef={row}
+                            updateWorkflow={updateWorkflow}
                           />
                         </Box>
                       </Collapse>

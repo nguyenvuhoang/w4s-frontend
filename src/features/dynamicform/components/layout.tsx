@@ -139,12 +139,19 @@ const Layout = ({
 
                 case 'viewdetail': {
                     const currentPath = getLocalizedUrl(`/form-view`, language);
-                    const _txFo = JSON.parse(actionRowSelect.txFo);
-                    const pathname = actionRowSelect.pathname;
-                    const parameters = _txFo[0].parameters;
-                    const viewid = rowData[parameters];
-                    const newPath = generatePathNameView(viewid, currentPath, _txFo, pathname);
-                    window.open(newPath, '_blank');
+                    let _txFo: any[] = [];
+                    try {
+                        _txFo = actionRowSelect.txFo ? JSON.parse(actionRowSelect.txFo) : [];
+                    } catch (e) {
+                        console.error('Error parsing txFo in viewdetail:', e);
+                    }
+                    const targetPathname = actionRowSelect.pathname;
+                    if (_txFo.length > 0) {
+                        const parameters = _txFo[0].parameters;
+                        const viewid = rowData[parameters];
+                        const newPath = generatePathNameView(viewid, currentPath, _txFo, targetPathname);
+                        window.open(newPath, '_blank');
+                    }
                     break;
                 }
 
@@ -175,19 +182,13 @@ const Layout = ({
         } catch (error) {
             console.error('Error fetching detail:', error);
         }
-    }, [pathname, router, language, session?.user?.token, formMethods]);
+    }, [pathname, router, language, session, formMethods]);
 
     const renderLayouts = useMemo(() => datalayout
         .filter((layout) => !isComponentHidden(layout.codeHidden, roleTask, role))
         .map((layout) => {
             const filteredViews = layout.list_view?.filter(view => !isComponentHidden(view.codeHidden, roleTask, role)) || [];
 
-            const isHidden = role.some(r => {
-                const roleId = r.role_id?.toString()
-                return roleTask?.[roleId]?.[layout.codeHidden]?.component?.install === false
-            })
-
-            if (isHidden) return null;
             return (
                 <RenderLayout
                     key={layout.id}
@@ -228,7 +229,7 @@ const Layout = ({
                     roleTask={roleTask}
                 />
             );
-        }), [datalayout, roleTask, role, formMethods, form_id, language, dictionary, hiddenFields, rules, session, setLoading, activeTab, handleTabChange, handleRowDoubleClick, datasearch, isFetching, txfoSearch, datasearchlookup, ismodify, searchtext, advancedsearch, globalAdvancedSearch, storeFormSearch, storeInfoSearch, fetchControlDefaultValue, renderviewdata]);
+        }), [datalayout, roleTask, role, formMethods, form_id, language, dictionary, hiddenFields, rules, session, setLoading, activeTab, handleTabChange, handleRowDoubleClick, datasearch, setDatasearch, isFetching, setIsFetching, txfoSearch, setTxFOSearch, datasearchlookup, ismodify, setIsModify, searchtext, setSearchText, advancedsearch, setAdvancedSearch, globalAdvancedSearch, setGlobalAdvancedSearch, storeFormSearch, setStoreFormSearch, storeInfoSearch, setStoreInfoSearch, fetchControlDefaultValue, setFetchControlDefaultValue, renderviewdata]);
 
 
     return !isNested ? (

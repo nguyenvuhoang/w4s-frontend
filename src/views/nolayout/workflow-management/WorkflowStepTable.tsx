@@ -1,7 +1,5 @@
 import JsonEditorComponent from "@/@core/components/jSONEditor";
 import CancelIcon from "@mui/icons-material/Cancel";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import ContentCopyTwoToneIcon from "@mui/icons-material/ContentCopyTwoTone";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
@@ -11,7 +9,6 @@ import {
     Button,
     Card,
     CardContent,
-    Checkbox,
     IconButton,
     Snackbar,
     Table,
@@ -21,9 +18,9 @@ import {
     Typography,
     useTheme
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import EditableCell from "./EditableCell";
-import { WorkflowStepType } from "./types";
+import { WorkflowDefinitionType, WorkflowStepType } from "./types";
 
 function SafeJsonEditor({
     initialValue,
@@ -49,17 +46,17 @@ function SafeJsonEditor({
 
 const WorkflowStepTable = ({
     steps,
-    updateWfStep,
-    selectedWfStep,
-    setSelectedWfStep,
+    setWfStepsMap,
+    wfDef,
+    updateWorkflow,
 }: {
     steps: WorkflowStepType[];
-    updateWfStep: (wfStep: object) => Promise<any>;
-    selectedWfStep: string[];
-    setSelectedWfStep: React.Dispatch<React.SetStateAction<string[]>>;
+    setWfStepsMap: React.Dispatch<React.SetStateAction<WorkflowStepType[]>>;
+    wfDef: WorkflowDefinitionType;
+    updateWorkflow: (wfDef: WorkflowDefinitionType, listStep: WorkflowStepType[]) => Promise<any>;
 }) => {
-    const [rows, setRows] = useState(steps);
     const theme = useTheme();
+    const [prevSteps, setPrevSteps] = useState(steps);
     const [editingRows, setEditingRows] = useState<
         Record<number, WorkflowStepType>
     >({});
@@ -73,19 +70,27 @@ const WorkflowStepTable = ({
         message: "",
         severity: "success",
     });
+
+    if (steps !== prevSteps) {
+        setPrevSteps(steps);
+        setEditingRows({});
+        setDirtyRows(new Set());
+    }
+
     const nonEditableFields: (keyof WorkflowStepType)[] = [
         "WorkflowId",
         "StepCode",
     ];
 
     const handleChange = (index: number, key: keyof WorkflowStepType, val: any) => {
+        const updatedRow = {
+            ...steps[index],
+            ...editingRows[index],
+            [key]: val,
+        };
         setEditingRows((prev) => ({
             ...prev,
-            [index]: {
-                ...rows[index],
-                ...prev[index],
-                [key]: val,
-            },
+            [index]: updatedRow,
         }));
 
         setDirtyRows((prev) => new Set(prev).add(index));
@@ -93,11 +98,14 @@ const WorkflowStepTable = ({
 
     const handleSave = async (index: number) => {
         try {
-            const wfStepSave: WorkflowStepType = editingRows[index] ?? rows[index];
-            console.log("Save WorkflowStep:", wfStepSave);
+            const wfStepSave: WorkflowStepType = editingRows[index] ?? steps[index];
 
-            const res = await updateWfStep(wfStepSave);
-            const isUpdateSuccess = res?.payload?.dataresponse?.error?.length === 0;
+            // Create a temp list of steps with the updated step
+            const updatedSteps = [...steps];
+            updatedSteps[index] = wfStepSave;
+
+            const res = await updateWorkflow(wfDef, updatedSteps);
+            const isUpdateSuccess = res?.payload?.dataresponse?.errors?.length === 0;
 
             if (isUpdateSuccess) {
                 setDirtyRows((prev) => {
@@ -106,11 +114,9 @@ const WorkflowStepTable = ({
                     return newSet;
                 });
 
-                setRows((prev) => {
-                    const newRows = [...prev];
-                    newRows[index] = wfStepSave;
-                    return newRows;
-                });
+                // Sync back to parent
+                setWfStepsMap(updatedSteps);
+
                 setSnackbar({
                     open: true,
                     message: "Update success!",
@@ -120,7 +126,7 @@ const WorkflowStepTable = ({
                 setSnackbar({
                     open: true,
                     message:
-                        "Update failed!\n" + res?.payload?.dataresponse?.error[0]?.info,
+                        "Update failed!\n" + (res?.payload?.dataresponse?.errors?.[0]?.info || "Unknown error"),
                     severity: "error",
                 });
             }
@@ -131,13 +137,9 @@ const WorkflowStepTable = ({
     };
 
     const handleCancel = (index: number) => {
-        const newRows = [...rows];
-        newRows[index] = steps[index];
-        setRows(newRows);
-
         setEditingRows((prev) => {
             const newEditing = { ...prev };
-            delete newEditing[index]; // Use delete instead of assigning steps[index] to clean state
+            delete newEditing[index];
             return newEditing;
         });
 
@@ -161,13 +163,6 @@ const WorkflowStepTable = ({
 
     const getRowKey = (row: WorkflowStepType) =>
         `${row.WorkflowId}#${row.StepCode}#${row.StepOrder}`;
-
-    const handleSelectOne = (row: WorkflowStepType) => {
-        const id = getRowKey(row);
-        setSelectedWfStep((prev) =>
-            prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-        );
-    };
 
     return (
         <Box sx={{ p: 2, backgroundColor: theme.palette.action.hover }}>
@@ -194,36 +189,9 @@ const WorkflowStepTable = ({
                         <CardContent sx={{ p: 0 }}>
                             <Table size="small" sx={{ width: "100%" }}>
                                 <TableBody>
-                                    {/* Selection Checkbox Row */}
-                                    <TableRow>
-                                        <TableCell sx={{ borderBottom: "none", p: 1 }}>
-                                            <Box
-                                                sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
-                                            >
-                                                <Checkbox
-                                                    sx={{
-                                                        p: 0,
-                                                        "& .MuiTouchRipple-root": {
-                                                            color: theme.palette.primary.light,
-                                                        },
-                                                    }}
-                                                    checked={selectedWfStep.includes(id)}
-                                                    onChange={() => handleSelectOne(step)}
-                                                    icon={
-                                                        <CheckBoxOutlineBlankIcon sx={{ color: theme.palette.action.disabled }} />
-                                                    }
-                                                    checkedIcon={<CheckBoxIcon sx={{ color: theme.palette.primary.main }} />}
-                                                />
-                                                <Typography variant="subtitle2" color="text.secondary">
-                                                    Select Step
-                                                </Typography>
-                                            </Box>
-                                        </TableCell>
-                                    </TableRow>
-
                                     {Object.entries(step).map(([key, value]) => {
                                         const typedKey = key as keyof WorkflowStepType;
-                                        const currentValue = editingRows[index]?.[typedKey] ?? rows[index][typedKey];
+                                        const currentValue = editingRows[index]?.[typedKey] ?? steps[index][typedKey];
 
                                         return (
                                             <TableRow
@@ -237,7 +205,7 @@ const WorkflowStepTable = ({
                                             >
                                                 <TableCell
                                                     sx={{
-                                                        width: "30%", // Percentage based width for better response
+                                                        width: "30%",
                                                         minWidth: 200,
                                                         maxWidth: 300,
                                                         fontWeight: 600,
@@ -267,6 +235,7 @@ const WorkflowStepTable = ({
                                                             "SendingTemplate",
                                                             "MappingResponse",
                                                             "SendingCondition",
+                                                            "SubSendingTemplate",
                                                         ].includes(key) ? (
                                                             <Box sx={{ width: "100%", mt: 1 }}>
                                                                 <SafeJsonEditor
@@ -311,7 +280,7 @@ const WorkflowStepTable = ({
                                                         <IconButton
                                                             size="small"
                                                             color="primary"
-                                                            onClick={() => handleCopy(value)}
+                                                            onClick={() => handleCopy(currentValue)}
                                                         >
                                                             <ContentCopyTwoToneIcon fontSize="small" />
                                                         </IconButton>

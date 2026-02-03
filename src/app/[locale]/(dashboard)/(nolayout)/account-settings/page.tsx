@@ -24,7 +24,7 @@ const AccountSettingPage = async ({ params }: { params: Params }) => {
     ]);
 
     if (!session) {
-        return <Logout locale={locale} dictionary={dictionary}/>;
+        return <Logout locale={locale} dictionary={dictionary} />;
     }
 
     const token = session?.user?.token
@@ -52,9 +52,7 @@ const AccountSettingPage = async ({ params }: { params: Params }) => {
         );
         return <Spinner />;
     }
-
-    const userdata = dataviewAPI.payload.dataresponse.data.input.data[0] as UserAccount;
-
+    const userdata = dataviewAPI.payload.dataresponse.data.data[0] as UserAccount;
 
     const dataSearchAPI = await dataService.searchData({
         sessiontoken: session?.user?.token as string,
@@ -78,9 +76,7 @@ const AccountSettingPage = async ({ params }: { params: Params }) => {
         );
         return <Spinner />;
     }
-
-    const useractivity = dataSearchAPI.payload.dataresponse.data.input 
-
+    const useractivity = dataSearchAPI.payload.dataresponse.data
     return (
         <Suspense fallback={<Spinner />}>
             <AccountSettingContent userdata={userdata} useractivity={useractivity} dictionary={dictionary} locale={locale} session={session} />

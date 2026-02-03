@@ -3,6 +3,7 @@ import { handlePostUpdateData } from '@/@core/components/cButton/handlePostUpdat
 import { handleSearchAPI } from '@/@core/components/cButton/handleSearchAPI';
 import { handlePostAddData } from '@/@core/components/cButton/handlePostAddData';
 import { handlePostViewData } from '@/@core/components/cButton/handlePostViewData';
+import { handlePostExportData } from '@/@core/components/cButton/handlePostExportData';
 import { Locale } from '@/configs/i18n';
 
 type PerformParams = {
@@ -14,6 +15,7 @@ type PerformParams = {
     dictionary?: any;
     searchtext?: string;
     language?: Locale;
+    allRows?: any[];
 };
 
 export const performTransaction = async ({
@@ -25,6 +27,7 @@ export const performTransaction = async ({
     dictionary,
     searchtext,
     language,
+    allRows,
 }: PerformParams) => {
     switch (txcode) {
         case '#sys:fo-post-updatedata':
@@ -43,6 +46,9 @@ export const performTransaction = async ({
 
         case '#sys:view-data':
             return await handlePostViewData(txFo, selectedRows);
+
+        case '#sys:fo-export-data':
+            return await handlePostExportData(txFo, selectedRows, dictionary, allRows);
 
         default:
             return { error: 'Unknown txcode' };

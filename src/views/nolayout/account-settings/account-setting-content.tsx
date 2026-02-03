@@ -3,29 +3,23 @@
 import PaginationPage from '@/@core/components/jTable/pagination'
 import { Locale } from '@/configs/i18n'
 import { languageData } from '@/data/meta'
-import { AccountActivity, UserAccount } from '@shared/types/bankType'
-import { PageData } from '@shared/types/systemTypes'
-import { getDictionary } from '@utils/getDictionary'
+import ChangePasswordForm from '@features/user/components/ChangePasswordForm'
 import {
+    Check,
     Email,
+    Home,
     Lock,
     Person,
     Phone,
-    Settings,
-    Translate,
-    Visibility,
-    Home,
-    Check
+    Translate
 } from '@mui/icons-material'
 import {
     Avatar,
     Box,
-    Button,
     Divider,
     Grid,
     InputAdornment,
     MenuItem,
-    Pagination,
     Paper,
     SelectChangeEvent,
     Tab,
@@ -39,10 +33,12 @@ import {
     TextField,
     Typography
 } from '@mui/material'
+import { AccountActivity, UserAccount } from '@shared/types/bankType'
+import { PageData } from '@shared/types/systemTypes'
+import { getDictionary } from '@utils/getDictionary'
+import { Session } from 'next-auth'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { Session } from 'next-auth'
-import ChangePasswordForm from '@features/user/components/ChangePasswordForm'
 
 type PageProps = {
     userdata: UserAccount
@@ -60,8 +56,8 @@ const AccountSettingContent = ({ userdata, useractivity, dictionary, locale, ses
     const [pageSize, setPageSize] = useState(10);
     const [jumpPage, setJumpPage] = useState(1);
 
-    const pagedItems = useractivity.items.slice((page - 1) * pageSize, page * pageSize)
-
+    const pagedItems = useractivity?.items?.slice((page - 1) * pageSize, page * pageSize)
+    console.log('useractivity', useractivity);
     const personalFields = [
         {
             name: 'fullName',

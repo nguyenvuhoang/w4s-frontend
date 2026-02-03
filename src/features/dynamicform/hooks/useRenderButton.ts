@@ -37,7 +37,8 @@ export interface UseRenderButtonParams {
   searchtext?: string;
   formMethods: ReturnType<typeof useForm>;
   roleTask?: any;
-  language?: Locale
+  language?: Locale;
+  datasearch?: PageData<any>;
 }
 
 export interface UseRenderButtonReturn {
@@ -74,7 +75,8 @@ export const useRenderButton = ({
   searchtext,
   formMethods,
   roleTask,
-  language
+  language,
+  datasearch
 }: UseRenderButtonParams): UseRenderButtonReturn => {
   // Local states
   const [disableButtonclick, setDisableButtonClick] = useState(false);
@@ -213,6 +215,7 @@ export const useRenderButton = ({
             session,
             formValues: formMethods.getValues(),
             selectedRows,
+            allRows: datasearch?.items,
             dictionary,
             searchtext,
             language,
@@ -248,6 +251,8 @@ export const useRenderButton = ({
       setDatasearch,
       setTxFOSearch,
       handleOpenModal,
+      language,
+      datasearch
     ]
   );
 

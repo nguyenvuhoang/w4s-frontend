@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import {
     wfDefKeyMap,
     wfStepKeyMap,
@@ -35,39 +35,32 @@ function renameKeys<T>(
 interface UseWorkflowDefinitionProps {
     items: any[];
     loadWfStep: (workflowId: string) => Promise<WorkflowStepType[]>;
-    updateWfDef: (wfDef: object) => Promise<any>;
-    updateWfStep: (wfStep: object) => Promise<any>;
+    updateWorkflow: (wfDef: WorkflowDefinitionType, listStep: WorkflowStepType[]) => Promise<any>;
     selectedWfDef: string[];
     setSelectedWfDef: React.Dispatch<React.SetStateAction<string[]>>;
-    selectedWfStep: string[];
-    setSelectedWfStep: React.Dispatch<React.SetStateAction<string[]>>;
     actionDeleteWfDef: boolean;
     setActionDeleteWfDef: React.Dispatch<React.SetStateAction<boolean>>;
     resultDeleteWfDef: any;
-    actionDeleteWfStep: boolean;
-    setActionDeleteWfStep: React.Dispatch<React.SetStateAction<boolean>>;
-    resultDeleteWfStep: any;
 }
 
 export const useWorkflowDefinition = ({
     items,
     loadWfStep,
-    updateWfDef,
-    selectedWfDef,
+    updateWorkflow,
     setSelectedWfDef,
-    selectedWfStep,
-    setSelectedWfStep,
     actionDeleteWfDef,
     setActionDeleteWfDef,
     resultDeleteWfDef,
-    actionDeleteWfStep,
-    setActionDeleteWfStep,
-    resultDeleteWfStep,
 }: UseWorkflowDefinitionProps) => {
     const [openRow, setOpenRow] = useState<number | null>(null);
     const [openWorkflowId, setOpenWorkflowId] = useState<string | null>(null);
     const [wfStepsMap, setWfStepsMap] = useState<WorkflowStepType[]>([]);
-    const [rows, setRows] = useState<WorkflowDefinitionType[]>([]);
+
+    // Pattern to reset state when items change without using useEffect
+    const [prevItems, setPrevItems] = useState(items);
+    const [rows, setRows] = useState<WorkflowDefinitionType[]>(() =>
+        items.map((item) => renameKeys<WorkflowDefinitionType>(item, wfDefKeyMap))
+    );
     const [editingRows, setEditingRows] = useState<
         Record<number, WorkflowDefinitionType>
     >({});
@@ -78,81 +71,39 @@ export const useWorkflowDefinition = ({
         severity: "success" | "error" | "info";
     }>({ open: false, message: "", severity: "success" });
 
-    useEffect(() => {
+    if (items !== prevItems) {
+        setPrevItems(items);
         setOpenRow(null);
-
-        const wfDefData = items.map((item) =>
-            renameKeys<WorkflowDefinitionType>(item, wfDefKeyMap)
-        );
-        setRows(wfDefData);
-
+        setOpenWorkflowId(null);
+        setRows(items.map((item) => renameKeys<WorkflowDefinitionType>(item, wfDefKeyMap)));
         setDirtyRows(new Set());
         setEditingRows({});
-        setSelectedWfStep([]);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [items]);
+    }
 
-    useEffect(() => {
-        if (actionDeleteWfDef) {
-            const res = resultDeleteWfDef;
-            const isDeleteSuccess = res?.payload?.dataresponse?.error?.length === 0;
+    // Pattern to handle delete side-effects without using useEffect (handling it when the flag changes)
+    const [prevActionDelete, setPrevActionDelete] = useState(actionDeleteWfDef);
+    if (actionDeleteWfDef && !prevActionDelete) {
+        setPrevActionDelete(true);
+        const res = resultDeleteWfDef;
+        const isDeleteSuccess = res?.payload?.dataresponse?.errors?.length === 0;
 
-            if (isDeleteSuccess) {
-                setSnackbar({
-                    open: true,
-                    message: "Delete success!",
-                    severity: "success",
-                });
-            } else {
-                setSnackbar({
-                    open: true,
-                    message:
-                        "Delete failed!\n" + res?.payload?.dataresponse?.error[0]?.info,
-                    severity: "error",
-                });
-                console.error(
-                    "Delete failed for WorkflowDef: ",
-                    res?.payload?.dataresponse?.error[0]?.info
-                );
-            }
-            setActionDeleteWfDef(false);
+        if (isDeleteSuccess) {
+            setSnackbar({
+                open: true,
+                message: "Delete success!",
+                severity: "success",
+            });
+        } else {
+            setSnackbar({
+                open: true,
+                message: "Delete failed!\n" + (res?.payload?.dataresponse?.errors?.[0]?.info || "Unknown error"),
+                severity: "error",
+            });
         }
-    }, [actionDeleteWfDef, resultDeleteWfDef, setActionDeleteWfDef]);
-
-    useEffect(() => {
-        if (actionDeleteWfStep) {
-            const run = async () => {
-                const res = resultDeleteWfStep;
-                const isDeleteSuccess = res?.payload?.dataresponse?.error?.length === 0;
-
-                if (isDeleteSuccess) {
-                    setSnackbar({
-                        open: true,
-                        message: "Delete success!",
-                        severity: "success",
-                    });
-                    if (openWorkflowId) {
-                        await searchWfStep(openWorkflowId);
-                    }
-                } else {
-                    setSnackbar({
-                        open: true,
-                        message:
-                            "Delete failed!\n" + res?.payload?.dataresponse?.error[0]?.info,
-                        severity: "error",
-                    });
-                    console.error(
-                        "Delete failed for WorkflowStep: ",
-                        res?.payload?.dataresponse?.error[0]?.info
-                    );
-                }
-                setActionDeleteWfStep(false);
-            };
-
-            run();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [actionDeleteWfStep]);
+        setActionDeleteWfDef(false);
+    } else if (!actionDeleteWfDef && prevActionDelete) {
+        setPrevActionDelete(false);
+    }
 
     const searchWfStep = async (workflowId: string) => {
         const wfStepdata = await loadWfStep(workflowId);
@@ -167,6 +118,7 @@ export const useWorkflowDefinition = ({
                 SendingTemplate: safeJsonParseObject(renamed.SendingTemplate),
                 MappingResponse: safeJsonParseObject(renamed.MappingResponse),
                 SendingCondition: safeJsonParseObject(renamed.SendingCondition),
+                SubSendingTemplate: safeJsonParseObject(renamed.SubSendingTemplate),
             };
         });
         setWfStepsMap(wfStepDataMap);
@@ -204,10 +156,8 @@ export const useWorkflowDefinition = ({
             const wfDefSave: WorkflowDefinitionType =
                 editingRows[index] ?? rows[index];
 
-            console.log("Save wfdef:", wfDefSave);
-
-            const res = await updateWfDef(wfDefSave);
-            const isUpdateSuccess = res?.payload?.dataresponse?.error?.length === 0;
+            const res = await updateWorkflow(wfDefSave, wfStepsMap);
+            const isUpdateSuccess = res?.payload?.dataresponse?.errors?.length === 0;
 
             if (isUpdateSuccess) {
                 setDirtyRows((prev) => {
@@ -230,7 +180,7 @@ export const useWorkflowDefinition = ({
                 setSnackbar({
                     open: true,
                     message:
-                        "Update failed!\n" + res?.payload?.dataresponse?.error[0]?.info,
+                        "Update failed!\n" + (res?.payload?.dataresponse?.errors?.[0]?.info || "Unknown error"),
                     severity: "error",
                 });
             }
@@ -279,6 +229,7 @@ export const useWorkflowDefinition = ({
         dirtyRows,
         snackbar,
         wfStepsMap,
+        setWfStepsMap,
         setSnackbar,
         handleRowClick,
         handleChange,
@@ -287,5 +238,7 @@ export const useWorkflowDefinition = ({
         handleCopy,
         getRowKey,
         handleSelectOne,
+        updateWorkflow,
+        openWorkflowId,
     };
 };
