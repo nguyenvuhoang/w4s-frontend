@@ -85,17 +85,17 @@ const input: Theme['components'] = {
   },
   MuiInputLabel: {
     styleOverrides: {
-      root: {
+      root: ({ theme }) => ({
         // Remove fontFamily to inherit from dynamic theme
 
-        color: '#006400',
+        color: theme.palette.primary.main,
         '&.MuiInputLabel-filled:not(.MuiInputLabel-shrink), &.MuiInputLabel-outlined:not(.MuiInputLabel-shrink)': {
           transform: 'translate(16px, 17px) scale(1)'
         }
-      },
-      shrink: ({ ownerState }) => ({
+      }),
+      shrink: ({ ownerState, theme }) => ({
         ...(ownerState.variant === 'outlined' && {
-          color: '#006400',
+          color: theme.palette.primary.main,
           transform: 'translate(16px, -8px) scale(0.867)'
         }),
         ...(ownerState.variant === 'filled' && {
@@ -118,7 +118,7 @@ const input: Theme['components'] = {
   MuiOutlinedInput: {
     styleOverrides: {
       root: ({ theme }) => ({
-        color: '#006400',
+        color: theme.palette.primary.main,
         '&.MuiInputBase-sizeSmall': {
           borderRadius: 'var(--mui-shape-customBorderRadius-md)',
           '&.MuiInputBase-multiline': {
@@ -167,8 +167,8 @@ const input: Theme['components'] = {
   },
   MuiInputAdornment: {
     styleOverrides: {
-      root: {
-        color: '#006400',
+      root: ({ theme }) => ({
+        color: theme.palette.primary.main,
         '& i, & svg': {
           fontSize: '1.25rem'
         },
@@ -177,7 +177,7 @@ const input: Theme['components'] = {
             marginInlineEnd: -8
           }
         }
-      },
+      }),
       positionStart: ({ theme }) => ({
         marginInlineEnd: theme.spacing(2.5)
       }),

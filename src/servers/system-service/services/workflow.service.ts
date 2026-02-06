@@ -225,6 +225,24 @@ export const workflowService = {
                     uid: `${sessiontoken}`,
                     app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
                 }
+            }),
+    loadApiKeys: ({ sessiontoken, language, pageindex, pagesize, searchtext }: SystemSearchDataRequest) =>
+        http.post<BODataResponse>('/system-service',
+            {
+                learn_api: LEARNAPICODE.CMS_LOAD_APIKEY,
+                fields: {
+                    pageindex: pageindex,
+                    pagesize: pagesize,
+                    searchtext: searchtext
+                }
+            },
+            {
+                baseUrl: process.env.NEXT_PUBLIC_API_URL,
+                headers: {
+                    uid: `${sessiontoken}`,
+                    lang: language,
+                    app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
+                }
             })
 }
 

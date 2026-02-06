@@ -1,7 +1,7 @@
 import { auth } from '@/auth';
 import OpenAPIManagementContent from '@/components/api-manager/credentials';
 import { Locale } from '@/configs/i18n';
-import { dataService } from '@/servers/system-service';
+import { workflowService } from '@/servers/system-service';
 import { generateAuthMetadata } from '@/shared/components/layout/AuthLayout';
 import PageError from '@/shared/components/PageError';
 import { OpenAPIType, PageData } from '@/shared/types/systemTypes';
@@ -19,30 +19,24 @@ const CredentialsPage = async (props: { params: Promise<{ locale: Locale }> }) =
         auth(),
     ]);
 
-    const openAPIdataApi = await dataService.searchData({
+    const openAPIdataApi = await workflowService.loadApiKeys({
         sessiontoken: session?.user?.token as string,
-        workflowid: "BO_EXECUTE_SQL_FROM_CMS",
-        commandname: "SimpleSearchCoreAPIKeys",
+        language: locale,
+        pageindex: 1,
+        pagesize: 10,
         searchtext: '',
-        pageSize: 10,
-        pageIndex: 1,
-        parameters: {
-            status: '',
-            query: '',
-            environment: ''
-        }
     });
 
     if (
         !isValidResponse(openAPIdataApi) ||
-        (openAPIdataApi.payload.dataresponse.error && openAPIdataApi.payload.dataresponse.error.length > 0)
+        (openAPIdataApi.payload.dataresponse.errors && openAPIdataApi.payload.dataresponse.errors.length > 0)
     ) {
-        const executionid = openAPIdataApi.payload.dataresponse.error[0].execute_id;
-        const errordetail = openAPIdataApi.payload.dataresponse.error[0].info;
+        const executionid = openAPIdataApi.payload.dataresponse.errors[0].execute_id;
+        const errordetail = openAPIdataApi.payload.dataresponse.errors[0].info;
         return <PageError errorDetails={errordetail} executionId={executionid} />
     }
 
-    const openAPIdata = openAPIdataApi.payload.dataresponse.fo[0].input as unknown as PageData<OpenAPIType>;
+    const openAPIdata = openAPIdataApi.payload.dataresponse.data as unknown as PageData<OpenAPIType>;
 
     return (
         <OpenAPIManagementContent session={session} dictionary={dictionary} locale={locale} openAPIdata={openAPIdata} />

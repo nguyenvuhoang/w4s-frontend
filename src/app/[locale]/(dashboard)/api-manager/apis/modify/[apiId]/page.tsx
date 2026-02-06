@@ -1,6 +1,6 @@
-
 import { auth } from '@/auth';
-import LearnApiDetail from '@/components/api-manager/apis/detail/LearnApiDetail';
+import LearnApiModify from '@/components/api-manager/apis/modify/LearnApiModify';
+import { Locale } from '@/configs/i18n';
 import { learnAPIService } from '@/servers/system-service/services/learnapi.service';
 import PageError from '@/shared/components/PageError';
 import { LearnAPIType } from '@/shared/types';
@@ -8,7 +8,14 @@ import { getDictionary } from '@/shared/utils/getDictionary';
 import { isValidResponse } from '@/shared/utils/isValidResponse';
 import { notFound } from 'next/navigation';
 
-export default async function ApiDetailPage({ params }: { params: { apiId: string, locale: string } }) {
+
+type Params = Promise<{
+    locale: Locale
+    apiId: string
+}>
+
+
+export default async function LearnApiModifyPage({ params }: { params: Params }) {
     const session = await auth();
     const { apiId, locale } = await params;
 
@@ -37,9 +44,10 @@ export default async function ApiDetailPage({ params }: { params: { apiId: strin
     }
 
     return (
-        <LearnApiDetail
+        <LearnApiModify
             api={api}
             dictionary={dictionary}
+            session={session}
             locale={locale as any}
         />
     );

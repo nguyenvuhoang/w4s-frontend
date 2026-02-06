@@ -501,6 +501,26 @@ export interface OpenAPIType {
     id: string
 }
 
+export interface LearnAPIType {
+    id: number
+    learn_api_id: string
+    learn_api_name: string
+    learn_api_data: string
+    learn_api_node_data: string
+    learn_api_method: string
+    learn_api_header: string
+    learn_api_mapping: string
+    key_read_data: string
+    learn_api_id_clear: string | null
+    channel: string
+    learn_api_mapping_response: string
+    full_interface_name: string
+    method_name: string
+    uri: string
+    is_internal: boolean
+    is_cache: boolean
+}
+
 export interface CalendarType {
     id: number,
     sqn_date: Date,

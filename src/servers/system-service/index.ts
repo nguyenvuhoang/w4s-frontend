@@ -32,6 +32,7 @@ export { workflowService } from './services/workflow.service';
 import { codeService } from './services/code.service';
 import { dataService } from './services/data.service';
 import { formService } from './services/form.service';
+import { learnAPIService } from './services/learnapi.service';
 import { logService } from './services/log.service';
 import { menuService } from './services/menu.service';
 import { reportService } from './services/report.service';
@@ -45,22 +46,25 @@ import { workflowService } from './services/workflow.service';
 export const systemServiceApi = {
     // Form Service
     ...formService,
-    
+
     // Menu Service
     ...menuService,
-    
+
     // Code Service
     ...codeService,
-    
+
     // Data Service
     ...dataService,
-    
+
     // Workflow Service
     ...workflowService,
-    
+
     // Report Service
     ...reportService,
-    
+
     // Log Service
     ...logService,
+
+    // LearnAPI Service
+    ...learnAPIService,
 }

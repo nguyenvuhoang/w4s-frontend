@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 interface PageHeaderProps {
-    title: string;
+    title: ReactNode;
     action?: ReactNode;
     breadcrumbs?: { label: string; href?: string }[];
 }

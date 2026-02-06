@@ -4,53 +4,34 @@ import PaginationPage from '@/@core/components/jTable/pagination'
 import { CustomCheckboxIcon } from '@/@core/components/mui/CustomCheckboxIcon'
 import { Locale } from '@/configs/i18n'
 import ContentWrapper from '@/features/dynamicform/components/layout/content-wrapper'
-import { SearchForm, useOpenApiClientHandler } from '@/services/useOpenApiClientHandler'
+import { LearnAPISearchForm, useLearnAPIHandler } from '@/services/useLearnAPIHandler'
 import { actionButtonColors, actionButtonSx } from '@/shared/components/forms/button-color/actionButtonSx'
 import EmptyListNotice from '@/shared/components/layout/shared/EmptyListNotice'
-import { OpenAPIType, PageContentProps, PageData } from '@/shared/types'
+import { LearnAPIType, PageData } from '@/shared/types'
 import { getDictionary } from '@/shared/utils/getDictionary'
-import AddIcon from '@mui/icons-material/Add'
 import ApiIcon from '@mui/icons-material/Api'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import DeleteIcon from '@mui/icons-material/Delete'
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import EditIcon from '@mui/icons-material/Edit'
-import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord"
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
-import HourglassTopIcon from '@mui/icons-material/HourglassTop'
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
-import ScheduleIcon from '@mui/icons-material/Schedule'
 import SearchIcon from '@mui/icons-material/Search'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import {
-    Box, Button, Checkbox, Grid, MenuItem, Paper, Skeleton,
+    Box, Button, Checkbox, Chip, Grid, MenuItem, Paper, Skeleton,
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField
 } from '@mui/material'
 import { Session } from 'next-auth'
 import { Controller, useForm } from 'react-hook-form'
 
-
-
-type PageProps = PageContentProps & {
-    openAPIdata: PageData<OpenAPIType>
+type PageProps = {
+    learnAPIData: PageData<LearnAPIType>
     dictionary: Awaited<ReturnType<typeof getDictionary>>
     session: Session | null
     locale: Locale
 }
 
+export default function LearnAPIManagementContent({ dictionary, learnAPIData, session, locale }: PageProps) {
+    const dict = dictionary['common'] || ({} as any)
 
-const envOptions = [
-    { value: 'ALL', label: 'All' },
-    { value: 'DEV', label: 'DEV' },
-    { value: 'UAT', label: 'UAT' },
-    { value: 'PROD', label: 'PROD' }
-]
-
-export default function OpenAPIManagementContent({ dictionary, openAPIdata, session, locale }: PageProps) {
-
-    const dict = dictionary['openapi'] || ({} as any)
     const {
-        openapi,
+        learnAPIs,
         page,
         jumpPage,
         rowsPerPage,
@@ -60,56 +41,69 @@ export default function OpenAPIManagementContent({ dictionary, openAPIdata, sess
         handleJumpPage,
         handlePageChange,
         handlePageSizeChange,
-        statusOptions,
-        selected, isAllSelected, isIndeterminate,
-        toggleAll, toggleOne,
-        // computed
-        selectedId, selectedRow, hasSelection, canDelete,
-        // row actions
-        handleRowDblClick, handleDeleteClick,
-        openViewPage, openModifyPage, openAddPage
-    } = useOpenApiClientHandler(openAPIdata, session, locale, dictionary)
+        channelOptions,
+        methodOptions,
+        selected,
+        isAllSelected,
+        isIndeterminate,
+        toggleAll,
+        toggleOne,
+        hasSelection,
+        selectedId,
+        handleRowDblClick,
+        openViewPage,
+        openModifyPage
+    } = useLearnAPIHandler(learnAPIData, session, locale, dictionary)
 
-
-    const onSubmit = (data: SearchForm) => handleSearch(data)
-    const { control, handleSubmit } = useForm<SearchForm>({
+    const onSubmit = (data: LearnAPISearchForm) => handleSearch(data)
+    const { control, handleSubmit } = useForm<LearnAPISearchForm>({
         defaultValues: {
             query: '',
-            environment: 'ALL',
-            status: 'ALL'
+            channel: 'ALL',
+            method: 'ALL'
         }
     })
 
+    const getMethodColor = (method: string): 'success' | 'info' | 'warning' | 'error' | 'default' => {
+        switch (method?.toUpperCase()) {
+            case 'GET': return 'success'
+            case 'POST': return 'info'
+            case 'PUT': return 'warning'
+            case 'DELETE': return 'error'
+            default: return 'default'
+        }
+    }
+
     return (
         <ContentWrapper
-            title={dict.title || 'OpenAPI Clients'}
-            description={dict.description || 'Manage API clients & keys'}
-            icon={<ApiIcon sx={{ fontSize: 40, color: '#0C9150' }} />}
+            title="Learn APIs"
+            description="Manage LearnAPI configurations"
+            icon={<ApiIcon sx={{ fontSize: 40, color: 'primary.main' }} />}
             dictionary={dictionary}
             issearch
         >
             <Box sx={{ my: 5, width: '100%' }}>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <Grid container spacing={3} mb={5}>
-                        {/* Query */}
+                        {/* Search Query */}
                         <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                             <Controller
                                 name="query"
                                 control={control}
                                 render={({ field }) => (
-                                    <TextField {...field} fullWidth size="small" label="Client / Name / Scope / By" />
+                                    <TextField {...field} fullWidth size="small" label="API ID / Name / URI" />
                                 )}
                             />
                         </Grid>
 
-                        {/* Environment */}
+                        {/* Channel */}
                         <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                             <Controller
-                                name="environment"
+                                name="channel"
                                 control={control}
                                 render={({ field }) => (
-                                    <TextField {...field} fullWidth size="small" label="Environment" select>
-                                        {envOptions.map(o => (
+                                    <TextField {...field} fullWidth size="small" label="Channel" select>
+                                        {channelOptions.map(o => (
                                             <MenuItem key={o.value} value={o.value}>
                                                 {o.label}
                                             </MenuItem>
@@ -119,14 +113,14 @@ export default function OpenAPIManagementContent({ dictionary, openAPIdata, sess
                             />
                         </Grid>
 
-                        {/* Status */}
+                        {/* Method */}
                         <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                             <Controller
-                                name="status"
+                                name="method"
                                 control={control}
                                 render={({ field }) => (
-                                    <TextField {...field} fullWidth size="small" label="Status" select>
-                                        {statusOptions.map(o => (
+                                    <TextField {...field} fullWidth size="small" label="Method" select>
+                                        {methodOptions.map(o => (
                                             <MenuItem key={o.value} value={o.value}>
                                                 {o.label}
                                             </MenuItem>
@@ -142,49 +136,28 @@ export default function OpenAPIManagementContent({ dictionary, openAPIdata, sess
                                 <Button
                                     variant="outlined"
                                     color="inherit"
-                                    startIcon={<AddIcon sx={{ color: '#0C9150' }} />}
-                                    sx={{ ...actionButtonSx, ...actionButtonColors.primary }}
-                                    onClick={openAddPage}
-                                >
-                                    {dictionary['common'].add}
-                                </Button>
-
-                                <Button
-                                    variant="outlined"
-                                    color="inherit"
                                     startIcon={<VisibilityIcon sx={{ color: '#1876d1' }} />}
-                                    disabled={!selectedRow}
+                                    disabled={!selectedId}
                                     sx={{ ...actionButtonSx, ...actionButtonColors.info }}
                                     onClick={openViewPage}
                                 >
-                                    {dictionary['common'].view ?? 'View'}
+                                    {dict.view ?? 'View'}
                                 </Button>
 
                                 <Button
                                     variant="outlined"
                                     color="inherit"
                                     startIcon={<EditIcon sx={{ color: '#f0a000' }} />}
-                                    disabled={!selectedRow}
+                                    disabled={!selectedId}
                                     sx={{ ...actionButtonSx, ...actionButtonColors.warning }}
                                     onClick={openModifyPage}
                                 >
-                                    {dictionary['common'].modify}
-                                </Button>
-
-                                <Button
-                                    variant="outlined"
-                                    color="inherit"
-                                    startIcon={<DeleteIcon sx={{ color: '#d33' }} />}
-                                    disabled={!canDelete}
-                                    sx={{ ...actionButtonSx, ...actionButtonColors.error }}
-                                    onClick={handleDeleteClick}
-                                >
-                                    {dictionary['common'].delete}
+                                    {dict.modify ?? 'Modify'}
                                 </Button>
                             </Box>
 
                             <Button type="submit" variant="contained" color="primary" startIcon={<SearchIcon />}>
-                                {dictionary['common'].search}
+                                {dict.search}
                             </Button>
                         </Grid>
                     </Grid>
@@ -217,20 +190,11 @@ export default function OpenAPIManagementContent({ dictionary, openAPIdata, sess
                                         disabled
                                     />
                                 </TableCell>
-                                {[
-                                    dict.client_id,
-                                    dict.display_name,
-                                    dict.environment,
-                                    dict.scopes,
-                                    dict.created_by,
-                                    dict.created_on_utc,
-                                    dict.expired_on_utc,
-                                    dict.status,
-                                    dict.usage_count,
-                                    dict.is_revoked
-                                ].map((key: string, i: number) => (
-                                    <TableCell key={`${key}-${i}`}>{key}</TableCell>
-                                ))}
+                                <TableCell>API ID</TableCell>
+                                <TableCell>API Name</TableCell>
+                                <TableCell>Method</TableCell>
+                                <TableCell>Channel</TableCell>
+                                <TableCell>URI</TableCell>
                             </TableRow>
                         </TableHead>
 
@@ -238,36 +202,30 @@ export default function OpenAPIManagementContent({ dictionary, openAPIdata, sess
                             {loading ? (
                                 [...Array(rowsPerPage)].map((_, index) => (
                                     <TableRow key={`skeleton-row-${index}`}>
-                                        {[...Array(11)].map((__, colIndex) => (
+                                        {[...Array(6)].map((__, colIndex) => (
                                             <TableCell key={`skeleton-cell-${colIndex}`}>
                                                 <Skeleton variant="text" width="100%" height={20} />
                                             </TableCell>
                                         ))}
                                     </TableRow>
                                 ))
-                            ) : !openapi || openapi.items.length === 0 ? (
+                            ) : !learnAPIs || learnAPIs.items.length === 0 ? (
                                 <TableRow>
-                                    <TableCell colSpan={11}>
-                                        <EmptyListNotice message={dictionary.account.nodatatransactionhistory} />
+                                    <TableCell colSpan={6}>
+                                        <EmptyListNotice message={dictionary.account?.nodatatransactionhistory ?? 'No data found'} />
                                     </TableCell>
                                 </TableRow>
                             ) : (
-                                openapi.items.map((row, index) => {
-                                    console.log(row);
-                                    const id = row.id
+                                learnAPIs.items.map((row, index) => {
+                                    const id = row.learn_api_id
                                     const checked = selected.includes(id)
                                     const isDisabledRow = hasSelection && id !== selectedId
-                                    const s = row.status
-
-                                    const fmtDate = (iso?: string | null) => iso ? (iso.includes('T') ? iso.split('T')[0] : iso) : ''
-
-                                    const scopesView = Array.isArray(row.scopes) ? row.scopes.join(', ') : String(row.scopes ?? '')
 
                                     return (
                                         <TableRow
-                                            key={`${row.id}-${index}`}
+                                            key={`${row.learn_api_id}-${index}`}
                                             hover
-                                            onDoubleClick={() => handleRowDblClick(row.clientid, row.environment)}
+                                            onDoubleClick={() => handleRowDblClick(row.learn_api_id)}
                                             sx={{
                                                 cursor: isDisabledRow ? 'default' : 'pointer',
                                                 pointerEvents: isDisabledRow ? 'none' : 'auto',
@@ -277,7 +235,7 @@ export default function OpenAPIManagementContent({ dictionary, openAPIdata, sess
                                         >
                                             <TableCell sx={{ width: 48, p: '0 16px' }}>
                                                 <Checkbox
-                                                    icon={isDisabledRow ? <LockOutlinedIcon sx={{ fontSize: 18, color: '#9e9e9e' }} /> : <CustomCheckboxIcon checked={false} />}
+                                                    icon={<CustomCheckboxIcon checked={false} />}
                                                     checkedIcon={<CustomCheckboxIcon checked={true} />}
                                                     size="small"
                                                     checked={checked}
@@ -287,39 +245,25 @@ export default function OpenAPIManagementContent({ dictionary, openAPIdata, sess
                                                 />
                                             </TableCell>
 
-                                            <TableCell>{row.clientid}</TableCell>
-                                            <TableCell>{row.displayname}</TableCell>
-                                            <TableCell>{row.environment}</TableCell>
-                                            <TableCell>{scopesView}</TableCell>
-                                            <TableCell>{row.createdby}</TableCell>
-                                            <TableCell>{fmtDate(row.createdonutc)}</TableCell>
-                                            <TableCell>{fmtDate(row.expiredonutc)}</TableCell>
-
+                                            <TableCell>{row.learn_api_id}</TableCell>
+                                            <TableCell>{row.learn_api_name}</TableCell>
                                             <TableCell>
-                                                <Box display="flex" alignItems="center" gap={1}>
-                                                    {s === 'ACTIVE' ? (
-                                                        <CheckCircleIcon sx={{ color: '#4caf50', fontSize: 20 }} />
-                                                    ) : s === 'REVOKED' ? (
-                                                        <DeleteForeverIcon sx={{ color: '#f44336', fontSize: 20 }} />
-                                                    ) : s === 'EXPIRED' ? (
-                                                        <HourglassTopIcon sx={{ color: '#d32f2f', fontSize: 20 }} />
-                                                    ) : s === 'INACTIVE' ? (
-                                                        <ScheduleIcon sx={{ color: '#ff9800', fontSize: 20 }} />
-                                                    ) : (
-                                                        <HelpOutlineIcon sx={{ color: '#9e9e9e', fontSize: 20 }} />
-                                                    )}
-                                                    <span>{s}</span>
-                                                </Box>
+                                                <Chip
+                                                    label={row.learn_api_method}
+                                                    size="small"
+                                                    color={getMethodColor(row.learn_api_method)}
+                                                />
                                             </TableCell>
-
-                                            <TableCell>{row.usage_count}</TableCell>
-
                                             <TableCell>
-                                                {row.isrevoked ? (
-                                                    <FiberManualRecordIcon sx={{ fontSize: 14, color: "red" }} />
-                                                ) : (
-                                                    <FiberManualRecordIcon sx={{ fontSize: 14, color: "green" }} />
-                                                )}
+                                                <Chip
+                                                    label={row.channel}
+                                                    size="small"
+                                                    variant="outlined"
+                                                    color={row.channel === 'BO' ? 'primary' : 'secondary'}
+                                                />
+                                            </TableCell>
+                                            <TableCell sx={{ maxWidth: 300, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                                {row.uri}
                                             </TableCell>
                                         </TableRow>
                                     )
