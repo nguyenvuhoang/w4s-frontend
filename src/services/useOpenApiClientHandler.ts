@@ -1,9 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Locale } from '@/configs/i18n'
 import { systemServiceApi } from '@/servers/system-service'
-import { OpenAPIType, PageData } from '@shared/types/systemTypes'
-import { getDictionary } from '@utils/getDictionary'
-import { isValidResponse } from '@utils/isValidResponse'
-import SwalAlert from '@utils/SwalAlert'
+import { OpenAPIType, PageData } from '@/shared/types'
+import { getDictionary } from '@/shared/utils/getDictionary'
+import { getLocalizedUrl } from '@/shared/utils/i18n'
+import { isValidResponse } from '@/shared/utils/isValidResponse'
+import SwalAlert from '@/shared/utils/SwalAlert'
 import { SelectChangeEvent } from '@mui/material'
 import { Session } from 'next-auth'
 import { useEffect, useMemo, useState } from 'react'
@@ -18,7 +20,7 @@ export const useOpenApiClientHandler = (
     openapiData: PageData<OpenAPIType>,
     session: Session | null,
     locale: Locale,
-    dictionary: Awaited<ReturnType<typeof getDictionary>>
+    dictionary?: Awaited<ReturnType<typeof getDictionary>>
 ) => {
     const [openapi, setOpenApi] = useState<PageData<OpenAPIType>>(openapiData)
     const [page, setPage] = useState<number>(Math.max((openapi?.page_index ?? 1), 0))
@@ -32,7 +34,7 @@ export const useOpenApiClientHandler = (
         { value: 'INACTIVE', label: 'Inactive' }
     ])
 
-    const [selected, setSelected] = useState<string[]>([]) // dÃ¹ng client_id lÃ m id
+    const [selected, setSelected] = useState<string[]>([]) // dùng client_id làm id
     const currentPageIds = useMemo(
         () => (openapiData?.items ?? []).map(x => x.id),
         [openapiData?.items]
@@ -51,6 +53,74 @@ export const useOpenApiClientHandler = (
         setSelected(prev => (prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]))
     }
     const clearSelection = () => setSelected([])
+
+    // =========================
+    // 🔵 COMPUTED VALUES
+    // =========================
+    const selectedId = selected[0] ?? null
+    const selectedRow = openapi?.items?.find((x) => x.id === selectedId) || null
+    const hasSelection = selected.length > 0
+
+    const isActive = (s?: boolean | string | number) =>
+        s === true || s === 1 || s === 'A' || s === 'Y' || s === 'ACTIVE'
+    const canDelete = !!selectedRow && isActive(selectedRow.isactive)
+
+    // =========================
+    // 🟢 ROW ACTIONS
+    // =========================
+    const handleRowDblClick = (clientid: string, environment: string) => {
+        if (hasSelection) return
+        const url = getLocalizedUrl(`/coreapi/open-api/view/${clientid}/${environment}`, locale as Locale)
+        window.open(url, '_blank')
+    }
+
+    const handleDeleteClick = async () => {
+        if (selected.length !== 1) return
+        const id = selected[0]
+        const row = openapi?.items?.find((x) => x.id === id)
+
+        if (!row || !dictionary) return
+
+        SwalAlert(
+            'question',
+            dictionary['openapi'].deleteclient.replace('{0}', row.clientid),
+            'center',
+            false,
+            true,
+            true,
+            async () => {
+                const apiDeleteResult = await deleteOpenAPI(id, row.clientid)
+                if (apiDeleteResult.ok) {
+                    SwalAlert(
+                        'success',
+                        dictionary['openapi'].delete_success_text.replace('{0}', row.clientid),
+                        'center'
+                    )
+                } else {
+                    SwalAlert('error', apiDeleteResult.message, 'center')
+                }
+            }
+        )
+    }
+
+    const openViewPage = () => {
+        if (selectedRow) {
+            const url = getLocalizedUrl(`/coreapi/open-api/view/${selectedRow.clientid}/${selectedRow.environment}`, locale as Locale)
+            window.open(url, '_blank')
+        }
+    }
+
+    const openModifyPage = () => {
+        if (selectedRow) {
+            const url = getLocalizedUrl(`/coreapi/open-api/modify/${selectedRow.clientid}/${selectedRow.environment}`, locale as Locale)
+            window.open(url, '_blank')
+        }
+    }
+
+    const openAddPage = () => {
+        const url = getLocalizedUrl(`/coreapi/open-api/add`, locale as Locale)
+        window.open(url, '_blank')
+    }
 
     const fetchData = async (
         payload: SearchForm = searchPayload!,
@@ -76,18 +146,18 @@ export const useOpenApiClientHandler = (
 
             if (
                 !isValidResponse(openAPIdataApi) ||
-                (openAPIdataApi.payload.dataresponse.error && openAPIdataApi.payload.dataresponse.error.length > 0)
+                (openAPIdataApi.payload.dataresponse.errors && openAPIdataApi.payload.dataresponse.errors.length > 0)
             ) {
                 console.log(
                     'ExecutionID:',
-                    openAPIdataApi.payload.dataresponse.error[0].execute_id +
+                    openAPIdataApi.payload.dataresponse.errors[0].execute_id +
                     ' - ' +
-                    openAPIdataApi.payload.dataresponse.error[0].info
+                    openAPIdataApi.payload.dataresponse.errors[0].info
                 )
                 return
             }
 
-            const datacontract = openAPIdataApi.payload.dataresponse.data.input as PageData<OpenAPIType>
+            const datacontract = openAPIdataApi.payload.dataresponse.fo[0].input as PageData<OpenAPIType>
             setOpenApi(datacontract)
             setTotalCount(datacontract.total_count || 0)
         } catch (err) {
@@ -101,7 +171,6 @@ export const useOpenApiClientHandler = (
         if (searchPayload) {
             fetchData(searchPayload)
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page, rowsPerPage, searchPayload])
 
     const defaultPayload: SearchForm = {
@@ -139,12 +208,11 @@ export const useOpenApiClientHandler = (
     }
 
     // =========================
-    // ðŸ”´ DELETE LOGIC
+    // 🔴 DELETE LOGIC
     // =========================
 
     /**
-     * XoÃ¡ 1 há»£p Ä‘á»“ng theo contractNo.
-     * Tráº£ vá» { ok, message } Ä‘á»ƒ UI hiá»ƒn thá»‹ Swal/toast.
+     * Trả về { ok, message } để UI hiển thị Swal/toast.
      */
     const deleteOpenAPI = async (id: string, clientId: string,): Promise<{ ok: boolean; message: string }> => {
         if (!clientId) return { ok: false, message: 'Invalid client ID' }
@@ -169,17 +237,14 @@ export const useOpenApiClientHandler = (
                 return { ok: false, message: msg }
             }
 
-            // CÃ³ backend tráº£ error trong payload?
             const errArr = (resp as any)?.payload?.dataresponse?.error
             if (Array.isArray(errArr) && errArr.length > 0) {
                 const msg = errArr[0]?.info || 'Delete client failed'
                 return { ok: false, message: msg }
             }
 
-            // Refresh láº¡i danh sÃ¡ch theo filter hiá»‡n táº¡i
             const payload = searchPayload ?? defaultPayload
 
-            // Náº¿u trang hiá»‡n táº¡i chá»‰ cÃ²n 1 record vÃ  xoÃ¡ nÃ³ => lÃ¹i vá» trang trÆ°á»›c (trÃ¡nh trá»‘ng trang)
             const willBeEmptyPage = (openapi?.items?.length ?? 0) === 1
             const nextPage = willBeEmptyPage ? Math.max((page ?? 1) - 1, 0) : page
 
@@ -196,65 +261,6 @@ export const useOpenApiClientHandler = (
         }
     }
 
-    /**
-     * XoÃ¡ táº¥t cáº£ cÃ¡c client Ä‘ang chá»n (selected).
-     * Tráº£ vá» { ok, message, results } â€“ trong Ä‘Ã³ results liá»‡t kÃª tá»«ng id ok/failed.
-     */
-    // const deleteManySelected = async (): Promise<{
-    //     ok: boolean
-    //     message: string
-    //     results: { id: string; ok: boolean; message: string }[]
-    // }> => {
-    //     if (selected.length === 0) {
-    //         return { ok: false, message: 'No rows selected', results: [] }
-    //     }
-    //     setLoading(true)
-    //     const results: { id: string; ok: boolean; message: string }[] = []
-    //     try {
-    //         for (const id of selected) {
-    //             const r = await deleteOpenAPI(id)
-    //             results.push({ id, ...r })
-    //         }
-
-    //         const allOk = results.every(r => r.ok)
-    //         const msg = allOk ? 'All selected clients deleted' : 'Some clients failed to delete'
-    //         return { ok: allOk, message: msg, results }
-    //     } finally {
-    //         setLoading(false)
-    //     }
-    // }
-
-    /**
-     * Handle delete click with SwalAlert confirmation
-     */
-    const handleDeleteClick = async () => {
-        if (selected.length !== 1) return
-        const id = selected[0]
-        const row = openapi?.items.find((x) => x.id === id)
-
-        if (!row) return
-
-        SwalAlert(
-            "question",
-            dictionary["openapi"].deleteclient.replace("{0}", row.clientid),
-            "center",
-            false,
-            true,
-            true,
-            async () => {
-                const apideleteContract = await deleteOpenAPI(id, row.clientid)
-                if (apideleteContract.ok) {
-                    SwalAlert(
-                        "success",
-                        dictionary["openapi"].delete_success_text.replace("{0}", row.clientid),
-                        "center"
-                    )
-                } else {
-                    SwalAlert("error", apideleteContract.message, "center")
-                }
-            }
-        )
-    }
 
     return {
         // data
@@ -269,10 +275,15 @@ export const useOpenApiClientHandler = (
         currentPageIds, isAllSelected, isIndeterminate,
         toggleAll, toggleOne,
 
-        // delete (NEW)
+        // computed
+        selectedId, selectedRow, hasSelection, canDelete,
+
+        // row actions
+        handleRowDblClick, handleDeleteClick,
+        openViewPage, openModifyPage, openAddPage,
+
+        // delete API
         deleteOpenAPI,
-        handleDeleteClick,
         // deleteManySelected
     }
 }
-

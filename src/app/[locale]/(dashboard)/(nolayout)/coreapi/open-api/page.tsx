@@ -1,17 +1,18 @@
 import { auth } from '@/auth';
-import OpenAPIManagementContent from '@/components/api-manager/credentials';
+import { generateAuthMetadata } from '@/components/layout/AuthLayout';
+import PageError from '@/components/PageError';
+import Spinner from '@/components/spinners';
 import { Locale } from '@/configs/i18n';
-import { dataService } from '@/servers/system-service';
-import { generateAuthMetadata } from '@/shared/components/layout/AuthLayout';
-import PageError from '@/shared/components/PageError';
-import { OpenAPIType, PageData } from '@/shared/types/systemTypes';
-import { getDictionary } from '@/shared/utils/getDictionary';
-import { isValidResponse } from '@/shared/utils/isValidResponse';
+import { systemServiceApi } from '@/servers/system-service';
+import { OpenAPIType, PageData } from '@/types/systemTypes';
+import { getDictionary } from '@/utils/getDictionary';
+import { isValidResponse } from '@/utils/isValidResponse';
+import OpenAPIManagementContent from '@/views/api/open-api';
 import { Metadata } from 'next';
 
-export const metadata: Metadata = generateAuthMetadata('Credentials');
+export const metadata: Metadata = generateAuthMetadata('OpenAPI management');
 
-const CredentialsPage = async (props: { params: Promise<{ locale: Locale }> }) => {
+const OpenAPIManagement = async (props: { params: Promise<{ locale: Locale }> }) => {
     const { locale } = await props.params;
 
     const [dictionary, session] = await Promise.all([
@@ -19,7 +20,7 @@ const CredentialsPage = async (props: { params: Promise<{ locale: Locale }> }) =
         auth(),
     ]);
 
-    const openAPIdataApi = await dataService.searchData({
+    const openAPIdataApi = await systemServiceApi.searchData({
         sessiontoken: session?.user?.token as string,
         workflowid: "BO_EXECUTE_SQL_FROM_CMS",
         commandname: "SimpleSearchCoreAPIKeys",
@@ -49,4 +50,4 @@ const CredentialsPage = async (props: { params: Promise<{ locale: Locale }> }) =
     );
 };
 
-export default CredentialsPage;
+export default OpenAPIManagement;
