@@ -4,6 +4,7 @@ import { learnAPIService } from '@/servers/system-service/services/learnapi.serv
 import { LearnAPIType, PageData } from '@/shared/types'
 import { getDictionary } from '@/shared/utils/getDictionary'
 import { isValidResponse } from '@/shared/utils/isValidResponse'
+import SwalAlert from '@/shared/utils/SwalAlert'
 import { SelectChangeEvent } from '@mui/material'
 import { Session } from 'next-auth'
 import { useRouter } from 'next/navigation'
@@ -88,6 +89,49 @@ export function useLearnAPIHandler(
         }
     }
 
+    const openAddPage = () => {
+        router.push(`/${locale}/api-manager/apis/add`)
+    }
+
+    const handleDelete = async () => {
+        if (selected.length !== 1) return
+
+        const id = selected[0]
+        SwalAlert(
+            'warning',
+            `Are you sure you want to delete API: ${id}?`,
+            'center',
+            true, // allowOutsideClick
+            true, // showCancelButton
+            true, // withConfirm (MUST BE TRUE to trigger functional)
+            async () => {
+                setLoading(true)
+                try {
+                    const res = await learnAPIService.delete({
+                        sessiontoken: session?.user?.token as string,
+                        language: locale,
+                        learn_api_id: id
+                    })
+
+                    if (isValidResponse(res) && !res.payload.dataresponse.errors?.length) {
+                        SwalAlert('success', 'Delete successful', 'center')
+                        clearSelection()
+                        fetchData()
+                    } else {
+                        const error = res.payload.dataresponse.errors?.[0]?.info || 'Delete failed'
+                        const exception = res.payload.dataresponse.execution_id || 'Delete failed'
+                        SwalAlert('error', error + ' - ' + exception, 'center')
+                    }
+                } catch (error) {
+                    console.error('Delete error:', error)
+                    SwalAlert('error', 'An unexpected error occurred during deletion.', 'center')
+                } finally {
+                    setLoading(false)
+                }
+            }
+        )
+    }
+
     // =========================
     // 🟢 DATA FETCHING
     // =========================
@@ -119,7 +163,7 @@ export function useLearnAPIHandler(
                 return
             }
 
-            const dataResult = learnAPIDataApi.payload.dataresponse.data?.fo?.[0]?.input as PageData<LearnAPIType>
+            const dataResult = learnAPIDataApi.payload.dataresponse.data as unknown as PageData<LearnAPIType>
 
             // Client-side filter by channel and method if needed
             let filteredItems = dataResult?.items ?? []
@@ -130,12 +174,14 @@ export function useLearnAPIHandler(
                 filteredItems = filteredItems.filter(item => item.learn_api_method === payload.method)
             }
 
+            const actualTotalCount = dataResult?.total_count ?? filteredItems.length
+
             setLearnAPIs({
                 ...dataResult,
                 items: filteredItems,
-                total_count: filteredItems.length
+                total_count: actualTotalCount
             })
-            setTotalCount(filteredItems.length)
+            setTotalCount(actualTotalCount)
         } catch (err) {
             console.error('Error fetching LearnAPI data:', err)
         } finally {
@@ -216,6 +262,8 @@ export function useLearnAPIHandler(
         hasSelection,
         handleRowDblClick,
         openViewPage,
-        openModifyPage
+        openModifyPage,
+        openAddPage,
+        handleDelete
     }
 }

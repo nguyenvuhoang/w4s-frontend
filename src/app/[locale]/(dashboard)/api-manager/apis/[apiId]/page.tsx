@@ -7,8 +7,15 @@ import { LearnAPIType } from '@/shared/types';
 import { getDictionary } from '@/shared/utils/getDictionary';
 import { isValidResponse } from '@/shared/utils/isValidResponse';
 import { notFound } from 'next/navigation';
+import { Locale } from '@/configs/i18n';
 
-export default async function ApiDetailPage({ params }: { params: { apiId: string, locale: string } }) {
+type Params = Promise<{
+    locale: Locale
+    apiId: string
+}>
+
+
+export default async function ApiDetailPage({ params }: { params: Params }) {
     const session = await auth();
     const { apiId, locale } = await params;
 

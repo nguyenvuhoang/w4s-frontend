@@ -66,6 +66,46 @@ export const learnAPIService = {
                     lang: language,
                     app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
                 }
+            }),
+
+    create: ({ sessiontoken, language, data }: { sessiontoken: string, language: string, data: LearnAPIType }) =>
+        http.post<BODataResponse>('/system-service',
+            {
+                learn_api: LEARNAPICODE.CMS_ADD_LEARN_API,
+                fields: {
+                    learn_api_id: data.learn_api_id,
+                    learn_api_name: data.learn_api_name,
+                    learn_api_mapping: data.learn_api_mapping,
+                    channel: data.channel,
+                    learn_api_mapping_response: data.learn_api_mapping_response,
+                    uri: data.uri
+                }
+            },
+            {
+                baseUrl: process.env.NEXT_PUBLIC_API_URL,
+                headers: {
+                    uid: `${sessiontoken}`,
+                    lang: language,
+                    app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
+                }
+            }),
+
+    delete: ({ sessiontoken, language, learn_api_id }: { sessiontoken: string, language: string, learn_api_id: string }) =>
+        http.post<BODataResponse>('/system-service',
+            {
+                learn_api: LEARNAPICODE.CMS_DELETE_LEARN_API,
+                fields: {
+                    learn_api_id: learn_api_id,
+                    channel_id: "BO"
+                }
+            },
+            {
+                baseUrl: process.env.NEXT_PUBLIC_API_URL,
+                headers: {
+                    uid: `${sessiontoken}`,
+                    lang: language,
+                    app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
+                }
             })
 }
 

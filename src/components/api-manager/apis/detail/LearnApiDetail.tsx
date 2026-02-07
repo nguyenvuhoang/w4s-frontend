@@ -74,7 +74,7 @@ export default function LearnApiDetail({ api, dictionary, locale }: LearnApiDeta
             />
 
             <Grid container spacing={3} sx={{ mt: 1 }}>
-                <Grid size={{ xs: 12, md: 8 }}>
+                <Grid size={{ xs: 12 }}>
                     <Card sx={{ borderRadius: 2, boxShadow: 3 }}>
                         <CardContent sx={{ p: 4 }}>
                             <Typography variant="h6" gutterBottom>API Information</Typography>
@@ -164,30 +164,6 @@ export default function LearnApiDetail({ api, dictionary, locale }: LearnApiDeta
                                         statusBar={false}
                                     />
                                 </Paper>
-                            </Box>
-                        </CardContent>
-                    </Card>
-                </Grid>
-
-                <Grid size={{ xs: 12, md: 4 }}>
-                    <Card sx={{ borderRadius: 2, boxShadow: 3 }}>
-                        <CardContent sx={{ p: 3 }}>
-                            <Typography variant="h6" gutterBottom>Other Details</Typography>
-                            <Divider sx={{ mb: 2 }} />
-
-                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                <Box>
-                                    <Typography variant="subtitle2" color="text.secondary">Interface Name</Typography>
-                                    <Typography variant="body2">{api.full_interface_name || '-'}</Typography>
-                                </Box>
-                                <Box>
-                                    <Typography variant="subtitle2" color="text.secondary">Method Name</Typography>
-                                    <Typography variant="body2">{api.method_name || '-'}</Typography>
-                                </Box>
-                                <Box>
-                                    <Typography variant="subtitle2" color="text.secondary">Node Data</Typography>
-                                    <Typography variant="body2" sx={{ wordBreak: 'break-all' }}>{api.learn_api_node_data || '-'}</Typography>
-                                </Box>
                             </Box>
                         </CardContent>
                     </Card>

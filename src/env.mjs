@@ -10,7 +10,11 @@ export const env = createEnv({
     ALLOW_INSECURE_REPORT_SSL: z.string().optional(),
     NEXT_PUBLIC_REST_API_ENDPOINT: z.string().optional(),
     API_URL: z.string().optional(),
-
+    INFISICAL_URL: z.string().optional(),
+    INFISICAL_CLIENT_ID: z.string().optional(),
+    INFISICAL_CLIENT_SECRET: z.string().optional(),
+    INFISICAL_WORKSPACE_ID: z.string().optional(),
+    INFISICAL_ENVIRONMENT_SLUG: z.string().optional(),
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.string().optional(),
@@ -43,6 +47,11 @@ export const env = createEnv({
     NEXT_PUBLIC_ENVIRONMENT: process.env.NEXT_PUBLIC_ENVIRONMENT,
     ALLOW_INSECURE_REPORT_SSL: process.env.ALLOW_INSECURE_REPORT_SSL,
     NEXT_PUBLIC_REST_API_ENDPOINT: process.env.NEXT_PUBLIC_REST_API_ENDPOINT,
-    API_URL: process.env.API_URL
+    API_URL: process.env.API_URL,
+    INFISICAL_URL: process.env.INFISICAL_URL,
+    INFISICAL_CLIENT_ID: process.env.INFISICAL_CLIENT_ID,
+    INFISICAL_CLIENT_SECRET: process.env.INFISICAL_CLIENT_SECRET,
+    INFISICAL_WORKSPACE_ID: process.env.INFISICAL_WORKSPACE_ID,
+    INFISICAL_ENVIRONMENT_SLUG: process.env.INFISICAL_ENVIRONMENT_SLUG,
   }
 })

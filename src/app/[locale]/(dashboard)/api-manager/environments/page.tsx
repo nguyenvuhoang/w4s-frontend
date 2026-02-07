@@ -1,47 +1,37 @@
-'use client';
+import { infisicalServerService } from '@/servers/system-service/services/infisical.server';
+import { env } from '@/env.mjs';
+import EnvironmentsView from '@/components/api-manager/environments/EnvironmentsView';
+import { Alert, Box } from '@mui/material';
 
-import React from 'react';
-import { Box, Paper, Grid, Typography, Card, CardContent, Divider, Button } from '@mui/material';
-import PageHeader from '@/components/api-manager/shared/PageHeader';
-import { Add } from '@mui/icons-material';
+export default async function EnvironmentsPage() {
+    let accessToken = '';
+    let error = '';
 
-// Mock client data since route is simple and we want interactive UI feel
-const MOCK_ENVS = [
-    { id: 'dev', name: 'Development', color: '#4caf50', url: 'https://dev-api.example.com' },
-    { id: 'staging', name: 'Staging', color: '#ff9800', url: 'https://staging-api.example.com' },
-    { id: 'prod', name: 'Production', color: '#f44336', url: 'https://api.example.com' },
-];
+    try {
+        const res = await infisicalServerService.login({
+            clientId: env.INFISICAL_CLIENT_ID || '',
+            clientSecret: env.INFISICAL_CLIENT_SECRET || '',
+        });
 
-export default function EnvironmentsPage() {
-    return (
-        <Box sx={{ p: 3 }}>
-            <PageHeader
-                title="Environments"
-                breadcrumbs={[{ label: 'Dashboard' }, { label: 'API Manager' }, { label: 'Environments' }]}
-                action={<Button variant="contained" startIcon={<Add />}>Add Environment</Button>}
-            />
+        console.log('Infisical login response:', res);
 
-            <Grid container spacing={3}>
-                {MOCK_ENVS.map((env) => (
-                    <Grid size={{ xs: 12, md: 4 }} key={env.id}>
-                        <Card sx={{ borderTop: `4px solid ${env.color}` }}>
-                            <CardContent>
-                                <Typography variant="h6" gutterBottom>{env.name}</Typography>
-                                <Typography variant="body2" color="text.secondary" gutterBottom>Gateway URL:</Typography>
-                                <Paper variant="outlined" sx={{ p: 1, bgcolor: 'background.default', mb: 2 }}>
-                                    <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>{env.url}</Typography>
-                                </Paper>
+        if (res.status === 200 && res.payload.accessToken) {
+            accessToken = res.payload.accessToken;
+        } else {
+            error = 'Failed to authenticate with Infisical on the server.';
+        }
+    } catch (err) {
+        console.error('Infisical server-side login error:', err);
+        error = 'An unexpected error occurred during server-side authentication.';
+    }
 
-                                <Divider sx={{ my: 1 }} />
-                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <Typography variant="body2">Variables</Typography>
-                                    <Button size="small">Manage (5)</Button>
-                                </Box>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                ))}
-            </Grid>
-        </Box>
-    );
+    if (error) {
+        return (
+            <Box sx={{ p: 3 }}>
+                <Alert severity="error">{error}</Alert>
+            </Box>
+        );
+    }
+
+    return <EnvironmentsView initialToken={accessToken} />;
 }

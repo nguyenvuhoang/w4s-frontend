@@ -9,7 +9,9 @@ import { actionButtonColors, actionButtonSx } from '@/shared/components/forms/bu
 import EmptyListNotice from '@/shared/components/layout/shared/EmptyListNotice'
 import { LearnAPIType, PageData } from '@/shared/types'
 import { getDictionary } from '@/shared/utils/getDictionary'
+import AddIcon from '@mui/icons-material/Add'
 import ApiIcon from '@mui/icons-material/Api'
+import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import SearchIcon from '@mui/icons-material/Search'
 import VisibilityIcon from '@mui/icons-material/Visibility'
@@ -52,7 +54,9 @@ export default function LearnAPIManagementContent({ dictionary, learnAPIData, se
         selectedId,
         handleRowDblClick,
         openViewPage,
-        openModifyPage
+        openModifyPage,
+        openAddPage,
+        handleDelete
     } = useLearnAPIHandler(learnAPIData, session, locale, dictionary)
 
     const onSubmit = (data: LearnAPISearchForm) => handleSearch(data)
@@ -153,6 +157,27 @@ export default function LearnAPIManagementContent({ dictionary, learnAPIData, se
                                     onClick={openModifyPage}
                                 >
                                     {dict.modify ?? 'Modify'}
+                                </Button>
+
+                                <Button
+                                    variant="outlined"
+                                    color="inherit"
+                                    startIcon={<AddIcon sx={{ color: 'primary.main' }} />}
+                                    sx={{ ...actionButtonSx, ...actionButtonColors.primary }}
+                                    onClick={openAddPage}
+                                >
+                                    {dict.add ?? 'Add'}
+                                </Button>
+
+                                <Button
+                                    variant="outlined"
+                                    color="inherit"
+                                    startIcon={<DeleteIcon sx={{ color: '#d33' }} />}
+                                    disabled={!selectedId}
+                                    sx={{ ...actionButtonSx, ...actionButtonColors.error }}
+                                    onClick={handleDelete}
+                                >
+                                    {dict.delete ?? 'Delete'}
                                 </Button>
                             </Box>
 

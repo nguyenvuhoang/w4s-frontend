@@ -16,6 +16,7 @@ export interface ResponseDefault<T> {
   data: T
   errors: ErrorInfo[]
   executionid: string
+  execution_id: string
 }
 
 export interface ResponseListDefault<T> {

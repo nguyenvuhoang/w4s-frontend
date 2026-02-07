@@ -7,7 +7,7 @@ import { LearnAPIType } from '@/shared/types';
 import { getDictionary } from '@/shared/utils/getDictionary';
 import { isValidResponse } from '@/shared/utils/isValidResponse';
 import SwalAlert from '@/shared/utils/SwalAlert';
-import { ArrowBack, Save, SettingsSuggest } from '@mui/icons-material';
+import { ArrowBack, Save } from '@mui/icons-material';
 import {
     Box,
     Button,
@@ -21,9 +21,9 @@ import {
     Typography
 } from '@mui/material';
 import { Session } from 'next-auth';
-import { useRouter } from 'next/navigation';
-import { Controller, useForm } from 'react-hook-form';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/navigation';
+import { useForm, Controller } from 'react-hook-form';
 
 const JsonEditor = dynamic(
     () => import('jsoneditor-react').then((mod) => mod.JsonEditor),
@@ -31,92 +31,71 @@ const JsonEditor = dynamic(
 );
 import 'jsoneditor-react/es/editor.min.css';
 
-interface LearnApiModifyProps {
-    api: LearnAPIType;
+interface LearnApiAddProps {
     dictionary: Awaited<ReturnType<typeof getDictionary>>;
-    session: Session | null;
     locale: Locale;
+    session: Session | null;
 }
 
-export default function LearnApiModify({ api, dictionary, session, locale }: LearnApiModifyProps) {
+export default function LearnApiAdd({ dictionary, locale, session }: LearnApiAddProps) {
     const router = useRouter();
     const dict = dictionary['common'] || ({} as any);
 
-    const { control, handleSubmit, formState: { isDirty, isSubmitting } } = useForm<LearnAPIType>({
-        defaultValues: api
+    const { control, handleSubmit, formState: { isSubmitting, isValid } } = useForm<LearnAPIType>({
+        defaultValues: {
+            learn_api_id: '',
+            learn_api_name: '',
+            uri: '',
+            learn_api_method: 'GET',
+            channel: 'BO',
+            learn_api_mapping: '{}',
+            learn_api_mapping_response: '{}'
+        }
     });
 
     const onSubmit = async (data: LearnAPIType) => {
         try {
-            const res = await learnAPIService.update({
+            const res = await learnAPIService.create({
                 sessiontoken: session?.user?.token as string,
                 language: locale,
                 data
             });
 
             if (isValidResponse(res) && !res.payload.dataresponse.errors?.length) {
-                SwalAlert('success', 'Update successful', 'center');
-                router.refresh();
+                SwalAlert('success', 'Create successful', 'center');
+                router.push(`/${locale}/api-manager/apis`);
             } else {
-                const error = res.payload.dataresponse.errors?.[0]?.info || 'Update failed';
+                const error = res.payload.dataresponse.errors?.[0]?.info || 'Create failed';
                 const executionId = res.payload.dataresponse.errors?.[0]?.execute_id;
                 SwalAlert('error', `Error: ${error}${executionId ? ` (ID: ${executionId})` : ''}`, 'center');
             }
         } catch (error) {
-            console.error('Update error:', error);
-            SwalAlert('error', 'An unexpected error occurred during update.', 'center');
+            console.error('Create error:', error);
+            SwalAlert('error', 'An unexpected error occurred during creation.', 'center');
         }
     };
 
     return (
-        <Box sx={{ p: 0 }}>
-            <Box sx={{
-                p: 3,
-                mb: 3,
-                background: 'linear-gradient(90deg, #F8FAF9 0%, #FFFFFF 100%)',
-                borderBottom: '1px solid #E0E0E0',
-                borderRadius: '8px 8px 0 0'
-            }}>
-                <PageHeader
-                    title={
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <SettingsSuggest sx={{ fontSize: 40, color: 'primary.main' }} />
-                            <Box>
-                                <Typography variant="h4" component="h1" sx={{ fontWeight: 600 }}>
-                                    Modify API
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    {api.learn_api_name}
-                                </Typography>
-                            </Box>
-                        </Box>
-                    }
-                    breadcrumbs={[
-                        { label: 'APIs', href: `/${locale}/api-manager/apis` },
-                        { label: api.learn_api_name, href: `/${locale}/api-manager/apis/${api.learn_api_id}` },
-                        { label: 'Modify' }
-                    ]}
-                    action={
-                        <Button
-                            variant="outlined"
-                            color="inherit"
-                            startIcon={<ArrowBack />}
-                            onClick={() => router.back()}
-                            sx={{
-                                borderRadius: 2,
-                                borderColor: '#E0E0E0',
-                                '&:hover': { borderColor: 'primary.main', bgcolor: 'rgba(12, 145, 80, 0.04)' }
-                            }}
-                        >
-                            {dict.back || 'Back'}
-                        </Button>
-                    }
-                />
-            </Box>
+        <Box sx={{ p: 3 }}>
+            <PageHeader
+                title="Add New Learn API"
+                breadcrumbs={[
+                    { label: 'APIs', href: `/${locale}/api-manager/apis` },
+                    { label: 'Add New' }
+                ]}
+                action={
+                    <Button
+                        variant="outlined"
+                        startIcon={<ArrowBack />}
+                        onClick={() => router.back()}
+                    >
+                        {dict.back || 'Back'}
+                    </Button>
+                }
+            />
 
-            <Box sx={{ px: 3, pb: 3 }}>
-
-                <Box sx={{ mt: 3 }}>
+            <Grid container spacing={3} sx={{ mt: 1 }}>
+                <Grid size={{ xs: 12 }} >
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <Card sx={{ borderRadius: 2, boxShadow: 3 }}>
                             <CardContent sx={{ p: 4 }}>
@@ -128,8 +107,9 @@ export default function LearnApiModify({ api, dictionary, session, locale }: Lea
                                         <Controller
                                             name="learn_api_id"
                                             control={control}
+                                            rules={{ required: true }}
                                             render={({ field }) => (
-                                                <TextField {...field} value={field.value ?? ''} fullWidth label="API ID" disabled />
+                                                <TextField {...field} value={field.value ?? ''} fullWidth label="API ID" required />
                                             )}
                                         />
                                     </Grid>
@@ -137,6 +117,7 @@ export default function LearnApiModify({ api, dictionary, session, locale }: Lea
                                         <Controller
                                             name="learn_api_name"
                                             control={control}
+                                            rules={{ required: true }}
                                             render={({ field }) => (
                                                 <TextField {...field} value={field.value ?? ''} fullWidth label="API Name" required />
                                             )}
@@ -146,12 +127,27 @@ export default function LearnApiModify({ api, dictionary, session, locale }: Lea
                                         <Controller
                                             name="uri"
                                             control={control}
+                                            rules={{ required: true }}
                                             render={({ field }) => (
                                                 <TextField {...field} value={field.value ?? ''} fullWidth label="URI" required />
                                             )}
                                         />
                                     </Grid>
-                                    <Grid size={{ xs: 12 }}>
+                                    <Grid size={{ xs: 12, md: 6 }}>
+                                        <Controller
+                                            name="learn_api_method"
+                                            control={control}
+                                            render={({ field }) => (
+                                                <TextField {...field} value={field.value ?? ''} fullWidth label="Method" select required>
+                                                    <MenuItem value="GET">GET</MenuItem>
+                                                    <MenuItem value="POST">POST</MenuItem>
+                                                    <MenuItem value="PUT">PUT</MenuItem>
+                                                    <MenuItem value="DELETE">DELETE</MenuItem>
+                                                </TextField>
+                                            )}
+                                        />
+                                    </Grid>
+                                    <Grid size={{ xs: 12, md: 6 }}>
                                         <Controller
                                             name="channel"
                                             control={control}
@@ -209,23 +205,23 @@ export default function LearnApiModify({ api, dictionary, session, locale }: Lea
                                     </Grid>
                                 </Grid>
 
-                                <Box sx={{ mt: 4, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+                                <Box sx={{ mt: 4, display: 'flex', justifyContent: 'flex-end' }}>
                                     <Button
                                         type="submit"
                                         variant="contained"
                                         color="primary"
                                         startIcon={<Save />}
-                                        disabled={!isDirty || isSubmitting}
+                                        disabled={!isValid || isSubmitting}
                                         loading={isSubmitting}
                                     >
-                                        {isSubmitting ? 'Saving...' : (dict.save || 'Save Changes')}
+                                        {isSubmitting ? 'Creating...' : (dict.save || 'Create API')}
                                     </Button>
                                 </Box>
                             </CardContent>
                         </Card>
                     </form>
-                </Box>
-            </Box>
+                </Grid>
+            </Grid>
         </Box>
     );
 }
