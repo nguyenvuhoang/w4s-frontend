@@ -2,7 +2,7 @@ import { auth } from '@/auth';
 import { generateAuthMetadata } from '@components/layout/AuthLayout';
 import Spinner from '@components/spinners';
 import { Locale } from '@/configs/i18n';
-import { systemServiceApi } from '@/servers/system-service';
+import { systemServiceApi, workflowService } from '@/servers/system-service';
 import { LanguageDataMobileType, PageLanguageResponse } from '@shared/types/bankType';
 import { getDictionary } from '@utils/getDictionary';
 import { isValidResponse } from '@utils/isValidResponse';
@@ -22,7 +22,7 @@ const LanguageManagement = async (props: PageProps) => {
     const [dictionary, session] = await Promise.all([getDictionary(locale), auth()]);
 
     // 1) Load dữ liệu bảng chính
-    const languageApi = await systemServiceApi.runFODynamic({
+    const languageApi = await workflowService.runFODynamic({
         sessiontoken: session?.user?.token as string,
         workflowid: 'BO_LOAD_LANGUAGE_APP',
         input: {

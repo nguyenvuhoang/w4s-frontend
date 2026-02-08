@@ -1,6 +1,6 @@
 // hooks/useContractHandler.ts
 import { Locale } from '@/configs/i18n'
-import { codeService, systemServiceApi } from '@/servers/system-service'
+import { codeService, systemServiceApi, workflowService } from '@/servers/system-service'
 import { Transaction } from '@shared/types/bankType'
 import { PageData } from '@shared/types/systemTypes'
 import { isValidResponse } from '@utils/isValidResponse'
@@ -89,7 +89,7 @@ export const useTransactionHistoryHandler = (
         try {
             const parameters = normalizePayload(payload)
 
-            const transactiondataApi = await systemServiceApi.runFODynamic({
+            const transactiondataApi = await workflowService.runFODynamic({
                 sessiontoken: session?.user?.token as string,
                 workflowid: 'SYS_EXECUTE_SQL',
                 input: {

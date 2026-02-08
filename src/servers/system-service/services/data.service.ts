@@ -14,7 +14,7 @@ export const dataService = {
     searchData: ({ sessiontoken, workflowid, commandname, searchtext, pageSize, pageIndex, parameters, logtype, language }: SearchDataRequest) => {
         // Validate commandname to prevent empty calls
         if (!commandname || commandname.trim() === '') {
-            console.warn('âš ï¸ searchData called with empty commandname, skipping API call');
+            console.warn('SearchData called with empty commandname, skipping API call');
             return Promise.resolve({
                 status: 400,
                 payload: {
@@ -57,6 +57,8 @@ export const dataService = {
                 search_text: searchtext,
                 page_index: pageIndex,
                 page_size: pageSize,
+                pageindex: pageIndex,
+                pagesize: pageSize,
             }),
             sessiontoken as string,
             {
