@@ -1,11 +1,7 @@
 'use client'
-import NoData from '@components/layout/shared/card/nodata'
 import { SERVICES } from '@/data/meta'
 import { dataService } from '@/servers/system-service'
-import { SettingItem } from '@shared/types/bankType'
-import { getDictionary } from '@utils/getDictionary'
-import { isValidResponse } from '@utils/isValidResponse'
-import SwalAlert from '@utils/SwalAlert'
+import NoData from '@components/layout/shared/card/nodata'
 import {
     Box,
     CircularProgress,
@@ -25,6 +21,10 @@ import {
     TextField,
     Typography
 } from '@mui/material'
+import { SettingItem } from '@shared/types/bankType'
+import { getDictionary } from '@utils/getDictionary'
+import { isValidResponse } from '@utils/isValidResponse'
+import SwalAlert from '@utils/SwalAlert'
 import { Session } from 'next-auth'
 import { useCallback, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
@@ -65,7 +65,6 @@ const Settings = ({ session, dictionary }: {
             }
 
             const dataSystem = dataSearchAPI.payload.dataresponse.data
-            setData(dataSystem.items || [])
             setTotalCount(dataSystem.total_count || 0)
         } catch (err) {
             console.error('Error fetching settings:', err)

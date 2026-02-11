@@ -71,7 +71,7 @@ export interface ResponseData<T> {
   execute_id?: string
   info?: string
   key?: string
-  items?: T[]
+  items?: any
 }
 
 export interface FormResponseData<T> {

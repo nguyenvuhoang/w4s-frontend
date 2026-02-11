@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  w4s-frontend:
+    image: anhben/w4s-frontend:latest
+    container_name: w4s-frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      # Add other environment variables here if needed
+      # - BASEPATH=/
+      # If you have a .env file, you can use env_file instead:
+      # env_file:
+      #   - .env.production
