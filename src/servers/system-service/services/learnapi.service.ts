@@ -106,6 +106,23 @@ export const learnAPIService = {
                     lang: language,
                     app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
                 }
+            }),
+
+    clearCache: ({ sessiontoken, language }: { sessiontoken: string, language: string }) =>
+        http.post<BODataResponse>('/system-service',
+            {
+                learn_api: LEARNAPICODE.CMS_CLEAR_CACHE,
+                fields: {
+                    target: "all"
+                }
+            },
+            {
+                baseUrl: process.env.NEXT_PUBLIC_API_URL,
+                headers: {
+                    uid: `${sessiontoken}`,
+                    lang: language,
+                    app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
+                }
             })
 }
 

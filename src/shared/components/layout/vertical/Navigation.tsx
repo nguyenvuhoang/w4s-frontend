@@ -38,6 +38,11 @@ import navigationCustomStyles from '@core/styles/vertical/navigationCustomStyles
 import VerticalSubMenu from './VerticalSubMenu'
 import { MenuItem } from '@shared/types/systemTypes'
 
+import { useSession } from 'next-auth/react'
+import { learnAPIService } from '@/servers/system-service/services/learnapi.service'
+import { isValidResponse } from '@/shared/utils/isValidResponse'
+import SwalAlert from '@/shared/utils/SwalAlert'
+
 type Props = {
   dictionary: Awaited<ReturnType<typeof getDictionary>>
   menudata: VerticalSubMenuDataType[]
@@ -142,6 +147,29 @@ const Navigation = (props: Props) => {
     }
   }, [isSubNavVisible])
 
+  const { data: session } = useSession();
+
+  const handleClearCache = async () => {
+    if (!session?.user?.token) return;
+
+    try {
+      const res = await learnAPIService.clearCache({
+        sessiontoken: session.user.token as string,
+        language: locale as string
+      });
+
+      if (isValidResponse(res)) {
+        SwalAlert('success', 'Clear cache successful', 'center');
+      } else {
+        const error = res.payload.dataresponse.errors?.[0]?.info || 'Clear cache failed';
+        SwalAlert('error', error, 'center');
+      }
+    } catch (error) {
+      console.error('Clear cache error:', error);
+      SwalAlert('error', 'An unexpected error occurred', 'center');
+    }
+  };
+
   return (
     // Sidebar Vertical Menu
     <>
@@ -173,6 +201,9 @@ const Navigation = (props: Props) => {
                 <i className='ri-settings-3-line text-[22px] text-white' />
               </IconButton>
             </Link>
+            <IconButton size='small' color='inherit' title='Clear Cache' onClick={handleClearCache} className='text-white'>
+              <i className='ri-refresh-line text-[22px] text-white' />
+            </IconButton>
             <LanguageDropdown />
             <LayoutToggle />
             <Logout />
