@@ -1,445 +1,602 @@
 'use client';
 
 import {
+    NotificationsActive as AlertsIcon,
+    ArrowForward as ArrowForwardIcon,
+    Circle as CircleIcon,
+    Memory as CpuIcon,
+    ErrorOutline as ErrorIcon,
+    Timer as LatencyIcon,
+    MoreVert as MoreIcon,
+    Public as NetworkIcon,
+    Settings as SettingsIcon,
+    Speed as SpeedIcon,
+    Storage as StorageIcon,
+    TrendingDown as TrendingDownIcon,
+    TrendingUp as TrendingUpIcon,
+} from '@mui/icons-material';
+import {
+    alpha,
     Box,
     Card,
     CardContent,
+    Chip,
+    Divider,
+    Drawer,
+    FormControlLabel,
     Grid,
-    Link,
+    IconButton,
+    LinearProgress,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
     MenuItem,
-    Paper,
     Select,
+    Switch,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Tooltip,
     Typography,
+    useTheme
 } from '@mui/material';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-    AccessTime as RecentIcon,
-    Collections as CollectionsIcon,
-    NotificationsActive as AlertsIcon,
-    Speed as TrafficIcon,
-    Timeline as TimelineIcon,
-    TroubleshootOutlined as InvestigateIcon,
-    Warning as ErrorIcon,
+    Area,
+    AreaChart,
+    CartesianGrid,
+    Tooltip as RechartsTooltip,
+    ResponsiveContainer,
+    XAxis,
+    YAxis
+} from 'recharts';
+import {
+    Close as CloseIcon,
+    Refresh as RefreshIcon,
+    Visibility as VisibilityIcon,
 } from '@mui/icons-material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // =============================================================================
-// MOCK DATA - Hard-coded data for the dashboard
+// MOCK DATA & GENERATORS
 // =============================================================================
 
-const mockTrafficData = {
-    title: 'Total Traffic',
-    value: '136.486',
-    unit: 'rps',
-    items: [
-        { name: 'perfBenchmark_invalid_v1', value: '78.428' },
-        { name: 'perfBenchmark_v1', value: '46.387' },
-    ],
+const generateTimeSeriesData = (points: number, min: number, max: number) => {
+    return Array.from({ length: points }, (_, i) => ({
+        time: `${i}:00`,
+        value: Math.floor(Math.random() * (max - min + 1) + min),
+    }));
 };
 
-const mockErrorRateData = {
-    title: 'Error Rate',
-    value: '54.747',
-    unit: '%',
-    items: [
-        { name: 'perfBenchmark_invalid_v1', value: '78.428%' },
-        { name: 'perfBenchmark_v1', value: '12.156%' },
-    ],
-};
+const trafficData = generateTimeSeriesData(12, 50, 200);
+const latencyData = generateTimeSeriesData(12, 10, 80).map(d => ({ ...d, p99: d.value + 20, p50: d.value }));
 
-const mockLatencyData = {
-    title: 'Top Proxy Latency P99',
-    value: '114',
-    unit: 'ms',
-    items: [
-        { name: 'oauth_v1', value: '114 ms' },
-        { name: 'perfBenchmark_invalid_v1', value: '89 ms' },
-    ],
-};
+const endpointPerformance = [
+    { name: '/api/v1/auth/login', calls: '142.5k', status: 'Healthy', latency: '42ms', successRate: 99.8 },
+    { name: '/api/v1/user/profile', calls: '98.2k', status: 'Healthy', latency: '28ms', successRate: 99.9 },
+    { name: '/api/v1/payment/verify', calls: '12.4k', status: 'Degraded', latency: '350ms', successRate: 85.4 },
+    { name: '/api/v1/products/list', calls: '245.1k', status: 'Healthy', latency: '15ms', successRate: 100 },
+    { name: '/api/v1/orders/create', calls: '5.2k', status: 'Warning', latency: '120ms', successRate: 92.1 },
+];
 
-const mockAlertsData = {
-    title: 'Alerts',
-    value: '109',
-    unit: '',
-    alerts: [
-        { name: 'Collection Alert', count: 20 },
-        { name: 'Test New Format of Alert', count: 10 },
-        { name: 'jundebug', count: 10 },
-    ],
-};
+const systemMetrics = [
+    { name: 'CPU Usage', value: 42, icon: <CpuIcon />, color: '#6366f1' },
+    { name: 'Memory', value: 78, icon: <StorageIcon />, color: '#a855f7' },
+    { name: 'DB Storage', value: 15, icon: <StorageIcon />, color: '#ec4899' },
+    { name: 'Network Load', value: 65, icon: <NetworkIcon />, color: '#06b6d4' },
+];
 
-const navigationTiles = [
-    {
-        icon: RecentIcon,
-        title: 'Recent',
-        subtitle: 'Track anomalies for the last hour',
-    },
-    {
-        icon: TimelineIcon,
-        title: 'Timeline',
-        subtitle: 'View trends history for context',
-    },
-    {
-        icon: InvestigateIcon,
-        title: 'Investigate',
-        subtitle: 'Drilldown and diagnose from logs',
-    },
-    {
-        icon: AlertsIcon,
-        title: 'Alerts',
-        subtitle: 'Configure alerts and get notified of issues',
-    },
-    {
-        icon: CollectionsIcon,
-        title: 'Collections',
-        subtitle: 'Create Collection to monitor group of proxies and targets',
-    },
+const recentLogs = [
+    { id: 1, type: 'Error', message: 'Unauthorized access attempt detected', time: '2 mins ago', severity: 'High' },
+    { id: 2, type: 'Warning', message: 'Latency spike in /payment/verify', time: '5 mins ago', severity: 'Medium' },
+    { id: 3, type: 'Info', message: 'System update completed', time: '15 mins ago', severity: 'Low' },
+    { id: 4, type: 'Error', message: 'Database connection timeout', time: '1 hour ago', severity: 'Critical' },
 ];
 
 // =============================================================================
-// METRIC CARD COMPONENT - Reusable card for traffic, error rate, latency
+// SUB-COMPONENTS
 // =============================================================================
 
-interface MetricCardProps {
-    icon: React.ReactNode;
-    title: string;
-    value: string;
-    unit: string;
-    items: { name: string; value: string }[];
-}
-
-const MetricCard = ({ icon, title, value, unit, items }: MetricCardProps) => {
+const GlassCard = ({ children, sx, ...props }: any) => {
+    const theme = useTheme();
     return (
         <Card
-            className="rounded-xl border border-slate-200 h-full"
-            sx={{ boxShadow: 1 }}
+            component={motion.div}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            sx={{
+                background: theme.palette.mode === 'dark'
+                    ? 'linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.8) 100%)'
+                    : 'linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(248, 250, 252, 0.8) 100%)',
+                backdropFilter: 'blur(10px)',
+                border: theme.palette.mode === 'dark'
+                    ? '1px solid rgba(51, 65, 85, 0.5)'
+                    : '1px solid rgba(226, 232, 240, 0.8)',
+                borderRadius: '16px',
+                boxShadow: theme.palette.mode === 'dark'
+                    ? '0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)'
+                    : '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
+                position: 'relative',
+                overflow: 'hidden',
+                ...sx
+            }}
+            {...props}
         >
-            <CardContent className="p-4 md:p-5">
-                {/* Header with icon and title */}
-                <Box className="flex items-center gap-2 mb-3">
-                    <Box className="text-slate-500">{icon}</Box>
-                    <Typography
-                        variant="subtitle2"
-                        className="text-slate-600 font-medium"
-                    >
-                        {title}
-                    </Typography>
-                </Box>
-
-                {/* Large metric value */}
-                <Typography
-                    variant="h4"
-                    className="font-bold text-slate-900 mb-4"
-                >
-                    {value}{' '}
-                    <Typography
-                        component="span"
-                        variant="body1"
-                        className="text-slate-500 font-normal"
-                    >
-                        {unit}
-                    </Typography>
-                </Typography>
-
-                {/* Sub-items list */}
-                <Box className="space-y-2 mb-3">
-                    {items.map((item, index) => (
-                        <Box
-                            key={index}
-                            className="flex justify-between items-center text-sm"
-                        >
-                            <Typography
-                                variant="body2"
-                                className="text-slate-600 truncate max-w-[60%]"
-                            >
-                                {item.name}
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                className="text-slate-700 font-medium"
-                            >
-                                {item.value}
-                            </Typography>
-                        </Box>
-                    ))}
-                </Box>
-
-                {/* View all link */}
-                <Link
-                    href="#"
-                    underline="hover"
-                    className="text-blue-600 text-sm font-medium hover:underline"
-                    sx={{
-                        '&:hover': {
-                            textDecoration: 'underline',
-                        },
-                    }}
-                >
-                    View all
-                </Link>
-            </CardContent>
+            {children}
         </Card>
     );
 };
 
-// =============================================================================
-// ALERTS CARD COMPONENT - Special card for alerts with different layout
-// =============================================================================
-
-interface AlertsCardProps {
-    title: string;
-    value: string;
-    alerts: { name: string; count: number }[];
-}
-
-const AlertsCard = ({ title, value, alerts }: AlertsCardProps) => {
-    return (
-        <Card
-            className="rounded-xl border border-slate-200 h-full"
-            sx={{ boxShadow: 1 }}
-        >
-            <CardContent className="p-4 md:p-5">
-                {/* Header with icon and title */}
-                <Box className="flex items-center gap-2 mb-3">
-                    <Box className="text-orange-500">
-                        <AlertsIcon fontSize="small" />
-                    </Box>
-                    <Typography
-                        variant="subtitle2"
-                        className="text-slate-600 font-medium"
-                    >
-                        {title}
-                    </Typography>
-                </Box>
-
-                {/* Large metric value */}
-                <Typography
-                    variant="h4"
-                    className="font-bold text-slate-900 mb-4"
+const StatCard = ({ title, value, unit, icon, color, trend }: any) => (
+    <GlassCard sx={{ height: '100%' }}>
+        <CardContent sx={{ p: '24px !important' }}>
+            <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
+                <Box
+                    sx={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: '12px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: alpha(color, 0.1),
+                        color: color,
+                    }}
                 >
+                    {icon}
+                </Box>
+                {trend && (
+                    <Chip
+                        icon={trend > 0 ? <TrendingUpIcon /> : <TrendingDownIcon />}
+                        label={`${Math.abs(trend)}%`}
+                        size="small"
+                        color={trend > 0 ? 'success' : 'error'}
+                        variant="filled"
+                        sx={{ fontWeight: 600, bgcolor: trend > 0 ? alpha('#10b981', 0.1) : alpha('#f43f5e', 0.1) }}
+                    />
+                )}
+            </Box>
+            <Typography variant="body2" color="text.secondary" fontWeight={500} gutterBottom>
+                {title}
+            </Typography>
+            <Box display="flex" alignItems="baseline" gap={1}>
+                <Typography variant="h4" fontWeight={800} sx={{ letterSpacing: '-0.5px' }}>
                     {value}
                 </Typography>
-
-                {/* Alerts list with counts on right */}
-                <Box className="space-y-2 mb-3">
-                    {alerts.map((alert, index) => (
-                        <Box
-                            key={index}
-                            className="flex justify-between items-center text-sm"
-                        >
-                            <Typography
-                                variant="body2"
-                                className="text-slate-600 truncate max-w-[70%]"
-                            >
-                                {alert.name}
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                className="text-slate-700 font-medium"
-                            >
-                                {alert.count}
-                            </Typography>
-                        </Box>
-                    ))}
-                </Box>
-
-                {/* View all link */}
-                <Link
-                    href="#"
-                    underline="hover"
-                    className="text-blue-600 text-sm font-medium"
-                    sx={{
-                        '&:hover': {
-                            textDecoration: 'underline',
-                        },
-                    }}
-                >
-                    View all
-                </Link>
-            </CardContent>
-        </Card>
-    );
-};
-
-// =============================================================================
-// NAVIGATION TILE COMPONENT - Square tiles for navigation
-// =============================================================================
-
-interface NavigationTileProps {
-    icon: React.ElementType;
-    title: string;
-    subtitle: string;
-}
-
-const NavigationTile = ({ icon: Icon, title, subtitle }: NavigationTileProps) => {
-    return (
-        <Paper
-            className="rounded-xl border border-slate-200 cursor-pointer transition-all duration-200"
-            sx={{
-                boxShadow: 1,
-                '&:hover': {
-                    boxShadow: 4,
-                    transform: 'translateY(-2px)',
-                },
-            }}
-        >
-            <Box className="flex flex-col items-center justify-center gap-2 py-8 px-4 text-center min-h-[180px]">
-                {/* Icon */}
-                <Box className="text-blue-600 mb-2">
-                    <Icon sx={{ fontSize: 40 }} />
-                </Box>
-
-                {/* Title */}
-                <Typography
-                    variant="subtitle1"
-                    className="font-semibold text-slate-800"
-                >
-                    {title}
-                </Typography>
-
-                {/* Subtitle */}
-                <Typography
-                    variant="body2"
-                    className="text-slate-500 text-center max-w-[200px]"
-                >
-                    {subtitle}
+                <Typography variant="body2" color="text.secondary" fontWeight={600}>
+                    {unit}
                 </Typography>
             </Box>
-        </Paper>
+        </CardContent>
+    </GlassCard>
+);
+
+const SystemHealthItem = ({ name, value, icon, color }: any) => (
+    <Box sx={{ mb: 2 }}>
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+            <Box display="flex" alignItems="center" gap={1.5}>
+                <Box sx={{ color: color, display: 'flex' }}>{icon}</Box>
+                <Typography variant="body2" fontWeight={600}>{name}</Typography>
+            </Box>
+            <Typography variant="body2" fontWeight={700} color={color}>{value}%</Typography>
+        </Box>
+        <LinearProgress
+            variant="determinate"
+            value={value}
+            sx={{
+                height: 6,
+                borderRadius: 3,
+                bgcolor: alpha(color, 0.1),
+                '& .MuiLinearProgress-bar': { bgcolor: color }
+            }}
+        />
+    </Box>
+);
+
+const SettingsDrawer = ({ open, onClose, settings, onSettingsChange }: any) => {
+    const theme = useTheme();
+
+    return (
+        <Drawer
+            anchor="right"
+            open={open}
+            onClose={onClose}
+            PaperProps={{
+                sx: {
+                    width: { xs: '100%', sm: 360 },
+                    background: theme.palette.mode === 'dark' ? '#1e293b' : '#fff',
+                    p: 0,
+                    boxShadow: theme.palette.mode === 'dark' ? '-10px 0 30px rgba(0,0,0,0.5)' : '-10px 0 30px rgba(0,0,0,0.05)',
+                }
+            }}
+        >
+            <Box sx={{ p: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="h6" fontWeight={800}>Dashboard Settings</Typography>
+                <IconButton onClick={onClose} size="small"><CloseIcon /></IconButton>
+            </Box>
+
+            <Divider />
+
+            <Box sx={{ p: 3 }}>
+                <Typography variant="overline" color="text.secondary" fontWeight={700} sx={{ mb: 2, display: 'block' }}>
+                    DISPLAY SECTIONS
+                </Typography>
+                <List disablePadding>
+                    <ListItem disablePadding sx={{ py: 1 }}>
+                        <ListItemText primary="Quick Stats" secondary="Hide summary count cards" />
+                        <Switch
+                            checked={settings.visibility.stats}
+                            onChange={(e) => onSettingsChange('visibility', { ...settings.visibility, stats: e.target.checked })}
+                        />
+                    </ListItem>
+                    <ListItem disablePadding sx={{ py: 1 }}>
+                        <ListItemText primary="Request Chart" secondary="Toggle throughput visualization" />
+                        <Switch
+                            checked={settings.visibility.chart}
+                            onChange={(e) => onSettingsChange('visibility', { ...settings.visibility, chart: e.target.checked })}
+                        />
+                    </ListItem>
+                    <ListItem disablePadding sx={{ py: 1 }}>
+                        <ListItemText primary="System Infrastructure" secondary="Memory, CPU & DB status" />
+                        <Switch
+                            checked={settings.visibility.infrastructure}
+                            onChange={(e) => onSettingsChange('visibility', { ...settings.visibility, infrastructure: e.target.checked })}
+                        />
+                    </ListItem>
+                    <ListItem disablePadding sx={{ py: 1 }}>
+                        <ListItemText primary="Endpoints" secondary="Performance table by route" />
+                        <Switch
+                            checked={settings.visibility.endpoints}
+                            onChange={(e) => onSettingsChange('visibility', { ...settings.visibility, endpoints: e.target.checked })}
+                        />
+                    </ListItem>
+                    <ListItem disablePadding sx={{ py: 1 }}>
+                        <ListItemText primary="Security Logs" secondary="Live feed of system activity" />
+                        <Switch
+                            checked={settings.visibility.logs}
+                            onChange={(e) => onSettingsChange('visibility', { ...settings.visibility, logs: e.target.checked })}
+                        />
+                    </ListItem>
+                </List>
+
+                <Box mt={4}>
+                    <Typography variant="overline" color="text.secondary" fontWeight={700} sx={{ mb: 2, display: 'block' }}>
+                        DATA REFRESH
+                    </Typography>
+                    <Select
+                        fullWidth
+                        size="small"
+                        value={settings.refreshInterval}
+                        onChange={(e) => onSettingsChange('refreshInterval', e.target.value)}
+                        sx={{ borderRadius: '12px' }}
+                    >
+                        <MenuItem value={0}>Manual Refresh</MenuItem>
+                        <MenuItem value={15}>Every 15 seconds</MenuItem>
+                        <MenuItem value={30}>Every 30 seconds</MenuItem>
+                        <MenuItem value={60}>Every 1 minute</MenuItem>
+                        <MenuItem value={300}>Every 5 minutes</MenuItem>
+                    </Select>
+                    <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+                        How often the dashboard updates its indicators automatically.
+                    </Typography>
+                </Box>
+            </Box>
+
+            <Box sx={{ mt: 'auto', p: 3, bgcolor: alpha(theme.palette.primary.main, 0.05) }}>
+                <Chip
+                    label="Reset to Default"
+                    icon={<RefreshIcon />}
+                    clickable
+                    color="primary"
+                    variant="outlined"
+                    onClick={() => onSettingsChange('reset', null)}
+                    sx={{ width: '100%', borderRadius: '12px', height: 40 }}
+                />
+            </Box>
+        </Drawer>
     );
 };
 
 // =============================================================================
-// MAIN PAGE COMPONENT
+// MAIN COMPONENT
 // =============================================================================
 
 const DashboardPageContent = () => {
-    const [environment, setEnvironment] = useState('prod');
+    const theme = useTheme();
+    const [settingsOpen, setSettingsOpen] = useState(false);
+
+    // Initialize settings from localStorage directly
+    const [settings, setSettings] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const saved = localStorage.getItem('dashboard_settings');
+            if (saved) {
+                try {
+                    return JSON.parse(saved);
+                } catch (e) {
+                    console.error('Failed to parse settings', e);
+                }
+            }
+        }
+        return {
+            visibility: {
+                stats: true,
+                chart: true,
+                infrastructure: true,
+                endpoints: true,
+                logs: true
+            },
+            refreshInterval: 60
+        };
+    });
+
+    const handleSettingsChange = (type: string, value: any) => {
+        let newSettings;
+        if (type === 'reset') {
+            newSettings = {
+                visibility: {
+                    stats: true,
+                    chart: true,
+                    infrastructure: true,
+                    endpoints: true,
+                    logs: true
+                },
+                refreshInterval: 60
+            };
+        } else {
+            newSettings = { ...settings, [type]: value };
+        }
+        setSettings(newSettings);
+        localStorage.setItem('dashboard_settings', JSON.stringify(newSettings));
+    };
 
     return (
-        // Page container with light gray background
-        <Box className="min-h-screen bg-slate-50">
-            <Box className="py-6 px-4 md:px-8 max-w-[1600px] mx-auto">
-                {/* ================================================================
-                    HEADER SECTION
-                    - Main title on left
-                    - Environment selector below
-                ================================================================ */}
-                <Box className="mb-6">
-                    {/* Main title */}
-                    <Typography
-                        variant="h4"
-                        component="h1"
-                        className="font-bold text-slate-900 mb-2"
-                    >
-                        API Monitoring
+        <Box sx={{ p: { xs: 2, md: 4 }, minHeight: '100vh', bgcolor: theme.palette.mode === 'dark' ? '#0f172a' : '#f8fafc' }}>
+            {/* Header Area */}
+            <Box mb={4} display="flex" flexDirection={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ xs: 'flex-start', sm: 'center' }} gap={2}>
+                <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
+                    <Typography variant="h4" fontWeight={800} sx={{ letterSpacing: '-1px', color: theme.palette.text.primary }}>
+                        Console <Box component="span" sx={{ color: '#6366f1' }}>Admin</Box>
                     </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ opacity: 0.8 }}>
+                        Intelligent API Monitoring & System Diagnostics
+                    </Typography>
+                </motion.div>
 
-                    {/* Secondary line with environment selector */}
-                    <Box className="flex flex-wrap items-center gap-1 text-slate-600">
-                        <Typography variant="body2">
-                            Last hour for apigee-pinpoint:
-                        </Typography>
-                        <Select
-                            value={environment}
-                            onChange={(e) => setEnvironment(e.target.value)}
-                            size="small"
-                            variant="standard"
-                            sx={{
-                                minWidth: 80,
-                                '& .MuiSelect-select': {
-                                    color: '#2563eb',
-                                    fontWeight: 500,
-                                    py: 0,
-                                },
-                                '&:before, &:after': {
-                                    display: 'none',
-                                },
-                            }}
-                        >
-                            <MenuItem value="prod">prod</MenuItem>
-                            <MenuItem value="staging">staging</MenuItem>
-                            <MenuItem value="dev">dev</MenuItem>
-                        </Select>
-                        <Typography variant="body2" className="text-slate-400">
-                            ▼
-                        </Typography>
-                    </Box>
+                <Box display="flex" gap={2} alignItems="center">
+                    <IconButton
+                        onClick={() => setSettingsOpen(true)}
+                        sx={{ bgcolor: theme.palette.background.paper, boxShadow: '0 2px 4px rgba(0,0,0,0.05)', borderRadius: '12px' }}
+                    >
+                        <SettingsIcon />
+                    </IconButton>
                 </Box>
-
-                {/* ================================================================
-                    TOP METRICS ROW - 4 Cards
-                    - Total Traffic, Error Rate, Latency P99, Alerts
-                    - 4 columns on desktop, 1 per row on mobile
-                ================================================================ */}
-                <Grid container spacing={3}>
-                    {/* Card 1 - Total Traffic */}
-                    <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-                        <MetricCard
-                            icon={<TrafficIcon fontSize="small" />}
-                            title={mockTrafficData.title}
-                            value={mockTrafficData.value}
-                            unit={mockTrafficData.unit}
-                            items={mockTrafficData.items}
-                        />
-                    </Grid>
-
-                    {/* Card 2 - Error Rate */}
-                    <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-                        <MetricCard
-                            icon={<ErrorIcon fontSize="small" />}
-                            title={mockErrorRateData.title}
-                            value={mockErrorRateData.value}
-                            unit={mockErrorRateData.unit}
-                            items={mockErrorRateData.items}
-                        />
-                    </Grid>
-
-                    {/* Card 3 - Top Proxy Latency P99 */}
-                    <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-                        <MetricCard
-                            icon={<TimelineIcon fontSize="small" />}
-                            title={mockLatencyData.title}
-                            value={mockLatencyData.value}
-                            unit={mockLatencyData.unit}
-                            items={mockLatencyData.items}
-                        />
-                    </Grid>
-
-                    {/* Card 4 - Alerts */}
-                    <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-                        <AlertsCard
-                            title={mockAlertsData.title}
-                            value={mockAlertsData.value}
-                            alerts={mockAlertsData.alerts}
-                        />
-                    </Grid>
-                </Grid>
-
-                {/* ================================================================
-                    SECOND ROW - Navigation Tiles (5 tiles)
-                    - Recent, Timeline, Investigate, Alerts, Collections
-                    - 5 columns on desktop, 2 per row on tablet, 1 on mobile
-                ================================================================ */}
-                <Grid container spacing={3} className="mt-6">
-                    {navigationTiles.map((tile, index) => (
-                        <Grid
-                            key={index}
-                            size={{
-                                xs: 12,
-                                sm: 6,
-                                md: 4,
-                                lg: 2.4,
-                            }}
-                        >
-                            <NavigationTile
-                                icon={tile.icon}
-                                title={tile.title}
-                                subtitle={tile.subtitle}
-                            />
-                        </Grid>
-                    ))}
-                </Grid>
             </Box>
+
+            {/* Quick Stats Grid */}
+            <AnimatePresence>
+                {settings.visibility.stats && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                    >
+                        <Grid container spacing={3} mb={4}>
+                            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                                <StatCard title="API Traffic" value="2.4M" unit="requests/hr" icon={<SpeedIcon />} color="#6366f1" trend={12} />
+                            </Grid>
+                            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                                <StatCard title="Error Rate" value="0.04" unit="%" icon={<ErrorIcon />} color="#f43f5e" trend={-2} />
+                            </Grid>
+                            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                                <StatCard title="Avg Latency" value="112" unit="ms" icon={<LatencyIcon />} color="#10b981" trend={-5} />
+                            </Grid>
+                            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                                <StatCard title="Active Alerts" value="4" unit="active" icon={<AlertsIcon />} color="#f59e0b" />
+                            </Grid>
+                        </Grid>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Middle Row: Charts & System Health */}
+            <Grid container spacing={3} mb={4}>
+                {settings.visibility.chart && (
+                    <Grid size={{ xs: 12, lg: settings.visibility.infrastructure ? 8 : 12 }}>
+                        <GlassCard sx={{ height: '100%' }}>
+                            <CardContent sx={{ p: 3 }}>
+                                <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
+                                    <Typography variant="h6" fontWeight={700}>Request Throughput</Typography>
+                                    <Box display="flex" gap={1}>
+                                        <Chip label="Realtime" size="small" sx={{ bgcolor: alpha('#10b981', 0.1), color: '#10b981', fontWeight: 600 }} />
+                                    </Box>
+                                </Box>
+                                <Box sx={{ height: 350, width: '100%' }}>
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <AreaChart data={trafficData}>
+                                            <defs>
+                                                <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
+                                                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                                                </linearGradient>
+                                            </defs>
+                                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={theme.palette.divider} />
+                                            <XAxis dataKey="time" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: theme.palette.text.secondary }} />
+                                            <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: theme.palette.text.secondary }} />
+                                            <RechartsTooltip
+                                                contentStyle={{
+                                                    borderRadius: '12px',
+                                                    border: 'none',
+                                                    boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
+                                                    backgroundColor: theme.palette.background.paper
+                                                }}
+                                            />
+                                            <Area
+                                                type="monotone"
+                                                dataKey="value"
+                                                stroke="#6366f1"
+                                                strokeWidth={3}
+                                                fillOpacity={1}
+                                                fill="url(#colorValue)"
+                                                animationDuration={2000}
+                                            />
+                                        </AreaChart>
+                                    </ResponsiveContainer>
+                                </Box>
+                            </CardContent>
+                        </GlassCard>
+                    </Grid>
+                )}
+
+                {settings.visibility.infrastructure && (
+                    <Grid size={{ xs: 12, lg: settings.visibility.chart ? 4 : 12 }}>
+                        <GlassCard sx={{ height: '100%' }}>
+                            <CardContent sx={{ p: 3 }}>
+                                <Typography variant="h6" fontWeight={700} mb={3}>System Infrastructure</Typography>
+                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                                    {systemMetrics.map((metric, idx) => (
+                                        <SystemHealthItem key={idx} {...metric} />
+                                    ))}
+                                </Box>
+                                <Box mt={3} p={2} sx={{ bgcolor: alpha('#6366f1', 0.05), borderRadius: '12px', border: `1px dashed ${alpha('#6366f1', 0.2)}` }}>
+                                    <Typography variant="caption" color="text.secondary" display="block" mb={1}>
+                                        STATUS SUMMARY
+                                    </Typography>
+                                    <Typography variant="body2" fontWeight={600} display="flex" alignItems="center" gap={1}>
+                                        <CircleIcon sx={{ fontSize: 10, color: '#10b981' }} /> All systems operational
+                                    </Typography>
+                                    <Box mt={1} display="flex" gap={1}>
+                                        <Chip label="Cluster: US-West-1" size="small" variant="outlined" />
+                                        <Chip label="Nodes: 12" size="small" variant="outlined" />
+                                    </Box>
+                                </Box>
+                            </CardContent>
+                        </GlassCard>
+                    </Grid>
+                )}
+            </Grid>
+
+            {/* Bottom Row: Table & Logs */}
+            <Grid container spacing={3}>
+                {/* Endpoint List */}
+                {settings.visibility.endpoints && (
+                    <Grid size={{ xs: 12, xl: settings.visibility.logs ? 8 : 12 }}>
+                        <GlassCard>
+                            <CardContent sx={{ p: 0 }}>
+                                <Box p={3} display="flex" justifyContent="space-between" alignItems="center">
+                                    <Typography variant="h6" fontWeight={700}>Endpoint Performance</Typography>
+                                    <Tooltip title="Export Report">
+                                        <IconButton size="small"><MoreIcon /></IconButton>
+                                    </Tooltip>
+                                </Box>
+                                <TableContainer>
+                                    <Table>
+                                        <TableHead>
+                                            <TableRow sx={{ bgcolor: alpha(theme.palette.divider, 0.03) }}>
+                                                <TableCell sx={{ fontWeight: 700 }}>Endpoint</TableCell>
+                                                <TableCell sx={{ fontWeight: 700 }}>Avg Latency</TableCell>
+                                                <TableCell sx={{ fontWeight: 700 }}>Throughput</TableCell>
+                                                <TableCell sx={{ fontWeight: 700 }}>Success Rate</TableCell>
+                                                <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
+                                                <TableCell />
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {endpointPerformance.map((row) => (
+                                                <TableRow key={row.name} hover>
+                                                    <TableCell sx={{ fontWeight: 600, color: '#6366f1' }}>{row.name}</TableCell>
+                                                    <TableCell>{row.latency}</TableCell>
+                                                    <TableCell>{row.calls}</TableCell>
+                                                    <TableCell>
+                                                        <Box display="flex" alignItems="center" gap={1}>
+                                                            <Box sx={{ flex: 1, minWidth: 60 }}>
+                                                                <LinearProgress
+                                                                    variant="determinate"
+                                                                    value={row.successRate}
+                                                                    sx={{ height: 4, borderRadius: 2 }}
+                                                                    color={row.successRate > 95 ? 'success' : 'warning'}
+                                                                />
+                                                            </Box>
+                                                            <Typography variant="caption" fontWeight={700}>{row.successRate}%</Typography>
+                                                        </Box>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Chip
+                                                            label={row.status}
+                                                            size="small"
+                                                            sx={{
+                                                                fontWeight: 600,
+                                                                bgcolor: row.status === 'Healthy' ? alpha('#10b981', 0.1) : alpha('#f59e0b', 0.1),
+                                                                color: row.status === 'Healthy' ? '#10b981' : '#f59e0b'
+                                                            }}
+                                                        />
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        <IconButton size="small"><ArrowForwardIcon sx={{ fontSize: 16 }} /></IconButton>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </CardContent>
+                        </GlassCard>
+                    </Grid>
+                )}
+
+                {/* Live Activity Logs */}
+                {settings.visibility.logs && (
+                    <Grid size={{ xs: 12, xl: settings.visibility.endpoints ? 4 : 12 }}>
+                        <GlassCard sx={{ height: '100%' }}>
+                            <CardContent sx={{ p: 3 }}>
+                                <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+                                    <Typography variant="h6" fontWeight={700}>Live Security Logs</Typography>
+                                    <Typography variant="caption" color="#6366f1" sx={{ cursor: 'pointer', fontWeight: 700 }}>VIEW ALL</Typography>
+                                </Box>
+                                <Box display="flex" flexDirection="column" gap={2}>
+                                    {recentLogs.map((log) => (
+                                        <Box
+                                            key={log.id}
+                                            p={2}
+                                            sx={{
+                                                borderRadius: '12px',
+                                                bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.03)' : '#fff',
+                                                border: `1px solid ${theme.palette.divider}`,
+                                                transition: 'transform 0.2s',
+                                                '&:hover': { transform: 'scale(1.02)' }
+                                            }}
+                                        >
+                                            <Box display="flex" justifyContent="space-between" mb={0.5}>
+                                                <Typography variant="caption" fontWeight={800} color={log.type === 'Error' ? '#f43f5e' : log.type === 'Warning' ? '#f59e0b' : '#6366f1'}>
+                                                    {log.type.toUpperCase()}
+                                                </Typography>
+                                                <Typography variant="caption" color="text.secondary">{log.time}</Typography>
+                                            </Box>
+                                            <Typography variant="body2" fontWeight={500} mb={1}>{log.message}</Typography>
+                                            <Box display="flex" justifyContent="space-between" alignItems="center">
+                                                <Chip label={log.severity} size="small" sx={{ height: 20, fontSize: '0.65rem', fontWeight: 700 }} />
+                                                <Typography variant="caption" sx={{ opacity: 0.6 }}>PID: {1000 + log.id * 123}</Typography>
+                                            </Box>
+                                        </Box>
+                                    ))}
+                                </Box>
+                            </CardContent>
+                        </GlassCard>
+                    </Grid>
+                )}
+            </Grid>
+
+            {/* Settings Drawer */}
+            <SettingsDrawer
+                open={settingsOpen}
+                onClose={() => setSettingsOpen(false)}
+                settings={settings}
+                onSettingsChange={handleSettingsChange}
+            />
         </Box>
     );
 };
