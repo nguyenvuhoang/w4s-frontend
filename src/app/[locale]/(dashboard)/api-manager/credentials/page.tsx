@@ -36,8 +36,7 @@ const CredentialsPage = async (props: { params: Promise<{ locale: Locale }> }) =
         return <PageError errorDetails={errordetail} executionId={executionid} />
     }
 
-    const openAPIdata = openAPIdataApi.payload.dataresponse.data as unknown as PageData<OpenAPIType>;
-
+    const openAPIdata = (openAPIdataApi.payload.dataresponse.data) as unknown as PageData<OpenAPIType>;
     return (
         <OpenAPIManagementContent session={session} dictionary={dictionary} locale={locale} openAPIdata={openAPIdata} />
     );

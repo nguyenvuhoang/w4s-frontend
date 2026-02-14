@@ -1092,7 +1092,8 @@
     "hide": "Hide",
     "deleteclient": "Delete client {0}",
     "delete_success_text": "Client {0} has been deleted.",
-    "is_revoked": "Is revoked"
+    "is_revoked": "Is revoked",
+    "allowed_ip_addresses": "Allowed IP Addresses"
   },
   "coreinbound": {
     "title": "Core inbound message",

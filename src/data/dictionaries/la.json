@@ -1091,7 +1091,8 @@
     "hide": "ເຊື່ອງ",
     "deleteclient": "ລຶບລູກຄ້າ {0}",
     "delete_success_text": "ລູກ​ຄ້າ {0} ໄດ້ຖືກລົບແລ້ວ.",
-    "is_revoked": "ຖືກຍົກເລີກ"
+    "is_revoked": "ຖືກຍົກເລີກ",
+    "allowed_ip_addresses": "ທີ່ຢູ່ IP ທີ່ອະນຸຍາດ"
   },
   "coreinbound": {
     "title": "ຂໍ້ຄວາມ Core Inbound",

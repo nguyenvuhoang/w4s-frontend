@@ -229,11 +229,11 @@ export const workflowService = {
     loadApiKeys: ({ sessiontoken, language, pageindex, pagesize, searchtext }: SystemSearchDataRequest) =>
         http.post<BODataResponse>('/system-service',
             {
-                learn_api: LEARNAPICODE.CMS_LOAD_APIKEY,
+                learn_api: LEARNAPICODE.LEARN_API_SIMPLE_SEARCH_API_CLIENT,
                 fields: {
-                    pageindex: pageindex,
-                    pagesize: pagesize,
-                    searchtext: searchtext
+                    page_index: pageindex,
+                    page_size: pagesize,
+                    search_text: searchtext
                 }
             },
             {
@@ -243,6 +243,70 @@ export const workflowService = {
                     lang: language,
                     app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
                 }
-            })
+            }),
+
+    viewAPIKey: ({ sessiontoken, fields }: SystemSearchDataRequest) =>
+        http.post<BODataResponse>('/system-service',
+            {
+                learn_api: LEARNAPICODE.LEARN_API_GET_API_CLIENT,
+                fields: {
+                    ...fields
+                }
+            },
+            {
+                baseUrl: process.env.NEXT_PUBLIC_API_URL,
+                headers: {
+                    uid: `${sessiontoken}`,
+                    app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
+                }
+            }),
+
+    updateAPIKey: ({ sessiontoken, fields }: SystemSearchDataRequest) =>
+        http.post<BODataResponse>('/system-service',
+            {
+                learn_api: LEARNAPICODE.LEARN_API_UPDATE_API_CLIENT,
+                fields: {
+                    ...fields
+                }
+            },
+            {
+                baseUrl: process.env.NEXT_PUBLIC_API_URL,
+                headers: {
+                    uid: `${sessiontoken}`,
+                    app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
+                }
+            }),
+
+    deleteAPIKey: ({ sessiontoken, fields }: SystemSearchDataRequest) =>
+        http.post<BODataResponse>('/system-service',
+            {
+                learn_api: LEARNAPICODE.LEARN_API_DELETE_API_CLIENT,
+                fields: {
+                    ...fields
+                }
+            },
+            {
+                baseUrl: process.env.NEXT_PUBLIC_API_URL,
+                headers: {
+                    uid: `${sessiontoken}`,
+                    app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
+                }
+            }),
+
+    addAPIKey: ({ sessiontoken, fields }: SystemSearchDataRequest) =>
+        http.post<BODataResponse>('/system-service',
+            {
+                learn_api: LEARNAPICODE.LEARN_API_ADD_API_CLIENT,
+                fields: {
+                    ...fields
+                }
+            },
+            {
+                baseUrl: process.env.NEXT_PUBLIC_API_URL,
+                headers: {
+                    uid: `${sessiontoken}`,
+                    app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
+                }
+            }),
 }
 

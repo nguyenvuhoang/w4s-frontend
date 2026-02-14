@@ -1090,7 +1090,8 @@
     "hide": "Ẩn",
     "deleteclient": "Xóa client {0}",
     "delete_success_text": "Client {0} đã được xóa.",
-    "is_revoked": "Is revoked"
+    "is_revoked": "Is revoked",
+    "allowed_ip_addresses": "Địa chỉ IP được phép"
   },
   "coreinbound": {
     "title": "Tin nhắn đến từ hệ thống Core",

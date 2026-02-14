@@ -514,7 +514,7 @@ const DashboardPageContent = () => {
                                     <Box textAlign="center" py={4}>
                                         <ErrorIcon sx={{ fontSize: 40, color: '#f43f5e', mb: 1 }} />
                                         <Typography variant="body2" color="text.secondary" mb={2}>
-                                            Unable to reach Node Exporter
+                                            Can not fetch data from server information
                                         </Typography>
                                         <Chip label="Retry" clickable color="primary" variant="outlined" onClick={fetchInfra} sx={{ borderRadius: '12px' }} />
                                     </Box>

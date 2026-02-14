@@ -3,25 +3,18 @@ import {
     Grid, MenuItem, Switch, TextField
 } from '@mui/material'
 import { Control, Controller } from 'react-hook-form'
-import { ENV_OPTS, FormValues } from '../types'
-import ScopesInput from './ScopesInput'
+import { FormValues } from '../types'
 
 // Style chung cho label màu primary
 const labelSx = { color: 'primary.main', '&.Mui-focused': { color: 'primary.main' } }
 
 type BasicInfoCardProps = {
     control: Control<FormValues>
-    scopes: string[]
-    onAddScope: (value: string) => void
-    onRemoveScope: (value: string) => void
     dict: Record<string, string>
 }
 
 export default function BasicInfoCard({
     control,
-    scopes,
-    onAddScope,
-    onRemoveScope,
     dict
 }: BasicInfoCardProps) {
     return (
@@ -74,22 +67,21 @@ export default function BasicInfoCard({
                         />
                     </Grid>
 
-                    {/* Environment */}
-                    <Grid size={{ xs: 12, md: 6 }}>
+                    {/* Description */}
+                    <Grid size={{ xs: 12 }}>
                         <Controller
-                            name="Environment"
+                            name="Description"
                             control={control}
                             render={({ field }) => (
                                 <TextField
                                     {...field}
-                                    label={dict.environment || 'Environment'}
-                                    select
+                                    label={dict.description || 'Description'}
                                     fullWidth
                                     size="small"
+                                    multiline
+                                    rows={2}
                                     slotProps={{ inputLabel: { sx: labelSx } }}
-                                >
-                                    {ENV_OPTS.map(e => <MenuItem key={e} value={e}>{e}</MenuItem>)}
-                                </TextField>
+                                />
                             )}
                         />
                     </Grid>
@@ -108,16 +100,6 @@ export default function BasicInfoCard({
                                     slotProps={{ inputLabel: { sx: labelSx } }}
                                 />
                             )}
-                        />
-                    </Grid>
-
-                    {/* Scopes */}
-                    <Grid size={{ xs: 12 }}>
-                        <ScopesInput
-                            scopes={scopes}
-                            onAdd={onAddScope}
-                            onRemove={onRemoveScope}
-                            label={dict.scopes || 'Scopes'}
                         />
                     </Grid>
 

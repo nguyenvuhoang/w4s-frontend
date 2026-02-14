@@ -23,6 +23,24 @@ export default function AuthDetailsCard({ control, dict }: AuthDetailsCardProps)
             <Divider />
             <CardContent>
                 <Grid container spacing={5}>
+                    {/* Client Secret */}
+                    <Grid size={{ xs: 12 }}>
+                        <Controller
+                            name="ClientSecret"
+                            control={control}
+                            render={({ field }) => (
+                                <TextField
+                                    {...field}
+                                    label={dict.client_secret || 'Client Secret'}
+                                    fullWidth
+                                    size="small"
+                                    type="password"
+                                    slotProps={{ inputLabel: { sx: labelSx } }}
+                                />
+                            )}
+                        />
+                    </Grid>
+
                     {/* Access Token TTL */}
                     <Grid size={{ xs: 12, md: 6 }}>
                         <Controller
@@ -32,7 +50,7 @@ export default function AuthDetailsCard({ control, dict }: AuthDetailsCardProps)
                                 <TextField
                                     {...field}
                                     type="number"
-                                    label={dict.access_token_ttl_seconds || 'Access Token TTL (seconds)'}
+                                    label={dict.access_token_ttl_seconds || 'Token Life Time (sec)'}
                                     fullWidth
                                     size="small"
                                     slotProps={{
@@ -46,16 +64,16 @@ export default function AuthDetailsCard({ control, dict }: AuthDetailsCardProps)
                         />
                     </Grid>
 
-                    {/* Access Token Max TTL */}
+                    {/* Refresh Token TTL */}
                     <Grid size={{ xs: 12, md: 6 }}>
                         <Controller
-                            name="AccessTokenMaxTtlSeconds"
+                            name="RefreshTokenLifeTimeInSeconds"
                             control={control}
                             render={({ field }) => (
                                 <TextField
                                     {...field}
                                     type="number"
-                                    label={dict.access_token_max_ttl_seconds || 'Access Token Max TTL (seconds)'}
+                                    label={dict.refresh_token_ttl_seconds || 'Refresh Token Life Time (sec)'}
                                     fullWidth
                                     size="small"
                                     slotProps={{
@@ -69,26 +87,26 @@ export default function AuthDetailsCard({ control, dict }: AuthDetailsCardProps)
                         />
                     </Grid>
 
-                    {/* Access Token Max Uses */}
+                    {/* Rate Limit Per Minute */}
                     <Grid size={{ xs: 12, md: 6 }}>
                         <Controller
-                            name="AccessTokenMaxUses"
+                            name="RateLimitPerMinute"
                             control={control}
                             render={({ field }) => (
                                 <TextField
                                     {...field}
                                     type="number"
-                                    label={dict.access_token_max_uses || 'Access Token Max Number of Uses'}
+                                    label={dict.rate_limit_per_minute || 'Rate Limit / Min'}
                                     fullWidth
                                     size="small"
-                                    placeholder={dict.not_set || 'Not set'}
                                     slotProps={{ inputLabel: { sx: labelSx } }}
                                 />
                             )}
                         />
                     </Grid>
 
-                    {/* Access Token Trusted IPs */}
+
+                    {/* Access Token Trusted IPs (Allowed IP Addresses) */}
                     <Grid size={{ xs: 12 }}>
                         <Controller
                             name="AccessTokenTrustedIPs"
@@ -96,10 +114,10 @@ export default function AuthDetailsCard({ control, dict }: AuthDetailsCardProps)
                             render={({ field }) => (
                                 <TextField
                                     {...field}
-                                    label={dict.access_token_trusted_ips || 'Access Token Trusted IPs'}
+                                    label={dict.allowed_ip_addresses || 'Allowed IP Addresses'}
                                     fullWidth
                                     size="small"
-                                    placeholder="0.0.0.0, ::"
+                                    placeholder="192.168.1.10,192.168.1.11"
                                     helperText="Comma-separated list"
                                     slotProps={{ inputLabel: { sx: labelSx } }}
                                 />
@@ -107,55 +125,20 @@ export default function AuthDetailsCard({ control, dict }: AuthDetailsCardProps)
                         />
                     </Grid>
 
-                    {/* Client Secret Trusted IPs */}
-                    <Grid size={{ xs: 12 }}>
-                        <Controller
-                            name="ClientSecretTrustedIPs"
-                            control={control}
-                            render={({ field }) => (
-                                <TextField
-                                    {...field}
-                                    label={dict.client_secret_trusted_ips || 'Client Secret Trusted IPs'}
-                                    fullWidth
-                                    size="small"
-                                    placeholder="0.0.0.0, ::"
-                                    helperText="Comma-separated list"
-                                    slotProps={{ inputLabel: { sx: labelSx } }}
-                                />
-                            )}
-                        />
-                    </Grid>
-
-                    {/* Secret Description */}
-                    <Grid size={{ xs: 12 }}>
-                        <Controller
-                            name="ClientSecretDescription"
-                            control={control}
-                            render={({ field }) => (
-                                <TextField
-                                    {...field}
-                                    label={dict.client_secret_description || 'Secret Description'}
-                                    fullWidth
-                                    size="small"
-                                    slotProps={{ inputLabel: { sx: labelSx } }}
-                                />
-                            )}
-                        />
-                    </Grid>
-
-                    {/* Secret Expires */}
+                    {/* Deactivated At */}
                     <Grid size={{ xs: 12, md: 6 }}>
                         <Controller
-                            name="ClientSecretExpiresOnUtc"
+                            name="DeactivatedAt"
                             control={control}
                             render={({ field }) => (
                                 <TextField
                                     {...field}
                                     type="datetime-local"
-                                    label={dict.client_secret_expires_on_utc || 'Secret Expires (UTC)'}
+                                    label={dict.deactivated_at || 'Deactivated At'}
                                     fullWidth
                                     size="small"
                                     slotProps={{ inputLabel: { shrink: true, sx: labelSx } }}
+                                    value={field.value || ''}
                                 />
                             )}
                         />

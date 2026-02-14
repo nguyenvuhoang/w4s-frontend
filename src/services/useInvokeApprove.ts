@@ -120,7 +120,6 @@ export const useInvokeApprove = ({
                 const operationsData: Operation = data || { operation_header: [], operation_body: [] };
                 setOperations(operationsData);
 
-                // Khá»Ÿi táº¡o tráº¡ng thÃ¡i checkbox dá»±a trÃªn dá»¯ liá»‡u ban Ä‘áº§u
                 const initialCheckboxState: { [roleName: string]: { [cmdid: string]: boolean } } = {};
                 const initialSelfInvokeState: { [roleName: string]: boolean } = {};
                 operationsData.operation_body?.forEach(row => {
@@ -155,7 +154,7 @@ export const useInvokeApprove = ({
             const channelId = "BO";
             const data = await fetchMenuData(channelId);
             setMenuParent(data?.filter((item: MenuItem) =>
-                item.parent_id === "0" && item.group_menu_visible === "1" && item.group_menu_id === null
+                item.parent_id === "0" && item.group_menu_visible === "1" && item.group_menu_id === ''
             ));
             setMenuData(data);
         };

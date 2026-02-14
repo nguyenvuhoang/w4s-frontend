@@ -2,7 +2,7 @@ import { auth } from '@/auth'
 import Spinner from '@components/spinners'
 import { Locale } from '@/configs/i18n'
 import { WORKFLOWCODE } from '@/data/WorkflowCode'
-import { systemServiceApi } from '@/servers/system-service'
+import { dataService, systemServiceApi } from '@/servers/system-service'
 import { getDictionary } from '@utils/getDictionary'
 import { isValidResponse } from '@utils/isValidResponse'
 import RoleProfileGeneric from '@/views/pages/role-profile'
@@ -25,7 +25,7 @@ const fetchBOData = async ({
     pageIndex?: number
     label: string // để log dễ hiểu hơn
 }) => {
-    const response = await systemServiceApi.searchData({
+    const response = await dataService.searchData({
         sessiontoken,
         workflowid,
         commandname,
@@ -58,7 +58,7 @@ const RoleProfilePage = async (props: { params: Promise<{ locale: Locale }> }) =
         auth(),
     ]);
 
-    const [ roleData, userData, mobileUserData] = await Promise.all([
+    const [roleData, userData, mobileUserData] = await Promise.all([
         fetchBOData({
             sessiontoken: session?.user?.token as string,
             workflowid: WORKFLOWCODE.WF_BO_EXECUTE_SQL_FROM_CTH,

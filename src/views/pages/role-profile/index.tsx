@@ -52,7 +52,7 @@ const RoleProfileGeneric = ({ locale, session, dictionary, role, userdata, mobil
     const [value, setValue] = useState(0);
     const [subValue, setSubValue] = useState(0);
     const subTabs = ['Invoke-Approve', 'User Assignment', 'Mobile User Assignment', 'Invoke limit'];
-    
+
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
         setSubValue(0);
@@ -118,7 +118,6 @@ const RoleProfileGeneric = ({ locale, session, dictionary, role, userdata, mobil
                             </Tabs>
                         </Box>
 
-                        {/* Ná»™i dung cá»§a tab nhá» */}
                         {subTabs.map((subTab, subIndex) => (
                             <TabPanel key={subIndex} value={subValue} index={subIndex}>
                                 {subTab === 'Invoke-Approve' ? (

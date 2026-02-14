@@ -396,6 +396,10 @@ export interface MenuItem {
     group_menu_id: any
     group_menu_list_authorize_form: any
     enable: boolean
+    href: string
+    icon: string
+    label: string
+    children?: MenuItem[]
 }
 
 export interface Operation {
@@ -485,20 +489,24 @@ export interface RunDynamicDataRequest {
 }
 
 export interface OpenAPIType {
-    clientid: string,
-    clientsecret: string,
-    displayname: string,
+    client_id: string,
+    client_secret: string,
+    client_name: string,
     environment: string,
     scopes: string,
-    expiredonutc: string,
-    isrevoked: boolean,
-    isactive: boolean,
-    createdonutc: string,
-    createdby: string,
-    lastusedonutc: Date | null,
+    expired_on_utc: string,
+    is_revoked: boolean,
+    is_active: boolean,
+    created_on_utc: string,
+    created_by: string,
+    last_used_on_utc: Date | null,
     usage_count: number,
     status: string,
-    id: string
+    id: string,
+    is_expired: boolean,
+    is_inactive: boolean,
+    allowed_ip_addresses: string,
+    description: string
 }
 
 export interface LearnAPIType {

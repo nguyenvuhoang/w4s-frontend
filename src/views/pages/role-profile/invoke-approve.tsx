@@ -75,13 +75,9 @@ const InvokeApprove = ({ locale, session, dictionary, tabvalue }: Props) => {
                         </Box>
                         <Box>
                             {menuParent?.map(parent => {
-                                const children = menuData.filter(
-                                    (item: MenuItem) =>
-                                        item.parent_id === parent.command_id && item.group_menu_visible === "1"
-                                );
-
-                                // CÃ³ children -> Accordion nhÆ° cÅ©
-                                if (children.length > 0) {
+                                const mainmenu = parent.children || [];
+                                if (mainmenu.length > 0) {
+                                    const label = getLocalizedName(parent.command_name_language, locale) || parent.label;
                                     return (
                                         <Accordion
                                             key={parent.command_id}
@@ -91,49 +87,50 @@ const InvokeApprove = ({ locale, session, dictionary, tabvalue }: Props) => {
                                         >
                                             <AccordionSummary sx={{ pl: 5, color: '#225087' }} expandIcon={<ExpandMoreIcon />}>
                                                 <ListItemIcon>
-                                                    {/* Parent cÃ³ children dÃ¹ng RootIcon */}
                                                     <AccountTreeIcon sx={{ color: '#225087' }} />
                                                 </ListItemIcon>
                                                 <Typography fontWeight="bold" sx={{ color: '#225087', mx: 2 }}>
-                                                    {getLocalizedName(parent.command_name_language, locale)}
+                                                    {label}
                                                 </Typography>
                                             </AccordionSummary>
                                             <AccordionDetails sx={{ pl: 5, color: '#225087' }}>
                                                 <List>
-                                                    {children.map(child => (
-                                                        <ListItem
-                                                            key={child.command_id}
-                                                            sx={{
-                                                                cursor: 'pointer',
-                                                                color: selectedMenu?.command_id === child.command_id ? '#0a9150' : 'inherit',
-                                                            }}
-                                                            onClick={() => handleMenuClick(child)}
-                                                        >
-                                                            <ListItemIcon>
-                                                                <FolderIcon
-                                                                    color={selectedMenu?.command_id === child.command_id ? 'primary' : 'warning'}
-                                                                />
-                                                            </ListItemIcon>
-                                                            <ListItemText
-                                                                primary={getLocalizedName(child.command_name_language, locale)}
-                                                                slotProps={{
-                                                                    primary: {
-                                                                        style: {
-                                                                            color: '#225087',
-                                                                            fontWeight: selectedMenu?.command_id === child.command_id ? 700 : 400
-                                                                        }
-                                                                    }
+                                                    {mainmenu?.map(child => {
+                                                        const childlabel = getLocalizedName(child.command_name_language, locale) || child.label;
+                                                        return (
+                                                            <ListItem
+                                                                key={child.command_id}
+                                                                sx={{
+                                                                    cursor: 'pointer',
+                                                                    color: selectedMenu?.command_id === child.command_id ? '#0a9150' : 'inherit',
                                                                 }}
-                                                            />
-                                                        </ListItem>
-                                                    ))}
+                                                                onClick={() => handleMenuClick(child)}
+                                                            >
+                                                                <ListItemIcon>
+                                                                    <FolderIcon
+                                                                        color={selectedMenu?.command_id === child.command_id ? 'primary' : 'warning'}
+                                                                    />
+                                                                </ListItemIcon>
+                                                                <ListItemText
+                                                                    primary={childlabel}
+                                                                    slotProps={{
+                                                                        primary: {
+                                                                            style: {
+                                                                                color: '#225087',
+                                                                                fontWeight: selectedMenu?.command_id === child.command_id ? 700 : 400
+                                                                            }
+                                                                        }
+                                                                    }}
+                                                                />
+                                                            </ListItem>
+                                                        )
+                                                    })}
                                                 </List>
                                             </AccordionDetails>
                                         </Accordion>
                                     );
                                 }
 
-                                // KHÃ”NG cÃ³ children -> render ListItem trá»±c tiáº¿p Ä‘á»ƒ tick quyá»n cho PARENT
                                 return (
                                     <List key={parent.command_id} sx={{ pl: 0 }}>
                                         <ListItem
@@ -150,7 +147,7 @@ const InvokeApprove = ({ locale, session, dictionary, tabvalue }: Props) => {
                                                 />
                                             </ListItemIcon>
                                             <ListItemText
-                                                primary={getLocalizedName(parent.command_name_language, locale)}
+                                                primary={getLocalizedName(parent.command_name_language || parent.label, locale)}
                                                 slotProps={{
                                                     primary: {
                                                         style: {

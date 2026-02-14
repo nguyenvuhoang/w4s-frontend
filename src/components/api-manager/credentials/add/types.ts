@@ -12,39 +12,33 @@ export type PageProps = PageContentProps & {
 export type FormValues = {
     ClientId: string
     DisplayName: string
-    Environment: 'DEV' | 'UAT' | 'PROD'
-    Scopes: string[]
     BICCode: string
     ExpiredOnUtc: string
     IsActive: boolean
 
     AccessTokenTtlSeconds: number
-    AccessTokenMaxTtlSeconds: number
-    AccessTokenMaxUses: number | '' | null
     AccessTokenTrustedIPs: string
-    ClientSecretTrustedIPs: string
 
-    ClientSecretDescription: string
-    ClientSecretExpiresOnUtc: string
+    ClientSecret: string
+    Description: string
+    DeactivatedAt: string | null
+    RateLimitPerMinute: number
+    RefreshTokenLifeTimeInSeconds: number
 }
-
-export const ENV_OPTS: Array<'DEV' | 'UAT' | 'PROD'> = ['DEV', 'UAT', 'PROD']
 
 export const DEFAULT_FORM_VALUES: FormValues = {
     ClientId: '',
     DisplayName: '',
-    Environment: 'DEV',
-    Scopes: [],
     BICCode: '',
     ExpiredOnUtc: '',
     IsActive: true,
 
-    AccessTokenTtlSeconds: 2_592_000,
-    AccessTokenMaxTtlSeconds: 2_592_000,
-    AccessTokenMaxUses: '',
+    AccessTokenTtlSeconds: 3600,
     AccessTokenTrustedIPs: '0.0.0.0, ::',
-    ClientSecretTrustedIPs: '0.0.0.0, ::',
 
-    ClientSecretDescription: '',
-    ClientSecretExpiresOnUtc: ''
+    ClientSecret: '',
+    Description: '',
+    DeactivatedAt: null,
+    RateLimitPerMinute: 100,
+    RefreshTokenLifeTimeInSeconds: 86400,
 }

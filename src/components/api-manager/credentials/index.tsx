@@ -23,7 +23,7 @@ import ScheduleIcon from '@mui/icons-material/Schedule'
 import SearchIcon from '@mui/icons-material/Search'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import {
-    Box, Button, Checkbox, Grid, MenuItem, Paper, Skeleton,
+    Box, Button, Checkbox, Chip, Grid, MenuItem, Paper, Skeleton,
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField
 } from '@mui/material'
 import { Session } from 'next-auth'
@@ -38,13 +38,6 @@ type PageProps = PageContentProps & {
     locale: Locale
 }
 
-
-const envOptions = [
-    { value: 'ALL', label: 'All' },
-    { value: 'DEV', label: 'DEV' },
-    { value: 'UAT', label: 'UAT' },
-    { value: 'PROD', label: 'PROD' }
-]
 
 export default function OpenAPIManagementContent({ dictionary, openAPIdata, session, locale }: PageProps) {
 
@@ -98,23 +91,6 @@ export default function OpenAPIManagementContent({ dictionary, openAPIdata, sess
                                 control={control}
                                 render={({ field }) => (
                                     <TextField {...field} fullWidth size="small" label="Client / Name / Scope / By" />
-                                )}
-                            />
-                        </Grid>
-
-                        {/* Environment */}
-                        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-                            <Controller
-                                name="environment"
-                                control={control}
-                                render={({ field }) => (
-                                    <TextField {...field} fullWidth size="small" label="Environment" select>
-                                        {envOptions.map(o => (
-                                            <MenuItem key={o.value} value={o.value}>
-                                                {o.label}
-                                            </MenuItem>
-                                        ))}
-                                    </TextField>
                                 )}
                             />
                         </Grid>
@@ -220,14 +196,12 @@ export default function OpenAPIManagementContent({ dictionary, openAPIdata, sess
                                 {[
                                     dict.client_id,
                                     dict.display_name,
-                                    dict.environment,
-                                    dict.scopes,
                                     dict.created_by,
                                     dict.created_on_utc,
                                     dict.expired_on_utc,
                                     dict.status,
-                                    dict.usage_count,
-                                    dict.is_revoked
+                                    dict.is_revoked,
+                                    dict.allowed_ip_addresses ?? 'Allowed IP Addresses'
                                 ].map((key: string, i: number) => (
                                     <TableCell key={`${key}-${i}`}>{key}</TableCell>
                                 ))}
@@ -236,24 +210,24 @@ export default function OpenAPIManagementContent({ dictionary, openAPIdata, sess
 
                         <TableBody>
                             {loading ? (
-                                [...Array(rowsPerPage)].map((_, index) => (
+                                [...Array(Math.min(rowsPerPage || 10, 20))].map((_, index) => (
                                     <TableRow key={`skeleton-row-${index}`}>
-                                        {[...Array(11)].map((__, colIndex) => (
+                                        {[...Array(9)].map((__, colIndex) => (
                                             <TableCell key={`skeleton-cell-${colIndex}`}>
                                                 <Skeleton variant="text" width="100%" height={20} />
                                             </TableCell>
                                         ))}
                                     </TableRow>
                                 ))
-                            ) : !openapi || openapi.items.length === 0 ? (
+                            ) : !openapi || !openapi.items || openapi.items.length === 0 ? (
                                 <TableRow>
-                                    <TableCell colSpan={11}>
+                                    <TableCell colSpan={9}>
                                         <EmptyListNotice message={dictionary.account.nodatatransactionhistory} />
                                     </TableCell>
                                 </TableRow>
                             ) : (
                                 openapi.items.map((row, index) => {
-                                    console.log(row);
+                                    if (!row) return null
                                     const id = row.id
                                     const checked = selected.includes(id)
                                     const isDisabledRow = hasSelection && id !== selectedId
@@ -261,13 +235,11 @@ export default function OpenAPIManagementContent({ dictionary, openAPIdata, sess
 
                                     const fmtDate = (iso?: string | null) => iso ? (iso.includes('T') ? iso.split('T')[0] : iso) : ''
 
-                                    const scopesView = Array.isArray(row.scopes) ? row.scopes.join(', ') : String(row.scopes ?? '')
-
                                     return (
                                         <TableRow
                                             key={`${row.id}-${index}`}
                                             hover
-                                            onDoubleClick={() => handleRowDblClick(row.clientid, row.environment)}
+                                            onDoubleClick={() => handleRowDblClick(row.id)}
                                             sx={{
                                                 cursor: isDisabledRow ? 'default' : 'pointer',
                                                 pointerEvents: isDisabledRow ? 'none' : 'auto',
@@ -287,23 +259,21 @@ export default function OpenAPIManagementContent({ dictionary, openAPIdata, sess
                                                 />
                                             </TableCell>
 
-                                            <TableCell>{row.clientid}</TableCell>
-                                            <TableCell>{row.displayname}</TableCell>
-                                            <TableCell>{row.environment}</TableCell>
-                                            <TableCell>{scopesView}</TableCell>
-                                            <TableCell>{row.createdby}</TableCell>
-                                            <TableCell>{fmtDate(row.createdonutc)}</TableCell>
-                                            <TableCell>{fmtDate(row.expiredonutc)}</TableCell>
+                                            <TableCell>{row.client_id}</TableCell>
+                                            <TableCell>{row.client_name}</TableCell>
+                                            <TableCell>{row.created_by}</TableCell>
+                                            <TableCell>{fmtDate(row.created_on_utc)}</TableCell>
+                                            <TableCell>{fmtDate(row.expired_on_utc)}</TableCell>
 
                                             <TableCell>
                                                 <Box display="flex" alignItems="center" gap={1}>
-                                                    {s === 'ACTIVE' ? (
+                                                    {row.status === 'Active' ? (
                                                         <CheckCircleIcon sx={{ color: '#4caf50', fontSize: 20 }} />
-                                                    ) : s === 'REVOKED' ? (
+                                                    ) : row.status === 'InActive' ? (
                                                         <DeleteForeverIcon sx={{ color: '#f44336', fontSize: 20 }} />
-                                                    ) : s === 'EXPIRED' ? (
+                                                    ) : row.status === 'Expired' ? (
                                                         <HourglassTopIcon sx={{ color: '#d32f2f', fontSize: 20 }} />
-                                                    ) : s === 'INACTIVE' ? (
+                                                    ) : row.status === 'Inactive' ? (
                                                         <ScheduleIcon sx={{ color: '#ff9800', fontSize: 20 }} />
                                                     ) : (
                                                         <HelpOutlineIcon sx={{ color: '#9e9e9e', fontSize: 20 }} />
@@ -312,14 +282,33 @@ export default function OpenAPIManagementContent({ dictionary, openAPIdata, sess
                                                 </Box>
                                             </TableCell>
 
-                                            <TableCell>{row.usage_count}</TableCell>
-
                                             <TableCell>
-                                                {row.isrevoked ? (
+                                                {row.is_revoked ? (
                                                     <FiberManualRecordIcon sx={{ fontSize: 14, color: "red" }} />
                                                 ) : (
                                                     <FiberManualRecordIcon sx={{ fontSize: 14, color: "green" }} />
                                                 )}
+                                            </TableCell>
+
+                                            <TableCell>
+                                                <Box display="flex" flexWrap="wrap" gap={0.5}>
+                                                    {row.allowed_ip_addresses
+                                                        ? row.allowed_ip_addresses.split(',').map((ip, idx) => (
+                                                            <Chip
+                                                                key={idx}
+                                                                label={ip.trim()}
+                                                                size="small"
+                                                                variant="outlined"
+                                                                sx={{
+                                                                    borderColor: '#0C9150',
+                                                                    color: '#0C9150',
+                                                                    fontWeight: 500,
+                                                                    fontSize: '12px'
+                                                                }}
+                                                            />
+                                                        ))
+                                                        : '—'}
+                                                </Box>
                                             </TableCell>
                                         </TableRow>
                                     )
@@ -332,10 +321,10 @@ export default function OpenAPIManagementContent({ dictionary, openAPIdata, sess
                 {totalCount > 0 && (
                     <Box mt={5}>
                         <PaginationPage
-                            page={page}
+                            page={page!}
                             pageSize={rowsPerPage}
                             totalResults={totalCount}
-                            jumpPage={jumpPage}
+                            jumpPage={jumpPage!}
                             handlePageChange={handlePageChange}
                             handlePageSizeChange={handlePageSizeChange}
                             handleJumpPage={handleJumpPage}
