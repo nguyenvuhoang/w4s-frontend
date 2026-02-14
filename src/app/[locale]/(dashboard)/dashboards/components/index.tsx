@@ -4,16 +4,17 @@ import {
     NotificationsActive as AlertsIcon,
     ArrowForward as ArrowForwardIcon,
     Circle as CircleIcon,
+    Close as CloseIcon,
     Memory as CpuIcon,
     ErrorOutline as ErrorIcon,
     Timer as LatencyIcon,
     MoreVert as MoreIcon,
-    Public as NetworkIcon,
+    Refresh as RefreshIcon,
     Settings as SettingsIcon,
     Speed as SpeedIcon,
     Storage as StorageIcon,
     TrendingDown as TrendingDownIcon,
-    TrendingUp as TrendingUpIcon,
+    TrendingUp as TrendingUpIcon
 } from '@mui/icons-material';
 import {
     alpha,
@@ -23,13 +24,11 @@ import {
     Chip,
     Divider,
     Drawer,
-    FormControlLabel,
     Grid,
     IconButton,
     LinearProgress,
     List,
     ListItem,
-    ListItemIcon,
     ListItemText,
     MenuItem,
     Select,
@@ -44,7 +43,8 @@ import {
     Typography,
     useTheme
 } from '@mui/material';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useCallback, useEffect, useState } from 'react';
 import {
     Area,
     AreaChart,
@@ -54,12 +54,6 @@ import {
     XAxis,
     YAxis
 } from 'recharts';
-import {
-    Close as CloseIcon,
-    Refresh as RefreshIcon,
-    Visibility as VisibilityIcon,
-} from '@mui/icons-material';
-import { useEffect, useState } from 'react';
 
 // =============================================================================
 // MOCK DATA & GENERATORS
@@ -83,12 +77,34 @@ const endpointPerformance = [
     { name: '/api/v1/orders/create', calls: '5.2k', status: 'Warning', latency: '120ms', successRate: 92.1 },
 ];
 
-const systemMetrics = [
-    { name: 'CPU Usage', value: 42, icon: <CpuIcon />, color: '#6366f1' },
-    { name: 'Memory', value: 78, icon: <StorageIcon />, color: '#a855f7' },
-    { name: 'DB Storage', value: 15, icon: <StorageIcon />, color: '#ec4899' },
-    { name: 'Network Load', value: 65, icon: <NetworkIcon />, color: '#06b6d4' },
-];
+// Infra data is fetched from /api/infra (Node Exporter)
+interface InfraData {
+    cpuUsage: string;
+    memoryUsage: string;
+    diskUsage: string;
+    networkRxBytes: number;
+    networkTxBytes: number;
+    uptimeSeconds: number;
+    loadAvg1m: number;
+    hostname: string;
+    status: string;
+}
+
+const formatUptime = (seconds: number) => {
+    const d = Math.floor(seconds / 86400);
+    const h = Math.floor((seconds % 86400) / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    if (d > 0) return `${d}d ${h}h`;
+    if (h > 0) return `${h}h ${m}m`;
+    return `${m}m`;
+};
+
+const formatBytes = (bytes: number) => {
+    if (bytes >= 1e9) return `${(bytes / 1e9).toFixed(1)} GB`;
+    if (bytes >= 1e6) return `${(bytes / 1e6).toFixed(1)} MB`;
+    if (bytes >= 1e3) return `${(bytes / 1e3).toFixed(1)} KB`;
+    return `${bytes} B`;
+};
 
 const recentLogs = [
     { id: 1, type: 'Error', message: 'Unauthorized access attempt detected', time: '2 mins ago', severity: 'High' },
@@ -310,6 +326,26 @@ const DashboardPageContent = () => {
     const theme = useTheme();
     const [settingsOpen, setSettingsOpen] = useState(false);
 
+    // ── Infra live data ─────────────────────────────────────────────────
+    const [infra, setInfra] = useState<InfraData | null>(null);
+    const [infraLoading, setInfraLoading] = useState(true);
+    const [infraError, setInfraError] = useState(false);
+
+    const fetchInfra = useCallback(async () => {
+        try {
+            setInfraLoading(true);
+            setInfraError(false);
+            const res = await fetch('/api/infra');
+            if (!res.ok) throw new Error('API error');
+            const data: InfraData = await res.json();
+            setInfra(data);
+        } catch {
+            setInfraError(true);
+        } finally {
+            setInfraLoading(false);
+        }
+    }, []);
+
     // Initialize settings from localStorage directly
     const [settings, setSettings] = useState(() => {
         if (typeof window !== 'undefined') {
@@ -353,6 +389,15 @@ const DashboardPageContent = () => {
         setSettings(newSettings);
         localStorage.setItem('dashboard_settings', JSON.stringify(newSettings));
     };
+
+    // Fetch infra on mount + auto-refresh
+    useEffect(() => {
+        fetchInfra();
+        const interval = settings.refreshInterval > 0
+            ? setInterval(fetchInfra, settings.refreshInterval * 1000)
+            : null;
+        return () => { if (interval) clearInterval(interval); };
+    }, [settings.refreshInterval, fetchInfra]);
 
     return (
         <Box sx={{ p: { xs: 2, md: 4 }, minHeight: '100vh', bgcolor: theme.palette.mode === 'dark' ? '#0f172a' : '#f8fafc' }}>
@@ -456,24 +501,68 @@ const DashboardPageContent = () => {
                     <Grid size={{ xs: 12, lg: settings.visibility.chart ? 4 : 12 }}>
                         <GlassCard sx={{ height: '100%' }}>
                             <CardContent sx={{ p: 3 }}>
-                                <Typography variant="h6" fontWeight={700} mb={3}>System Infrastructure</Typography>
-                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                                    {systemMetrics.map((metric, idx) => (
-                                        <SystemHealthItem key={idx} {...metric} />
-                                    ))}
+                                <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+                                    <Typography variant="h6" fontWeight={700}>System Infrastructure</Typography>
+                                    <Tooltip title="Refresh">
+                                        <IconButton size="small" onClick={fetchInfra} disabled={infraLoading}>
+                                            <RefreshIcon sx={{ fontSize: 18, animation: infraLoading ? 'spin 1s linear infinite' : 'none', '@keyframes spin': { '0%': { transform: 'rotate(0deg)' }, '100%': { transform: 'rotate(360deg)' } } }} />
+                                        </IconButton>
+                                    </Tooltip>
                                 </Box>
-                                <Box mt={3} p={2} sx={{ bgcolor: alpha('#6366f1', 0.05), borderRadius: '12px', border: `1px dashed ${alpha('#6366f1', 0.2)}` }}>
-                                    <Typography variant="caption" color="text.secondary" display="block" mb={1}>
-                                        STATUS SUMMARY
-                                    </Typography>
-                                    <Typography variant="body2" fontWeight={600} display="flex" alignItems="center" gap={1}>
-                                        <CircleIcon sx={{ fontSize: 10, color: '#10b981' }} /> All systems operational
-                                    </Typography>
-                                    <Box mt={1} display="flex" gap={1}>
-                                        <Chip label="Cluster: US-West-1" size="small" variant="outlined" />
-                                        <Chip label="Nodes: 12" size="small" variant="outlined" />
+
+                                {infraError && !infra ? (
+                                    <Box textAlign="center" py={4}>
+                                        <ErrorIcon sx={{ fontSize: 40, color: '#f43f5e', mb: 1 }} />
+                                        <Typography variant="body2" color="text.secondary" mb={2}>
+                                            Unable to reach Node Exporter
+                                        </Typography>
+                                        <Chip label="Retry" clickable color="primary" variant="outlined" onClick={fetchInfra} sx={{ borderRadius: '12px' }} />
                                     </Box>
-                                </Box>
+                                ) : (
+                                    <>
+                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                                            {[
+                                                { name: 'CPU Usage', value: parseFloat(infra?.cpuUsage || '0'), icon: <CpuIcon />, color: '#6366f1' },
+                                                { name: 'Memory', value: parseFloat(infra?.memoryUsage || '0'), icon: <StorageIcon />, color: '#a855f7' },
+                                                { name: 'Disk Usage', value: parseFloat(infra?.diskUsage || '0'), icon: <StorageIcon />, color: '#ec4899' },
+                                            ].map((metric, idx) => (
+                                                <SystemHealthItem key={idx} {...metric} />
+                                            ))}
+                                        </Box>
+
+                                        {/* Network I/O row */}
+                                        <Box mt={2} display="flex" gap={2}>
+                                            <Box flex={1} p={1.5} sx={{ bgcolor: alpha('#06b6d4', 0.06), borderRadius: '10px', textAlign: 'center' }}>
+                                                <Typography variant="caption" color="text.secondary" display="block">▼ RX</Typography>
+                                                <Typography variant="body2" fontWeight={700} color="#06b6d4">
+                                                    {infra ? formatBytes(infra.networkRxBytes) : '–'}
+                                                </Typography>
+                                            </Box>
+                                            <Box flex={1} p={1.5} sx={{ bgcolor: alpha('#f59e0b', 0.06), borderRadius: '10px', textAlign: 'center' }}>
+                                                <Typography variant="caption" color="text.secondary" display="block">▲ TX</Typography>
+                                                <Typography variant="body2" fontWeight={700} color="#f59e0b">
+                                                    {infra ? formatBytes(infra.networkTxBytes) : '–'}
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+
+                                        {/* Status Summary */}
+                                        <Box mt={3} p={2} sx={{ bgcolor: alpha('#6366f1', 0.05), borderRadius: '12px', border: `1px dashed ${alpha('#6366f1', 0.2)}` }}>
+                                            <Typography variant="caption" color="text.secondary" display="block" mb={1}>
+                                                STATUS SUMMARY
+                                            </Typography>
+                                            <Typography variant="body2" fontWeight={600} display="flex" alignItems="center" gap={1}>
+                                                <CircleIcon sx={{ fontSize: 10, color: infraError ? '#f43f5e' : '#10b981' }} />
+                                                {infraError ? 'Connection issue' : 'All systems operational'}
+                                            </Typography>
+                                            <Box mt={1} display="flex" gap={1} flexWrap="wrap">
+                                                <Chip label={`Host: ${infra?.hostname || '–'}`} size="small" variant="outlined" />
+                                                <Chip label={`Uptime: ${infra ? formatUptime(infra.uptimeSeconds) : '–'}`} size="small" variant="outlined" />
+                                                <Chip label={`Load: ${infra?.loadAvg1m?.toFixed(2) ?? '–'}`} size="small" variant="outlined" />
+                                            </Box>
+                                        </Box>
+                                    </>
+                                )}
                             </CardContent>
                         </GlassCard>
                     </Grid>
