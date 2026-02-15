@@ -2,14 +2,14 @@
 
 import { PageContentProps } from '@shared/types';
 import {
-    Box,
-    Card,
-    CardContent,
-    Chip,
-    Grid,
-    Paper,
-    Typography,
-    alpha,
+  Box,
+  Card,
+  CardContent,
+  Chip,
+  Grid,
+  Paper,
+  Typography,
+  alpha,
 } from '@mui/material';
 import * as Icons from '@mui/icons-material';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -168,8 +168,8 @@ const WalletCategoryTab = ({
 
             {/* Category Grid */}
             <Grid container spacing={2}>
-              {cats.map((cat) => (
-                <Grid size={{ xs: 6, sm: 4, md: 3 }} key={cat.category_id}>
+              {cats.map((cat, index) => (
+                <Grid size={{ xs: 6, sm: 4, md: 3 }} key={`${cat.category_id}-${index}`}>
                   <Paper
                     elevation={0}
                     sx={{

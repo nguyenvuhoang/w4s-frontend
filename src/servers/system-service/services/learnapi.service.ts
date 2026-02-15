@@ -162,14 +162,13 @@ export const learnAPIService = {
                 }
             }),
 
-    searchWorkflowLog: ({ sessiontoken, language, pageindex, pagesize, searchtext, ...rest }: SystemSearchDataRequest) =>
+    searchWorkflowLog: ({ sessiontoken, language, pageindex, pagesize, ...rest }: SystemSearchDataRequest) =>
         http.post<BODataResponse>('/system-service',
             {
                 learn_api: LEARNAPICODE.LEARN_API_BO_SEARCH_WORKFLOW_LOG,
                 fields: {
-                    page_index: pageindex,
-                    page_size: pagesize,
-                    search_text: searchtext,
+                    pageindex: pageindex,
+                    pagesize: pagesize,
                     ...rest
                 }
             },
