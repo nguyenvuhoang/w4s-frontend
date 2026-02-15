@@ -339,8 +339,8 @@ export interface SearchDataResponse extends ResponseDefaultData<DefaultData> {
     dataresponse: ResponseDefault<ResponseData<PageData<any>>>
 }
 
-export interface BODataResponse extends ResponseDefaultData<DefaultData> {
-    dataresponse: ResponseDefault<ResponseData<any>>
+export interface BODataResponse<T = any> extends ResponseDefaultData<DefaultData> {
+    dataresponse: ResponseDefault<ResponseData<T>>
 }
 
 export interface FODataResponse extends ResponseDefaultData<DefaultData> {
@@ -506,7 +506,33 @@ export interface OpenAPIType {
     is_expired: boolean,
     is_inactive: boolean,
     allowed_ip_addresses: string,
-    description: string
+    description: string,
+    bic_code?: string,
+    rate_limit_per_minute?: number,
+    token_life_time_in_seconds?: number,
+    refresh_token_life_time_in_seconds?: number,
+    deactivated_at?: string | null
+}
+
+export interface ApplicationLogItem {
+    log_timestamp: string;
+    log_level: string;
+    service_name: string;
+    correlation_id: string;
+    log_type: string;
+    direction: string | null;
+    action_name: string | null;
+    flow: string | null;
+    duration_ms: number;
+    exception_details: string | null;
+    properties: string | null;
+    message: string | null;
+    headers: string | null;
+    request_payload: string | null;
+    response_payload: string | null;
+    id: number;
+    created_on_utc: string;
+    updated_on_utc: string;
 }
 
 export interface LearnAPIType {
@@ -556,4 +582,62 @@ export interface CalendarType {
     is_fiscal_begin_of_year: number,
     descs: string,
     currency_code: string
+}
+
+export interface WorkflowInfo {
+    execution_id: string
+    correlation_id: string
+    input: any
+    input_string: string
+    workflow_id: string
+    status: number | string
+    error: any
+    error_info: any
+    created_on: number
+    finish_on: number
+    is_timeout: any
+    is_processing: any
+    is_success: any
+    workflow_type: any
+    response_content: any
+    reversed_execution_id: any
+    reversed_by_execution_id: any
+    is_disputed: any
+    archiving_time: number
+    purging_time: number
+    approved_execution_id: any
+    transaction_number: any
+    transaction_date: string
+    value_date: string
+    app_code?: string
+}
+
+export interface WorkflowStepInfoList {
+    should_await: boolean
+    step_execution_id: string
+    execution_id: string
+    step_order: number
+    step_code: string
+    sending_condition: any
+    p1_request: any
+    p1_start: number
+    p1_finish: number
+    p1_status: string
+    p1_error: any
+    p1_content: any
+    p2_request: any
+    p2_start: number
+    p2_finish: number
+    p2_status: string
+    p2_error: any
+    p2_error_code: any
+    p2_content: any
+    is_success: any
+    is_timeout: any
+    execution_service: any
+}
+
+export interface WorkflowLogDetailData {
+    workflow_info: WorkflowInfo
+    workflow_step_info_list: WorkflowStepInfoList[]
 }

@@ -13,12 +13,13 @@ type JsonEditorProps = {
     initialJson: object;
     onChange: (updatedJson: object) => void;
     height?: string;
+    readOnly?: boolean;
 };
 
-const JsonEditorComponent: React.FC<JsonEditorProps> = ({ initialJson, onChange, height = '300px' }) => {
+const JsonEditorComponent: React.FC<JsonEditorProps> = ({ initialJson, onChange, height = '300px', readOnly = false }) => {
     const editorContainerRef = useRef<HTMLDivElement | null>(null);
     const editorInstanceRef = useRef<any>(null);
-    const modes = ['tree', 'form', 'view', 'code', 'text'];
+    const modes: any[] = readOnly ? ['view'] : ['tree', 'form', 'view', 'code', 'text'];
 
     useEffect(() => {
         if (typeof window !== 'undefined' && editorContainerRef.current && JSONEditor) {
@@ -26,6 +27,7 @@ const JsonEditorComponent: React.FC<JsonEditorProps> = ({ initialJson, onChange,
                 modes: modes,
                 mode: modes[0],
                 onChange: () => {
+                    if (readOnly) return;
                     try {
                         const updatedJson = editorInstanceRef.current?.get();
                         onChange(updatedJson || {});

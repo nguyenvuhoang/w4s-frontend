@@ -5,8 +5,10 @@ import { green, red, grey } from '@mui/material/colors';
 
 export const getStatusIcon = (status: number) => {
   switch (status) {
+    case 0:
     case 2:
       return <CheckCircleIcon sx={{ color: green[600] }} titleAccess="Success" />;
+    case 1:
     case 3:
       return <CancelIcon sx={{ color: red[600] }} titleAccess="Failed" />;
     default:

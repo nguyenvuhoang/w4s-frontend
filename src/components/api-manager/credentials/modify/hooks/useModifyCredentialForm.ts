@@ -8,40 +8,33 @@ import { workflowService } from '@/servers/system-service'
 import { isValidResponse } from '@/shared/utils/isValidResponse'
 import SwalAlert from '@/shared/utils/SwalAlert'
 import { OpenAPIType } from '@/shared/types/systemTypes'
-import { FormValues, DEFAULT_FORM_VALUES } from '../add/types'
+import { FormValues, DEFAULT_FORM_VALUES } from '../../add/types'
+import { getLocalizedUrl } from '@/shared/utils/i18n'
 
 const fromLocalDT = (v: string) => (v ? new Date(v).toISOString() : null)
 
-export function useModifyCredentialForm(session: Session | null, initialData: OpenAPIType) {
+export function useModifyCredentialForm(session: Session | null, initialData: OpenAPIType, locale: string) {
     const [saving, setSaving] = useState(false)
 
     const form = useForm<FormValues>({
         defaultValues: {
             ...DEFAULT_FORM_VALUES,
-            ClientId: initialData.client_id,
-            DisplayName: initialData.client_name,
-            Environment: initialData.environment as any,
-            Scopes: initialData.scopes ? initialData.scopes.split(',').map(s => s.trim()) : [],
-            IsActive: initialData.is_active,
+            ClientId: initialData.client_id || '',
+            DisplayName: initialData.client_name || '',
+            ClientSecret: initialData.client_secret || '',
+            BICCode: initialData.bic_code || '',
+            Description: initialData.description || '',
+            IsActive: !!initialData.is_active,
+            AccessTokenTtlSeconds: initialData.token_life_time_in_seconds || 3600,
+            RefreshTokenLifeTimeInSeconds: initialData.refresh_token_life_time_in_seconds || 86400,
+            RateLimitPerMinute: initialData.rate_limit_per_minute || 100,
             AccessTokenTrustedIPs: initialData.allowed_ip_addresses || '',
+            DeactivatedAt: initialData.deactivated_at || null,
             ExpiredOnUtc: initialData.expired_on_utc ? initialData.expired_on_utc.split('Z')[0] : ''
         }
     })
 
-    const { watch, setValue, reset } = form
-
-    const addScope = useCallback((val: string) => {
-        const trimmed = val.trim()
-        if (!trimmed) return
-        const current = watch('Scopes') || []
-        if (!current.includes(trimmed)) {
-            setValue('Scopes', [...current, trimmed])
-        }
-    }, [watch, setValue])
-
-    const removeScope = useCallback((val: string) => {
-        setValue('Scopes', (watch('Scopes') || []).filter(x => x !== val))
-    }, [watch, setValue])
+    const { reset } = form
 
     const resetForm = useCallback(() => {
         reset()
@@ -49,21 +42,25 @@ export function useModifyCredentialForm(session: Session | null, initialData: Op
 
     const onSubmit = useCallback(async (data: FormValues) => {
         const payload = {
-            id: initialData.id,
+            id: initialData.id, // Primary key required for update
             client_id: data.ClientId,
-            display_name: data.DisplayName,
-            environment: data.Environment,
-            scopes: (data.Scopes ?? []).join(','),
-            is_active: data.IsActive,
+            client_name: data.DisplayName,
+            client_secret: data.ClientSecret,
+            bic_code: data.BICCode,
+            description: data.Description,
+            status: data.IsActive ? 'Active' : 'InActive',
+            deactivated_at: data.DeactivatedAt ? fromLocalDT(data.DeactivatedAt) : null,
             allowed_ip_addresses: data.AccessTokenTrustedIPs || null,
-            expired_on_utc: fromLocalDT(data.ExpiredOnUtc)
+            rate_limit_per_minute: data.RateLimitPerMinute,
+            token_life_time_in_seconds: data.AccessTokenTtlSeconds,
+            refresh_token_life_time_in_seconds: data.RefreshTokenLifeTimeInSeconds
         }
 
         setSaving(true)
         try {
             const resp = await workflowService.updateAPIKey({
                 sessiontoken: session?.user?.token as string,
-                language: 'en' as any, // Locale placeholder
+                language: 'en' as any,
                 fields: payload
             })
 
@@ -83,8 +80,7 @@ export function useModifyCredentialForm(session: Session | null, initialData: Op
                 false,
                 true,
                 () => {
-                    // Back to list?
-                    window.location.href = '../..'
+                    window.location.href = getLocalizedUrl('/api-manager/credentials', locale)
                 }
             )
         } catch (e: any) {
@@ -97,8 +93,6 @@ export function useModifyCredentialForm(session: Session | null, initialData: Op
     return {
         form,
         saving,
-        addScope,
-        removeScope,
         resetForm,
         onSubmit
     }

@@ -1,5 +1,3 @@
-'use client'
-
 import { getDictionary } from '@utils/getDictionary'
 import { Box, Divider, Typography } from '@mui/material'
 import React from 'react'
@@ -25,7 +23,7 @@ const ContentWrapper = ({
     issearch
 }: Props) => {
     // Chuẩn hoá dataref về mảng
-    const dataRefs = React.useMemo<string[]>(() => {
+    const dataRefs = (() => {
         if (!dataref) return []
         if (Array.isArray(dataref)) {
             return dataref
@@ -37,7 +35,7 @@ const ContentWrapper = ({
             .split(';')               // tách theo dấu ;
             .map(s => s.trim())
             .filter(Boolean)
-    }, [dataref])
+    })();
 
     return (
         <Box className="mx-auto p-6">

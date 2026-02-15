@@ -1,7 +1,9 @@
 import {
+    Avatar,
     Card, CardContent, CardHeader, Divider,
-    Grid, InputAdornment, TextField
+    Grid, InputAdornment, TextField, Typography
 } from '@mui/material'
+import VpnKeyIcon from '@mui/icons-material/VpnKey'
 import { Control, Controller } from 'react-hook-form'
 import { FormValues } from '../types'
 
@@ -15,12 +17,21 @@ type AuthDetailsCardProps = {
 
 export default function AuthDetailsCard({ control, dict }: AuthDetailsCardProps) {
     return (
-        <Card sx={{ borderRadius: 2, boxShadow: 3 }}>
+        <Card sx={{ borderRadius: 3, border: '1px solid', borderColor: 'divider', boxShadow: '0 4px 20px 0 rgba(0,0,0,0.05)' }}>
             <CardHeader
-                title={dict.auth_details || 'Authentication Details'}
-                sx={{ '& .MuiCardHeader-title': { fontWeight: 700, color: 'primary.main' } }}
+                avatar={
+                    <Avatar sx={{ bgcolor: 'primary.main', width: 40, height: 40 }}>
+                        <VpnKeyIcon sx={{ fontSize: 24, color: 'white' }} />
+                    </Avatar>
+                }
+                title={
+                    <Typography variant="h6" sx={{ fontWeight: 800 }}>
+                        {dict.auth_details || 'Authentication Details'}
+                    </Typography>
+                }
+                sx={{ p: 3, pb: 0, mb: 2 }}
             />
-            <Divider />
+            <Divider sx={{ mx: 3 }} />
             <CardContent>
                 <Grid container spacing={5}>
                     {/* Client Secret */}
@@ -31,6 +42,7 @@ export default function AuthDetailsCard({ control, dict }: AuthDetailsCardProps)
                             render={({ field }) => (
                                 <TextField
                                     {...field}
+                                    value={field.value ?? ''}
                                     label={dict.client_secret || 'Client Secret'}
                                     fullWidth
                                     size="small"
@@ -49,6 +61,7 @@ export default function AuthDetailsCard({ control, dict }: AuthDetailsCardProps)
                             render={({ field }) => (
                                 <TextField
                                     {...field}
+                                    value={field.value ?? ''}
                                     type="number"
                                     label={dict.access_token_ttl_seconds || 'Token Life Time (sec)'}
                                     fullWidth
@@ -72,6 +85,7 @@ export default function AuthDetailsCard({ control, dict }: AuthDetailsCardProps)
                             render={({ field }) => (
                                 <TextField
                                     {...field}
+                                    value={field.value ?? ''}
                                     type="number"
                                     label={dict.refresh_token_ttl_seconds || 'Refresh Token Life Time (sec)'}
                                     fullWidth
@@ -95,6 +109,7 @@ export default function AuthDetailsCard({ control, dict }: AuthDetailsCardProps)
                             render={({ field }) => (
                                 <TextField
                                     {...field}
+                                    value={field.value ?? ''}
                                     type="number"
                                     label={dict.rate_limit_per_minute || 'Rate Limit / Min'}
                                     fullWidth
@@ -114,6 +129,7 @@ export default function AuthDetailsCard({ control, dict }: AuthDetailsCardProps)
                             render={({ field }) => (
                                 <TextField
                                     {...field}
+                                    value={field.value ?? ''}
                                     label={dict.allowed_ip_addresses || 'Allowed IP Addresses'}
                                     fullWidth
                                     size="small"
@@ -133,12 +149,12 @@ export default function AuthDetailsCard({ control, dict }: AuthDetailsCardProps)
                             render={({ field }) => (
                                 <TextField
                                     {...field}
+                                    value={field.value ?? ''}
                                     type="datetime-local"
                                     label={dict.deactivated_at || 'Deactivated At'}
                                     fullWidth
                                     size="small"
                                     slotProps={{ inputLabel: { shrink: true, sx: labelSx } }}
-                                    value={field.value || ''}
                                 />
                             )}
                         />

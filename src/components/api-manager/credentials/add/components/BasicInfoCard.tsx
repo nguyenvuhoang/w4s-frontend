@@ -1,7 +1,9 @@
 import {
+    Avatar,
     Card, CardContent, CardHeader, Divider, FormControlLabel,
-    Grid, MenuItem, Switch, TextField
+    Grid, MenuItem, Stack, Switch, TextField, Typography
 } from '@mui/material'
+import BadgeIcon from '@mui/icons-material/Badge'
 import { Control, Controller } from 'react-hook-form'
 import { FormValues } from '../types'
 
@@ -18,12 +20,21 @@ export default function BasicInfoCard({
     dict
 }: BasicInfoCardProps) {
     return (
-        <Card sx={{ borderRadius: 2, boxShadow: 3 }}>
+        <Card sx={{ borderRadius: 3, border: '1px solid', borderColor: 'divider', boxShadow: '0 4px 20px 0 rgba(0,0,0,0.05)' }}>
             <CardHeader
-                title="Basic Information"
-                sx={{ '& .MuiCardHeader-title': { fontWeight: 700, color: 'primary.main' } }}
+                avatar={
+                    <Avatar sx={{ bgcolor: 'primary.main', width: 40, height: 40 }}>
+                        <BadgeIcon sx={{ fontSize: 24, color: 'white' }} />
+                    </Avatar>
+                }
+                title={
+                    <Typography variant="h6" sx={{ fontWeight: 800 }}>
+                        {dict.details || 'Basic Information'}
+                    </Typography>
+                }
+                sx={{ p: 3, pb: 0, mb: 2 }}
             />
-            <Divider />
+            <Divider sx={{ mx: 3 }} />
             <CardContent>
                 <Grid container spacing={5}>
                     {/* Client ID */}
@@ -35,6 +46,7 @@ export default function BasicInfoCard({
                             render={({ field, fieldState }) => (
                                 <TextField
                                     {...field}
+                                    value={field.value ?? ''}
                                     label={dict.client_id || 'Client ID'}
                                     fullWidth
                                     size="small"
@@ -58,6 +70,7 @@ export default function BasicInfoCard({
                             render={({ field }) => (
                                 <TextField
                                     {...field}
+                                    value={field.value ?? ''}
                                     label={dict.display_name || 'Display Name'}
                                     fullWidth
                                     size="small"
@@ -75,6 +88,7 @@ export default function BasicInfoCard({
                             render={({ field }) => (
                                 <TextField
                                     {...field}
+                                    value={field.value ?? ''}
                                     label={dict.description || 'Description'}
                                     fullWidth
                                     size="small"
@@ -94,6 +108,7 @@ export default function BasicInfoCard({
                             render={({ field }) => (
                                 <TextField
                                     {...field}
+                                    value={field.value ?? ''}
                                     label={dict.biccd || 'BIC Code'}
                                     fullWidth
                                     size="small"
@@ -111,6 +126,7 @@ export default function BasicInfoCard({
                             render={({ field }) => (
                                 <TextField
                                     {...field}
+                                    value={field.value ?? ''}
                                     type="datetime-local"
                                     label={dict.expired_on_utc || 'Expired On (UTC)'}
                                     fullWidth
@@ -130,13 +146,13 @@ export default function BasicInfoCard({
                                 <FormControlLabel
                                     control={
                                         <Switch
-                                            checked={field.value}
+                                            checked={!!field.value}
                                             onChange={(_, v) => field.onChange(v)}
                                             color="primary"
                                         />
                                     }
-                                    label={dict.status_active || 'Active'}
-                                    sx={{ '& .MuiFormControlLabel-label': { color: 'primary.main' } }}
+                                    label={field.value ? (dict.status_active || 'Active') : (dict.status_inactive || 'InActive')}
+                                    sx={{ '& .MuiFormControlLabel-label': { color: 'primary.main', fontWeight: 600 } }}
                                 />
                             )}
                         />

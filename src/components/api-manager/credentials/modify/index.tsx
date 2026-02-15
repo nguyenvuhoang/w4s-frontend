@@ -1,12 +1,8 @@
-import { Box, Grid } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import ApiIcon from '@mui/icons-material/Api'
-import { useRouter } from 'next/navigation'
 
-import { Locale } from '@/configs/i18n'
 import ContentWrapper from '@/features/dynamicform/components/layout/content-wrapper'
-import { getLocalizedUrl } from '@/shared/utils/i18n'
-import { AuthDetailsCard, BasicInfoCard, FormActions } from '../add/components'
-import { useModifyCredentialForm } from './hooks/useModifyCredentialForm'
+import ModifyForm from './ModifyForm'
 import { PageProps } from '../add/types'
 import { OpenAPIType } from '@/shared/types/systemTypes'
 
@@ -15,14 +11,23 @@ type ModifyProps = PageProps & {
 }
 
 export default function OpenAPIModifyContent({ dictionary, session, locale, data }: ModifyProps) {
-    const router = useRouter()
     const dict = dictionary['openapi'] || ({} as any)
     const dictCommon = dictionary['common'] || ({} as any)
 
-    const { form, saving, resetForm, onSubmit } = useModifyCredentialForm(session, data)
-    const { control, handleSubmit } = form
-
-    const handleBack = () => router.push(getLocalizedUrl('/api-manager/credentials/', locale as Locale))
+    if (!data) {
+        return (
+            <ContentWrapper
+                title={dict.title || 'OpenAPI Client'}
+                description={dictCommon.modify || 'Modify details'}
+                icon={<ApiIcon sx={{ fontSize: 40, color: 'primary.main' }} />}
+                dictionary={dictionary}
+            >
+                <Box sx={{ my: 5, textAlign: 'center' }}>
+                    <Typography color="text.secondary">{dictCommon.nodata || 'No data found'}</Typography>
+                </Box>
+            </ContentWrapper>
+        )
+    }
 
     return (
         <ContentWrapper
@@ -32,34 +37,12 @@ export default function OpenAPIModifyContent({ dictionary, session, locale, data
             dictionary={dictionary}
             issearch
         >
-            <Box sx={{ my: 5, width: '100%' }}>
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <Grid container spacing={3}>
-                        {/* Left: Basic Info */}
-                        <Grid size={{ xs: 12, md: 6 }}>
-                            <BasicInfoCard
-                                control={control}
-                                dict={dict}
-                            />
-                        </Grid>
-
-                        {/* Right: Auth Details */}
-                        <Grid size={{ xs: 12, md: 6 }}>
-                            <AuthDetailsCard control={control} dict={dict} />
-                        </Grid>
-
-                        {/* Actions */}
-                        <Grid size={{ xs: 12 }}>
-                            <FormActions
-                                saving={saving}
-                                onReset={resetForm}
-                                onBack={handleBack}
-                                dictCommon={dictCommon}
-                            />
-                        </Grid>
-                    </Grid>
-                </form>
-            </Box>
+            <ModifyForm
+                data={data}
+                dictionary={dictionary}
+                session={session}
+                locale={locale}
+            />
         </ContentWrapper>
     )
 }

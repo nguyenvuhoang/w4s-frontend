@@ -1,5 +1,5 @@
 import { auth } from '@/auth';
-import OpenAPIModifyContent from '@/components/api-manager/credentials/modify';
+import OpenAPIModifyContent from '@/components/api-manager/credentials/modify/index';
 import { Locale } from '@/configs/i18n';
 import { workflowService } from '@/servers/system-service';
 import { generateAuthMetadata } from '@/shared/components/layout/AuthLayout';
@@ -23,7 +23,7 @@ const ModifyCredentialPage = async (props: { params: Promise<{ locale: Locale, i
         sessiontoken: session?.user?.token as string,
         language: locale,
         fields: {
-            id: Number(id)
+            client_id: id
         }
     });
 
@@ -36,7 +36,7 @@ const ModifyCredentialPage = async (props: { params: Promise<{ locale: Locale, i
         return <PageError errorDetails={errordetail} executionId={executionid} />
     }
 
-    const openAPIdata = openAPIdataApi.payload.dataresponse.data.input as unknown as OpenAPIType;
+    const openAPIdata = (openAPIdataApi.payload.dataresponse.data?.input || openAPIdataApi.payload.dataresponse.data) as unknown as OpenAPIType;
 
     return (
         <OpenAPIModifyContent session={session} dictionary={dictionary} locale={locale} data={openAPIdata} />

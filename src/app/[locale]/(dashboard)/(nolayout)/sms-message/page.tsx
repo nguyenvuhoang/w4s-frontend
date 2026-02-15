@@ -1,6 +1,6 @@
 import { auth } from '@/auth'
 import { Locale } from '@/configs/i18n'
-import { systemServiceApi } from '@/servers/system-service'
+import { dataService, systemServiceApi } from '@/servers/system-service'
 import { getDictionary } from '@utils/getDictionary'
 import { isValidResponse } from '@utils/isValidResponse'
 import SMSMessageContent from '@/views/nolayout/sms-message/sms-message-content'
@@ -28,7 +28,7 @@ const SMSMessageData = async (
 ) => {
     const today = dayjs().format('DD/MM/YYYY')
 
-    const dataSearchAPI = await systemServiceApi.searchData({
+    const dataSearchAPI = await dataService.searchData({
         sessiontoken: session?.user?.token as string,
         workflowid: "BO_SEARCH_SMS_MESSAGE",
         commandname: "SimpleSearchSMSSendOut",
@@ -52,7 +52,7 @@ const SMSMessageData = async (
         const executionId = error?.execute_id;
         const errorInfo = error?.info;
         return (
-            <SMSMessageError 
+            <SMSMessageError
                 executionId={executionId}
                 errorInfo={errorInfo}
                 dictionary={dictionary}
@@ -63,10 +63,10 @@ const SMSMessageData = async (
     const smsdata = dataSearchAPI.payload.dataresponse.data.input
 
     return (
-        <SMSMessageContent 
-            dictionary={dictionary} 
-            session={session} 
-            initialData={smsdata} 
+        <SMSMessageContent
+            dictionary={dictionary}
+            session={session}
+            initialData={smsdata}
         />
     )
 }

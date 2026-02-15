@@ -23,7 +23,7 @@ const ViewCredentialPage = async (props: { params: Promise<{ locale: Locale, id:
         sessiontoken: session?.user?.token as string,
         language: locale,
         fields: {
-            id: Number(id)
+            client_id: id
         }
     });
 
@@ -36,7 +36,7 @@ const ViewCredentialPage = async (props: { params: Promise<{ locale: Locale, id:
         return <PageError errorDetails={errordetail} executionId={executionid} />
     }
 
-    const openAPIdata = openAPIdataApi.payload.dataresponse.data.input as unknown as OpenAPIType;
+    const openAPIdata = openAPIdataApi.payload.dataresponse.data as unknown as OpenAPIType;
 
     return (
         <OpenAPIViewContent session={session} dictionary={dictionary} locale={locale} data={openAPIdata} />

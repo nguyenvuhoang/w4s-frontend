@@ -191,14 +191,14 @@ export const useOpenApiClientHandler = (
 
     const openViewPage = () => {
         if (selectedRow) {
-            const url = getLocalizedUrl(`/api-manager/credentials/view/${selectedRow.id}`, locale as Locale)
+            const url = getLocalizedUrl(`/api-manager/credentials/view/${selectedRow.client_id}`, locale as Locale)
             window.open(url, '_blank')
         }
     }
 
     const openModifyPage = () => {
         if (selectedRow) {
-            const url = getLocalizedUrl(`/api-manager/credentials/modify/${selectedRow.id}`, locale as Locale)
+            const url = getLocalizedUrl(`/api-manager/credentials/modify/${selectedRow.client_id}`, locale as Locale)
             window.open(url, '_blank')
         }
     }

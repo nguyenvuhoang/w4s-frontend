@@ -1,6 +1,6 @@
 import { LEARNAPICODE } from '@/data/LearnAPICode';
 import { env } from '@/env.mjs';
-import { BODataResponse, LearnAPIType, SystemSearchDataRequest } from "@shared/types/systemTypes";
+import { BODataResponse, LearnAPIType, SearchDataResponse, SystemSearchDataRequest, WorkflowLogDetailData } from "@shared/types/systemTypes";
 import http from "../../lib/http";
 
 /**
@@ -114,6 +114,82 @@ export const learnAPIService = {
                 learn_api: LEARNAPICODE.CMS_CLEAR_CACHE,
                 fields: {
                     target: "all"
+                }
+            },
+            {
+                baseUrl: process.env.NEXT_PUBLIC_API_URL,
+                headers: {
+                    uid: `${sessiontoken}`,
+                    lang: language,
+                    app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
+                }
+            }),
+
+    searchApplicationLog: ({ sessiontoken, language, pageindex, pagesize, searchtext, ...rest }: SystemSearchDataRequest) =>
+        http.post<SearchDataResponse>('/system-service',
+            {
+                learn_api: LEARNAPICODE.LEARN_API_SIMPLE_SEARCH_APPLICATION_LOG,
+                fields: {
+                    page_index: pageindex,
+                    page_size: pagesize,
+                    search_text: searchtext,
+                    ...rest
+                }
+            },
+            {
+                baseUrl: process.env.NEXT_PUBLIC_API_URL,
+                headers: {
+                    uid: `${sessiontoken}`,
+                    lang: language,
+                    app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
+                }
+            }),
+
+    getApplicationLog: ({ sessiontoken, language, correlation_id }: { sessiontoken: string, language: string, correlation_id: string }) =>
+        http.post<BODataResponse>('/system-service',
+            {
+                learn_api: LEARNAPICODE.LEARN_API_GET_APPLICATION_LOG,
+                fields: {
+                    correlation_id: correlation_id
+                }
+            },
+            {
+                baseUrl: process.env.NEXT_PUBLIC_API_URL,
+                headers: {
+                    uid: `${sessiontoken}`,
+                    lang: language,
+                    app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
+                }
+            }),
+
+    searchWorkflowLog: ({ sessiontoken, language, pageindex, pagesize, searchtext, ...rest }: SystemSearchDataRequest) =>
+        http.post<BODataResponse>('/system-service',
+            {
+                learn_api: LEARNAPICODE.LEARN_API_BO_SEARCH_WORKFLOW_LOG,
+                fields: {
+                    page_index: pageindex,
+                    page_size: pagesize,
+                    search_text: searchtext,
+                    ...rest
+                }
+            },
+            {
+                baseUrl: process.env.NEXT_PUBLIC_API_URL,
+                headers: {
+                    uid: `${sessiontoken}`,
+                    lang: language,
+                    app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
+                }
+            }),
+
+    getWorkflowLogByExecutionId: ({ sessiontoken, language, execution_id, pageindex, pagesize }: { sessiontoken: string, language: string, execution_id: string, pageindex: number, pagesize: number }) =>
+        http.post<BODataResponse<WorkflowLogDetailData>>('/system-service',
+            {
+                learn_api: LEARNAPICODE.LEARN_API_BO_GET_WF_LOG_BY_EXECUTION_ID,
+                fields: {
+                    execution_id: execution_id,
+                    pageindex: pageindex,
+                    pagesize: pagesize
                 }
             },
             {

@@ -1,35 +1,12 @@
-'use client'
+import ApiIcon from '@mui/icons-material/Api'
+import { Box } from '@mui/material'
 
-import PaginationPage from '@/@core/components/jTable/pagination'
-import { CustomCheckboxIcon } from '@/@core/components/mui/CustomCheckboxIcon'
-import { Locale } from '@/configs/i18n'
 import ContentWrapper from '@/features/dynamicform/components/layout/content-wrapper'
-import { SearchForm, useOpenApiClientHandler } from '@/services/useOpenApiClientHandler'
-import { actionButtonColors, actionButtonSx } from '@/shared/components/forms/button-color/actionButtonSx'
-import EmptyListNotice from '@/shared/components/layout/shared/EmptyListNotice'
 import { OpenAPIType, PageContentProps, PageData } from '@/shared/types'
 import { getDictionary } from '@/shared/utils/getDictionary'
-import AddIcon from '@mui/icons-material/Add'
-import ApiIcon from '@mui/icons-material/Api'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import DeleteIcon from '@mui/icons-material/Delete'
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
-import EditIcon from '@mui/icons-material/Edit'
-import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord"
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
-import HourglassTopIcon from '@mui/icons-material/HourglassTop'
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
-import ScheduleIcon from '@mui/icons-material/Schedule'
-import SearchIcon from '@mui/icons-material/Search'
-import VisibilityIcon from '@mui/icons-material/Visibility'
-import {
-    Box, Button, Checkbox, Chip, Grid, MenuItem, Paper, Skeleton,
-    Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField
-} from '@mui/material'
+import { Locale } from '@/configs/i18n'
 import { Session } from 'next-auth'
-import { Controller, useForm } from 'react-hook-form'
-
-
+import OpenAPIList from './OpenAPIList'
 
 type PageProps = PageContentProps & {
     openAPIdata: PageData<OpenAPIType>
@@ -38,40 +15,8 @@ type PageProps = PageContentProps & {
     locale: Locale
 }
 
-
 export default function OpenAPIManagementContent({ dictionary, openAPIdata, session, locale }: PageProps) {
-
     const dict = dictionary['openapi'] || ({} as any)
-    const {
-        openapi,
-        page,
-        jumpPage,
-        rowsPerPage,
-        totalCount,
-        loading,
-        handleSearch,
-        handleJumpPage,
-        handlePageChange,
-        handlePageSizeChange,
-        statusOptions,
-        selected, isAllSelected, isIndeterminate,
-        toggleAll, toggleOne,
-        // computed
-        selectedId, selectedRow, hasSelection, canDelete,
-        // row actions
-        handleRowDblClick, handleDeleteClick,
-        openViewPage, openModifyPage, openAddPage
-    } = useOpenApiClientHandler(openAPIdata, session, locale, dictionary)
-
-
-    const onSubmit = (data: SearchForm) => handleSearch(data)
-    const { control, handleSubmit } = useForm<SearchForm>({
-        defaultValues: {
-            query: '',
-            environment: 'ALL',
-            status: 'ALL'
-        }
-    })
 
     return (
         <ContentWrapper
@@ -82,255 +27,12 @@ export default function OpenAPIManagementContent({ dictionary, openAPIdata, sess
             issearch
         >
             <Box sx={{ my: 5, width: '100%' }}>
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <Grid container spacing={3} mb={5}>
-                        {/* Query */}
-                        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-                            <Controller
-                                name="query"
-                                control={control}
-                                render={({ field }) => (
-                                    <TextField {...field} fullWidth size="small" label="Client / Name / Scope / By" />
-                                )}
-                            />
-                        </Grid>
-
-                        {/* Status */}
-                        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-                            <Controller
-                                name="status"
-                                control={control}
-                                render={({ field }) => (
-                                    <TextField {...field} fullWidth size="small" label="Status" select>
-                                        {statusOptions.map(o => (
-                                            <MenuItem key={o.value} value={o.value}>
-                                                {o.label}
-                                            </MenuItem>
-                                        ))}
-                                    </TextField>
-                                )}
-                            />
-                        </Grid>
-
-                        {/* Actions */}
-                        <Grid size={{ xs: 12 }} display="flex" justifyContent="space-between" sx={{ mt: 3 }}>
-                            <Box display="flex" gap={2}>
-                                <Button
-                                    variant="outlined"
-                                    color="inherit"
-                                    startIcon={<AddIcon sx={{ color: '#0C9150' }} />}
-                                    sx={{ ...actionButtonSx, ...actionButtonColors.primary }}
-                                    onClick={openAddPage}
-                                >
-                                    {dictionary['common'].add}
-                                </Button>
-
-                                <Button
-                                    variant="outlined"
-                                    color="inherit"
-                                    startIcon={<VisibilityIcon sx={{ color: '#1876d1' }} />}
-                                    disabled={!selectedRow}
-                                    sx={{ ...actionButtonSx, ...actionButtonColors.info }}
-                                    onClick={openViewPage}
-                                >
-                                    {dictionary['common'].view ?? 'View'}
-                                </Button>
-
-                                <Button
-                                    variant="outlined"
-                                    color="inherit"
-                                    startIcon={<EditIcon sx={{ color: '#f0a000' }} />}
-                                    disabled={!selectedRow}
-                                    sx={{ ...actionButtonSx, ...actionButtonColors.warning }}
-                                    onClick={openModifyPage}
-                                >
-                                    {dictionary['common'].modify}
-                                </Button>
-
-                                <Button
-                                    variant="outlined"
-                                    color="inherit"
-                                    startIcon={<DeleteIcon sx={{ color: '#d33' }} />}
-                                    disabled={!canDelete}
-                                    sx={{ ...actionButtonSx, ...actionButtonColors.error }}
-                                    onClick={handleDeleteClick}
-                                >
-                                    {dictionary['common'].delete}
-                                </Button>
-                            </Box>
-
-                            <Button type="submit" variant="contained" color="primary" startIcon={<SearchIcon />}>
-                                {dictionary['common'].search}
-                            </Button>
-                        </Grid>
-                    </Grid>
-                </form>
-
-                <TableContainer component={Paper} sx={{ borderRadius: 2, boxShadow: 3 }}>
-                    <Table
-                        size="small"
-                        sx={{
-                            border: '1px solid #d0d0d0',
-                            fontSize: '15px',
-                            '& th, & td': { borderBottom: '1px solid #e0e0e0', py: '12px', px: '10px' },
-                            '& th': { fontSize: '14px', fontWeight: 600, backgroundColor: 'primary.main', color: 'white' },
-                            '& tbody tr:nth-of-type(odd)': { backgroundColor: '#fafafa' },
-                            '& tbody tr:hover': { backgroundColor: '#f1fdf5' }
-                        }}
-                    >
-                        <TableHead>
-                            <TableRow>
-                                <TableCell sx={{ width: 48 }}>
-                                    <Checkbox
-                                        icon={<CustomCheckboxIcon checked={false} header />}
-                                        checkedIcon={<CustomCheckboxIcon checked={true} header />}
-                                        sx={{ p: 0 }}
-                                        size="small"
-                                        indeterminate={isIndeterminate}
-                                        checked={isAllSelected}
-                                        onChange={toggleAll}
-                                        slotProps={{ input: { 'aria-label': 'select all rows' } }}
-                                        disabled
-                                    />
-                                </TableCell>
-                                {[
-                                    dict.client_id,
-                                    dict.display_name,
-                                    dict.created_by,
-                                    dict.created_on_utc,
-                                    dict.expired_on_utc,
-                                    dict.status,
-                                    dict.is_revoked,
-                                    dict.allowed_ip_addresses ?? 'Allowed IP Addresses'
-                                ].map((key: string, i: number) => (
-                                    <TableCell key={`${key}-${i}`}>{key}</TableCell>
-                                ))}
-                            </TableRow>
-                        </TableHead>
-
-                        <TableBody>
-                            {loading ? (
-                                [...Array(Math.min(rowsPerPage || 10, 20))].map((_, index) => (
-                                    <TableRow key={`skeleton-row-${index}`}>
-                                        {[...Array(9)].map((__, colIndex) => (
-                                            <TableCell key={`skeleton-cell-${colIndex}`}>
-                                                <Skeleton variant="text" width="100%" height={20} />
-                                            </TableCell>
-                                        ))}
-                                    </TableRow>
-                                ))
-                            ) : !openapi || !openapi.items || openapi.items.length === 0 ? (
-                                <TableRow>
-                                    <TableCell colSpan={9}>
-                                        <EmptyListNotice message={dictionary.account.nodatatransactionhistory} />
-                                    </TableCell>
-                                </TableRow>
-                            ) : (
-                                openapi.items.map((row, index) => {
-                                    if (!row) return null
-                                    const id = row.id
-                                    const checked = selected.includes(id)
-                                    const isDisabledRow = hasSelection && id !== selectedId
-                                    const s = row.status
-
-                                    const fmtDate = (iso?: string | null) => iso ? (iso.includes('T') ? iso.split('T')[0] : iso) : ''
-
-                                    return (
-                                        <TableRow
-                                            key={`${row.id}-${index}`}
-                                            hover
-                                            onDoubleClick={() => handleRowDblClick(row.id)}
-                                            sx={{
-                                                cursor: isDisabledRow ? 'default' : 'pointer',
-                                                pointerEvents: isDisabledRow ? 'none' : 'auto',
-                                                opacity: isDisabledRow ? 0.6 : 1
-                                            }}
-                                            onClick={() => toggleOne(id)}
-                                        >
-                                            <TableCell sx={{ width: 48, p: '0 16px' }}>
-                                                <Checkbox
-                                                    icon={isDisabledRow ? <LockOutlinedIcon sx={{ fontSize: 18, color: '#9e9e9e' }} /> : <CustomCheckboxIcon checked={false} />}
-                                                    checkedIcon={<CustomCheckboxIcon checked={true} />}
-                                                    size="small"
-                                                    checked={checked}
-                                                    onChange={() => toggleOne(id)}
-                                                    onClick={e => e.stopPropagation()}
-                                                    slotProps={{ input: { 'aria-label': `select row ${id}` } }}
-                                                />
-                                            </TableCell>
-
-                                            <TableCell>{row.client_id}</TableCell>
-                                            <TableCell>{row.client_name}</TableCell>
-                                            <TableCell>{row.created_by}</TableCell>
-                                            <TableCell>{fmtDate(row.created_on_utc)}</TableCell>
-                                            <TableCell>{fmtDate(row.expired_on_utc)}</TableCell>
-
-                                            <TableCell>
-                                                <Box display="flex" alignItems="center" gap={1}>
-                                                    {row.status === 'Active' ? (
-                                                        <CheckCircleIcon sx={{ color: '#4caf50', fontSize: 20 }} />
-                                                    ) : row.status === 'InActive' ? (
-                                                        <DeleteForeverIcon sx={{ color: '#f44336', fontSize: 20 }} />
-                                                    ) : row.status === 'Expired' ? (
-                                                        <HourglassTopIcon sx={{ color: '#d32f2f', fontSize: 20 }} />
-                                                    ) : row.status === 'Inactive' ? (
-                                                        <ScheduleIcon sx={{ color: '#ff9800', fontSize: 20 }} />
-                                                    ) : (
-                                                        <HelpOutlineIcon sx={{ color: '#9e9e9e', fontSize: 20 }} />
-                                                    )}
-                                                    <span>{s}</span>
-                                                </Box>
-                                            </TableCell>
-
-                                            <TableCell>
-                                                {row.is_revoked ? (
-                                                    <FiberManualRecordIcon sx={{ fontSize: 14, color: "red" }} />
-                                                ) : (
-                                                    <FiberManualRecordIcon sx={{ fontSize: 14, color: "green" }} />
-                                                )}
-                                            </TableCell>
-
-                                            <TableCell>
-                                                <Box display="flex" flexWrap="wrap" gap={0.5}>
-                                                    {row.allowed_ip_addresses
-                                                        ? row.allowed_ip_addresses.split(',').map((ip, idx) => (
-                                                            <Chip
-                                                                key={idx}
-                                                                label={ip.trim()}
-                                                                size="small"
-                                                                variant="outlined"
-                                                                sx={{
-                                                                    borderColor: '#0C9150',
-                                                                    color: '#0C9150',
-                                                                    fontWeight: 500,
-                                                                    fontSize: '12px'
-                                                                }}
-                                                            />
-                                                        ))
-                                                        : '—'}
-                                                </Box>
-                                            </TableCell>
-                                        </TableRow>
-                                    )
-                                })
-                            )}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-
-                {totalCount > 0 && (
-                    <Box mt={5}>
-                        <PaginationPage
-                            page={page!}
-                            pageSize={rowsPerPage}
-                            totalResults={totalCount}
-                            jumpPage={jumpPage!}
-                            handlePageChange={handlePageChange}
-                            handlePageSizeChange={handlePageSizeChange}
-                            handleJumpPage={handleJumpPage}
-                        />
-                    </Box>
-                )}
+                <OpenAPIList
+                    openAPIdata={openAPIdata}
+                    dictionary={dictionary}
+                    session={session}
+                    locale={locale}
+                />
             </Box>
         </ContentWrapper>
     )
