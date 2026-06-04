@@ -2,64 +2,27 @@ import PageHeader from '@/components/api-manager/shared/PageHeader';
 import { Box } from '@mui/material';
 import YarpConfigView from '@/components/api-manager/gateway/routes/YarpConfigView';
 import { YarpRoute, YarpCluster } from '@/types/yarp';
+import { auth } from '@/auth';
+import { learnAPIService } from '@/servers/system-service/services/learnapi.service';
+import { Locale } from '@/configs/i18n';
 
-const SAMPLE_YARP_DATA = {
-    "ReverseProxy": {
-        "Routes": {
-            "chat-sse": {
-                "ClusterId": "AIService",
-                "Match": {
-                    "Path": "/api/chat"
-                }
-            },
-            "w4s-upload": {
-                "ClusterId": "W4SService",
-                "Match": {
-                    "Path": "/api/w4s/{**catch-all}"
-                },
-                "Transforms": [
-                    { "PathRemovePrefix": "/api/w4s" }
-                ]
-            }
-        },
-        "Clusters": {
-            "AIService": {
-                "Destinations": {
-                    "primary": {
-                        "Address": "https://192.168.1.103:5050"
-                    }
-                },
-                "HttpRequest": {
-                    "ActivityTimeout": "00:10:00",
-                    "Version": "1.1",
-                    "VersionPolicy": "RequestVersionExact",
-                    "AllowResponseBuffering": false
-                }
-            },
-            "W4SService": {
-                "Destinations": {
-                    "primary": {
-                        "Address": "https://localhost:5020"
-                    }
-                },
-                "HttpRequest": {
-                    "ActivityTimeout": "00:10:00",
-                    "Version": "1.1",
-                    "VersionPolicy": "RequestVersionExact",
-                    "AllowResponseBuffering": false
-                }
-            }
-        }
-    }
-};
+export default async function GatewaysRoutesPage({ params }: { params: { locale: string } }) {
+    const session = await auth();
+    const locale = params.locale as Locale;
 
-export default function GatewaysRoutesPage() {
-    const routes: YarpRoute[] = Object.entries(SAMPLE_YARP_DATA.ReverseProxy.Routes).map(([id, config]) => ({
+    const res = await learnAPIService.getReverseProxyConfig({
+        sessiontoken: session?.user?.token as string,
+        language: locale
+    });
+
+    const data = res.payload.dataresponse.data as any;
+
+    const routes: YarpRoute[] = Object.entries(data?.ReverseProxy?.Routes || {}).map(([id, config]: [string, any]) => ({
         id,
         ...config
     })) as YarpRoute[];
 
-    const clusters: YarpCluster[] = Object.entries(SAMPLE_YARP_DATA.ReverseProxy.Clusters).map(([id, config]) => ({
+    const clusters: YarpCluster[] = Object.entries(data?.ReverseProxy?.Clusters || {}).map(([id, config]: [string, any]) => ({
         id,
         ...config
     })) as YarpCluster[];

@@ -11,7 +11,7 @@ if (Test-Path "dist-deploy") { Remove-Item -Recurse -Force dist-deploy }
 
 # 2. Build application (assume dependencies already installed)
 Write-Host "`n[2/4] Building Next.js application..." -ForegroundColor Yellow
-npm run build
+pnpm run build
 
 # Check if build succeeded
 if (-not (Test-Path ".next/standalone")) {

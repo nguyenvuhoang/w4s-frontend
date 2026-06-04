@@ -11,7 +11,7 @@ const ChangePassword = ({ dictionary, locale, session }: {
     session: Session | null
 }) => {
     const lightImg = '/images/pages/login-day.jpg'
-    const lightlogo = '/images/logobank/emi.svg'
+    const lightlogo = '/images/logobank/logo.png'
 
     return (
         <Box className="flex w-full h-screen">

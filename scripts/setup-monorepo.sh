@@ -9,7 +9,7 @@ echo ""
 
 # Step 1: Install root dependencies
 echo "📦 Step 1: Installing root dependencies..."
-npm install
+pnpm install
 if [ $? -ne 0 ]; then
     echo "❌ Failed to install root dependencies"
     exit 1
@@ -22,7 +22,7 @@ echo "🔨 Step 2: Building shared packages..."
 
 echo "  Building @emi-portal/shared-types..."
 cd packages/shared-types
-npm run build
+pnpm run build
 if [ $? -ne 0 ]; then
     echo "  ❌ Failed to build shared-types"
     cd ../..
@@ -33,7 +33,7 @@ echo "  ✅ @emi-portal/shared-types built"
 
 echo "  Building @emi-portal/config..."
 cd packages/config
-npm run build
+pnpm run build
 if [ $? -ne 0 ]; then
     echo "  ❌ Failed to build config"
     cd ../..
@@ -44,7 +44,7 @@ echo "  ✅ @emi-portal/config built"
 
 echo "  Building @emi-portal/api-client..."
 cd packages/api-client
-npm run build
+pnpm run build
 if [ $? -ne 0 ]; then
     echo "  ❌ Failed to build api-client"
     cd ../..
@@ -55,7 +55,7 @@ echo "  ✅ @emi-portal/api-client built"
 
 echo "  Building @emi-portal/auth..."
 cd packages/auth
-npm run build
+pnpm run build
 if [ $? -ne 0 ]; then
     echo "  ❌ Failed to build auth"
     cd ../..
@@ -96,13 +96,13 @@ echo ""
 echo "📚 Next Steps:"
 echo "  1. Read MONOREPO_QUICKSTART.md for a quick overview"
 echo "  2. Read MONOREPO.md for detailed documentation"
-echo "  3. Run 'npm run dev --workspace=apps/admin-portal' to test the example app"
+echo "  3. Run 'pnpm run dev --workspace=apps/admin-portal' to test the example app"
 echo "  4. Migrate your current app to apps/portal/"
 echo ""
 echo "💡 Quick Commands:"
-echo "  npm run dev                              # Run main portal (after migration)"
-echo "  npm run dev --workspace=apps/admin-portal # Run admin portal"
-echo "  npm run build                            # Build all packages and apps"
-echo "  npm run lint                             # Lint all workspaces"
+echo "  pnpm run dev                              # Run main portal (after migration)"
+echo "  pnpm run dev --workspace=apps/admin-portal # Run admin portal"
+echo "  pnpm run build                            # Build all packages and apps"
+echo "  pnpm run lint                             # Lint all workspaces"
 echo ""
 echo "Happy coding! 🚀"

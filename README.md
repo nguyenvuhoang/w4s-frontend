@@ -149,7 +149,7 @@ Complete enterprise-grade Next.js 16 banking/financial portal with comprehensive
 
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Copy environment variables
 cp .env.example .env
@@ -196,16 +196,16 @@ Theme settings in `src/configs/themeConfig.ts`:
 
 ```bash
 # Development mode (with Turbopack)
-npm run dev
+pnpm run dev
 
 # Production build
-npm run build
+pnpm run build
 
 # Start production server
-npm start
+pnpm start
 
 # Lint code
-npm run lint
+pnpm run lint
 ```
 
 The app will be available at [http://localhost:3000](http://localhost:3000)
@@ -438,7 +438,7 @@ docker run -p 3000:3000 emi-portal
 
 ### PM2 (Production)
 ```bash
-npm run build
+pnpm run build
 pm2 start ecosystem.config.js
 ```
 

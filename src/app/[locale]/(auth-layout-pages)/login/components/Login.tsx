@@ -12,7 +12,7 @@ const Login = ({ dictionary, locale }: {
     dictionary: Awaited<ReturnType<typeof getDictionary>>,
     locale: Locale
 }) => {
-    const lightlogo = '/images/logobank/emi.svg'
+    const lightlogo = '/images/logobank/logo.png'
 
     return (
         <NoSsr>

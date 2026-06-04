@@ -12,11 +12,11 @@ rm -rf .next dist-deploy
 
 # 2. Install dependencies
 echo -e "\n[2/5] Installing dependencies..."
-npm ci --only=production
+pnpm install --frozen-lockfile
 
 # 3. Build application
 echo -e "\n[3/5] Building Next.js application..."
-npm run build
+pnpm run build
 
 # 4. Package cho production
 echo -e "\n[4/5] Packaging deployment files..."
