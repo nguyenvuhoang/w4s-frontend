@@ -2,7 +2,7 @@
 
 import SnackbarComponent from '@/@core/components/layouts/shared/Snackbar';
 import { cdnServiceApi } from '@/servers/cnd-service';
-import { getDictionary } from '@utils/getDictionary';
+import { getDictionary } from '@/shared/utils/getDictionary';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import EditIcon from '@mui/icons-material/Edit';
 import { Box, Button, CircularProgress, IconButton, Typography } from '@mui/material';
@@ -17,6 +17,8 @@ interface ViewImageItemProps {
       code?: string;
     };
     ismodify?: boolean;
+    width?: number;
+    height?: number;
   };
   onChangeValue?: (code: string, value: string) => void;
   dictionary: Awaited<ReturnType<typeof getDictionary>>;
@@ -78,7 +80,7 @@ const ViewImageItem = ({ input, onChangeValue, dictionary, session }: ViewImageI
         return;
       }
 
-      const fileUrl = data?.fileUrl;
+      const fileUrl = data?.file_url;
       if (!fileUrl) {
         setToastMessage('File upload failed, no URL returned');
         setToastSeverity('error');
@@ -87,9 +89,9 @@ const ViewImageItem = ({ input, onChangeValue, dictionary, session }: ViewImageI
       }
 
       onChangeValue?.(input.default?.code || '', fileUrl);
-      setTrackerCode(data?.trackerCode || null);
+      setTrackerCode(data?.tracker_code || null);
       setIsTemp(data?.temp === true);
-      setExpiredOnUtc(data?.expiredOnUtc ? new Date(data.expiredOnUtc) : null);
+      setExpiredOnUtc(data?.expired_on_utc ? new Date(data.expired_on_utc) : null);
 
       setToastMessage('File uploaded successfully');
       setToastSeverity('success');
@@ -152,8 +154,8 @@ const ViewImageItem = ({ input, onChangeValue, dictionary, session }: ViewImageI
         <Image
           src={previewUrl || input.value}
           alt={input.default?.name || 'image'}
-          width={324}
-          height={204}
+          width={input.width || 324}
+          height={input.height || 204}
           style={{
             objectFit: 'cover',
             display: 'block',
@@ -249,8 +251,7 @@ const ViewImageItem = ({ input, onChangeValue, dictionary, session }: ViewImageI
             fontStyle: 'italic',
             color: '#666',
             fontSize: '1rem',
-            // Removed hardcoded fontFamily to inherit from theme
-
+            fontFamily: 'QuickSand, sans-serif',
           }}
         >
           {input.default.name}
@@ -265,8 +266,7 @@ const ViewImageItem = ({ input, onChangeValue, dictionary, session }: ViewImageI
               color: '#333',
               fontSize: '0.85rem',
               wordBreak: 'break-all',
-              // Removed hardcoded fontFamily to inherit from theme
-
+              fontFamily: 'QuickSand, sans-serif',
             }}
           >
             <strong>{trackerCode}</strong>
@@ -279,8 +279,7 @@ const ViewImageItem = ({ input, onChangeValue, dictionary, session }: ViewImageI
                 display: 'block',
                 color: 'orange',
                 fontSize: '0.8rem',
-                // Removed hardcoded fontFamily to inherit from theme
-
+                fontFamily: 'QuickSand, sans-serif',
                 mt: 0.5,
               }}
             >
@@ -303,4 +302,3 @@ const ViewImageItem = ({ input, onChangeValue, dictionary, session }: ViewImageI
 };
 
 export default ViewImageItem;
-

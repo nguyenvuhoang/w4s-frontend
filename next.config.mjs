@@ -47,6 +47,10 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "emicms.jits.com.vn",
+      },
+      {
+        protocol: "https",
+        hostname: "openapi.jits.com.vn",
       }
     ],
 

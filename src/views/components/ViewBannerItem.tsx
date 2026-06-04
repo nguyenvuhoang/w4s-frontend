@@ -82,7 +82,7 @@ export default function ViewBannerItem({
       });
 
       const { status, data } = res;
-      if (status !== 200 || !data?.fileUrl) {
+      if (status !== 200 || !data?.file_url) {
         setToastMessage(data?.message || `Upload failed (${status})`);
         setToastSeverity('error');
         setToastOpen(true);
@@ -92,7 +92,7 @@ export default function ViewBannerItem({
       setToastMessage('Upload successful');
       setToastSeverity('success');
       setToastOpen(true);
-      return data.fileUrl;
+      return data.file_url;
     } catch (err) {
       console.error(err);
       setToastMessage('Unexpected error during upload');
@@ -173,7 +173,7 @@ export default function ViewBannerItem({
         />
         <label htmlFor="banner-upload">
           <Button variant="outlined" component="span">
-            {isEditing ? "Chọn ảnh khác" : "Đổi ảnh"}
+            {isEditing ? "Choose Another Image" : "Change Image"}
           </Button>
         </label>
 
