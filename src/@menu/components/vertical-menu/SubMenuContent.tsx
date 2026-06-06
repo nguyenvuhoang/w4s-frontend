@@ -1,25 +1,15 @@
 'use client'
 
 // React Imports
-import type { ForwardRefRenderFunction, HTMLAttributes, MutableRefObject } from 'react'
-import { forwardRef, useEffect, useState } from 'react'
+import type { ForwardRefRenderFunction, HTMLAttributes } from 'react'
+import { forwardRef } from 'react'
 
 // Third-party Imports
+import styled from '@emotion/styled'
 
 // Type Imports
 import type { ChildrenType, RootStylesType } from '@shared/types'
 import type { VerticalMenuContextProps } from './Menu'
-
-// Hooks Imports
-
-
-// Styled Component Imports
-import { useTheme } from '@mui/material/styles'
-
-// Style Imports
-import navigationCustomStyles from '@/@core/styles/vertical/navigationCustomStyles'
-import useVerticalNav from '@/@menu/hooks/useVerticalNav'
-import VerticalNav from './VerticalNav'
 
 export type SubMenuContentProps = HTMLAttributes<HTMLUListElement> &
   RootStylesType &
@@ -37,6 +27,24 @@ export type SubMenuContentProps = HTMLAttributes<HTMLUListElement> &
 
 
 
+const StyledSubMenuContent = styled('ul')<{
+  open?: boolean
+  transitionDuration?: number
+}>`
+  display: block;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  max-block-size: ${({ open }) => (open ? '1200px' : '0px')};
+  opacity: ${({ open }) => (open ? 1 : 0)};
+  transform: translateY(${({ open }) => (open ? '0' : '-4px')});
+  transition:
+    max-block-size ${({ transitionDuration }) => `${transitionDuration ?? 300}ms`} ease-in-out,
+    opacity ${({ transitionDuration }) => `${transitionDuration ?? 300}ms`} ease-in-out,
+    transform ${({ transitionDuration }) => `${transitionDuration ?? 300}ms`} ease-in-out;
+`
+
 const SubMenuContent: ForwardRefRenderFunction<HTMLUListElement, SubMenuContentProps> = (props, ref) => {
   // Props
   const {
@@ -52,23 +60,22 @@ const SubMenuContent: ForwardRefRenderFunction<HTMLUListElement, SubMenuContentP
     ...rest
   } = props
 
-  // Extract non-DOM props to prevent React warnings
   const { rootStyles, className, ...domProps } = rest as any
+  const shouldOpen = Boolean(openWhenCollapsed || (open && !(isCollapsed && !isHovered)))
 
   return (
-    <ul
+    <StyledSubMenuContent
       ref={ref}
       className={className}
+      open={shouldOpen}
+      transitionDuration={transitionDuration}
       style={{
-        display: open ? 'block' : 'none',
-        listStyle: 'none',
-        padding: 0,
-        margin: 0,
         ...(typeof rootStyles === 'object' ? rootStyles : {})
       }}
+      {...domProps}
     >
       {children}
-    </ul>
+    </StyledSubMenuContent>
   )
 }
 

@@ -14,60 +14,56 @@ import {
 import type { VerticalMenuDataType } from '@shared/types/menuTypes'
 import { getLocalizedUrl } from '@utils/i18n'
 import { useParams, useRouter } from 'next/navigation'
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import { staticSynonyms, commonStopWords } from '@/data/aiSearchData'
 
 interface AISearchProps {
     menuData: VerticalMenuDataType[] | any[]
+    dictionary?: any
 }
 
 interface FlattenedMenuItem {
     label: string
     path: string
     icon?: string
-    keywords: string[] // Dynamic learning: store extracted keywords
+    keywords: string[]
+    parentLabels: string[]
 }
 
-const AISearch = ({ menuData }: AISearchProps) => {
+const AISearch = ({ menuData, dictionary }: AISearchProps) => {
     const [value, setValue] = useState<FlattenedMenuItem | null>(null)
     const [inputValue, setInputValue] = useState('')
     const router = useRouter()
     const { locale } = useParams()
 
     // Flatten menu data for easier searching
-    const normalizeString = (str: string) => {
+    const normalizeString = useCallback((str: string) => {
         return str
             .toLowerCase()
             .normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '')
             .replace(/đ/g, 'd')
             .trim()
-    }
+    }, [])
 
     // Extract keywords from a string for "learning"
-    const extractKeywords = (str: string): string[] => {
+    const extractKeywords = useCallback((str: string): string[] => {
         const normalized = normalizeString(str)
         return normalized
             .split(/\s+/)
             .filter(word => word.length > 1 && !commonStopWords.includes(word))
-    }
+    }, [normalizeString])
 
     // Flatten menu data and "learn" keywords
     const flattenedMenu = useMemo(() => {
         const flattened: FlattenedMenuItem[] = []
 
-        const processItem = (item: any) => {
+        const processItem = (item: any, parents: string[] = []) => {
             // Skip sections
             if (item.isSection) {
-                if (item.children) item.children.forEach(processItem)
+                if (item.children) item.children.forEach((child: any) => processItem(child, parents))
                 return
-            }
-
-            // Handle items with children (SubMenus)
-            const children = item.children || item.items || item.submenus
-            if (children && Array.isArray(children)) {
-                children.forEach(processItem)
             }
 
             // Extract label from various possible properties
@@ -77,19 +73,27 @@ const AISearch = ({ menuData }: AISearchProps) => {
             else if (typeof item.command_name === 'string') label = item.command_name
 
             const path = item.href || item.command_uri || item.command_url
+            const children = item.children || item.items || item.submenus
 
             if (label && path) {
                 flattened.push({
                     label,
                     path,
                     icon: item.icon || item.group_menu_icon || item.command_icon,
-                    keywords: extractKeywords(label)
+                    keywords: extractKeywords(`${parents.join(' ')} ${label}`),
+                    parentLabels: parents
                 })
+            }
+
+            if (children && Array.isArray(children)) {
+                const nextParents = label ? [...parents, label] : parents
+
+                children.forEach((child: any) => processItem(child, nextParents))
             }
         }
 
         if (Array.isArray(menuData)) {
-            menuData.forEach(processItem)
+            menuData.forEach(item => processItem(item))
         }
 
         // Remove duplicates based on path
@@ -101,7 +105,7 @@ const AISearch = ({ menuData }: AISearchProps) => {
         })
 
         return Array.from(uniqueMap.values())
-    }, [menuData])
+    }, [extractKeywords, menuData])
 
     // Custom filter for "natural language" commands using static synonyms and dynamic keywords
     const filterOptions = (options: FlattenedMenuItem[], { inputValue }: { inputValue: string }) => {
@@ -114,7 +118,7 @@ const AISearch = ({ menuData }: AISearchProps) => {
         if (!cleanInput) return []
 
         return options.filter(option => {
-            const normalizedLabel = normalizeString(option.label)
+            const normalizedLabel = normalizeString(`${option.parentLabels.join(' ')} ${option.label}`)
 
             // 1. Direct match with label
             if (normalizedLabel.includes(cleanInput)) return true
@@ -160,8 +164,14 @@ const AISearch = ({ menuData }: AISearchProps) => {
         }
     }
 
+    const common = dictionary?.common ?? {}
+    const navigation = dictionary?.navigation ?? {}
+    const searchLabel = common.search ?? navigation.search ?? 'Search'
+    const noOptionsText = common.no_result ?? common.noResult ?? navigation.no_result ?? searchLabel
+    const placeholder = `${searchLabel}...`
+
     return (
-        <Box sx={{ width: { xs: '100%', md: 300 }, mx: 4 }}>
+        <Box sx={{ width: { xs: '100%', md: 280 }, mx: { xs: 0, md: 3 } }}>
             <Autocomplete
                 value={value}
                 onChange={handleSelect}
@@ -174,7 +184,7 @@ const AISearch = ({ menuData }: AISearchProps) => {
                 options={flattenedMenu}
                 getOptionLabel={(option) => option.label}
                 filterOptions={filterOptions}
-                noOptionsText="Không tìm thấy menu nào"
+                noOptionsText={noOptionsText}
                 onKeyDown={handleKeyDown}
                 renderOption={(props, option) => {
                     const { key, ...rest } = props as any
@@ -187,9 +197,13 @@ const AISearch = ({ menuData }: AISearchProps) => {
                             </ListItemIcon>
                             <ListItemText
                                 primary={option.label}
+                                secondary={option.parentLabels.length > 0 ? option.parentLabels.join(' / ') : undefined}
                                 slotProps={{
                                     primary: {
                                         variant: 'body2', fontWeight: 500
+                                    },
+                                    secondary: {
+                                        variant: 'caption'
                                     }
                                 }}
                             />
@@ -200,35 +214,37 @@ const AISearch = ({ menuData }: AISearchProps) => {
                     <TextField
                         {...params}
                         size="small"
-                        placeholder="AI Search: Phân quyền, User..."
+                        placeholder={placeholder}
                         variant="outlined"
                         slotProps={{
                             input: {
                                 ...params.InputProps,
                                 startAdornment: (
                                     <InputAdornment position="start">
-                                        <Icons.AutoAwesome sx={{ color: 'white', fontSize: 20 }} />
+                                        <Icons.AutoAwesome sx={{ color: 'primary.main', fontSize: 18 }} />
                                     </InputAdornment>
                                 ),
                                 sx: {
-                                    borderRadius: '50px',
-                                    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                                    color: 'white',
+                                    minHeight: 38,
+                                    borderRadius: '999px',
+                                    backgroundColor: 'rgba(255, 255, 255, 0.72)',
+                                    color: 'text.primary',
+                                    boxShadow: '0 8px 24px rgba(34, 80, 135, 0.08)',
                                     '& .MuiOutlinedInput-notchedOutline': {
-                                        borderColor: 'rgba(255, 255, 255, 0.3)',
+                                        borderColor: 'rgba(34, 80, 135, 0.12)',
                                     },
                                     '&:hover .MuiOutlinedInput-notchedOutline': {
-                                        borderColor: 'rgba(255, 255, 255, 0.5)',
+                                        borderColor: 'rgba(34, 80, 135, 0.28)',
                                     },
                                     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                        borderColor: 'white',
+                                        borderColor: 'primary.main',
                                     },
                                     '& .MuiInputBase-input::placeholder': {
-                                        color: 'rgba(255, 255, 255, 0.6)',
+                                        color: 'text.disabled',
                                         opacity: 1
                                     },
                                     '& .MuiAutocomplete-endAdornment .MuiIconButton-root': {
-                                        color: 'rgba(255, 255, 255, 0.7)'
+                                        color: 'text.secondary'
                                     },
                                     transition: 'all 0.2s ease-in-out',
                                     fontSize: '0.875rem'

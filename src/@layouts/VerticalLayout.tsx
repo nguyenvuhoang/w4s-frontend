@@ -28,10 +28,14 @@ const VerticalLayout = (props: VerticalLayoutProps) => {
   const { navbar, navBackground, footer, navigation, children } = props
 
   return (
-    <div className={classnames(verticalLayoutClasses.root, 'flex flex-auto main-content z-[1] sxl:pl-[300px]')}>
+    <div
+      className={classnames(verticalLayoutClasses.root, 'flex flex-auto main-content z-[1]')}
+      style={{ minHeight: '100vh', overflowX: 'clip' }}
+    >
       {navigation || null}
       <StyledContentWrapper
-        className={classnames(verticalLayoutClasses.contentWrapper, 'flex flex-col min-is-0 is-full')}
+        className={classnames(verticalLayoutClasses.contentWrapper, 'flex flex-col flex-auto min-is-0 is-full')}
+        style={{ minHeight: '100vh' }}
       >
         {navbar || null}
         {navBackground || null}
