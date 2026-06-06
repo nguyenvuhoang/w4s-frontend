@@ -30,16 +30,18 @@ const menuItemStyles = (verticalNavOptions: VerticalNavState, theme: Theme): Men
       transition: 'all 0.3s ease !important',
       [`&.${menuClasses.subMenuRoot}.${menuClasses.open} > .${menuClasses.button}, &.${menuClasses.subMenuRoot} > .${menuClasses.button}.${menuClasses.active}`]:
       {
-        backgroundImage: 'linear-gradient(90deg, #EAF6FF 0%, #F3FFE9 100%) !important',
-        color: 'var(--mui-palette-primary-main) !important',
+        backgroundImage: 'linear-gradient(90deg, #FFFFFF 0%, #EAFBFF 54%, #E9FFF5 100%) !important',
+        color: '#0F5F74 !important',
         borderRadius: '14px !important',
         marginInline: '10px !important',
-        boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.05) !important',
+        boxShadow: '0px 8px 22px rgba(0, 0, 0, 0.16) !important',
         [`& .${menuClasses.icon}`]: {
-          color: 'var(--mui-palette-primary-main) !important'
+          color: '#0F6F7F !important',
+          background: 'linear-gradient(135deg, rgba(34, 80, 135, 0.16), rgba(0, 188, 212, 0.18)) !important',
+          boxShadow: '0 4px 12px rgba(15, 111, 127, 0.18)'
         },
         [`& .${menuClasses.label}`]: {
-          color: 'var(--mui-palette-primary-main) !important'
+          color: '#0F5F74 !important'
         }
       },
       [`&.${menuClasses.disabled} > .${menuClasses.button}`]: {
@@ -48,22 +50,28 @@ const menuItemStyles = (verticalNavOptions: VerticalNavState, theme: Theme): Men
       [`&:not(.${menuClasses.subMenuRoot}) > .${menuClasses.button}.${menuClasses.active}`]: {
         ...(popoutCollapsed && level > 0
           ? {
-            backgroundImage: 'linear-gradient(90deg, #EAF6FF 0%, #F3FFE9 100%) !important',
-            color: 'var(--mui-palette-primary-main) !important',
+            backgroundImage: 'linear-gradient(90deg, #FFFFFF 0%, #EAFBFF 54%, #E9FFF5 100%) !important',
+            color: '#0F5F74 !important',
             borderRadius: '16px !important',
             marginInline: '12px !important',
             [`& .${menuClasses.icon}`]: {
-              color: 'var(--mui-palette-primary-main)'
+              color: '#0F6F7F !important',
+              background: 'linear-gradient(135deg, rgba(34, 80, 135, 0.16), rgba(0, 188, 212, 0.18)) !important'
             }
           }
           : {
-            color: 'var(--mui-palette-primary-main) !important',
-            backgroundImage: 'linear-gradient(90deg, #EAF6FF 0%, #F3FFE9 100%) !important',
-            boxShadow: level === 0 ? '0px 4px 12px rgba(0, 0, 0, 0.1) !important' : 'none',
+            color: '#0F5F74 !important',
+            backgroundImage: 'linear-gradient(90deg, #FFFFFF 0%, #EAFBFF 54%, #E9FFF5 100%) !important',
+            boxShadow: level === 0 ? '0px 8px 22px rgba(0, 0, 0, 0.16) !important' : 'none',
             borderRadius: '14px !important',
             marginInline: level === 0 ? '10px !important' : '14px 10px 6px 18px !important',
             [`& .${menuClasses.icon}`]: {
-              color: 'var(--mui-palette-primary-main) !important'
+              color: '#0F6F7F !important',
+              background: 'linear-gradient(135deg, rgba(34, 80, 135, 0.16), rgba(0, 188, 212, 0.18)) !important',
+              boxShadow: '0 4px 12px rgba(15, 111, 127, 0.18)'
+            },
+            [`& .${menuClasses.label}`]: {
+              color: '#0F5F74 !important'
             }
           })
       }
@@ -74,7 +82,7 @@ const menuItemStyles = (verticalNavOptions: VerticalNavState, theme: Theme): Men
       ...(!active && !(rest as any).open && {
         color: 'var(--menu-inactive-color, rgba(255, 255, 255, 0.85)) !important',
         [`& .${menuClasses.icon}`]: {
-          color: 'var(--menu-inactive-color, rgba(255, 255, 255, 0.85)) !important'
+          color: '#FFFFFF !important'
         },
         [`& .${menuClasses.label}`]: {
           color: 'var(--menu-inactive-color, rgba(255, 255, 255, 0.85)) !important'
@@ -95,7 +103,15 @@ const menuItemStyles = (verticalNavOptions: VerticalNavState, theme: Theme): Men
       }),
       ...(!active && {
         '&:hover, &:focus-visible': {
-          backgroundColor: level === 0 ? 'rgba(255, 255, 255, 0.08) !important' : 'rgba(255, 255, 255, 0.06) !important'
+          backgroundColor: level === 0 ? 'rgba(255, 255, 255, 0.12) !important' : 'rgba(255, 255, 255, 0.08) !important',
+          transform: level === 0 ? 'translateX(2px)' : 'none',
+          [`& .${menuClasses.icon}`]: {
+            backgroundColor: 'rgba(255, 255, 255, 0.24) !important',
+            boxShadow: '0 5px 14px rgba(255, 255, 255, 0.12)'
+          },
+          [`& .${menuClasses.label}`]: {
+            color: '#FFFFFF !important'
+          }
         },
         '&[aria-expanded="true"]': {
           backgroundColor: 'var(--mui-palette-action-selected)'
@@ -103,15 +119,23 @@ const menuItemStyles = (verticalNavOptions: VerticalNavState, theme: Theme): Men
       })
     }),
     icon: ({ level }) => ({
-      transition: `margin-inline-end ${transitionDuration}ms ease-in-out`,
-      color: 'rgba(255, 255, 255, 0.85) !important',
+      transition: theme.transitions.create(['margin-inline-end', 'background-color', 'box-shadow', 'color', 'transform'], {
+        duration: transitionDuration,
+        easing: 'ease-in-out'
+      }),
+      color: '#FFFFFF !important',
+      inlineSize: level === 0 ? 34 : 26,
+      blockSize: level === 0 ? 34 : 26,
+      borderRadius: 999,
+      backgroundColor: level === 0 ? 'rgba(255, 255, 255, 0.16)' : 'rgba(255, 255, 255, 0.10)',
+      boxShadow: level === 0 ? 'inset 0 0 0 1px rgba(255, 255, 255, 0.12)' : 'none',
       ...(level === 0 && {
-        fontSize: '1.375rem',
+        fontSize: '1.15rem',
         marginInlineEnd: theme.spacing(2)
       }),
       ...(level > 0 && {
-        fontSize: '0.875rem',
-        color: 'rgba(255, 255, 255, 0.68) !important',
+        fontSize: '0.8rem',
+        color: 'rgba(255, 255, 255, 0.86) !important',
         marginInlineEnd: theme.spacing(2.5)
       }),
       ...(level === 1 &&
@@ -129,7 +153,8 @@ const menuItemStyles = (verticalNavOptions: VerticalNavState, theme: Theme): Men
         marginInlineEnd: theme.spacing(2)
       }),
       '& > i, & > svg': {
-        fontSize: 'inherit'
+        fontSize: 'inherit',
+        color: 'inherit'
       }
     }),
     prefix: {

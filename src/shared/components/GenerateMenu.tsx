@@ -234,7 +234,7 @@ export const GenerateVerticalMenu = ({
               onMenuItemClick?.(subMenuItem)
             }}
             {...stripSubMenuLinkProps(stripNonDomProps(rest))}
-            icon={<MenuIcon icon={icon} size={20} />}
+            icon={<MenuIcon icon={icon} size={20} color='currentColor' />}
           >
             {subMenuItem.label}
           </VerticalMenuItem>
@@ -254,7 +254,7 @@ export const GenerateVerticalMenu = ({
           suffix={renderChipOrNode(suffix)}
           {...stripNonDomProps(rest)}
           href={href}
-          icon={<MenuIcon icon={icon} size={20} />}
+          icon={<MenuIcon icon={icon} size={20} color='currentColor' />}
         >
           {label}
         </VerticalMenuItem>

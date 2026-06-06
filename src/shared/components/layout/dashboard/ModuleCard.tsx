@@ -27,39 +27,46 @@ const ModuleCard = ({ item, onClick }: ModuleCardProps) => {
         p: 2.25,
         minHeight: 150,
         borderRadius: 3,
-        backgroundColor: alpha(theme.palette.background.paper, 0.92),
-        border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
-        boxShadow: `0 10px 28px ${alpha(theme.palette.primary.main, 0.08)}`,
+        background: `linear-gradient(180deg, ${alpha(theme.palette.background.paper, 0.98)} 0%, ${alpha('#EAFBFF', 0.72)} 100%)`,
+        border: `1px solid ${alpha('#225087', 0.14)}`,
+        boxShadow: `0 12px 30px ${alpha('#225087', 0.1)}`,
         transition: theme.transitions.create(['transform', 'box-shadow', 'border-color', 'background-color'], {
           duration: 200
         }),
         cursor: 'pointer',
         '&:hover': {
-          transform: 'translateY(-3px)',
-          borderColor: alpha(theme.palette.primary.main, 0.25),
-          boxShadow: `0 16px 40px ${alpha(theme.palette.primary.main, 0.14)}`,
+          transform: 'translateY(-4px)',
+          borderColor: alpha('#15B8C8', 0.36),
+          boxShadow: `0 18px 44px ${alpha('#225087', 0.16)}`,
           backgroundColor: alpha(theme.palette.background.paper, 0.98),
-          '& .card-actions': { opacity: 1 }
+          '& .card-actions': { opacity: 1 },
+          '& .module-icon': {
+            transform: 'scale(1.04)',
+            boxShadow: `0 10px 24px ${alpha('#15B8C8', 0.22)}`
+          }
         }
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1.25 }}>
         <Box
+          className='module-icon'
           sx={{
             flexShrink: 0,
             inlineSize: 46,
             blockSize: 46,
-            borderRadius: 2,
+            borderRadius: '50%',
             display: 'grid',
             placeItems: 'center',
-            color: theme.palette.primary.main,
-            backgroundColor: alpha(theme.palette.primary.main, 0.09)
+            color: '#0F6F7F',
+            background: `linear-gradient(135deg, ${alpha('#225087', 0.1)} 0%, ${alpha('#15B8C8', 0.18)} 100%)`,
+            boxShadow: `inset 0 0 0 1px ${alpha('#15B8C8', 0.14)}`,
+            transition: theme.transitions.create(['transform', 'box-shadow'], { duration: 200 })
           }}
         >
           {item.icon ? (
-            <MenuIcon icon={item.icon} size={24} color={theme.palette.primary.main} />
+            <MenuIcon icon={item.icon} size={24} color='#0F6F7F' />
           ) : (
-            <DashboardRounded sx={{ fontSize: 24, color: theme.palette.primary.main }} />
+            <DashboardRounded sx={{ fontSize: 24, color: '#0F6F7F' }} />
           )}
         </Box>
 

@@ -80,121 +80,137 @@ const ModuleLauncher = ({ moduleItem, dictionary, onBack }: ModuleLauncherProps)
     router.push(getLocalizedUrl(route, locale as Locale))
   }
 
+  const glassButtonSx = {
+    height: 32,
+    minWidth: 0,
+    fontSize: 12,
+    borderRadius: '10px',
+    px: 1.45,
+    color: '#FFFFFF',
+    borderColor: alpha(theme.palette.common.white, 0.36),
+    backgroundColor: alpha(theme.palette.common.white, 0.14),
+    backdropFilter: 'blur(8px)',
+    '& .MuiButton-startIcon': { mr: 0.55, color: '#FFFFFF' },
+    '&:hover': {
+      borderColor: alpha(theme.palette.common.white, 0.62),
+      backgroundColor: alpha(theme.palette.common.white, 0.24)
+    }
+  }
+
   return (
     <Box sx={{ px: { xs: 2.25, md: 3.25 }, py: 3, minHeight: '100%' }}>
       <Box
         sx={{
           borderRadius: 4,
           border: `1px solid ${alpha(theme.palette.primary.main, 0.08)}`,
-          background: `linear-gradient(180deg, ${alpha(theme.palette.background.paper, 0.96)} 0%, ${alpha(theme.palette.primary.main, 0.045)} 100%)`,
-          boxShadow: `0 8px 28px ${alpha(theme.palette.primary.main, 0.06)}`,
-          p: { xs: 2.5, md: 3 }
+          backgroundColor: alpha(theme.palette.background.paper, 0.9),
+          boxShadow: `0 14px 42px ${alpha(theme.palette.primary.main, 0.09)}`,
+          overflow: 'hidden'
         }}
       >
-        <Stack direction='row' alignItems='center' justifyContent='space-between' spacing={2.25} flexWrap='wrap'>
-          <Box>
-            <Typography sx={{ fontSize: 11, color: 'text.disabled', mb: 0.25, letterSpacing: '0.02em' }}>
-              {text.home} / {moduleTitle || text.moduleFallback}
-            </Typography>
-            <Typography sx={{ fontWeight: 700, fontSize: 17, color: '#134B2F', lineHeight: 1.3 }}>
-              {moduleTitle || text.moduleFallback}
-            </Typography>
-            <Typography sx={{ fontSize: 12, color: 'text.disabled', mt: 0.25 }}>
-              {searchableChildren.length} {text.availableFunctions}
-            </Typography>
-          </Box>
-
-          <Stack direction='row' spacing={1} alignItems='center'>
-            <Button
-              size='small'
-              variant='outlined'
-              startIcon={<AppsRounded sx={{ fontSize: 16 }} />}
-              onClick={() => setFilter('all')}
-              sx={{
-                height: 30,
-                minWidth: 0,
-                fontSize: 12,
-                borderRadius: '9px',
-                px: 1.35,
-                color: '#087A52',
-                borderColor: alpha('#087A52', filter === 'all' ? 0.72 : 0.42),
-                backgroundColor: alpha('#087A52', filter === 'all' ? 0.09 : 0.04),
-                '& .MuiButton-startIcon': { mr: 0.55, color: '#087A52' }
-              }}
-            >
-              {text.all}
-            </Button>
-            <Button
-              size='small'
-              variant='outlined'
-              startIcon={<StarRounded sx={{ fontSize: 15 }} />}
-              onClick={() => setFilter('favorites')}
-              sx={{
-                height: 30,
-                minWidth: 0,
-                fontSize: 12,
-                borderRadius: '9px',
-                px: 1.35,
-                color: alpha(theme.palette.text.secondary, 0.92),
-                borderColor: alpha(theme.palette.text.secondary, filter === 'favorites' ? 0.42 : 0.2),
-                backgroundColor: alpha(theme.palette.background.paper, filter === 'favorites' ? 0.95 : 0.68),
-                '& .MuiButton-startIcon': { mr: 0.55, color: '#D79700' }
-              }}
-            >
-              {text.favorites}
-            </Button>
-            <Button
-              size='small'
-              variant='outlined'
-              startIcon={<ArrowBackRounded sx={{ fontSize: 16 }} />}
-              onClick={onBack}
-              sx={{
-                height: 30,
-                minWidth: 0,
-                fontSize: 12,
-                borderRadius: '9px',
-                px: 1.35,
-                color: '#0F4A38',
-                borderColor: alpha('#0F4A38', 0.35),
-                backgroundColor: alpha('#0F4A38', 0.035),
-                '& .MuiButton-startIcon': { mr: 0.55, color: '#0F4A38' }
-              }}
-            >
-              {text.back}
-            </Button>
-          </Stack>
-        </Stack>
-
-        <Divider sx={{ my: 2.5, borderColor: alpha(theme.palette.primary.main, 0.09) }} />
-
-        <TextField
-          fullWidth
-          placeholder={text.searchModule}
-          value={query}
-          onChange={event => setQuery(event.target.value)}
-          inputProps={{ style: { fontSize: 13, paddingTop: 9, paddingBottom: 9 } }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position='start'>
-                <SearchRounded sx={{ fontSize: 18, color: alpha(theme.palette.primary.main, 0.78) }} />
-              </InputAdornment>
-            )
-          }}
+        <Box
           sx={{
-            mb: 3.25,
-            '& .MuiOutlinedInput-root': {
-              borderRadius: 999,
-              height: 42,
-              backgroundColor: alpha(theme.palette.background.paper, 0.9),
-              '& fieldset': { borderColor: alpha(theme.palette.primary.main, 0.14) },
-              '&:hover fieldset': { borderColor: alpha(theme.palette.primary.main, 0.28) },
-              '&.Mui-focused fieldset': { borderColor: alpha(theme.palette.primary.main, 0.46), borderWidth: 1 },
-              '&.Mui-focused': {
-                boxShadow: `0 0 0 3px ${alpha(theme.palette.primary.main, 0.09)}`
-              }
+            p: { xs: 2.5, md: 3 },
+            background: 'linear-gradient(135deg, #225087 0%, #0D7EA4 56%, #15B8C8 100%)',
+            position: 'relative',
+            overflow: 'hidden',
+            '&::after': {
+              content: '""',
+              position: 'absolute',
+              insetInlineEnd: -120,
+              insetBlockStart: -120,
+              inlineSize: 280,
+              blockSize: 280,
+              borderRadius: '50%',
+              backgroundColor: alpha(theme.palette.common.white, 0.1),
+              pointerEvents: 'none'
             }
           }}
-        />
+        >
+          <Stack direction='row' alignItems='center' justifyContent='space-between' spacing={2.25} flexWrap='wrap' sx={{ position: 'relative', zIndex: 1 }}>
+            <Box>
+              <Typography sx={{ fontSize: 11, color: alpha(theme.palette.common.white, 0.72), mb: 0.25, letterSpacing: '0.02em' }}>
+                {text.home} / {moduleTitle || text.moduleFallback}
+              </Typography>
+              <Typography sx={{ fontWeight: 800, fontSize: { xs: 20, md: 24 }, color: '#FFFFFF', lineHeight: 1.22 }}>
+                {moduleTitle || text.moduleFallback}
+              </Typography>
+              <Typography sx={{ fontSize: 12, color: alpha(theme.palette.common.white, 0.78), mt: 0.45 }}>
+                {searchableChildren.length} {text.availableFunctions}
+              </Typography>
+            </Box>
+
+            <Stack direction='row' spacing={1} alignItems='center'>
+              <Button
+                size='small'
+                variant='outlined'
+                startIcon={<AppsRounded sx={{ fontSize: 16 }} />}
+                onClick={() => setFilter('all')}
+                sx={{
+                  ...glassButtonSx,
+                  backgroundColor: alpha(theme.palette.common.white, filter === 'all' ? 0.26 : 0.14)
+                }}
+              >
+                {text.all}
+              </Button>
+              <Button
+                size='small'
+                variant='outlined'
+                startIcon={<StarRounded sx={{ fontSize: 15 }} />}
+                onClick={() => setFilter('favorites')}
+                sx={{
+                  ...glassButtonSx,
+                  backgroundColor: alpha(theme.palette.common.white, filter === 'favorites' ? 0.26 : 0.14)
+                }}
+              >
+                {text.favorites}
+              </Button>
+              <Button
+                size='small'
+                variant='outlined'
+                startIcon={<ArrowBackRounded sx={{ fontSize: 16 }} />}
+                onClick={onBack}
+                sx={glassButtonSx}
+              >
+                {text.back}
+              </Button>
+            </Stack>
+          </Stack>
+
+          <TextField
+            fullWidth
+            placeholder={text.searchModule}
+            value={query}
+            onChange={event => setQuery(event.target.value)}
+            inputProps={{ style: { fontSize: 13, paddingTop: 9, paddingBottom: 9 } }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position='start'>
+                  <SearchRounded sx={{ fontSize: 18, color: alpha('#225087', 0.78) }} />
+                </InputAdornment>
+              )
+            }}
+            sx={{
+              mt: 2.75,
+              position: 'relative',
+              zIndex: 1,
+              '& .MuiOutlinedInput-root': {
+                borderRadius: 999,
+                height: 44,
+                backgroundColor: alpha(theme.palette.common.white, 0.95),
+                boxShadow: `0 10px 26px ${alpha(theme.palette.common.black, 0.16)}`,
+                '& fieldset': { borderColor: alpha(theme.palette.common.white, 0.45) },
+                '&:hover fieldset': { borderColor: alpha(theme.palette.common.white, 0.8) },
+                '&.Mui-focused fieldset': { borderColor: '#FFFFFF', borderWidth: 1 },
+                '&.Mui-focused': {
+                  boxShadow: `0 0 0 3px ${alpha(theme.palette.common.white, 0.2)}, 0 10px 26px ${alpha(theme.palette.common.black, 0.16)}`
+                }
+              }
+            }}
+          />
+        </Box>
+
+        <Box sx={{ p: { xs: 2.5, md: 3 } }}>
 
         {groupedChildren.length === 0 ? (
           <Box sx={{ py: 8, textAlign: 'center', color: 'text.secondary', fontSize: 13 }}>
@@ -241,6 +257,7 @@ const ModuleLauncher = ({ moduleItem, dictionary, onBack }: ModuleLauncherProps)
             ))}
           </Stack>
         )}
+        </Box>
       </Box>
     </Box>
   )
