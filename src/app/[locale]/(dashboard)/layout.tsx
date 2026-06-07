@@ -127,6 +127,7 @@ async function PortalLayoutContent({ children, params }: ChildrenType & { params
                     <LayoutWrapper
                         verticalLayout={
                             <DashboardShell dictionary={dictionary} menudata={usercommand}>
+                                <InitUserStore name={name} avatar={avatar} role={role} />
                                 {children}
                             </DashboardShell>
                         }

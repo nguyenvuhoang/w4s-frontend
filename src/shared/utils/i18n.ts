@@ -19,12 +19,14 @@ export const localeMessages: any = {
 };
 
 // Get the localized url
-export const getLocalizedUrl = (url: string, languageCode: string): string => {
-  if (!url || !languageCode) {
-    console.warn('getLocalizedUrl called with invalid parameters:', { url, languageCode });
-    return url || '/'; // fallback safely
+export const getLocalizedUrl = (url: string, languageCode?: string | null): string => {
+  if (!url) {
+    console.warn('getLocalizedUrl called with invalid url:', { url });
+    return '/'
   }
 
-  return isUrlMissingLocale(url) ? `/${languageCode}${ensurePrefix(url, '/')}` : url
+  const normalizedLanguageCode = languageCode?.trim() || 'en'
+
+  return isUrlMissingLocale(url) ? `/${normalizedLanguageCode}${ensurePrefix(url, '/')}` : url
 }
 

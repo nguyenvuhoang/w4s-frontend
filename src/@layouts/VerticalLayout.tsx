@@ -15,6 +15,7 @@ import { verticalLayoutClasses } from './utils/layoutClasses'
 
 // Styled Component Imports
 import StyledContentWrapper from './styles/vertical/StyledContentWrapper'
+import { Box } from '@mui/material'
 
 type VerticalLayoutProps = ChildrenType & {
   navigation?: ReactNode
@@ -28,7 +29,7 @@ const VerticalLayout = (props: VerticalLayoutProps) => {
   const { navbar, navBackground, footer, navigation, children } = props
 
   return (
-    <div
+    <Box
       className={classnames(verticalLayoutClasses.root, 'flex flex-auto main-content z-[1]')}
       style={{ minHeight: '100vh', overflowX: 'clip' }}
     >
@@ -43,7 +44,7 @@ const VerticalLayout = (props: VerticalLayoutProps) => {
         <LayoutContent>{children}</LayoutContent>
         {footer || null}
       </StyledContentWrapper>
-    </div>
+    </Box>
   )
 }
 

@@ -1,34 +1,56 @@
-export interface YarpRoute {
-    id: string; // Internal ID for table
-    ClusterId: string;
-    Match: {
-        Path: string;
-    };
-    Transforms?: {
-        [key: string]: any;
-    }[];
+export type ReverseProxyPrimitive = string | number | boolean | null;
+
+export interface ReverseProxyTransform {
+    [key: string]: ReverseProxyPrimitive;
 }
 
-export interface YarpCluster {
-    id: string; // Internal ID for table
-    Destinations: {
-        [key: string]: {
-            Address: string;
-        };
-    };
-    HttpRequest?: {
-        ActivityTimeout?: string;
-        Version?: string;
-        VersionPolicy?: string;
-        AllowResponseBuffering?: boolean;
-    };
+export interface ReverseProxyDestination {
+    Address?: string | null;
+    [key: string]: ReverseProxyPrimitive | undefined;
 }
 
-export interface YarpConfig {
-    Routes: {
-        [key: string]: Omit<YarpRoute, 'id'>;
-    };
-    Clusters: {
-        [key: string]: Omit<YarpCluster, 'id'>;
-    };
+export interface ReverseProxyHttpRequest {
+    ActivityTimeout?: string | null;
+    Version?: string | null;
+    VersionPolicy?: string | null;
+    AllowResponseBuffering?: boolean | null;
+    [key: string]: ReverseProxyPrimitive | undefined;
 }
+
+export interface ReverseProxyRoute {
+    ClusterId?: string | null;
+    Match?: {
+        Path?: string | null;
+        [key: string]: ReverseProxyPrimitive | undefined;
+    } | null;
+    Transforms?: ReverseProxyTransform[] | null;
+    [key: string]: ReverseProxyPrimitive | ReverseProxyTransform[] | ReverseProxyRoute['Match'] | undefined;
+}
+
+export interface ReverseProxyCluster {
+    Destinations?: Record<string, ReverseProxyDestination | null> | null;
+    HttpRequest?: ReverseProxyHttpRequest | null;
+    [key: string]: ReverseProxyPrimitive | Record<string, ReverseProxyDestination | null> | ReverseProxyHttpRequest | undefined;
+}
+
+export interface ReverseProxyConfig {
+    Routes?: Record<string, ReverseProxyRoute | null> | null;
+    Clusters?: Record<string, ReverseProxyCluster | null> | null;
+}
+
+export interface ReverseProxyResponseData {
+    ReverseProxy?: ReverseProxyConfig | null;
+}
+
+export interface ParsedReverseProxyRoute extends ReverseProxyRoute {
+    id: string;
+}
+
+export interface ParsedReverseProxyCluster extends ReverseProxyCluster {
+    id: string;
+}
+
+export type YarpRoute = ParsedReverseProxyRoute;
+export type YarpCluster = ParsedReverseProxyCluster;
+
+export interface YarpConfig extends ReverseProxyConfig {}

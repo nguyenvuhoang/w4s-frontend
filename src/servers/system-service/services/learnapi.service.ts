@@ -1,5 +1,6 @@
 import { LEARNAPICODE } from '@/data/LearnAPICode';
 import { env } from '@/env.mjs';
+import { ReverseProxyConfig, ReverseProxyResponseData } from '@/types/yarp';
 import { BODataResponse, LearnAPIType, SearchDataResponse, SystemSearchDataRequest, WorkflowLogDetailData } from "@shared/types/systemTypes";
 import http from "../../lib/http";
 
@@ -114,6 +115,38 @@ export const learnAPIService = {
                 learn_api: LEARNAPICODE.CMS_CLEAR_CACHE,
                 fields: {
                     target: "all"
+                }
+            },
+            {
+                baseUrl: process.env.NEXT_PUBLIC_API_URL,
+                headers: {
+                    uid: `${sessiontoken}`,
+                    lang: language,
+                    app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
+                }
+            }),
+
+    getReverseProxyConfig: ({ sessiontoken, language }: { sessiontoken: string, language: string }) =>
+        http.post<BODataResponse<ReverseProxyResponseData>>('/system-service',
+            {
+                learn_api: LEARNAPICODE.CMS_GET_REVERSE_PROXY_CONFIG,
+                fields: {}
+            },
+            {
+                baseUrl: process.env.NEXT_PUBLIC_API_URL,
+                headers: {
+                    uid: `${sessiontoken}`,
+                    lang: language,
+                    app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
+                }
+            }),
+
+    updateReverseProxyConfig: ({ sessiontoken, language, reverseProxy }: { sessiontoken: string, language: string, reverseProxy: ReverseProxyConfig }) =>
+        http.post<BODataResponse<ReverseProxyResponseData>>('/system-service',
+            {
+                learn_api: LEARNAPICODE.CMS_UPDATE_REVERSE_PROXY_CONFIG,
+                fields: {
+                    ReverseProxy: reverseProxy
                 }
             },
             {

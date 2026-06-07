@@ -3,9 +3,9 @@
 import React from 'react';
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-    Paper, TablePagination, Box, CircularProgress, Typography, IconButton
+    Paper, TablePagination, Box, CircularProgress, Typography
 } from '@mui/material';
-import { MoreVert as MoreVertIcon } from '@mui/icons-material';
+import brandColorConfig from '@/configs/brandColorConfig';
 
 export interface Column<T> {
     id: keyof T | 'actions';
@@ -32,6 +32,13 @@ export default function DataTable<T extends { id: string }>({
     columns, rows, count = 0, page = 0, rowsPerPage = 10,
     onPageChange, onRowsPerPageChange, loading = false, onRowClick, actions
 }: DataTableProps<T>) {
+    const headerGradient = `linear-gradient(90deg, ${brandColorConfig.primary} 0%, ${brandColorConfig.primaryDark} 58%, ${brandColorConfig.primaryLight} 100%)`;
+    const headerSx = {
+        background: 'transparent',
+        color: 'common.white',
+        fontWeight: 700,
+        borderBottom: 'none'
+    };
 
     const handleChangePage = (event: unknown, newPage: number) => {
         onPageChange?.(newPage);
@@ -62,18 +69,19 @@ export default function DataTable<T extends { id: string }>({
         <Paper sx={{ width: '100%', overflow: 'hidden' }}>
             <TableContainer sx={{ maxHeight: 600 }}>
                 <Table stickyHeader aria-label="sticky table">
-                    <TableHead>
-                        <TableRow>
+                    <TableHead sx={{ background: headerGradient }}>
+                        <TableRow sx={{ background: headerGradient }}>
                             {columns.map((column) => (
                                 <TableCell
                                     key={String(column.id)}
                                     align={column.align}
                                     style={{ minWidth: column.minWidth }}
+                                    sx={headerSx}
                                 >
                                     {column.label}
                                 </TableCell>
                             ))}
-                            {actions && <TableCell align="right">Actions</TableCell>}
+                            {actions && <TableCell align="right" sx={headerSx}>Actions</TableCell>}
                         </TableRow>
                     </TableHead>
                     <TableBody>
