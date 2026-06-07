@@ -178,7 +178,7 @@ const RenderImageUpload = ({
         return;
       }
 
-      const fileUrl = data?.fileUrl;
+      const fileUrl = data?.file_url;
       if (!fileUrl) {
         formMethods.setError(columnKey, { type: 'validate', message: 'No URL returned' });
         await formMethods.trigger(columnKey);

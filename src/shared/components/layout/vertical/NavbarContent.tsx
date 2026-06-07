@@ -8,9 +8,10 @@ import AISearch from '../shared/AISearch'
 
 interface Props {
   menuData?: any[]
+  dictionary?: any
 }
 
-const NavbarContent = ({ menuData }: Props) => {
+const NavbarContent = ({ menuData, dictionary }: Props) => {
   return (
     <>
       <Box className='absolute top-0 right-0 flex items-center z-10 pt-4 pr-10'>
@@ -18,7 +19,7 @@ const NavbarContent = ({ menuData }: Props) => {
       </Box>
 
       <Box className={classnames(verticalLayoutClasses.navbarContent, 'flex items-center justify-between gap-6 is-full relative')}>
-        <AISearch menuData={menuData || []} />
+        <AISearch menuData={menuData || []} dictionary={dictionary} />
       </Box>
     </>
   )

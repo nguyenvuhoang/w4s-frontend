@@ -14,7 +14,7 @@ export default async function Layout(props: {
 
     return (
         <Suspense fallback={<Spinner />}>
-            <Providers initialAvatar="/images/logobank/emi.svg">
+            <Providers initialAvatar="/images/logobank/logo.png">
                 {children}
             </Providers>
         </Suspense>

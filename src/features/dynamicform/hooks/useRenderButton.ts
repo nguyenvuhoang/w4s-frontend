@@ -22,6 +22,7 @@ import { disableButton } from '../components/layout/rule/disableButton';
 import { handleRuleExecution } from '../components/layout/rule/handleRuleExecution';
 import { Locale } from '@/configs/i18n';
 import { performTransaction } from '@features/dynamicform/services/transactionService';
+import { getLocalizedUrl } from '@/shared/utils/i18n';
 
 export interface UseRenderButtonParams {
   input: FormInput;
@@ -37,7 +38,7 @@ export interface UseRenderButtonParams {
   searchtext?: string;
   formMethods: ReturnType<typeof useForm>;
   roleTask?: any;
-  language?: Locale;
+  language: Locale;
   datasearch?: PageData<any>;
 }
 
@@ -202,7 +203,7 @@ export const useRenderButton = ({
 
         if (txcode === '#sys:fo-open-form') {
           const form_key = txFo_[0].input.form_key;
-          const newUrl = `/${form_key}`;
+          const newUrl = getLocalizedUrl(`/${form_key}`, language);
           window.open(newUrl, '_blank');
           return;
         }

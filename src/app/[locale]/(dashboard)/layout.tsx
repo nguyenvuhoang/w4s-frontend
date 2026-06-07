@@ -1,15 +1,13 @@
 // src/app/[locale]/(dashboard)/(portal)/layout.tsx
 import HorizontalLayout from '@/@layouts/HorizontalLayout'
 import LayoutWrapper from '@/@layouts/LayoutWrapper'
-import VerticalLayout from '@/@layouts/VerticalLayout'
 import AuthGuard from '@/hocs/AuthGuard'
 import IdleTimer from '@/hocs/IdleTimer'
 import ErrorPage from '@/views/Error'
 import GlobalSignalRLogoutListener from '@components/GlobalSignalRLogoutListener'
 import HorizontalFooter from '@components/layout/horizontal/Footer'
 import HeaderHorizontal from '@components/layout/horizontal/Header'
-import Navbar from '@components/layout/vertical/Navbar'
-import Navigation from '@components/layout/vertical/Navigation'
+import DashboardShell from '@components/layout/dashboard/DashboardShell'
 import Providers from '@components/Providers'
 import Spinner from '@components/spinners'
 import { Skeleton } from '@mui/material'
@@ -128,13 +126,10 @@ async function PortalLayoutContent({ children, params }: ChildrenType & { params
 
                     <LayoutWrapper
                         verticalLayout={
-                            <VerticalLayout
-                                navigation={<Navigation dictionary={dictionary} menudata={usercommand} />}
-                                navbar={<Navbar menuData={usercommand} />}
-                                footer={<></>}
-                            >
+                            <DashboardShell dictionary={dictionary} menudata={usercommand}>
+                                <InitUserStore name={name} avatar={avatar} role={role} />
                                 {children}
-                            </VerticalLayout>
+                            </DashboardShell>
                         }
                         horizontalLayout={
                             <HorizontalLayout

@@ -2,9 +2,9 @@
   "name": "o24openapimanager",
   "version": "4.8.2",
   "private": true,
-  "packageManager": "npm@10.9.2",
+  "packageManager": "pnpm@10.24.0",
   "scripts": {
-    "prebuild": "npx ts-node src/scripts/update-version.ts",
+    "prebuild": "ts-node src/scripts/update-version.ts",
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",

@@ -156,10 +156,10 @@ const UserDropdown = ({ avatar, name, dictionary }: {
                     <i className='ri-user-3-line text-primary' />
                     <Typography color='primary.main'>{dictionary['common'].myprofile}</Typography>
                   </MenuItem>
-                  {/* <MenuItem className='gap-3 pli-4' onClick={e => handleDropdownClose(e, '/console-admin')}>
+                  <MenuItem className='gap-3 pli-4' onClick={e => handleDropdownClose(e, '/console-admin')}>
                     <i className='ri-settings-4-line text-primary' />
                     <Typography color='primary.main'>{dictionary['common'].userconsoleadmin}</Typography>
-                  </MenuItem> */}
+                  </MenuItem>
                   <Box className='flex items-center plb-1.5 pli-4'>
                     <Button
                       fullWidth

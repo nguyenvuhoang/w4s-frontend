@@ -76,6 +76,7 @@ const RenderButtonDefault = ({
     setDatasearch,
     setTxFOSearch,
     dictionary,
+    language,
     ismodify,
     setIsModify,
     searchtext,

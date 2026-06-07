@@ -1,15 +1,17 @@
 'use client'
 
 // React Imports
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 // Next Imports
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
 // MUI Imports
-import { styled, useColorScheme, useTheme } from '@mui/material/styles'
-import { Box, IconButton } from '@mui/material'
+import ChevronLeftRounded from '@mui/icons-material/ChevronLeftRounded'
+import ChevronRightRounded from '@mui/icons-material/ChevronRightRounded'
+import { alpha, styled, useTheme } from '@mui/material/styles'
+import { Box, IconButton, Tooltip } from '@mui/material'
 
 // Type Imports
 import type { getDictionary } from '@utils/getDictionary'
@@ -21,31 +23,34 @@ import VerticalNav, { NavHeader } from '@menu/vertical-menu'
 import VerticalMenu from './VerticalMenu'
 import LanguageDropdown from '@components/layout/shared/LanguageDropdown'
 import LayoutToggle from '@components/layout/shared/LayoutToggle'
-import ModeDropdown from '@components/layout/shared/ModeDropdown'
 import Logout from '../shared/Logout'
 
 // Hook Imports
 import { useSettings } from '@core/hooks/useSettings'
 import useVerticalNav from '@menu/hooks/useVerticalNav'
+import useSidebarCollapse from './useSidebarCollapse'
 
 // Util Imports
 import { getLocalizedUrl } from '@utils/i18n'
 
-// Style Imports
-import VeriticalSubNav from '@/@menu/components/vertical-menu/VeriticalSubNav'
 import { VerticalSubMenuDataType } from '@shared/types/menuTypes'
 import navigationCustomStyles from '@core/styles/vertical/navigationCustomStyles'
-import VerticalSubMenu from './VerticalSubMenu'
-import { MenuItem } from '@shared/types/systemTypes'
 
 import { useSession } from 'next-auth/react'
 import { learnAPIService } from '@/servers/system-service/services/learnapi.service'
 import { isValidResponse } from '@/shared/utils/isValidResponse'
 import SwalAlert from '@/shared/utils/SwalAlert'
+import {
+  SIDEBAR_COLLAPSED_WIDTH,
+  SIDEBAR_TOGGLE_DURATION,
+  SIDEBAR_WIDTH
+} from './sidebarConstants'
 
 type Props = {
   dictionary: Awaited<ReturnType<typeof getDictionary>>
   menudata: VerticalSubMenuDataType[]
+  onMenuItemClick?: (item: VerticalSubMenuDataType) => void
+  activeItem?: VerticalSubMenuDataType | null
 }
 
 const StyledBoxForShadow = styled('div')(({ theme }) => ({
@@ -67,26 +72,25 @@ const StyledBoxForShadow = styled('div')(({ theme }) => ({
 
 const Navigation = (props: Props) => {
   // Props
-  const { dictionary, menudata } = props
+  const { dictionary, menudata, onMenuItemClick, activeItem } = props
 
   // Hooks
   const verticalNavOptions = useVerticalNav()
   const { settings } = useSettings()
+  const { collapsed, toggleSidebar } = useSidebarCollapse(settings.layout === 'collapsed')
   const { locale } = useParams()
-  const { mode: muiMode, systemMode: muiSystemMode } = useColorScheme()
   const theme = useTheme()
-
-  // State
-  const [isSubNavVisible, setIsSubNavVisible] = useState(false)
-  const [clickedItem, setClickedItem] = useState<VerticalSubMenuDataType | null>(null); // State to store clicked item
 
   // Refs
   const shadowRef = useRef(null)
 
   // Vars
-  const { collapseVerticalNav, isBreakpointReached } = verticalNavOptions
-  const isSemiDark = settings.semiDark
-  let isDark = muiMode === 'dark' || (muiMode === 'system' && muiSystemMode === 'dark')
+  const { isCollapsed, isHovered, collapseVerticalNav, isBreakpointReached } = verticalNavOptions
+  const common = dictionary.common ?? {}
+  const collapseLabel = common.collapsemenu ?? common.close ?? ''
+  const expandLabel = common.expandmenu ?? common.menu ?? ''
+  const toggleLabel = collapsed ? expandLabel : collapseLabel
+  const showToggleButton = !isBreakpointReached && (!isCollapsed || isHovered)
 
 
   const scrollMenu = (container: any, isPerfectScrollbar: boolean) => {
@@ -105,47 +109,10 @@ const Navigation = (props: Props) => {
   }
 
   useEffect(() => {
-    if (settings.layout === 'collapsed') {
-      collapseVerticalNav(true)
-    } else {
+    if (isBreakpointReached && isCollapsed) {
       collapseVerticalNav(false)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [settings.layout])
-
-  const handleMenuItemClick = (item: VerticalSubMenuDataType) => {
-    // If the same item is clicked, toggle visibility. If a new item is clicked, show it.
-    const isSameItem = clickedItem && (
-      (item.id && clickedItem.id === item.id) ||
-      (item.label && clickedItem.label === item.label)
-    );
-
-    if (isSameItem) {
-      setIsSubNavVisible(prev => !prev)
-    } else {
-      setIsSubNavVisible(true)
-      setClickedItem(item)
-    }
-  }
-
-  const subNavId = "veritical-sub-nav";
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const subNavElement = document.getElementById(subNavId);
-      if (subNavElement && !subNavElement.contains(event.target as Node)) {
-        setIsSubNavVisible(false);
-      }
-    }
-
-    if (isSubNavVisible) {
-      document.addEventListener('mousedown', handleClickOutside)
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [isSubNavVisible])
+  }, [collapseVerticalNav, isBreakpointReached, isCollapsed])
 
   const { data: session } = useSession();
 
@@ -174,28 +141,82 @@ const Navigation = (props: Props) => {
     // Sidebar Vertical Menu
     <>
       <VerticalNav
+        width={SIDEBAR_WIDTH}
         customStyles={navigationCustomStyles(verticalNavOptions, theme)}
-        collapsedWidth={71}
+        collapsedWidth={SIDEBAR_COLLAPSED_WIDTH}
         backgroundColor='#225087'
+        transitionDuration={SIDEBAR_TOGGLE_DURATION}
         data-mui-color-scheme='dark'
         style={{ '--menu-inactive-color': 'rgba(255, 255, 255, 0.85)' } as any}
       >
         <Box className='flex flex-col h-full'>
           {/* Nav Header including Logo & nav toggle icons  */}
           <NavHeader>
-            <Link href={getLocalizedUrl('/', locale as Locale)}>
-              <Logo />
-            </Link>
+            <Box
+              sx={{
+                position: 'relative',
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                pr: showToggleButton ? 1 : 0
+              }}
+            >
+              <Link href={getLocalizedUrl('/', locale as Locale)}>
+                <Logo />
+              </Link>
+
+              {showToggleButton && (
+                <Tooltip title={toggleLabel} placement='right'>
+                  <IconButton
+                    aria-label={toggleLabel}
+                    size='small'
+                    onClick={toggleSidebar}
+                    sx={{
+                      position: 'absolute',
+                      insetInlineEnd: 4,
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      color: 'white',
+                      border: `1px solid ${alpha(theme.palette.common.white, 0.25)}`,
+                      backgroundColor: alpha(theme.palette.common.white, 0.12),
+                      boxShadow: `0 4px 14px ${alpha(theme.palette.common.black, 0.18)}`,
+                      transition: theme.transitions.create(['background-color', 'border-color'], {
+                        duration: SIDEBAR_TOGGLE_DURATION
+                      }),
+                      '&:hover': {
+                        backgroundColor: alpha(theme.palette.common.white, 0.2)
+                      }
+                    }}
+                  >
+                    {collapsed ? (
+                      <ChevronRightRounded fontSize='small' />
+                    ) : (
+                      <ChevronLeftRounded fontSize='small' />
+                    )}
+                  </IconButton>
+                </Tooltip>
+              )}
+            </Box>
           </NavHeader>
           <StyledBoxForShadow ref={shadowRef} />
           <VerticalMenu
             dictionary={dictionary}
             scrollMenu={scrollMenu}
-            onMenuItemClick={handleMenuItemClick}
+            onMenuItemClick={onMenuItemClick}
             menudata={menudata}
-            activeItem={clickedItem}
+            activeItem={activeItem}
           />
-          <Box className='mt-auto pli-6 pbs-4 pbe-6 flex flex-col items-start gap-1 text-white'>
+          <Box
+            className='mt-auto pbs-4 pbe-6 flex flex-col gap-1 text-white'
+            sx={{
+              alignItems: isCollapsed && !isHovered ? 'center' : 'flex-start',
+              px: isCollapsed && !isHovered ? 0 : 6,
+              transition: theme.transitions.create(['padding', 'align-items'], {
+                duration: SIDEBAR_TOGGLE_DURATION
+              })
+            }}
+          >
             <Link href={getLocalizedUrl('/system-settings', locale as Locale)}>
               <IconButton size='small' color='inherit' title={dictionary['navigation'].system_settings || 'System Settings'} className='text-white'>
                 <i className='ri-settings-3-line text-[22px] text-white' />
@@ -210,45 +231,6 @@ const Navigation = (props: Props) => {
           </Box>
         </Box>
       </VerticalNav>
-      {/* Submenu Vertical Menu */}
-      {isSubNavVisible &&
-        <>
-          <VeriticalSubNav
-            id={subNavId}
-            customStyles={navigationCustomStyles(verticalNavOptions, theme)}
-            collapsedWidth={71}
-            backgroundColor='#FFFFFF'
-            className='!z-40 text-gray-900'
-            style={{
-              position: 'absolute',
-              left: '300px',
-              height: '100vh',
-              '--menu-inactive-color': 'rgba(0, 0, 0, 0.6)',
-              boxShadow: '10px 0 50px rgba(0,0,0,0.15)',
-              borderLeft: '1px solid #e0e0e0'
-            } as any}
-          >
-            <NavHeader>
-              <Link
-                href="#"
-                className='flex items-center justify-center space-x-1'
-              >
-                <i className='ri-information-2-line text-[#A1C038] w-7 h-7' />
-                <span className='text-gray-500 font-sans italic'>{dictionary['common'].description_feature}</span>
-              </Link>
-            </NavHeader>
-            <StyledBoxForShadow ref={shadowRef} />
-            <VerticalSubMenu
-              key={clickedItem?.id || (typeof clickedItem?.label === 'string' ? clickedItem.label : 'submenu')}
-              dictionary={dictionary}
-              scrollMenu={scrollMenu}
-              parentItem={clickedItem}
-              setIsSubNavVisible={setIsSubNavVisible}
-            />
-          </VeriticalSubNav>
-        </>
-      }
-      <div className={`-sxl:hidden custom-backdrop ${isSubNavVisible ? ' show-backdrop' : ''}`} style={{ zIndex: 10 } as any}></div>
       <div className="sxl:hidden custom-backdrop" style={{ zIndex: 10 } as any}></div>
     </>
   );

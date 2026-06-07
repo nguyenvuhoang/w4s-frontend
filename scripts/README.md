@@ -8,24 +8,24 @@ Tự động tạo boilerplate cho page mới trong Admin Console với đầy �
 
 ```bash
 # Basic usage - tạo nolayout page
-npm run generate:page user-management
+pnpm run generate:page user-management
 
 # Với view subpage (detail page)
-npm run generate:page transaction-logs -- --view
+pnpm run generate:page transaction-logs -- --view
 
 # Nested path
-npm run generate:page reports/monthly
+pnpm run generate:page reports/monthly
 
 # Skip error/skeleton components
-npm run generate:page api-gateway -- --skip-error --skip-skeleton
+pnpm run generate:page api-gateway -- --skip-error --skip-skeleton
 
 # Normal layout page (không phải nolayout)
-npm run generate:page dashboard/analytics -- --type normal
+pnpm run generate:page dashboard/analytics -- --type normal
 ```
 
 ### 📁 What It Creates
 
-Với command `npm run generate:page user-management --view`:
+Với command `pnpm run generate:page user-management -- --view`:
 
 ```
 src/
@@ -117,7 +117,7 @@ export default function UserManagementContent({ locale }: Props) {
 
 **List + Detail Pages:**
 ```bash
-npm run generate:page contract-management -- --view
+pnpm run generate:page contract-management -- --view
 # Creates:
 # - /contract-management (list)
 # - /contract-management/view/[id] (detail)
@@ -125,13 +125,13 @@ npm run generate:page contract-management -- --view
 
 **Nested Routes:**
 ```bash
-npm run generate:page reports/transaction-summary
+pnpm run generate:page reports/transaction-summary
 # Creates: /reports/transaction-summary
 ```
 
 **Simple Page (no error/skeleton):**
 ```bash
-npm run generate:page quick-action -- --skip-error --skip-skeleton
+pnpm run generate:page quick-action -- --skip-error --skip-skeleton
 ```
 
 ### 🎨 Customization
@@ -147,16 +147,16 @@ Edit `scripts/generate-page.mjs` to customize:
 **Error: Page path is required**
 ```bash
 # ❌ Wrong
-npm run generate:page
+pnpm run generate:page
 
 # ✅ Correct
-npm run generate:page my-page
+pnpm run generate:page my-page
 ```
 
-**Need to pass flags with npm:**
+**Need to pass flags with pnpm:**
 ```bash
 # Use -- to pass flags to script
-npm run generate:page my-page -- --view --skip-error
+pnpm run generate:page my-page -- --view --skip-error
 ```
 
 **Path aliases not resolving:**
@@ -167,27 +167,27 @@ npm run generate:page my-page -- --view --skip-error
 
 1. **Use kebab-case for page names:**
    ```bash
-   npm run generate:page user-management  # ✅ Good
-   npm run generate:page UserManagement   # ❌ Will be converted to usermanagement
+   pnpm run generate:page user-management  # ✅ Good
+   pnpm run generate:page UserManagement   # ❌ Will be converted to usermanagement
    ```
 
 2. **Nested pages inherit parent layout:**
    ```bash
-   npm run generate:page settings/security
+   pnpm run generate:page settings/security
    # Respects /settings layout if exists
    ```
 
 3. **Quick prototype without extras:**
    ```bash
-   npm run generate:page prototype -- --skip-error --skip-skeleton
+   pnpm run generate:page prototype -- --skip-error --skip-skeleton
    ```
 
 4. **Batch create with shell script:**
    ```bash
    # create-pages.sh
-   npm run generate:page users
-   npm run generate:page roles
-   npm run generate:page permissions
+   pnpm run generate:page users
+   pnpm run generate:page roles
+   pnpm run generate:page permissions
    ```
 
 ### 📚 Related Documentation

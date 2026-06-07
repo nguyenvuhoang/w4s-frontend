@@ -1,82 +1,61 @@
 import PageHeader from '@/components/api-manager/shared/PageHeader';
 import { Box } from '@mui/material';
 import YarpConfigView from '@/components/api-manager/gateway/routes/YarpConfigView';
-import { YarpRoute, YarpCluster } from '@/types/yarp';
+import { ReverseProxyConfig, ReverseProxyResponseData } from '@/types/yarp';
+import { auth } from '@/auth';
+import { learnAPIService } from '@/servers/system-service/services/learnapi.service';
+import { Locale } from '@/configs/i18n';
 
-const SAMPLE_YARP_DATA = {
-    "ReverseProxy": {
-        "Routes": {
-            "chat-sse": {
-                "ClusterId": "AIService",
-                "Match": {
-                    "Path": "/api/chat"
-                }
-            },
-            "w4s-upload": {
-                "ClusterId": "W4SService",
-                "Match": {
-                    "Path": "/api/w4s/{**catch-all}"
-                },
-                "Transforms": [
-                    { "PathRemovePrefix": "/api/w4s" }
-                ]
-            }
-        },
-        "Clusters": {
-            "AIService": {
-                "Destinations": {
-                    "primary": {
-                        "Address": "https://192.168.1.103:5050"
-                    }
-                },
-                "HttpRequest": {
-                    "ActivityTimeout": "00:10:00",
-                    "Version": "1.1",
-                    "VersionPolicy": "RequestVersionExact",
-                    "AllowResponseBuffering": false
-                }
-            },
-            "W4SService": {
-                "Destinations": {
-                    "primary": {
-                        "Address": "https://localhost:5020"
-                    }
-                },
-                "HttpRequest": {
-                    "ActivityTimeout": "00:10:00",
-                    "Version": "1.1",
-                    "VersionPolicy": "RequestVersionExact",
-                    "AllowResponseBuffering": false
-                }
-            }
-        }
-    }
+export const dynamic = 'force-dynamic';
+
+type ReverseProxyApiResponse = {
+    payload?: {
+        dataresponse?: {
+            data?: ReverseProxyResponseData | null;
+        };
+    };
+    dataresponse?: {
+        data?: ReverseProxyResponseData | null;
+    };
 };
 
-export default function GatewaysRoutesPage() {
-    const routes: YarpRoute[] = Object.entries(SAMPLE_YARP_DATA.ReverseProxy.Routes).map(([id, config]) => ({
-        id,
-        ...config
-    })) as YarpRoute[];
+const extractReverseProxyConfig = (response: ReverseProxyApiResponse): ReverseProxyConfig => {
+    const data = response.payload?.dataresponse?.data ?? response.dataresponse?.data;
 
-    const clusters: YarpCluster[] = Object.entries(SAMPLE_YARP_DATA.ReverseProxy.Clusters).map(([id, config]) => ({
-        id,
-        ...config
-    })) as YarpCluster[];
+    return {
+        Routes: data?.ReverseProxy?.Routes ?? {},
+        Clusters: data?.ReverseProxy?.Clusters ?? {}
+    };
+};
+
+export default async function GatewaysRoutesPage({ params }: { params: { locale: string } }) {
+    const session = await auth();
+    const locale = params.locale as Locale;
+
+    const res = await learnAPIService.getReverseProxyConfig({
+        sessiontoken: session?.user?.token as string,
+        language: locale
+    });
+
+    const reverseProxyConfig = extractReverseProxyConfig(res as ReverseProxyApiResponse);
 
     return (
         <Box sx={{ p: 0 }}>
             <Box sx={{ px: 3, pt: 3 }}>
                 <PageHeader
-                    title="Gateway Proxy Configuration"
+                    title="Reverse Proxy Configuration"
                     breadcrumbs={[
                         { label: 'Dashboard' },
                         { label: 'API Manager' },
-                        { label: 'Gateway Proxy' }
+                        { label: 'Reverse Proxy Configuration' }
                     ]}
                 />
             </Box>
-            <YarpConfigView initialRoutes={routes} initialClusters={clusters} />
+            <YarpConfigView
+                config={reverseProxyConfig}
+                locale={locale}
+                sessionToken={session?.user?.token as string}
+            />
         </Box>
     );
 }

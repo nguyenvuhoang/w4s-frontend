@@ -101,5 +101,5 @@ if ($totalFiles -gt 0) {
 
 Write-Host ""
 Write-Host "To see changes, restart your dev server:" -ForegroundColor Cyan
-Write-Host "  npm run dev" -ForegroundColor White
+Write-Host "  pnpm run dev" -ForegroundColor White
 Write-Host ""

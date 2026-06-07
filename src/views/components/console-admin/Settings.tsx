@@ -57,15 +57,15 @@ const Settings = ({ session, dictionary }: {
                 !isValidResponse(dataSearchAPI) ||
                 (dataSearchAPI.payload.dataresponse.errors && dataSearchAPI.payload.dataresponse.errors.length > 0)
             ) {
-                console.log(dataSearchAPI.payload.dataresponse.errors);
                 const execute_id = dataSearchAPI.payload.dataresponse.errors[0].execute_id
                 const errorinfo = dataSearchAPI.payload.dataresponse.errors[0].info
                 SwalAlert('error', `[${execute_id}] - ${errorinfo}`, 'center');
                 setData([])
             }
 
-            const dataSystem = dataSearchAPI.payload.dataresponse.data
+            const dataSystem = dataSearchAPI.payload.dataresponse.data.items
             setTotalCount(dataSystem.total_count || 0)
+            setData(dataSystem)
         } catch (err) {
             console.error('Error fetching settings:', err)
             setData([])

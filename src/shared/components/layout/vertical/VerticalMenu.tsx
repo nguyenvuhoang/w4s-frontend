@@ -1,6 +1,3 @@
-// Next Imports
-import { useParams } from 'next/navigation'
-
 // MUI Imports
 import { useTheme } from '@mui/material/styles'
 
@@ -35,7 +32,7 @@ type RenderExpandIconProps = {
 type Props = {
   dictionary: Awaited<ReturnType<typeof getDictionary>>
   scrollMenu: (container: any, isPerfectScrollbar: boolean) => void
-  onMenuItemClick: (item: VerticalSubMenuDataType) => void
+  onMenuItemClick?: (item: VerticalSubMenuDataType) => void
   menudata: VerticalSubMenuDataType[]
   activeItem?: VerticalSubMenuDataType | null
 }
@@ -49,7 +46,6 @@ const VerticalMenu = ({ dictionary, scrollMenu, onMenuItemClick, menudata, activ
   // Hooks
   const theme = useTheme()
   const verticalNavOptions = useVerticalNav()
-  const params = useParams()
   const { isBreakpointReached } = useVerticalNav()
 
   // Vars

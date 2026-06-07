@@ -2,7 +2,7 @@ import { Box } from '@mui/material';
 import Image from 'next/image';
 
 const Center = ({ children }: { children: React.ReactNode }) => {
-    const lightlogo = '/images/logobank/emi.svg'
+    const lightlogo = '/images/logobank/logo.png'
     return (
         <>
             <Box className="w-full md:w-[30%] h-full bg-white flex flex-col justify-center px-6 sm:px-10 py-10">

@@ -476,9 +476,9 @@ export interface SubmitDataRequest {
 
 export interface FilesDataResponse {
     message: string;
-    fileUrl: string
-    trackerCode: string | null;
-    expiredOnUtc: Date | null;
+    file_url: string
+    tracker_code: string | null;
+    expired_on_utc: Date | null;
     temp: boolean;
     status: string;
 }
