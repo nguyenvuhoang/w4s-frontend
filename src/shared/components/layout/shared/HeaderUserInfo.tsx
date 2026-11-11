@@ -18,6 +18,7 @@ import Typography from '@mui/material/Typography'
 import type { Locale } from '@configs/i18n'
 import { getLocalizedUrl } from '@utils/i18n'
 
+import { appProfile } from '@configs/appProfile'
 import { useUserName } from '@/@core/stores/useUserStore'
 import WorkingProjectSelector from './WorkingProjectSelector'
 
@@ -106,16 +107,22 @@ const HeaderUserInfo = ({ dictionary }: { dictionary?: any } = {}) => {
         <span className='whitespace-nowrap'>{headerText('business_datetime')}: {businessDateTime}</span>
       </div>
 
-      <span className='hidden md:inline opacity-40'>|</span>
+      {/* Project Context selector is profile-gated (hidden on W4S). The working-project store and
+          its bootstrap keep running regardless — only this UI is skipped. */}
+      {appProfile.features.showProjectContextSelector ? (
+        <>
+          <span className='hidden md:inline opacity-40'>|</span>
 
-      <div className='hidden md:flex items-center gap-2 opacity-90' data-tour="current-project-info">
-        <i className='ri-building-4-line text-[18px] text-white' />
-        <WorkingProjectSelector
-          dictionary={dictionary}
-          sessiontoken={session?.user?.token as string | undefined}
-          language={locale as string}
-        />
-      </div>
+          <div className='hidden md:flex items-center gap-2 opacity-90' data-tour="current-project-info">
+            <i className='ri-building-4-line text-[18px] text-white' />
+            <WorkingProjectSelector
+              dictionary={dictionary}
+              sessiontoken={session?.user?.token as string | undefined}
+              language={locale as string}
+            />
+          </div>
+        </>
+      ) : null}
 
       <span className='hidden md:inline opacity-40'>|</span>
 

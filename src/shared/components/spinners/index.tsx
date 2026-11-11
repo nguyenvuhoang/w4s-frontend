@@ -1,30 +1,12 @@
 'use client'
 
 import { useContext, useEffect } from 'react'
-import { keyframes } from '@emotion/react'
 import { Typography } from '@mui/material'
 import type { BoxProps } from '@mui/material/Box'
 import Box from '@mui/material/Box'
 import { SettingsContext } from '@core/contexts/settingsContext'
 import { navTraceLoader } from '@/shared/utils/navigationDebug'
-
-const bounce = keyframes`
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-`
-
-const fadeLoop = keyframes`
-  0%, 100% {
-    opacity: 0.4;
-  }
-  50% {
-    opacity: 1;
-  }
-`
+import BrandLoadingLogo from '@components/BrandLoadingLogo'
 
 type FallbackSpinnerProps = {
   sx?: BoxProps['sx']
@@ -44,7 +26,7 @@ const FallbackSpinner = ({ sx, loadingtext, loadingText }: FallbackSpinnerProps)
   // Read the context directly instead of the throwing useSettings() hook: this component is also
   // used as a Suspense `fallback` shown WHILE <Providers> (which mounts SettingsProvider) is
   // itself still loading — at that exact moment there is no SettingsProvider ancestor yet, so it
-  // must degrade gracefully to the built-in animated logo rather than crash.
+  // must degrade gracefully to the profile's built-in logo rather than crash.
   const settingsCtx = useContext(SettingsContext)
   const loadingLogoUrl = settingsCtx?.settings?.logos?.loading
 
@@ -64,49 +46,9 @@ const FallbackSpinner = ({ sx, loadingtext, loadingText }: FallbackSpinnerProps)
         }}
       >
 
-        {loadingLogoUrl ? (
-          <Box
-            component="img"
-            src={loadingLogoUrl}
-            alt={resolvedLoadingText}
-            sx={{
-              width: 104,
-              height: 104,
-              maxWidth: 120,
-              maxHeight: 120,
-              objectFit: 'contain',
-              animation: `${fadeLoop} 2s ease-in-out infinite, ${bounce} 2s ease-in-out infinite`
-            }}
-          />
-        ) : (
-        <Box
-          component="svg"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 128.61 52.34"
-          sx={{
-            width: 104,
-            height: 'auto',
-            maxWidth: 120,
-            maxHeight: 120,
-            flex: '0 0 auto',
-            animation: `${fadeLoop} 2s ease-in-out infinite, ${bounce} 2s ease-in-out infinite`
-          }}
-        >
-          <g id="Layer_2" data-name="Layer 2">
-            <g id="Layer_1-2" data-name="Layer 1">
-              <rect fill="#0089cf" x="41.1" y="6.1" width="7.51" height="40.05" />
-              <path fill="#0089cf" d="M75.71,6a15.81,15.81,0,0,1,6.42,1.22A13.19,13.19,0,0,1,89.48,15a15.44,15.44,0,0,1,.93,5.19,15,15,0,0,1-.9,5.2,13.45,13.45,0,0,1-2.77,4.54,13.72,13.72,0,0,1-4.59,3.21,15.85,15.85,0,0,1-6.44,1.21H64.4V46.15H56.83V6.1q4.77,0,9.45,0t9.43,0M64.4,27.44H75.71a7.24,7.24,0,0,0,4-1.05,6.68,6.68,0,0,0,2.42-2.63,7.48,7.48,0,0,0,.79-3.42,7.37,7.37,0,0,0-.81-3.42,6.78,6.78,0,0,0-2.41-2.62,7.19,7.19,0,0,0-4-1.05H64.4Z" />
-              <path fill="#0089cf" d="M121.35,15.79a6.62,6.62,0,0,0-1.44-1.66,11.26,11.26,0,0,0-2.18-1.43,13.72,13.72,0,0,0-2.75-1,13,13,0,0,0-3.13-.38,14.17,14.17,0,0,0-3.66.42,8.56,8.56,0,0,0-2.6,1.13,4.67,4.67,0,0,0-1.53,1.68,4.36,4.36,0,0,0-.51,2.08,3.32,3.32,0,0,0,.73,2.18,5.62,5.62,0,0,0,1.94,1.44,12.17,12.17,0,0,0,2.84.89c1.08.21,2.22.39,3.43.52,1.4.16,2.76.38,4.09.64a30.57,30.57,0,0,1,3.8,1,16.76,16.76,0,0,1,3.31,1.54,10.45,10.45,0,0,1,2.6,2.25,9.77,9.77,0,0,1,1.7,3.14,13.06,13.06,0,0,1,.62,4.19,11.09,11.09,0,0,1-5.06,9.73,16.56,16.56,0,0,1-5.36,2.3,27.17,27.17,0,0,1-6.4.74,30.86,30.86,0,0,1-5.76-.51A17.4,17.4,0,0,1,101.11,45a14.3,14.3,0,0,1-3.94-3,15.47,15.47,0,0,1-2.83-4.63l6.31-3.26a9,9,0,0,0,1.83,2.84,10.08,10.08,0,0,0,2.64,2,12.06,12.06,0,0,0,3.22,1.14,17,17,0,0,0,3.57.37,17.53,17.53,0,0,0,3.44-.33,9.71,9.71,0,0,0,3-1,6,6,0,0,0,2-1.86,4.76,4.76,0,0,0,.77-2.78,4.12,4.12,0,0,0-.7-2.43,5.59,5.59,0,0,0-1.94-1.7,11.55,11.55,0,0,0-2.93-1.12,28.67,28.67,0,0,0-3.7-.64c-1.36-.17-2.7-.37-4-.62a25.46,25.46,0,0,1-3.71-1,16.65,16.65,0,0,1-3.22-1.48,10,10,0,0,1-2.52-2.14,9.49,9.49,0,0,1-1.67-3,11.9,11.9,0,0,1-.6-4,9.78,9.78,0,0,1,1.39-5.3,11.46,11.46,0,0,1,3.6-3.6,16.49,16.49,0,0,1,5-2.08,24.29,24.29,0,0,1,5.53-.7,29.2,29.2,0,0,1,4.66.38,18.45,18.45,0,0,1,4.4,1.28,14.2,14.2,0,0,1,3.8,2.45,12.57,12.57,0,0,1,2.86,3.85Z" />
-              <path fill="#1b449c" d="M9.33,22.29.78,28.83A1.78,1.78,0,0,0,.17,31,1.48,1.48,0,0,1,0,30.39a.86.86,0,0,1,0-.16H0V13.93a2,2,0,0,1,.78-1.55L3.92,10.2,1.13,12.38a2,2,0,0,0,0,3.15Z" />
-              <path fill="#ed1c24" d="M17,31.62,9.7,37.29a1.78,1.78,0,0,1-2.24,0L.68,31.67A1.83,1.83,0,0,1,.16,31a1.79,1.79,0,0,1,.62-2.14l8.55-6.54,7.56,6.4A2,2,0,0,1,17,31.62" />
-              <path fill="#0089cf" d="M19.4,1.8V13.55A1.81,1.81,0,0,1,18.71,15l-.19.15L9.33,22.29,1.09,15.53a2,2,0,0,1,0-3.15L3.92,10.2h0L16.5.38A1.8,1.8,0,0,1,19.4,1.8" />
-              <path fill="#1b449c" d="M33.71,22.11v16.3A2,2,0,0,1,32.93,40l-3.14,2.17L32.58,40a2,2,0,0,0,0-3.16l-8.24-6.76,8.55-6.54a1.79,1.79,0,0,0,.62-2.14,1.85,1.85,0,0,1,.16.58v.16Z" />
-              <path fill="#ed1c24" d="M32.93,23.51,24.38,30l-7.56-6.39a2,2,0,0,1-.08-2.93L24,15.05a1.79,1.79,0,0,1,2.25,0L33,20.67a1.7,1.7,0,0,1,.52.7,1.79,1.79,0,0,1-.62,2.14" />
-              <path fill="#0089cf" d="M24.38,30l8.24,6.77a2,2,0,0,1,0,3.16l-2.79,2.17h0L17.21,52a1.8,1.8,0,0,1-2.9-1.42V38.79A1.81,1.81,0,0,1,15,37.37l.19-.14Z" />
-            </g>
-          </g>
-        </Box>
-        )}
+        {/* Branding logo from System Settings wins when configured; otherwise the profile's
+            (W4S) logo — the same asset as the login screen. */}
+        <BrandLoadingLogo src={loadingLogoUrl || undefined} alt={resolvedLoadingText} width={104} />
 
         <Typography
           sx={{

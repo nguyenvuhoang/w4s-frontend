@@ -5,11 +5,11 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 
 import Box from '@mui/material/Box'
-import CircularProgress from '@mui/material/CircularProgress'
 import Typography from '@mui/material/Typography'
 import type { SxProps, Theme } from '@mui/material/styles'
 
 import { navTraceLoader } from '@/shared/utils/navigationDebug'
+import BrandLoadingLogo from '@components/BrandLoadingLogo'
 
 // How long this screen stays mounted before its message escalates to acknowledge the wait —
 // shared in spirit with NavigationOverlay's escalation threshold (both exist to reassure the
@@ -34,7 +34,7 @@ type PageLoadingScreenProps = {
 }
 
 /**
- * Small, plain, non-branded loading state shared by every "the page itself isn't ready yet"
+ * Small, quiet, W4S-branded (pulsing logo) loading state shared by every "the page itself isn't ready yet"
  * surface — the (dashboard) layout's top-level Suspense fallback (auth/session bootstrap) and
  * loading.tsx (F5/direct URL/server navigation), and NavigationOverlay (client-side navigation
  * blocking overlay) — so all three read as the same one screen instead of a different spinner
@@ -73,7 +73,7 @@ const PageLoadingScreen = ({ sx, debugSource = 'PageLoadingScreen' }: PageLoadin
         ...sx
       }}
     >
-      <CircularProgress size={32} thickness={4} />
+      <BrandLoadingLogo width={96} />
       <Typography variant='body2' color='text.secondary' sx={{ textAlign: 'center', fontFamily: 'Quicksand' }}>
         {isLongRunning ? text.longRunning : text.normal}
       </Typography>

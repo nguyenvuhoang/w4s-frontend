@@ -132,10 +132,14 @@ const LoginForm = ({ locale, dictionary }: {
                             className='mt-5 p-3'
                             type='submit'
                             sx={{
-                                background:
-                                    'radial-gradient(300.55% 959.41% at 293.35% -237.5%, #6EC2F7 0%, #2531F5 67.24%,  #04E7B2 98.3%)',
+                                background: 'linear-gradient(90deg, #2563EB 0%, #1D4ED8 100%)',
                                 color: 'white',
-                                '&:hover': { opacity: 0.5 }
+                                borderRadius: '12px',
+                                boxShadow: '0 10px 24px rgba(37, 99, 235, 0.28)',
+                                '&:hover': {
+                                    background: 'linear-gradient(90deg, #1D4ED8 0%, #1E40AF 100%)',
+                                    boxShadow: '0 14px 28px rgba(37, 99, 235, 0.32)'
+                                }
                             }}
                         >
                             {dictionary['auth'].login}

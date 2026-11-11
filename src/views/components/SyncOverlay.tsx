@@ -1,11 +1,10 @@
 'use client'
 
-import Image from 'next/image'
 import { Box, Typography } from '@mui/material'
 import { alpha } from '@mui/material/styles'
-import ComputerIcon from '@mui/icons-material/Computer'
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance'
 import { keyframes } from '@mui/system'
+
+import BrandLoadingLogo from '@components/BrandLoadingLogo'
 
 const syncMove = keyframes`
   0% {
@@ -40,8 +39,8 @@ type SyncOverlayProps = {
    * overlay never leaves its own content wrapper. This is the default specifically so an existing
    * management screen can never accidentally blank out the whole app by omitting a prop.
    *
-   * 'standalone' — full-viewport branded boot screen (`position: fixed`, gradient background, IPS
-   * logo). Reserved for screens with no Dashboard chrome to protect: login/register/reset-password/
+   * 'standalone' — full-viewport branded boot screen (`position: fixed`, gradient background,
+   * brand logo). Reserved for screens with no Dashboard chrome to protect: login/register/reset-password/
    * forgot-password, ProjectContext bootstrap, and the first-time /select-project screen. Never use
    * this inside a Dashboard-rendered page — it visually covers Header/Sidebar even though they're
    * still mounted underneath.
@@ -53,61 +52,34 @@ const DEFAULT_MESSAGE = 'Đang kết nối hệ thống'
 const DEFAULT_DESCRIPTION = 'Đang tải thông tin dự án và thiết lập phiên làm việc...'
 const DEFAULT_CONTENT_MESSAGE = 'Đang tải dữ liệu...'
 
+// Thin indeterminate bar under the brand logo — the previous computer<->bank motif was IPS
+// (banking) branding; W4S shows its own logo instead (see BrandLoadingLogo).
 const SyncIndicator = ({ tone }: { tone: 'onGradient' | 'onSurface' }) => {
   const onGradient = tone === 'onGradient'
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 2, sm: 4 } }}>
+    <Box
+      sx={{
+        position: 'relative',
+        width: { xs: 120, sm: 180 },
+        height: 4,
+        backgroundColor: onGradient ? theme => alpha(theme.palette.common.white, 0.25) : 'action.hover',
+        borderRadius: 2,
+        overflow: 'hidden'
+      }}
+    >
       <Box
         sx={{
-          width: { xs: 48, sm: 80 },
-          height: { xs: 48, sm: 80 },
-          borderRadius: '50%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: onGradient ? 'common.white' : 'primary.main'
+          position: 'absolute',
+          top: 0,
+          left: '-30%',
+          width: '30%',
+          height: '100%',
+          borderRadius: 2,
+          backgroundColor: onGradient ? 'common.white' : 'primary.main',
+          animation: `${syncMove} 1.2s linear infinite`
         }}
-      >
-        <ComputerIcon sx={{ fontSize: { xs: 28, sm: 48 } }} />
-      </Box>
-
-      <Box
-        sx={{
-          position: 'relative',
-          width: { xs: 96, sm: 200 },
-          height: 6,
-          backgroundColor: onGradient ? theme => alpha(theme.palette.common.white, 0.25) : 'action.hover',
-          borderRadius: 3,
-          overflow: 'hidden'
-        }}
-      >
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 0,
-            left: '-30%',
-            width: '30%',
-            height: '100%',
-            backgroundColor: 'secondary.main',
-            animation: `${syncMove} 1.2s linear infinite`
-          }}
-        />
-      </Box>
-
-      <Box
-        sx={{
-          width: { xs: 48, sm: 80 },
-          height: { xs: 48, sm: 80 },
-          borderRadius: '50%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: onGradient ? 'common.white' : 'primary.main'
-        }}
-      >
-        <AccountBalanceIcon sx={{ fontSize: { xs: 28, sm: 48 } }} />
-      </Box>
+      />
     </Box>
   )
 }
@@ -130,6 +102,7 @@ const ContentOverlay = ({ message, description }: { message?: string; descriptio
       backdropFilter: 'blur(2px)'
     }}
   >
+    <BrandLoadingLogo width={88} />
     <SyncIndicator tone="onSurface" />
 
     <Box>
@@ -192,17 +165,8 @@ const StandaloneOverlay = ({ message, description }: { message?: string; descrip
       }}
     />
 
-    <Box
-      sx={{
-        position: 'relative',
-        width: 104,
-        height: 104,
-        maxWidth: 120,
-        maxHeight: 120,
-        zIndex: 1
-      }}
-    >
-      <Image src="/images/logobank/logo-white.svg" alt="IPS" fill priority style={{ objectFit: 'contain' }} />
+    <Box sx={{ position: 'relative', zIndex: 1 }}>
+      <BrandLoadingLogo tone="dark" width={104} />
     </Box>
 
     <Box

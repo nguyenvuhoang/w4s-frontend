@@ -13,6 +13,7 @@ import DashboardShell from '@components/layout/dashboard/DashboardShell'
 import ErrorPage from '@/views/Error'
 
 import type { Locale } from '@/configs/i18n'
+import { appProfile } from '@configs/appProfile'
 import { InitUserStore } from '@/@core/stores/InitUserStore'
 import {
   useMenuScope,
@@ -30,6 +31,10 @@ import WorkspaceBootErrorState from '@/shared/components/project-context/Workspa
 import { getLocalizedUrl } from '@utils/i18n'
 import type { RoleChannel, UserInRole } from '@shared/types/systemTypes'
 import { navTrace } from '@/shared/utils/navigationDebug'
+
+// Presentation-only toggle (hidden on W4S): the ProjectContext itself — READY gate, menu scope,
+// project-scoped API calls — is untouched.
+const showProjectBanner = appProfile.features.showProjectContextBanner
 
 type Props = {
   dictionary: any
@@ -187,7 +192,7 @@ const ReadyDashboard = ({ dictionary, locale, sessiontoken, avatar, name, role, 
       verticalLayout={
         <DashboardShell dictionary={dictionary} menudata={menu}>
           <InitUserStore name={name} avatar={avatar} role={role} />
-          <ProjectContextBanner dictionary={dictionary} />
+          {showProjectBanner ? <ProjectContextBanner dictionary={dictionary} /> : null}
           {children}
         </DashboardShell>
       }
@@ -199,7 +204,7 @@ const ReadyDashboard = ({ dictionary, locale, sessiontoken, avatar, name, role, 
           footer={<HorizontalFooter />}
         >
           <InitUserStore name={name} avatar={avatar} role={role} />
-          <ProjectContextBanner dictionary={dictionary} />
+          {showProjectBanner ? <ProjectContextBanner dictionary={dictionary} /> : null}
           {children}
         </HorizontalLayout>
       }

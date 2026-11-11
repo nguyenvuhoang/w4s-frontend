@@ -7,8 +7,11 @@ import type { CSSProperties } from 'react'
 import useVerticalNav from '@menu/hooks/useVerticalNav'
 import { useSettings } from '@core/hooks/useSettings'
 
-const DEFAULT_FAVICON = '/images/logobank/FavIcon.svg'
-const DEFAULT_LOGO = '/images/logobank/logo-white.svg'
+import { appProfile } from '@configs/appProfile'
+
+// Profile defaults (W4S white mark on the dark nav); IPS keeps its own assets via the IPS profile.
+const DEFAULT_FAVICON = appProfile.name === 'ips' ? '/images/logobank/FavIcon.svg' : appProfile.logos.onDark
+const DEFAULT_LOGO = appProfile.logos.onDark
 
 type LogoProps = {
   color?: CSSProperties['color']
@@ -25,7 +28,7 @@ const Logo = ({ color, variant = 'sidebar' }: LogoProps) => {
   const compact = variant === 'sidebar' && isCollapsed && !isHovered
 
   // Custom branding logos (System Settings > Branding > Bộ nhận diện Logo) apply per slot,
-  // falling back to the default IPS assets when a slot isn't configured.
+  // falling back to the active profile's assets when a slot isn't configured.
   const logoSrc = variant === 'topMenu'
     ? settings.logos?.top_menu || DEFAULT_LOGO
     : (compact ? settings.logos?.favicon || DEFAULT_FAVICON : settings.logos?.banner || DEFAULT_LOGO)
@@ -34,7 +37,7 @@ const Logo = ({ color, variant = 'sidebar' }: LogoProps) => {
     <div className='flex items-center justify-center min-bs-[24px] overflow-hidden'>
       <img
         src={logoSrc}
-        alt={settings.brandingName || 'IPS'}
+        alt={settings.brandingName || appProfile.brandName}
         style={{
           color,
           height: compact ? '64px' : '38px',
