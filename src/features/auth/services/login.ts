@@ -44,7 +44,7 @@ export const handleLogin = async (
     });
 
     const authRes = await res.json();
-    
+
     if (authRes && authRes.status === 299) {
       return {
         success: false,
@@ -52,23 +52,35 @@ export const handleLogin = async (
           username: data.username,
           deviceId: my_device.device_id ?? ''
         },
-        errorState: { message: [authRes.error || ''] }
+        errorState: {
+          message: [authRes.error || ''],
+          error_code: authRes.error_code ?? null,
+          execution_id: authRes.execution_id ?? null,
+          type_error: authRes.type_error ?? 'warning'
+        }
       }
     }
 
-    if (authRes && (authRes.error === null || authRes.error === '')) {
+    if (authRes && authRes.ok && (authRes.error === null || authRes.error === '')) {
       return {
         success: true,
-        redirectUrl: getLocalizedUrl(`/`, locale as any)
+        redirectUrl: getLocalizedUrl(`/dashboards`, locale as any)
       }
     }
 
+    // Always surface the real backend error (errors[0].info -> errors[0].message -> message)
+    // that was forwarded through /api/login -> auth.ts -> /api/authenticate. Do not replace it
+    // with a generic message unless the backend genuinely returned nothing usable.
     return {
       success: false,
-      errorState: { message: [dictionary['auth'].usernamepasswordincorrect] }
+      errorState: {
+        message: [authRes?.error || dictionary['auth'].usernamepasswordincorrect],
+        error_code: authRes?.error_code ?? null,
+        execution_id: authRes?.execution_id ?? null,
+        type_error: authRes?.type_error ?? 'danger'
+      }
     }
-  } catch (err) {
-    console.error('[CTH_LOGIN] [ERROR]', err);
+  } catch {
     return {
       success: false,
       errorState: { message: [dictionary['auth'].loginfailed] }

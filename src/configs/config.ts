@@ -10,7 +10,6 @@ const configProject = configSchema.safeParse({
   NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL
 })
 if (!configProject.success) {
-  console.error(configProject.error.issues)
   throw new Error('Các giá trị khai báo trong file .env không hợp lệ')
 }
 

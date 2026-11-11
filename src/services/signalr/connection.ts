@@ -1,12 +1,30 @@
 'use client';
 
 import * as signalR from '@microsoft/signalr';
+import { redirectToMaintenance } from '@utils/maintenance';
 
 let connection: signalR.HubConnection | null = null;
 let connectionPromise: Promise<signalR.HubConnection> | null = null;
 let isInitialized = false;
+let maintenanceDetected = false;
 
 const isServer = () => typeof window === 'undefined';
+
+/**
+ * Negotiate/start failures caused by a 502 (Cloudflare Bad Gateway) surface from
+ * @microsoft/signalr as nested "Failed to complete negotiation..." / "Failed to
+ * start the connection..." errors whose message still carries the status code.
+ */
+const isBadGatewaySignalRError = (error: unknown): boolean => {
+  const message = error instanceof Error ? error.message : String(error ?? '');
+
+  return /\b502\b/.test(message) || /bad gateway/i.test(message);
+};
+
+const handleMaintenanceDetected = () => {
+  maintenanceDetected = true;
+  redirectToMaintenance();
+};
 
 /**
  * Get or create SignalR connection (without token)
@@ -14,6 +32,11 @@ const isServer = () => typeof window === 'undefined';
 export const getSignalRConnection = async (hubUrl: string): Promise<signalR.HubConnection> => {
     if (isServer()) {
         throw new Error('SignalR connection cannot be created on server side');
+    }
+
+    // System is under maintenance (502 already detected): stop retrying/negotiating.
+    if (maintenanceDetected) {
+        throw new Error('SYSTEM_MAINTENANCE');
     }
 
     // If already connecting, wait for that promise
@@ -34,7 +57,6 @@ export const getSignalRConnection = async (hubUrl: string): Promise<signalR.HubC
 
     connectionPromise = (async () => {
         try {
-            console.log("SignalR: Starting connection to " + hubUrl);
             connection = new signalR.HubConnectionBuilder()
                 .withUrl(hubUrl, {
                     skipNegotiation: false,
@@ -51,30 +73,35 @@ export const getSignalRConnection = async (hubUrl: string): Promise<signalR.HubC
 
             // Handle connection state changes
             connection.onclose((error) => {
-                console.warn('SignalR connection closed:', error?.message || 'No error');
                 connection = null;
                 connectionPromise = null;
                 isInitialized = false;
+
+                if (isBadGatewaySignalRError(error)) {
+                    handleMaintenanceDetected();
+                }
             });
 
             connection.onreconnecting((error) => {
-                console.warn('SignalR reconnecting:', error?.message || 'No error');
             });
 
             connection.onreconnected((connectionId) => {
-                console.log('SignalR reconnected with ID:', connectionId);
                 // Re-init after reconnect if we have stored token
                 isInitialized = false;
             });
 
             await connection.start();
-            console.log('SignalR connected successfully');
 
             return connection;
         } catch (error) {
-            console.error('SignalR connection failed:', error);
             connection = null;
             connectionPromise = null;
+
+            if (isBadGatewaySignalRError(error)) {
+                handleMaintenanceDetected();
+                throw new Error('SYSTEM_MAINTENANCE');
+            }
+
             throw error;
         }
     })();
@@ -83,26 +110,26 @@ export const getSignalRConnection = async (hubUrl: string): Promise<signalR.HubC
 };
 
 /**
- * Initialize SignalR with token - call Init method on server
+ * Register the live connection with the hub via its `Init` RPC. `identifier` is a non-secret,
+ * stable per-user value (session.user.usercode) — the hub's own UserLogOut push already keys off
+ * the same usercode (src/services/signalr/events/logout.ts), and this connection is otherwise
+ * fully unauthenticated (no accessTokenFactory/Authorization header, see getSignalRConnection
+ * above), so `Init` was never a place to put the real backend JWT. Kept the exported name
+ * (`initSignalRWithToken`) to avoid a wider rename; only what gets passed to it changed.
  */
-export const initSignalRWithToken = async (token: string): Promise<void> => {
+export const initSignalRWithToken = async (identifier: string): Promise<void> => {
     if (!connection || connection.state !== signalR.HubConnectionState.Connected) {
         throw new Error('SignalR connection not established. Call getSignalRConnection first.');
     }
 
     if (isInitialized) {
-        console.log('SignalR: Already initialized with token');
         return;
     }
 
     try {
-        console.log('SignalR: Calling Init with token...', token?.substring(0, 20) + '...');
-        const result = await connection.invoke('Init', token);
-        console.log('SignalR: Init response:', result);
+        const result = await connection.invoke('Init', identifier);
         isInitialized = true;
-        console.log('SignalR: Init successful - now listening for events');
     } catch (error) {
-        console.error('SignalR: Init failed:', error);
         throw error;
     }
 };
@@ -115,7 +142,6 @@ export const isSignalRInitialized = () => isInitialized;
 export const stopSignalRConnection = async () => {
     if (connection) {
         await connection.stop();
-        console.log('SignalR stopped');
         connection = null;
         connectionPromise = null;
         isInitialized = false;

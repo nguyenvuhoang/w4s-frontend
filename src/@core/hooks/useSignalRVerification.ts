@@ -5,11 +5,15 @@ import type { HubConnection } from '@microsoft/signalr';
 import { getSignalRConnection, initSignalRWithToken } from '@/services/signalr/connection';
 
 /**
- * Hook to get SignalR connection and initialize with token
+ * Hook to get SignalR connection and register it against a user via the hub's `Init` RPC.
  * @param hubUrl - SignalR hub URL
- * @param token - Optional token to call Init method after connection
+ * @param identifier - Non-secret, stable user identifier (session.user.usercode) used only so the
+ * hub can target push events (e.g. UserLogOut) at this connection — the hub's own UserLogOut
+ * payload already keys off the same usercode (see src/services/signalr/events/logout.ts), so this
+ * was never meant to be a credential. The real backend JWT must never reach the browser (see
+ * src/auth.ts) and is intentionally not used here even though this param used to be called `token`.
  */
-export const useSignalRConnection = (hubUrl: string, token?: string) => {
+export const useSignalRConnection = (hubUrl: string, identifier?: string) => {
   const [connection, setConnection] = useState<HubConnection | null>(null);
   const [isReady, setIsReady] = useState(false);
   const initCalledRef = useRef(false);
@@ -24,11 +28,8 @@ export const useSignalRConnection = (hubUrl: string, token?: string) => {
         
         if (isMounted) {
           setConnection(conn);
-          console.log('SignalR: Connection established, ready to register handlers');
         }
-      } catch (err) {
-        console.error('Error connecting to SignalR:', err);
-      }
+      } catch {}
     };
 
     connect();
@@ -40,23 +41,20 @@ export const useSignalRConnection = (hubUrl: string, token?: string) => {
 
   // Step 2: Call Init AFTER connection is set and handlers can be registered
   useEffect(() => {
-    if (!connection || !token || initCalledRef.current) return;
+    if (!connection || !identifier || initCalledRef.current) return;
 
     const doInit = async () => {
       try {
-        console.log('SignalR: Calling Init after handlers are ready...');
-        await initSignalRWithToken(token);
+        await initSignalRWithToken(identifier);
         initCalledRef.current = true;
         setIsReady(true);
-      } catch (err) {
-        console.error('Error initializing SignalR:', err);
-      }
+      } catch {}
     };
 
     // Small delay to ensure handlers are registered first
     const timer = setTimeout(doInit, 100);
     return () => clearTimeout(timer);
-  }, [connection, token]);
+  }, [connection, identifier]);
 
   return { connection, isReady };
 };

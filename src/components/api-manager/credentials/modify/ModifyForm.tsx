@@ -1,7 +1,7 @@
 'use client'
 
 import { Box, Grid } from '@mui/material'
-import { useRouter } from 'next/navigation'
+import { useRouter } from '@shared/hooks/useRouter'
 import { Locale } from '@/configs/i18n'
 import { getLocalizedUrl } from '@/shared/utils/i18n'
 import { AuthDetailsCard, BasicInfoCard, FormActions } from '../add/components'

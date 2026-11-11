@@ -1,9 +1,12 @@
 import ClientCss from "@components/theme/clientcss";
+import PerformanceMeasureGuard from "@components/PerformanceMeasureGuard";
+import InspectGuard from "@components/InspectGuard";
 import { cn } from "@utils";
 import type { Locale } from '@configs/i18n';
 import type { ChildrenType } from '@core/types';
 
 import { getSettingsFromCookie } from "@core/utils/serverHelpers";
+import { getBrandingSettings } from "@shared/services/brandingSettingsService";
 
 export const metadata = {
   title: 'Admin Console',
@@ -17,10 +20,11 @@ type Params = Promise<{
 const RootLayout = async ({ children, params }: ChildrenType & { params: Params }) => {
   const { locale } = await params
   const settings = await getSettingsFromCookie()
-  const fontFamily = settings.fontFamily || 'Quicksand, sans-serif'
+  const brandingSettings = await getBrandingSettings()
+  const fontFamily = settings.fontFamily || brandingSettings.fontFamily
 
   return (
-    <html id='__next' lang={locale}>
+    <html id='__next' lang={locale} suppressHydrationWarning>
       <head>
         <meta name="supported-color-schemes" content="light" />
         <meta name="color-scheme" content="light only" />
@@ -34,6 +38,8 @@ const RootLayout = async ({ children, params }: ChildrenType & { params: Params 
         suppressHydrationWarning
       >
         <ClientCss />
+        <PerformanceMeasureGuard />
+        <InspectGuard />
         {children}
       </body>
     </html>

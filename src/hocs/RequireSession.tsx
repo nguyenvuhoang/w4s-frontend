@@ -16,7 +16,7 @@ export default async function RequireSession({ locale, dictionary, children }: R
     auth()
   ]);
 
-  if (!session || !session.user || session.user.token?.length === 0) {
+  if (!session || !session.user || !session.user.authenticated) {
     return <Logout locale={locale} dictionary={dict} />;
   }
 

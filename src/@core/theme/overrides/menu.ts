@@ -38,16 +38,20 @@ const menu = (skin: Skin): Theme['components'] => ({
           minInlineSize: 0
         },
         '&.Mui-selected': {
-          color: '#225087 !important',
+          backgroundColor: 'rgba(0, 0, 0, 0.08)',
+          color: 'var(--mui-palette-primary-main) !important',
           '& .MuiListItemIcon-root': {
-            color: '#abf4d1 !important'
-          },
-          '&:hover, &.Mui-focused, &.Mui-focusVisible': {
-            backgroundColor: '#f7fffb !important',
+            color: 'var(--mui-palette-success-main) !important'
           }
         },
+        '&.Mui-selected:hover': {
+          backgroundColor: 'rgba(0, 0, 0, 0.12)'
+        },
+        '&.Mui-focusVisible': {
+          backgroundColor: 'rgba(0, 0, 0, 0.08)'
+        },
         '&.Mui-disabled': {
-          color: 'white !important',
+          color: 'var(--mui-palette-text-disabled) !important',
           opacity: 1
         }
       })

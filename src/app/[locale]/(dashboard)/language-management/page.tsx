@@ -8,6 +8,8 @@ import { getDictionary } from '@utils/getDictionary';
 import { isValidResponse } from '@utils/isValidResponse';
 import LanguageManagementContent from '@/views/language-management';
 import { Metadata } from 'next';
+import { getServerBackendToken } from '@/server/auth/getServerBackendToken'
+import logger from '@lib/logger'
 
 export const metadata: Metadata = generateAuthMetadata('Language management');
 
@@ -23,7 +25,7 @@ const LanguageManagement = async (props: PageProps) => {
 
     // 1) Load dữ liệu bảng chính
     const languageApi = await workflowService.runFODynamic({
-        sessiontoken: session?.user?.token as string,
+        sessiontoken: (await getServerBackendToken()) as string,
         workflowid: 'BO_LOAD_LANGUAGE_APP',
         input: {
             request_channel: "MB",
@@ -41,7 +43,7 @@ const LanguageManagement = async (props: PageProps) => {
     if (hasError) {
         const err0 = languageApi?.payload?.dataresponse?.errors?.[0];
         if (err0) {
-            console.log('ExecutionID:', `${err0.execute_id} - ${err0.info}`);
+            logger.log('ExecutionID:', `${err0.execute_id} - ${err0.info}`);
         }
         return <Spinner />;
     }

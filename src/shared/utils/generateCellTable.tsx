@@ -8,7 +8,7 @@ import ZoomOutMapIcon from '@mui/icons-material/ZoomOutMap';
 import { Menu, MenuItem } from '@mui/material';
 import React from 'react';
 import { normalizeLang } from './normalizeLang';
-import { Locale } from '@/configs/i18n';
+import { i18n, Locale } from '@/configs/i18n';
 import { getLocalizedText } from './getLocalizedText';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as FaIcons from "@fortawesome/free-solid-svg-icons";
@@ -25,7 +25,7 @@ export const generateCellTable = (
     handleClose?: () => void,
     onClick?: (e: React.MouseEvent<SVGSVGElement | HTMLElement>, rowdata: any, input: any, ismodify?: boolean) => void,
     handlePreviewModal?: (content: any, previewtype: string, datatype?: string, app?: string) => void,
-    language: Locale | undefined = 'en'
+    language: Locale | undefined = i18n.defaultLocale
 ) => {
 
     switch (column.inputtype) {
@@ -52,7 +52,7 @@ export const generateCellTable = (
                         (() => {
                             try {
                                 return JSON.stringify(JSON.parse(value));
-                            } catch (error) {
+                            } catch {
                                 return 'Invalid JSON';
                             }
                         })()
@@ -73,8 +73,7 @@ export const generateCellTable = (
                                 try {
                                     JSON.parse(value);
                                     return '#1976d2';
-                                } catch (error) {
-                                    console.warn(`Failed to parse JSON for value: ${value}`, error);
+                                } catch {
                                     return 'red';
                                 }
                             })(),
@@ -271,17 +270,16 @@ export const generateCellTable = (
                     return <span>{formattedDate}</span>;
                 }
                 return <span>{value || 'N/A'}</span>;
-            } catch (error) {
-                console.error('Error formatting date:', error);
+            } catch {
                 return <span>{value || 'Invalid Date'}</span>;
             }
         case 'ColumnMultiLanguage': {
-            const getLang = language || 'en';
+            const getLang = language || i18n.defaultLocale;
             // map "la" => "lo"
             const lang = getLang === 'la' ? 'lo' : getLang;
             const fallbacks = Array.isArray(column?.config?.fallbacks)
                 ? column.config.fallbacks.map(normalizeLang)
-                : ['en', 'vi', 'lo', 'zh']
+                : [i18n.defaultLocale, 'en', 'lo', 'zh']
 
             const text = getLocalizedText(value, lang, fallbacks)
 

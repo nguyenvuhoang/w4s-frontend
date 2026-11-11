@@ -1,25 +1,18 @@
 // src/app/[locale]/(dashboard)/(portal)/layout.tsx
-import HorizontalLayout from '@/@layouts/HorizontalLayout'
-import LayoutWrapper from '@/@layouts/LayoutWrapper'
 import AuthGuard from '@/hocs/AuthGuard'
 import IdleTimer from '@/hocs/IdleTimer'
 import ErrorPage from '@/views/Error'
 import GlobalSignalRLogoutListener from '@components/GlobalSignalRLogoutListener'
-import HorizontalFooter from '@components/layout/horizontal/Footer'
-import HeaderHorizontal from '@components/layout/horizontal/Header'
-import DashboardShell from '@components/layout/dashboard/DashboardShell'
 import Providers from '@components/Providers'
 import Spinner from '@components/spinners'
-import { Skeleton } from '@mui/material'
+import PageLoadingScreen from '@components/PageLoadingScreen'
+import DashboardContent from '@/shared/components/layout/dashboard/DashboardContent'
 import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
 
-import { InitUserStore } from '@/@core/stores/InitUserStore'
 import { auth } from '@/auth'
-import { WORKFLOWCODE } from '@/data/WorkflowCode'
-import { env } from '@/env.mjs'
 import { AUTHENTICATION_ERROR_STATUS, BAD_REQUEST } from '@/servers/lib/http'
-import { formService, workflowService } from '@/servers/system-service'
+import { formService } from '@/servers/system-service'
 import { handleApiError } from '@/shared/utils/handleApiError'
 import type { Locale } from '@configs/i18n'
 import { i18n } from '@configs/i18n'
@@ -29,6 +22,8 @@ import { getLocalizedUrl } from '@utils/i18n'
 import { isValidResponse } from '@utils/isValidResponse'
 import { unstable_cache as cache } from 'next/cache'
 import ChangePassword from '../(auth-layout-pages)/change-password/components'
+import { toClientSessionToken } from '@utils/safeSessionToken'
+import { getServerBackendToken } from '@/server/auth/getServerBackendToken'
 
 const getDictionaryCached = cache(
     async (locale: Locale) => getDictionary(locale),
@@ -40,7 +35,7 @@ type Params = Promise<{ locale: Locale }>
 
 export default function Layout({ children, params }: ChildrenType & { params: Params }) {
     return (
-        <Suspense fallback={<Skeleton />} >
+        <Suspense fallback={<PageLoadingScreen debugSource='(dashboard)/layout Suspense' />}>
             <PortalLayoutContent params={params}>{children}</PortalLayoutContent>
         </Suspense>
     )
@@ -57,7 +52,7 @@ async function PortalLayoutContent({ children, params }: ChildrenType & { params
     const dictPromise = getDictionaryCached(locale)
 
     const systemData = await formService.getSystemInfo({
-        sessiontoken: session.user.token as string,
+        sessiontoken: (await getServerBackendToken()) as string,
         language: locale
     })
 
@@ -83,7 +78,7 @@ async function PortalLayoutContent({ children, params }: ChildrenType & { params
 
     if (!isValidResponse(systemData) || (datapayload.errors?.length ?? 0) > 0) {
         const e = datapayload.errors?.[0]
-        return handleApiError({ locale, error: e })
+        return handleApiError({ locale, error: e, dictionary: await dictPromise })
     }
 
     const datainput = datapayload.data
@@ -92,61 +87,37 @@ async function PortalLayoutContent({ children, params }: ChildrenType & { params
     const role = datainput?.role ?? ''
     const roleChannel = datainput?.role_channel || []
     const isfirstlogin = session.user.is_first_login ?? datainput?.is_first_login ?? false
-
     const dictionary = await dictPromise
 
     if (isfirstlogin) {
         return (
-            <Providers initialAvatar={avatar}>
+            <Providers initialAvatar={avatar} initialUserInfo={datainput} initialMenuData={[]}>
                 <ChangePassword dictionary={dictionary} session={session} locale={locale} />
             </Providers>
         )
     }
 
-    const menudata = await workflowService.runFODynamic({
-        sessiontoken: session.user.token as string,
-        language: locale,
-        workflowid: WORKFLOWCODE.WF_BO_LOAD_MENU,
-        input: { channel_id: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO' }
-    })
-
-    const menupayload = menudata?.payload?.dataresponse
-    if (!isValidResponse(menudata) || (menupayload?.errors?.length ?? 0) > 0) {
-        const e = menupayload?.errors?.[0]
-        return handleApiError({ locale, error: e })
-    }
-
-    const usercommand = menupayload.data?.data as any[] ?? []
-
+    // Menu is NOT fetched here anymore: menu permissions can depend on the selected project's
+    // scope, which is only known client-side (per-user localStorage) once ProjectContext
+    // resolves. DashboardContent gates on that, then loads the menu itself before rendering
+    // any sidebar/header. See useDashboardMenu / DashboardContent.
     return (
-        <Providers initialAvatar={avatar}>
+        <Providers initialAvatar={avatar} initialUserInfo={datainput} initialMenuData={[]}>
             <AuthGuard locale={locale} dictionary={dictionary}>
                 <IdleTimer locale={locale}>
                     <GlobalSignalRLogoutListener dictionary={dictionary} locale={locale} />
 
-                    <LayoutWrapper
-                        verticalLayout={
-                            <DashboardShell dictionary={dictionary} menudata={usercommand}>
-                                <InitUserStore name={name} avatar={avatar} role={role} />
-                                {children}
-                            </DashboardShell>
-                        }
-                        horizontalLayout={
-                            <HorizontalLayout
-                                header={<HeaderHorizontal
-                                    menu={usercommand}
-                                    avatar={avatar}
-                                    name={name}
-                                    dictionary={dictionary}
-                                    roleChannel={roleChannel}
-                                />}
-                                footer={<HorizontalFooter />}
-                            >
-                                <InitUserStore name={name} avatar={avatar} role={role} />
-                                {children}
-                            </HorizontalLayout>
-                        }
-                    />
+                    <DashboardContent
+                        dictionary={dictionary}
+                        locale={locale}
+                        sessiontoken={toClientSessionToken(session) ?? ''}
+                        avatar={avatar}
+                        name={name}
+                        role={role}
+                        roleChannel={roleChannel}
+                    >
+                        {children}
+                    </DashboardContent>
                 </IdleTimer>
             </AuthGuard>
         </Providers>

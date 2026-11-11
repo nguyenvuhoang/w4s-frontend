@@ -13,10 +13,12 @@ import {
 } from '@mui/material'
 import type { VerticalMenuDataType } from '@shared/types/menuTypes'
 import { getLocalizedUrl } from '@utils/i18n'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
+import { useRouter } from '@shared/hooks/useRouter'
 import { useCallback, useMemo, useState } from 'react'
 
 import { staticSynonyms, commonStopWords } from '@/data/aiSearchData'
+import { getMenuRoute, getMenuTitle } from './menu-utils'
 
 interface AISearchProps {
     menuData: VerticalMenuDataType[] | any[]
@@ -66,13 +68,8 @@ const AISearch = ({ menuData, dictionary }: AISearchProps) => {
                 return
             }
 
-            // Extract label from various possible properties
-            let label = ''
-            if (typeof item.label === 'string') label = item.label
-            else if (typeof item.command_name_language === 'string') label = item.command_name_language
-            else if (typeof item.command_name === 'string') label = item.command_name
-
-            const path = item.href || item.command_uri || item.command_url
+            const label = getMenuTitle(item, locale as string)
+            const path = getMenuRoute(item)
             const children = item.children || item.items || item.submenus
 
             if (label && path) {
@@ -105,7 +102,7 @@ const AISearch = ({ menuData, dictionary }: AISearchProps) => {
         })
 
         return Array.from(uniqueMap.values())
-    }, [extractKeywords, menuData])
+    }, [extractKeywords, locale, menuData])
 
     // Custom filter for "natural language" commands using static synonyms and dynamic keywords
     const filterOptions = (options: FlattenedMenuItem[], { inputValue }: { inputValue: string }) => {

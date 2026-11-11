@@ -21,7 +21,7 @@ import {
     Typography
 } from '@mui/material';
 import { Session } from 'next-auth';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@shared/hooks/useRouter';
 import { Controller, useForm } from 'react-hook-form';
 import dynamic from 'next/dynamic';
 
@@ -62,8 +62,7 @@ export default function LearnApiModify({ api, dictionary, session, locale }: Lea
                 const executionId = res.payload.dataresponse.errors?.[0]?.execute_id;
                 SwalAlert('error', `Error: ${error}${executionId ? ` (ID: ${executionId})` : ''}`, 'center');
             }
-        } catch (error) {
-            console.error('Update error:', error);
+        } catch {
             SwalAlert('error', 'An unexpected error occurred during update.', 'center');
         }
     };

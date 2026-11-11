@@ -152,15 +152,17 @@ const CardShowMoreInfo = ({
                                 }
                             }}
 
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        {captchaImage && <Image src={captchaImage} alt="captcha" width={100} height={45} className="rounded-xl" />}
-                                        <IconButton onClick={fetchCaptcha}>
-                                            <i className="!text-[var(--main-color)] ri-refresh-line"></i>
-                                        </IconButton>
-                                    </InputAdornment>
-                                )
+                            slotProps={{
+                                input: {
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            {captchaImage && <Image src={captchaImage} alt="captcha" width={100} height={45} className="rounded-xl" />}
+                                            <IconButton onClick={fetchCaptcha}>
+                                                <i className="!text-[var(--main-color)] ri-refresh-line"></i>
+                                            </IconButton>
+                                        </InputAdornment>
+                                    )
+                                }
                             }}
                             error={Boolean(captchaError) || Boolean(errorState)}
                             helperText={captchaError || errorState?.message}

@@ -1,27 +1,37 @@
 import { getDictionary } from '@utils/getDictionary'
 import { Box, Divider, Typography } from '@mui/material'
 import React from 'react'
+import { getRowInteractionTip, resolveRowInteractionMode, type RowInteractionMode } from '@/shared/utils/rowInteraction'
 
 type Props = {
     title: string
     description: string
     icon: React.ReactNode
+    actions?: React.ReactNode
     children: React.ReactNode
     dictionary: Awaited<ReturnType<typeof getDictionary>>
     /** Có thể truyền "A;B;C" hoặc ["A","B","C"] */
     dataref?: string | string[]
     issearch?: boolean
+    /** Override only for a screen whose actual row interaction differs from the framework default. */
+    rowInteractionMode?: RowInteractionMode
 }
 
 const ContentWrapper = ({
     title,
     description,
     icon,
+    actions,
     children,
     dataref,
     dictionary,
-    issearch
+    issearch,
+    rowInteractionMode
 }: Props) => {
+    const interactionMode = resolveRowInteractionMode(rowInteractionMode)
+    // `searchformlabel` is the legacy double-click instruction. Do not render it for the
+    // framework's single-click mode (or a page without row navigation).
+    const showLegacySearchHint = Boolean(issearch && getRowInteractionTip(dictionary, interactionMode))
     // Chuẩn hoá dataref về mảng
     const dataRefs = (() => {
         if (!dataref) return []
@@ -47,11 +57,22 @@ const ContentWrapper = ({
                     boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
                 }}
             >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                    {icon}
-                    <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#225087' }}>
-                        {title}
-                    </Typography>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: { xs: 'flex-start', md: 'center' },
+                        justifyContent: 'space-between',
+                        gap: 2,
+                        flexWrap: 'wrap'
+                    }}
+                >
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        {icon}
+                        <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#225087' }}>
+                            {title}
+                        </Typography>
+                    </Box>
+                    {actions}
                 </Box>
 
                 <Typography variant="body1" sx={{ color: '#225087', whiteSpace: 'pre-line' }}>
@@ -82,14 +103,16 @@ const ContentWrapper = ({
                     </Box>
                 )}
 
-                <Box>
-                    <Typography
-                        variant="caption"
-                        sx={{ color: '#666', mt: 1, fontStyle: 'italic' }}
-                    >
-                        {issearch ? dictionary['common'].searchformlabel : dictionary['common'].modifyformlabel}
-                    </Typography>
-                </Box>
+                {(showLegacySearchHint || !issearch) && (
+                    <Box>
+                        <Typography
+                            variant="caption"
+                            sx={{ color: '#666', mt: 1, fontStyle: 'italic' }}
+                        >
+                            {issearch ? dictionary['common'].searchformlabel : dictionary['common'].modifyformlabel}
+                        </Typography>
+                    </Box>
+                )}
 
                 <Divider sx={{ mt: 2 }} />
 

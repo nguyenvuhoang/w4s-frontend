@@ -1,18 +1,20 @@
 'use client'
 
-import { useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 
-import { usePathname } from 'next/navigation'
+import { useParams } from 'next/navigation'
 
 import VerticalLayout from '@/@layouts/VerticalLayout'
 import Navbar from '@components/layout/vertical/Navbar'
 import Navigation from '@components/layout/vertical/Navigation'
+import { useAppContext } from '@contexts/AppContext'
+import { useRouter } from '@shared/hooks/useRouter'
+import type { Locale } from '@configs/i18n'
 import type { getDictionary } from '@utils/getDictionary'
+import { getLocalizedUrl } from '@utils/i18n'
 import type { VerticalSubMenuDataType } from '@shared/types/menuTypes'
 
-import { getMenuChildren } from '../shared/menu-utils'
-import ModuleLauncher from './ModuleLauncher'
+import { getCommandId, getMenuChildren } from '../shared/menu-utils'
 
 type DashboardShellProps = {
   children: ReactNode
@@ -21,18 +23,23 @@ type DashboardShellProps = {
 }
 
 const DashboardShell = ({ children, dictionary, menudata }: DashboardShellProps) => {
-  const pathname = usePathname()
-  const [selectedModule, setSelectedModule] = useState<VerticalSubMenuDataType | null>(null)
-  const [selectedPath, setSelectedPath] = useState<string | null>(null)
+  const { menuData } = useAppContext()
+  const router = useRouter()
+  const { locale } = useParams()
+  const appMenuData = menuData.length > 0 ? menuData : menudata
 
-  const activeModule = selectedPath === pathname ? selectedModule : null
-  const selectedChildren = useMemo(() => (activeModule ? getMenuChildren(activeModule) : []), [activeModule])
-
+  // Navigates to the parent menu's own `/module/[commandId]` hub route instead of swapping in
+  // client state — the previous approach left the URL pointing at whatever business screen was
+  // open before the click, so a second click, refresh, or Back all disagreed with what was on
+  // screen. See ModuleHubContent for the route that renders the submenu list.
   const handleParentClick = (item: VerticalSubMenuDataType) => {
-    if (getMenuChildren(item).length > 0) {
-      setSelectedModule(item)
-      setSelectedPath(pathname)
-    }
+    if (getMenuChildren(item).length === 0) return
+
+    const commandId = getCommandId(item)
+
+    if (!commandId) return
+
+    router.push(getLocalizedUrl(`/module/${encodeURIComponent(commandId)}`, locale as Locale))
   }
 
   return (
@@ -40,19 +47,14 @@ const DashboardShell = ({ children, dictionary, menudata }: DashboardShellProps)
       navigation={
         <Navigation
           dictionary={dictionary}
-          menudata={menudata}
+          menudata={appMenuData}
           onMenuItemClick={handleParentClick}
-          activeItem={activeModule}
         />
       }
-      navbar={<Navbar menuData={menudata} dictionary={dictionary} />}
+      navbar={<Navbar menuData={appMenuData} dictionary={dictionary} />}
       footer={<></>}
     >
-      {selectedChildren.length > 0 && activeModule ? (
-        <ModuleLauncher moduleItem={activeModule} dictionary={dictionary} onBack={() => setSelectedModule(null)} />
-      ) : (
-        children
-      )}
+      {children}
     </VerticalLayout>
   )
 }

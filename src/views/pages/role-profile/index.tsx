@@ -51,12 +51,13 @@ type Props = {
 const RoleProfileGeneric = ({ locale, session, dictionary, role, userdata, mobileuserdata }: Props) => {
     const [value, setValue] = useState(0);
     const [subValue, setSubValue] = useState(0);
-    const subTabs = ['Invoke-Approve', 'User Assignment', 'Mobile User Assignment', 'Invoke limit'];
-
-    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-        setValue(newValue);
-        setSubValue(0);
-    };
+    // key dùng để định danh/so sánh nội bộ, label lấy từ dictionary để đổi theo ngôn ngữ UI.
+    const subTabs = [
+        { key: 'Invoke-Approve', label: dictionary['common'].invokeapprove || 'Invoke & Approve' },
+        { key: 'User Assignment', label: dictionary['common'].userassignment || 'User Assignment' },
+        { key: 'Mobile User Assignment', label: dictionary['common']?.mobileUserAssignment || 'Mobile User Assignment' },
+        // 'Invoke limit'
+    ];
 
     const handleSubChange = (event: React.SyntheticEvent, newSubValue: number) => {
         setSubValue(newSubValue);
@@ -105,7 +106,7 @@ const RoleProfileGeneric = ({ locale, session, dictionary, role, userdata, mobil
                                 {subTabs.map((subTab, subIndex) => (
                                     <Tab
                                         key={subIndex}
-                                        label={subTab}
+                                        label={subTab.label}
                                         id={`subtab-${subIndex}`}
                                         aria-controls={`subtabpanel-${subIndex}`}
                                         sx={{
@@ -120,32 +121,34 @@ const RoleProfileGeneric = ({ locale, session, dictionary, role, userdata, mobil
 
                         {subTabs.map((subTab, subIndex) => (
                             <TabPanel key={subIndex} value={subValue} index={subIndex}>
-                                {subTab === 'Invoke-Approve' ? (
+                                {subTab.key === 'Invoke-Approve' ? (
                                     <InvokeApprove
                                         locale={locale}
                                         session={session}
                                         dictionary={dictionary}
                                         tabvalue={value}
+                                        readOnly={false}
                                     />
-                                ) : subTab === 'User Assignment' ? (
+                                ) : subTab.key === 'User Assignment' ? (
                                     <UserAssignment
                                         dictionary={dictionary}
                                         role={role}
                                         userdata={userdata}
                                         session={session}
                                     />
-                                ) : subTab === 'Mobile User Assignment' ? (
+                                ) : subTab.key === 'Mobile User Assignment' ? (
                                     <MobileUserAssignment
                                         dictionary={dictionary}
                                         role={role}
                                         userdata={mobileuserdata}
                                         session={session}
                                     />
-                                ) : (
-                                    <InvokeLimit
-                                        roles={role}
-                                    />
-                                )}
+                                )
+                                    : (
+                                        <InvokeLimit
+                                            roles={role}
+                                        />
+                                    )}
                             </TabPanel>
                         ))}
                     </Box>

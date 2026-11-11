@@ -43,7 +43,7 @@ export const useEmailSettingsHandler = () => {
                     email_test: "nguyenvuhoangz@gmail.com"
                 });
             }
-        } catch (err) {
+        } catch {
             setError('Could not load email configuration.');
         } finally {
             setLoading(false);
@@ -58,7 +58,6 @@ export const useEmailSettingsHandler = () => {
 
     const handleSave = async () => {
         // To be implemented
-        console.log('Saving config:', config);
     };
 
     return {

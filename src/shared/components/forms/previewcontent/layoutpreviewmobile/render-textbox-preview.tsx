@@ -21,7 +21,6 @@ const RenderTextboxPreviewDefault = ({ content }: Props) => {
         ? Number(numericValue).toFixed(2)
         : numericValue;
 
-    console.log(content)
 
     return (
         <Grid size={{ xs: 12 }} sx={{ marginBottom: '16px', position: 'relative' }}>

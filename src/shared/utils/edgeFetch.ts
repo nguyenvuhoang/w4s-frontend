@@ -41,11 +41,6 @@ export async function edgeFetch(url: string, options: EdgeFetchOptions = {}): Pr
   } catch (error) {
     // Enhanced error handling for development
     if (process.env.NODE_ENV === 'development') {
-      console.error('[EdgeFetch] Request failed:', {
-        url,
-        error: error instanceof Error ? error.message : String(error),
-        options: enhancedOptions
-      });
     }
     throw error;
   }

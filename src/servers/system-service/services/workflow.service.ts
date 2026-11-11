@@ -82,7 +82,7 @@ export const workflowService = {
     /**
      * Run Function Object (FO) with dynamic input
      */
-    runFODynamic: ({ sessiontoken, workflowid, input, language, encrypt }: RunFoDynamicDataRequest & { encrypt?: boolean }) =>
+    runFODynamic: ({ sessiontoken, workflowid, input, language, encrypt, scope }: RunFoDynamicDataRequest & { encrypt?: boolean; scope?: string }) =>
         apiPost<ViewDataResponse>('/system-service',
             createDefaultBody(
                 workflowid as string,
@@ -93,7 +93,8 @@ export const workflowService = {
             sessiontoken as string,
             {
                 lang: language ?? "en",
-                app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'SYS'
+                app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'SYS',
+                ...(scope !== undefined ? { scope } : {})
             },
             { encrypt }
         ),

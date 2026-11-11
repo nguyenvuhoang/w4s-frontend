@@ -257,12 +257,14 @@ export default function YarpConfigView({ config, locale, sessionToken }: YarpCon
                         placeholder="Search route, cluster, path or address"
                         fullWidth
                         size="small"
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <SearchIcon fontSize="small" />
-                                </InputAdornment>
-                            )
+                        slotProps={{
+                            input: {
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <SearchIcon fontSize="small" />
+                                    </InputAdornment>
+                                )
+                            }
                         }}
                     />
                     <Button disabled={saving} variant="outlined" startIcon={<RefreshIcon />} onClick={() => reloadConfig()} sx={{ minWidth: 120 }}>

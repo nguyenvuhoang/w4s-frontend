@@ -10,6 +10,7 @@ import MenuManagementError from '@/views/nolayout/menu-management/MenuManagement
 import MenuManagementSkeleton from '@/views/nolayout/menu-management/MenuManagementSkeleton'
 import DescriptionIcon from '@mui/icons-material/Description'
 import { Suspense } from 'react'
+import { getServerBackendToken } from '@/server/auth/getServerBackendToken'
 
 type Params = Promise<{
     locale: Locale
@@ -18,7 +19,7 @@ type Params = Promise<{
 async function MenuManagementData({ locale, session }: { locale: Locale; session: any }) {
     const dictionary = await getDictionary(locale)
     const response = await menuService.loadMenu({
-        sessiontoken: session?.user?.token as string,
+        sessiontoken: (await getServerBackendToken()) as string,
         pageindex: 0,
         pagesize: 10,
         searchtext: '',

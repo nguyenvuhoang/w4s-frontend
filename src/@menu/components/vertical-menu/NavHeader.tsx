@@ -24,10 +24,15 @@ const StyledNavHeader = styled.div<StyledNavHeaderProps>`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 4;
+  background-color: inherit;
+  flex-shrink: 0;
   transition: ${({ transitionDuration }) => `padding-inline ${transitionDuration}ms ease-in-out`};
 
   ${({ isHovered, isCollapsed, collapsedWidth }) =>
-    isCollapsed && !isHovered && `padding-inline: calc((${collapsedWidth}px - 1px - 22px) / 2);`}
+    isCollapsed && !isHovered && `padding-inline: 8px;`}
 `
 
 const NavHeader = ({ children }: ChildrenType) => {

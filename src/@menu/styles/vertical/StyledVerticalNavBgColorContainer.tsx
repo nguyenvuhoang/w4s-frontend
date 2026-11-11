@@ -8,7 +8,8 @@ type StyledVerticalNavBgColorContainerProps = Pick<VerticalNavProps, 'background
 
 const StyledVerticalNavBgColorContainer = styled.div<StyledVerticalNavBgColorContainerProps>`
   position: relative;
-  block-size: 100%;
+  height: 100vh;
+  min-height: 100dvh;
   z-index: 3;
   display: flex;
   flex-direction: column;

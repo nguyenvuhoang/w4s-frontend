@@ -22,7 +22,7 @@ import {
 } from '@mui/material';
 import { Session } from 'next-auth';
 import dynamic from 'next/dynamic';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@shared/hooks/useRouter';
 import { useForm, Controller } from 'react-hook-form';
 
 const JsonEditor = dynamic(
@@ -69,8 +69,7 @@ export default function LearnApiAdd({ dictionary, locale, session }: LearnApiAdd
                 const executionId = res.payload.dataresponse.errors?.[0]?.execute_id;
                 SwalAlert('error', `Error: ${error}${executionId ? ` (ID: ${executionId})` : ''}`, 'center');
             }
-        } catch (error) {
-            console.error('Create error:', error);
+        } catch {
             SwalAlert('error', 'An unexpected error occurred during creation.', 'center');
         }
     };

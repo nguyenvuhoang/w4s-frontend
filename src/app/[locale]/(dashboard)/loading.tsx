@@ -1,11 +1,7 @@
 'use client'
 
-import FallbackSpinner from '@components/spinners'
+import PageLoadingScreen from '@components/PageLoadingScreen'
 
 export default function Loading() {
-  return (
-    <>
-      <FallbackSpinner />
-    </>
-  )
+  return <PageLoadingScreen debugSource='(dashboard)/loading.tsx' />
 }

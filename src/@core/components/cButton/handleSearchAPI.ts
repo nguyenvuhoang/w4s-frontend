@@ -1,4 +1,4 @@
-import { Locale } from "@/configs/i18n";
+import { i18n, Locale } from "@/configs/i18n";
 import { systemServiceApi } from "@/servers/system-service";
 import SwalAlert from "@utils/SwalAlert";
 import { Session } from "next-auth";
@@ -14,7 +14,7 @@ export const handleSearchAPI = async (session: Session | null, txFo_: any, pageI
             pageSize: pageSize,
             pageIndex: pageIndex,
             parameters: parameters ?? inputdata?.parameters ?? {},
-            language: language ?? 'en',
+            language: language ?? i18n.defaultLocale,
         });
 
         const transactionresponse = submitForm.payload.dataresponse;
@@ -27,8 +27,6 @@ export const handleSearchAPI = async (session: Session | null, txFo_: any, pageI
         }
         return transactionresponse.data;
 
-    } catch (error) {
-        console.log(error);
-    }
+    } catch {}
 };
 

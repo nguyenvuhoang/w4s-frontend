@@ -15,7 +15,6 @@ export const handlePostDeleteData = async (
     selectedRowsTableSearchRef ??
     [];
 
-  console.log("handlePostDeleteData selectedRows:", selectedRows);
 
   if (!Array.isArray(selectedRows) || selectedRows.length === 0) {
     SwalAlert("warning", dictionary["common"].pleaseselectrow, "center");
@@ -93,14 +92,6 @@ export const handlePostDeleteData = async (
             const paramName = value.substring(1);
             const collectedValue = collectValues(paramName);
 
-            console.log(
-              "placeholder:",
-              value,
-              "paramName:",
-              paramName,
-              "collectedValue:",
-              collectedValue
-            );
 
             result[key] =
               collectedValue !== undefined ? collectedValue : value;
@@ -187,7 +178,6 @@ export const handlePostDeleteData = async (
             requestBody = buildRequestBody(txFo_[0].inputmulti, selectedRows);
           }
 
-          console.log("Delete requestBody:", requestBody);
 
           const submitApi = await workflowService.runBODynamic({
             sessiontoken: session?.user?.token as string,

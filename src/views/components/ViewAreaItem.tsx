@@ -27,8 +27,7 @@ const ViewAreaItem = ({ input, dictionary, session, locale, control }: ViewImage
   const parseJSON = (value: any) => {
     try {
       return typeof value === 'string' ? JSON.parse(value) : value;
-    } catch (error) {
-      console.error('Invalid JSON string:', error);
+    } catch {
       return {};
     }
   };

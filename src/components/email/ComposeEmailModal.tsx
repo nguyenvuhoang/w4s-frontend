@@ -171,7 +171,7 @@ export default function ComposeEmailModal({ open, onClose, dictionary }: Compose
                                 }
                             }}>
                                 <CKEditor
-                                    editor={ClassicEditor}
+                                    editor={ClassicEditor as any}
                                     data={content}
                                     onChange={(event, editor) => {
                                         const data = editor.getData();

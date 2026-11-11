@@ -4,17 +4,36 @@ import { z } from "zod";
 export const env = createEnv({
   server: {
     NEXTAUTH_SECRET: z.string().optional(),
+    AUTH_DEBUG: z.string().optional(),
     NEXT_PUBLIC_APPLICATION_CODE: z.string().optional(),
     TURNSTILE_SECRET: z.string().optional(),
     NEXT_PUBLIC_REPORT_URI: z.string().optional(),
     ALLOW_INSECURE_REPORT_SSL: z.string().optional(),
     NEXT_PUBLIC_REST_API_ENDPOINT: z.string().optional(),
+    // Server-only backend gateway URL. Prefer this over NEXT_PUBLIC_REST_API_ENDPOINT in new
+    // server-only modules — it is never inlined into the client bundle.
+    REST_API_ENDPOINT: z.string().optional(),
     API_URL: z.string().optional(),
     INFISICAL_URL: z.string().optional(),
     INFISICAL_CLIENT_ID: z.string().optional(),
     INFISICAL_CLIENT_SECRET: z.string().optional(),
-    INFISICAL_WORKSPACE_ID: z.string().optional(),
-    INFISICAL_ENVIRONMENT_SLUG: z.string().optional(),
+    DOCUMENT_UPLOAD_ENDPOINT: z.string().optional(),
+    MINIO_PUBLIC_ENDPOINT: z.string().optional(),
+    MINIO_ACCESS_KEY: z.string().optional(),
+    MINIO_SECRET_KEY: z.string().optional(),
+    MINIO_BUCKET: z.string().optional(),
+    MINIO_REGION: z.string().optional(),
+    // VietQR Generate API (server only, never NEXT_PUBLIC_): /api/projects/bank-qr
+    VIETQR_CLIENT_ID: z.string().optional(),
+    VIETQR_API_KEY: z.string().optional(),
+    CMS_API_URL: z.string().optional(),
+    CMS_API_BASE_URL: z.string().optional(),
+    CMS_CACHE_ADMIN_PASSWORD: z.string().optional(),
+    CMS_HOST: z.string().optional(),
+    // Secure API transport (src/lib/secure-api) — RSA-OAEP private key, base64-encoded PKCS8 PEM.
+    // Server-only, must never be exposed to the client bundle.
+    SECURE_API_KEY_ID: z.string().optional(),
+    SECURE_API_RSA_PRIVATE_KEY_BASE64: z.string().optional(),
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.string().optional(),
@@ -30,9 +49,15 @@ export const env = createEnv({
     NEXT_PUBLIC_ENVIRONMENT: z.string().default("development"),
     ALLOW_INSECURE_REPORT_SSL: z.string().optional(),
     NEXT_PUBLIC_REST_API_ENDPOINT: z.string().optional(),
+    // Secure API transport — RSA-OAEP PUBLIC key only. Safe to ship to the browser by design
+    // (it can only encrypt, never decrypt) — never put the private key half in a NEXT_PUBLIC_*
+    // variable.
+    NEXT_PUBLIC_SECURE_API_KEY_ID: z.string().optional(),
+    NEXT_PUBLIC_SECURE_API_RSA_PUBLIC_KEY_BASE64: z.string().optional(),
   },
   runtimeEnv: {
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
+    AUTH_DEBUG: process.env.AUTH_DEBUG,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
     NEXT_PUBLIC_API_IMAGE: process.env.NEXT_PUBLIC_IMAGE_API_ENDPOINT,
@@ -47,11 +72,26 @@ export const env = createEnv({
     NEXT_PUBLIC_ENVIRONMENT: process.env.NEXT_PUBLIC_ENVIRONMENT,
     ALLOW_INSECURE_REPORT_SSL: process.env.ALLOW_INSECURE_REPORT_SSL,
     NEXT_PUBLIC_REST_API_ENDPOINT: process.env.NEXT_PUBLIC_REST_API_ENDPOINT,
+    REST_API_ENDPOINT: process.env.REST_API_ENDPOINT,
     API_URL: process.env.API_URL,
     INFISICAL_URL: process.env.INFISICAL_URL,
     INFISICAL_CLIENT_ID: process.env.INFISICAL_CLIENT_ID,
     INFISICAL_CLIENT_SECRET: process.env.INFISICAL_CLIENT_SECRET,
-    INFISICAL_WORKSPACE_ID: process.env.INFISICAL_WORKSPACE_ID,
-    INFISICAL_ENVIRONMENT_SLUG: process.env.INFISICAL_ENVIRONMENT_SLUG,
+    DOCUMENT_UPLOAD_ENDPOINT: process.env.DOCUMENT_UPLOAD_ENDPOINT,
+    MINIO_PUBLIC_ENDPOINT: process.env.MINIO_PUBLIC_ENDPOINT,
+    MINIO_ACCESS_KEY: process.env.MINIO_ACCESS_KEY,
+    MINIO_SECRET_KEY: process.env.MINIO_SECRET_KEY,
+    MINIO_BUCKET: process.env.MINIO_BUCKET,
+    MINIO_REGION: process.env.MINIO_REGION,
+    VIETQR_CLIENT_ID: process.env.VIETQR_CLIENT_ID,
+    VIETQR_API_KEY: process.env.VIETQR_API_KEY,
+    CMS_HOST: process.env.CMS_HOST,
+    CMS_API_URL: process.env.CMS_API_URL,
+    CMS_API_BASE_URL: process.env.CMS_API_BASE_URL,
+    CMS_CACHE_ADMIN_PASSWORD: process.env.CMS_CACHE_ADMIN_PASSWORD,
+    SECURE_API_KEY_ID: process.env.SECURE_API_KEY_ID,
+    SECURE_API_RSA_PRIVATE_KEY_BASE64: process.env.SECURE_API_RSA_PRIVATE_KEY_BASE64,
+    NEXT_PUBLIC_SECURE_API_KEY_ID: process.env.NEXT_PUBLIC_SECURE_API_KEY_ID,
+    NEXT_PUBLIC_SECURE_API_RSA_PUBLIC_KEY_BASE64: process.env.NEXT_PUBLIC_SECURE_API_RSA_PUBLIC_KEY_BASE64,
   }
 })

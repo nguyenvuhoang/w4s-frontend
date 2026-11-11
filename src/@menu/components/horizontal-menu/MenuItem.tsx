@@ -29,6 +29,7 @@ import useVerticalNav from '@hooks/useVerticalNav'
 // Util Imports
 import { renderMenuIcon } from '@utils/menuUtils'
 import { menuClasses } from '@utils/menuClasses'
+import { isMenuActive } from '@components/layout/shared/menu-utils'
 
 // Styled Component Imports
 import StyledMenuLabel from '../../styles/StyledMenuLabel'
@@ -122,7 +123,7 @@ const MenuItem: ForwardRefRenderFunction<HTMLLIElement, MenuItemProps> = (props,
 
     if (href) {
       // Check if the current url matches any of the children urls
-      if (exactMatch ? pathname === href : activeUrl && pathname.includes(activeUrl)) {
+      if (exactMatch ? isMenuActive(href, pathname) : activeUrl && pathname.includes(activeUrl)) {
         setActive(true)
       } else {
         setActive(false)

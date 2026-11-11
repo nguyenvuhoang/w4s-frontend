@@ -24,9 +24,7 @@ const PreviewInfo: React.FC<PreviewContentProps> = ({ input, content, onClose, d
     const [isValid, setIsValid] = useState(false);
 
     const previewinfo = input.config.previewinfo || [];
-    console.log(previewinfo)
     useEffect(() => {
-        console.log("ðŸš€ Checking validation...");
 
         let allValid = true;
 
@@ -34,8 +32,7 @@ const PreviewInfo: React.FC<PreviewContentProps> = ({ input, content, onClose, d
             let sectionData = [];
             try {
                 sectionData = section.data ? JSON.parse(section.data) : [];
-            } catch (error) {
-                console.error("âŒ Invalid JSON format in previewinfo:", error);
+            } catch {
                 sectionData = [];
             }
 
@@ -48,7 +45,6 @@ const PreviewInfo: React.FC<PreviewContentProps> = ({ input, content, onClose, d
                         const isRequired = row.required;
                         const hasError = isRequired && (value === undefined || value === null || value === '');
 
-                        console.log(`ðŸ§ Row ${rowIndex} | Field: ${row.field} | Value: ${value} | Required: ${isRequired} | hasError: ${hasError}`);
 
                         if (hasError) {
                             allValid = false;
@@ -61,7 +57,6 @@ const PreviewInfo: React.FC<PreviewContentProps> = ({ input, content, onClose, d
                     const isRequired = row.required;
                     const hasError = isRequired && !value;
 
-                    console.log(`ðŸ§ Field: ${row.field} | Value: ${value} | Required: ${isRequired} | hasError: ${hasError}`);
 
                     if (hasError) {
                         allValid = false;
@@ -70,14 +65,12 @@ const PreviewInfo: React.FC<PreviewContentProps> = ({ input, content, onClose, d
             }
         });
 
-        console.log("âœ… Final validation state:", allValid);
         setIsValid(allValid);
     }, [content]);
 
 
     const handleConfirm = async () => {
         if (!isValid) {
-            console.warn("âš ï¸ Please fill all required fields before confirming.");
             return;
         }
 
@@ -114,7 +107,6 @@ const PreviewInfo: React.FC<PreviewContentProps> = ({ input, content, onClose, d
             }
         }
 
-        console.log("âœ… Submitting data to server:", content);
         // Call API to submit content
     };
 
@@ -172,8 +164,7 @@ const PreviewInfo: React.FC<PreviewContentProps> = ({ input, content, onClose, d
 
                             try {
                                 sectionData = section.data ? JSON.parse(section.data) : [];
-                            } catch (error) {
-                                console.error("âŒ Invalid JSON format in previewinfo:", error);
+                            } catch {
                                 sectionData = [];
                             }
 

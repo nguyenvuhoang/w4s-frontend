@@ -32,9 +32,16 @@ export function useChangePassword({ dictionary, session, loginname = '' }: UseCh
 
   const handleUserLogout = async () => {
     try {
+      // Invalidate the session on the backend BEFORE clearing the Next.js session below. The
+      // real backend token never reaches the browser (see src/auth.ts) — /api/logout resolves
+      // it itself, server-side, from the session cookie.
+      await fetch('/api/logout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason: 'manual' })
+      })
+    } catch {} finally {
       await signOut({ callbackUrl: process.env.NEXT_PUBLIC_APP_URL })
-    } catch (error) {
-      console.error(error)
     }
   }
 
@@ -51,7 +58,7 @@ export function useChangePassword({ dictionary, session, loginname = '' }: UseCh
     try {
       const userName = loginname || ''
       const apiChangePassword = await changePassword(
-        session?.user?.token || '',
+        '',
         userName,
         data.oldPassword,
         data.newPassword
@@ -68,11 +75,9 @@ export function useChangePassword({ dictionary, session, loginname = '' }: UseCh
         }
 
       } else {
-        console.error(`Error changing password: ${apiChangePassword.payload.error?.[0]?.info || 'Unknown error'}`)
       }
 
     } catch (error) {
-      console.error('Error changing password:', error)
       const errorMessage = (error instanceof Error) ? error.message : 'Error changing password'
       SwalAlert('error', errorMessage, 'center')
     }

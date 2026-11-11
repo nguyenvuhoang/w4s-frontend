@@ -52,8 +52,7 @@ export const useUpdateBankAccountHandler = ({
 
             onAfterSync?.(accounts);
             SwalAlert('success', dictionary['account'].syncsuccess, 'center', false, false, false);
-        } catch (error) {
-            console.error('Error syncing:', error);
+        } catch {
             SwalAlert('error', dictionary['account'].syncfailed, 'center');
         } finally {
             setLoading(false);

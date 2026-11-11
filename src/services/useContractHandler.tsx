@@ -1,4 +1,4 @@
-import { Locale } from '@/configs/i18n'
+import { i18n, Locale } from '@/configs/i18n'
 import { workflowService, codeService } from '@/servers/system-service'
 import { ContractType } from '@shared/types/bankType'
 import { PageData } from '@shared/types/systemTypes'
@@ -24,7 +24,7 @@ export const useContractHandler = (
     locale: Locale
 ) => {
     const [contracts, setContracts] = useState<PageData<ContractType>>(contractdata)
-    const [page, setPage] = useState<number>(Math.max((contractdata?.page_index ?? 1), 0))
+    const [page, setPage] = useState<number>(Math.max((contractdata?.page_index ?? 0), 0))
     const [jumpPage, setJumpPage] = useState<number>(contractdata.page_index || 1)
     const [rowsPerPage, setRowsPerPage] = useState<number>(contractdata.page_size || 10)
     const [totalCount, setTotalCount] = useState<number>(contractdata.total_count || 0)
@@ -84,21 +84,13 @@ export const useContractHandler = (
                 !isValidResponse(contractdataApi) ||
                 (contractdataApi.payload.dataresponse.errors && contractdataApi.payload.dataresponse.errors.length > 0)
             ) {
-                console.log(
-                    'ExecutionID:',
-                    contractdataApi.payload.dataresponse.errors[0].execute_id +
-                    ' - ' +
-                    contractdataApi.payload.dataresponse.errors[0].info
-                )
                 return
             }
 
             const datacontract = contractdataApi.payload.dataresponse.data.input as PageData<ContractType>
             setContracts(datacontract)
             setTotalCount(datacontract.total_count || 0)
-        } catch (err) {
-            console.error('Error fetching contract data:', err)
-        } finally {
+        } catch {} finally {
             setLoading(false)
         }
     }
@@ -139,11 +131,10 @@ export const useContractHandler = (
             codename: 'CONTRACTSTATUS',
             codegroup: 'BO',
             sessiontoken: session?.user?.token as string,
-            language: locale || 'en'
+            language: locale || i18n.defaultLocale
         })
 
         if (!isValidResponse(getCdlistApi) || !getCdlistApi.payload.dataresponse || !getCdlistApi.payload.dataresponse) {
-            console.error('Failed to fetch status options:', getCdlistApi)
             return
         }
         const data_query = getCdlistApi.payload.dataresponse.data.input.items || []
@@ -163,11 +154,10 @@ export const useContractHandler = (
             codename: 'CONTRACTTYPE',
             codegroup: 'BO',
             sessiontoken: session?.user?.token as string,
-            language: locale || 'en'
+            language: locale || i18n.defaultLocale
         })
 
         if (!isValidResponse(getCdlistApi) || !getCdlistApi.payload.dataresponse || !getCdlistApi.payload.dataresponse) {
-            console.error('Failed to fetch contract type options:', getCdlistApi)
             return
         }
         const data_query = getCdlistApi.payload.dataresponse.data.input.items || []

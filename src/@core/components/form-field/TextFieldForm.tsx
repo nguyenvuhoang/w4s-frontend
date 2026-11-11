@@ -4,6 +4,7 @@ import {
   TextField
 } from '@mui/material';
 import { ReactNode } from 'react';
+import type { InputBaseComponentProps } from '@mui/material/InputBase';
 import { getInputSlotProps } from './library';
 
 interface TextFieldFormProps {
@@ -16,6 +17,13 @@ interface TextFieldFormProps {
   label?: string;
   size?: 'small' | 'medium' | undefined;
   disabled?: boolean;
+  required?: boolean;
+  fullWidth?: boolean;
+  type?: string;
+  multiline?: boolean;
+  rows?: number;
+  minRows?: number;
+  inputProps?: InputBaseComponentProps;
   onBlur?: (value: string) => void;
   onChange?: (value: string) => void;
 }
@@ -30,6 +38,13 @@ const TextFieldForm = ({
   label,
   size = 'small',
   disabled = false,
+  required = false,
+  fullWidth = true,
+  type,
+  multiline = false,
+  rows,
+  minRows,
+  inputProps,
   onBlur,
   onChange
 }: TextFieldFormProps) => {
@@ -50,6 +65,13 @@ const TextFieldForm = ({
       variant="outlined"
       error={error}
       label={label}
+      required={required}
+      fullWidth={fullWidth}
+      type={type}
+      multiline={multiline}
+      rows={rows}
+      minRows={minRows}
+      inputProps={inputProps}
       slotProps={{
         input: getInputSlotProps({ startAdornment, endAdornment, isLoading }),
         inputLabel: {

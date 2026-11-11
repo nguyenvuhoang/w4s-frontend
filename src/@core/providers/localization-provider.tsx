@@ -1,6 +1,7 @@
 'use client'
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import 'dayjs/locale/vi';
 import dynamic from 'next/dynamic';
 import React from 'react';
 
@@ -16,7 +17,7 @@ type Props = {
 
 const LocalizationProviders = ({ children }: Props) => {
     return (
-        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en">
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="vi">
             {children}
         </LocalizationProvider>
     )

@@ -1,5 +1,6 @@
 'use client'
 
+import PaginationPage from '@/@core/components/jTable/pagination';
 import SnackbarComponent from '@/@core/components/layouts/shared/Snackbar';
 import { useUserAssignment } from '@/services/useUserAssignment';
 import { UserAccount } from '@shared/types/bankType';
@@ -46,20 +47,35 @@ const UserAssignment = ({ dictionary, role, userdata, session }: Props) => {
 
     const { settings } = useSettings();
 
+    // Checkbox "Chọn tất cả" ở header: dùng đúng size/hộp mặc định như checkbox từng dòng bên dưới,
+    // chỉ đổi tông sang trắng để nổi trên nền header #225087. Không override padding/border/border-radius.
+    const headerSelectAllSx = {
+        color: '#fff',
+        '&.Mui-checked': { color: '#fff' },
+        '&.MuiCheckbox-indeterminate': { color: '#fff' },
+        '&.Mui-disabled': { color: 'rgba(255,255,255,0.5)' },
+    };
+
     const {
-        loadingUsers,
+        loadingUsers, loadingAssignedUsers,
         selectedLeft, selectedRight, handleLeftSelect, handleRightSelect,
+        leftSelectAllChecked, leftSelectAllIndeterminate, leftSelectAllLoading, handleLeftSelectAll,
+        rightSelectAllChecked, rightSelectAllIndeterminate, rightSelectAllLoading, handleRightSelectAll,
         filterUserName, setFilterUserName,
         filterFullname, setFilterFullname,
         filterAssignedUserName, setFilterAssignedUserName,
         filterAssignedFullname, setFilterAssignedFullname,
         filteredUsers, filteredAssignedUsers,
-        userGroups, selectedUserGroup, setSelectedUserGroup,
+        userGroups, assignableRoles, selectedUserGroup, setSelectedUserGroup,
         selectedAssignedRoleId, setSelectedAssignedRoleId,
         handleAssignOne, handleAssignMany,
         handleUnassignOne, handleUnassignMany,
         isAssigning,
         toastOpen, toastMessage, toastSeverity, handleCloseToast,
+        currentPageLeft, pageSizeLeft, totalCountLeft, jumpPageLeft,
+        currentPageRight, pageSizeRight, totalCountRight, jumpPageRight,
+        handlePageLeftChange, handlePageSizeLeftChange, handleJumpPageLeft,
+        handlePageRightChange, handlePageSizeRightChange, handleJumpPageRight,
     } = useUserAssignment({ dictionary, role, userdata, session });
 
     return (
@@ -137,7 +153,17 @@ const UserAssignment = ({ dictionary, role, userdata, session }: Props) => {
                                             {dictionary['common'].nodot}
                                         </Typography>
                                     </TableCell>
-                                    <TableCell sx={{ borderRight: '1px solid #ddd', background: '#225087' }} />
+                                    <TableCell sx={{ borderRight: '1px solid #ddd', background: '#225087' }}>
+                                        <Checkbox
+                                            checked={leftSelectAllChecked}
+                                            indeterminate={leftSelectAllIndeterminate}
+                                            disabled={leftSelectAllLoading || loadingUsers}
+                                            onChange={handleLeftSelectAll}
+                                            title={dictionary['common'].selectall || 'Select all'}
+                                            slotProps={{ input: { 'aria-label': dictionary['common'].selectall || 'Select all' } }}
+                                            sx={headerSelectAllSx}
+                                        />
+                                    </TableCell>
 
                                     <TableCell sx={{ borderRight: '1px solid #ddd', verticalAlign: 'top', py: 1.5, background: '#225087' }} >
                                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
@@ -219,9 +245,14 @@ const UserAssignment = ({ dictionary, role, userdata, session }: Props) => {
                                             <Typography variant="body2" color="text.secondary">Loading users...</Typography>
                                         </TableCell>
                                     </TableRow>
+                                ) : filteredUsers.length === 0 ? (
+                                    <TableRow>
+                                        <TableCell colSpan={4} align="center">
+                                            <Typography variant="body2" color="text.secondary">{dictionary['common'].nodata}</Typography>
+                                        </TableCell>
+                                    </TableRow>
                                 ) : (
                                     filteredUsers?.map((user, index) => {
-                                        console.log(user);
                                         return (
                                             <TableRow
                                                 key={user.id}
@@ -243,7 +274,7 @@ const UserAssignment = ({ dictionary, role, userdata, session }: Props) => {
                                                 >
                                                     <Checkbox
                                                         checked={selectedLeft.includes(user.id)}
-                                                        onChange={() => handleLeftSelect(user.id)}
+                                                        onChange={() => handleLeftSelect(user)}
                                                         sx={
                                                             {
                                                                 color: '#225087',
@@ -269,6 +300,21 @@ const UserAssignment = ({ dictionary, role, userdata, session }: Props) => {
                             </TableBody>
                         </Table>
                     </TableContainer>
+                    {totalCountLeft > 0 && (
+                        <Box mt={2} sx={{ '& .MuiPaginationItem-root.Mui-selected': { backgroundColor: '#225087 !important' } }}>
+                            <PaginationPage
+                                page={currentPageLeft}
+                                pageSize={pageSizeLeft}
+                                totalResults={totalCountLeft}
+                                jumpPage={jumpPageLeft}
+                                handlePageChange={handlePageLeftChange}
+                                handlePageSizeChange={handlePageSizeLeftChange}
+                                handleJumpPage={handleJumpPageLeft}
+                                dictionary={dictionary}
+                                pageSizeOptions={[10, 20, 50]}
+                            />
+                        </Box>
+                    )}
                 </Grid>
 
                 {/* NÃºt di chuyá»ƒn giá»¯a hai báº£ng */}
@@ -344,7 +390,7 @@ const UserAssignment = ({ dictionary, role, userdata, session }: Props) => {
                                     },
                                 }}
                             >
-                                {role.items.map((role, index) => (
+                                {assignableRoles.map((role, index) => (
                                     <MenuItem key={index} value={role.roleid}>
                                         {role.rolename}
                                     </MenuItem>
@@ -382,7 +428,17 @@ const UserAssignment = ({ dictionary, role, userdata, session }: Props) => {
                                     <TableCell sx={{ fontWeight: 'bold', color: 'white', background: '#225087', borderRight: '1px solid #ddd' }}>
                                         {dictionary['common'].nodot}
                                     </TableCell>
-                                    <TableCell sx={{ background: '#225087', borderRight: '1px solid #ddd' }} />
+                                    <TableCell sx={{ background: '#225087', borderRight: '1px solid #ddd' }}>
+                                        <Checkbox
+                                            checked={rightSelectAllChecked}
+                                            indeterminate={rightSelectAllIndeterminate}
+                                            disabled={rightSelectAllLoading || loadingAssignedUsers || selectedAssignedRoleId === ''}
+                                            onChange={handleRightSelectAll}
+                                            title={dictionary['common'].selectall || 'Select all'}
+                                            slotProps={{ input: { 'aria-label': dictionary['common'].selectall || 'Select all' } }}
+                                            sx={headerSelectAllSx}
+                                        />
+                                    </TableCell>
                                     <TableCell sx={{ background: '#225087', borderRight: '1px solid #ddd', verticalAlign: 'top', py: 1.5 }}>
                                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                                             <Typography variant="caption" fontWeight="bold" color="white" sx={{ fontFamily: settings.fontFamily }}>
@@ -456,37 +512,66 @@ const UserAssignment = ({ dictionary, role, userdata, session }: Props) => {
 
                             </TableHead>
                             <TableBody>
-                                {filteredAssignedUsers?.map((user, index) => (
-                                    <TableRow
-                                        key={user.id}
-                                        sx={{
-                                            cursor: 'pointer',
-                                            backgroundColor: selectedRight.includes(user.id) ? '#e0e0e0' : 'white',
-                                            '& td': {
-                                                borderBottom: '1px solid #e0e0e0',
-                                            },
-                                        }}
-                                    >
-                                        <TableCell
-                                            sx={{ borderRight: '1px solid #ddd', color: '#225087', fontFamily: settings.fontFamily }}
-                                        >
-                                            {index + 1}
+                                {loadingAssignedUsers ? (
+                                    <TableRow>
+                                        <TableCell colSpan={4} align="center">
+                                            <Typography variant="body2" color="text.secondary">Loading users...</Typography>
                                         </TableCell>
-                                        <TableCell
-                                            sx={{ borderRight: '1px solid #ddd', color: '#225087', fontFamily: settings.fontFamily }}
-                                        >
-                                            <Checkbox
-                                                checked={selectedRight.includes(user.id)}
-                                                onChange={() => handleRightSelect(user.id)}
-                                            />
-                                        </TableCell>
-                                        <TableCell sx={{ borderRight: '1px solid #ddd', color: '#225087', fontFamily: settings.fontFamily }}>{user.username}</TableCell>
-                                        <TableCell sx={{ borderRight: '1px solid #ddd', color: '#225087', fontFamily: settings.fontFamily }}>{user.fullname}</TableCell>
                                     </TableRow>
-                                ))}
+                                ) : filteredAssignedUsers.length === 0 ? (
+                                    <TableRow>
+                                        <TableCell colSpan={4} align="center">
+                                            <Typography variant="body2" color="text.secondary">{dictionary['common'].nodata}</Typography>
+                                        </TableCell>
+                                    </TableRow>
+                                ) : (
+                                    filteredAssignedUsers.map((user, index) => (
+                                        <TableRow
+                                            key={user.id}
+                                            sx={{
+                                                cursor: 'pointer',
+                                                backgroundColor: selectedRight.includes(user.id) ? '#e0e0e0' : 'white',
+                                                '& td': {
+                                                    borderBottom: '1px solid #e0e0e0',
+                                                },
+                                            }}
+                                        >
+                                            <TableCell
+                                                sx={{ borderRight: '1px solid #ddd', color: '#225087', fontFamily: settings.fontFamily }}
+                                            >
+                                                {index + 1}
+                                            </TableCell>
+                                            <TableCell
+                                                sx={{ borderRight: '1px solid #ddd', color: '#225087', fontFamily: settings.fontFamily }}
+                                            >
+                                                <Checkbox
+                                                    checked={selectedRight.includes(user.id)}
+                                                    onChange={() => handleRightSelect(user)}
+                                                />
+                                            </TableCell>
+                                            <TableCell sx={{ borderRight: '1px solid #ddd', color: '#225087', fontFamily: settings.fontFamily }}>{user.username}</TableCell>
+                                            <TableCell sx={{ borderRight: '1px solid #ddd', color: '#225087', fontFamily: settings.fontFamily }}>{user.fullname}</TableCell>
+                                        </TableRow>
+                                    ))
+                                )}
                             </TableBody>
                         </Table>
                     </TableContainer>
+                    {totalCountRight > 0 && (
+                        <Box mt={2} sx={{ '& .MuiPaginationItem-root.Mui-selected': { backgroundColor: '#225087 !important' } }}>
+                            <PaginationPage
+                                page={currentPageRight}
+                                pageSize={pageSizeRight}
+                                totalResults={totalCountRight}
+                                jumpPage={jumpPageRight}
+                                handlePageChange={handlePageRightChange}
+                                handlePageSizeChange={handlePageSizeRightChange}
+                                handleJumpPage={handleJumpPageRight}
+                                dictionary={dictionary}
+                                pageSizeOptions={[10, 20, 50]}
+                            />
+                        </Box>
+                    )}
                 </Grid>
             </Grid>
             <SnackbarComponent handleCloseToast={handleCloseToast} toastMessage={toastMessage} toastOpen={toastOpen} toastSeverity={toastSeverity} />

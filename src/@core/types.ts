@@ -18,6 +18,9 @@ export type LayoutComponentPosition = 'fixed' | 'static'
 
 export type ErrorType = {
     message: string[]
+    error_code?: string | null
+    execution_id?: string | null
+    type_error?: string | null
 }
 const exampleTranslator: any = {};
 const loginSchemaInstance = createLoginSchema(exampleTranslator);

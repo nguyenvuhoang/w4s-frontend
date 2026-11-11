@@ -7,6 +7,8 @@ import { getDictionary } from '@utils/getDictionary'
 import { isValidResponse } from '@utils/isValidResponse'
 import UserDeviceViewContent from '@/views/nolayout/user-device/view'
 import { Suspense } from 'react'
+import { getServerBackendToken } from '@/server/auth/getServerBackendToken'
+import logger from '@lib/logger'
 
 type Params = Promise<{
     locale: Locale
@@ -24,7 +26,7 @@ const UserDeviceViewPage = async ({ params }: { params: Params }) => {
     ]);
 
     const dataviewAPI = await systemServiceApi.viewData({
-        sessiontoken: session?.user?.token as string,
+        sessiontoken: (await getServerBackendToken()) as string,
         learnapi: 'cbs_workflow_execute',
         workflowid: WORKFLOWCODE.WF_BO_EXECUTE_SQL_FROM_CTH,
         commandname: 'viewuserdevice',
@@ -37,7 +39,7 @@ const UserDeviceViewPage = async ({ params }: { params: Params }) => {
         !isValidResponse(dataviewAPI) ||
         (dataviewAPI.payload.dataresponse.errors && dataviewAPI.payload.dataresponse.errors.length > 0)
     ) {
-        console.log(
+        logger.log(
             'ExecutionID:',
             dataviewAPI.payload.dataresponse.errors[0].execute_id +
             ' - ' +

@@ -18,7 +18,8 @@ import {
     Stack,
     Typography
 } from '@mui/material';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
+import { useRouter } from '@shared/hooks/useRouter';
 import React, { useState } from 'react';
 
 import EmailListRow from '@/components/email/EmailListRow';

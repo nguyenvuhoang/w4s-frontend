@@ -59,7 +59,6 @@ const MultiSelectWithDialog = ({ gridProps, ismodify }: Props) => {
     };
 
     const handleAddNewLabel = () => {
-        console.log('Add new label clicked');
     };
 
 

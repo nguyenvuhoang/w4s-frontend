@@ -11,6 +11,7 @@ interface SelectFormFieldProps {
   placeholder?: string;
   size?: 'small' | 'medium';
   disabled?: boolean;
+  required?: boolean;
   startAdornment?: ReactNode;
   endAdornment?: ReactNode;
   isLoading?: boolean;
@@ -28,6 +29,7 @@ const SelectFormField = ({
   placeholder,
   size = 'small',
   disabled = false,
+  required = false,
   startAdornment,
   endAdornment,
   isLoading = false,
@@ -76,6 +78,7 @@ const SelectFormField = ({
       variant="outlined"
       error={error}
       label={label}
+      required={required}
       disabled={disabled}
       size={size}
       slotProps={{
@@ -114,12 +117,42 @@ const SelectFormField = ({
     >
       {(selectType === 'custom' && banklist.length > 0
         ? banklist.map((bank) => (
-          <MenuItem key={bank.bin} value={bank.bin}>
+          <MenuItem
+            key={bank.bin}
+            value={bank.bin}
+            sx={{
+              '&.Mui-selected': {
+                backgroundColor: '#f5f5f5 !important',
+                color: 'inherit',
+              },
+              '&.Mui-selected:hover': {
+                backgroundColor: '#eeeeee !important',
+              },
+              '&:hover': {
+                backgroundColor: '#fafafa',
+              },
+            }}
+          >
             {bank.name}
           </MenuItem>
         ))
         : options.map((option) => (
-          <MenuItem key={option.value} value={option.value}>
+          <MenuItem
+            key={option.value}
+            value={option.value}
+            sx={{
+              '&.Mui-selected': {
+                backgroundColor: '#f5f5f5 !important',
+                color: 'inherit',
+              },
+              '&.Mui-selected:hover': {
+                backgroundColor: '#eeeeee !important',
+              },
+              '&:hover': {
+                backgroundColor: '#fafafa',
+              },
+            }}
+          >
             {option.label}
           </MenuItem>
         ))

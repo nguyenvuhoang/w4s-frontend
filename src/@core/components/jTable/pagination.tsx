@@ -13,7 +13,10 @@ type Props = {
     handlePageSizeChange: (event: SelectChangeEvent<number>, child?: React.ReactNode) => void | Promise<void>
     handleJumpPage: (React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> | undefined)
     dictionary?: Awaited<ReturnType<typeof getDictionary>>;
+    pageSizeOptions?: number[]
 }
+
+const DEFAULT_PAGE_SIZE_OPTIONS = [5, 10, 20, 50]
 
 const PaginationPage = ({
     totalResults,
@@ -23,7 +26,8 @@ const PaginationPage = ({
     handlePageChange,
     handlePageSizeChange,
     handleJumpPage,
-    dictionary
+    dictionary,
+    pageSizeOptions = DEFAULT_PAGE_SIZE_OPTIONS
 }: Props) => {
 
 
@@ -63,10 +67,9 @@ const PaginationPage = ({
                             },
                         }}
                     >
-                        <MenuItem value={5}>5</MenuItem>
-                        <MenuItem value={10}>10</MenuItem>
-                        <MenuItem value={20}>20</MenuItem>
-                        <MenuItem value={50}>50</MenuItem>
+                        {pageSizeOptions.map(option => (
+                            <MenuItem key={option} value={option}>{option}</MenuItem>
+                        ))}
                     </Select>
                 </FormControl>
 

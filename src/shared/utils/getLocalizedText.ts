@@ -1,3 +1,5 @@
+import { i18n } from '@/configs/i18n'
+
 const toObjectIfJson = (v: any): any => {
   if (v == null) return null
   if (typeof v === 'object') return v
@@ -17,7 +19,7 @@ const toObjectIfJson = (v: any): any => {
 export const getLocalizedText = (
     value: any,
     lang: string,
-    fallbacks: string[] = ['en', 'vi', 'lo', 'zh']
+    fallbacks: string[] = [i18n.defaultLocale, 'en', 'lo', 'zh']
 ): string => {
     const obj = toObjectIfJson(value)
     if (!obj || typeof obj !== 'object') return value ?? 'N/A'

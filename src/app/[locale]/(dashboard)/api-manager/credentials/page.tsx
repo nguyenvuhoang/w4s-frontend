@@ -8,6 +8,7 @@ import { OpenAPIType, PageData } from '@/shared/types/systemTypes';
 import { getDictionary } from '@/shared/utils/getDictionary';
 import { isValidResponse } from '@/shared/utils/isValidResponse';
 import { Metadata } from 'next';
+import { getServerBackendToken } from '@/server/auth/getServerBackendToken'
 
 export const metadata: Metadata = generateAuthMetadata('Credentials');
 
@@ -20,7 +21,7 @@ const CredentialsPage = async (props: { params: Promise<{ locale: Locale }> }) =
     ]);
 
     const openAPIdataApi = await workflowService.loadApiKeys({
-        sessiontoken: session?.user?.token as string,
+        sessiontoken: (await getServerBackendToken()) as string,
         language: locale,
         pageindex: 1,
         pagesize: 10,

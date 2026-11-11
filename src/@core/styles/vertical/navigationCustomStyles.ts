@@ -22,9 +22,11 @@ const navigationCustomStyles = (verticalNavOptions: VerticalNavState, theme: The
       paddingBlock: theme.spacing(5),
       paddingInline: theme.spacing(5.5, 4),
       ...(collapsedNotHovered && {
-        paddingInline: theme.spacing(((collapsedWidth as number) - 42) / 8),
+        justifyContent: 'center',
+        paddingBlock: theme.spacing(3),
+        paddingInline: theme.spacing(1),
         '& a': {
-          transform: `translateY(-${22 - ((collapsedWidth as number) - 42) / 2}px)`
+          transform: 'none'
         }
       }),
       '& a': {
@@ -61,7 +63,20 @@ const navigationCustomStyles = (verticalNavOptions: VerticalNavState, theme: The
     },
     [`& .${menuClasses.root}`]: {
       paddingBlock: theme.spacing(1),
-      paddingInline: theme.spacing(3)
+      paddingInline: collapsedNotHovered ? 0 : theme.spacing(3),
+      ...(collapsedNotHovered && {
+        [`& .${menuClasses.button}`]: {
+          justifyContent: 'center',
+          paddingInline: '0 !important'
+        },
+        [`& .${menuClasses.label}, & .${menuClasses.prefix}, & .${menuClasses.suffix}, & .${menuClasses.subMenuExpandIcon}`]:
+          {
+            display: 'none !important'
+          },
+        [`& .${menuClasses.icon}`]: {
+          marginInline: '0 !important'
+        }
+      })
     },
     [`& .${verticalNavClasses.backdrop}`]: {
       backgroundColor: 'var(--backdrop-color)'

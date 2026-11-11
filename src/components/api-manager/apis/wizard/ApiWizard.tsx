@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Box, Stepper, Step, StepLabel, Button, Paper, Typography, TextField, FormControl, InputLabel, Select, MenuItem, Grid, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import PageHeader from '@/components/api-manager/shared/PageHeader';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@shared/hooks/useRouter';
 import { apiClient } from '@/server/api-manager/client';
 import { useDictionary } from '@/lib/i18n';
 import { ApiSpecUploadCard } from '@/components/api-manager/spec/ApiSpecUploadCard';

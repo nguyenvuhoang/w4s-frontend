@@ -28,5 +28,4 @@ export const registerLoginEvents = (connection: HubConnection, opts: LoginHandle
 
 export const sendInitToken = async (connection: HubConnection, token: string) => {
     await connection.invoke('init', token);
-    console.log(`Token ${token} registered successfully`);
 };

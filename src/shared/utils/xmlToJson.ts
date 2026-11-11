@@ -6,8 +6,7 @@ export const xmlToJson = (xmlString: string) => {
         const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
         const json = xmlNodeToJson(xmlDoc.documentElement);
         return json;
-    } catch (error) {
-        console.error('Invalid XML string:', error);
+    } catch {
         return {};
     }
 };

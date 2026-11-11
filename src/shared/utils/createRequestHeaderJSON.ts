@@ -6,9 +6,7 @@ export const createRequestHeaderJSON = (input: any) => {
     let dataDefaultObject = {};
     try {
         dataDefaultObject = JSON.parse(input.config?.data_default || '{}');
-    } catch (error) {
-        console.error('Invalid JSON format in data_default', error);
-    }
+    } catch {}
 
     // Tạo object Request Header
     const requestHeader = {

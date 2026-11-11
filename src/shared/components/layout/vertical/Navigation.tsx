@@ -1,36 +1,29 @@
 'use client'
 
-// React Imports
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
-// Next Imports
-import Link from 'next/link'
+import { RouterLink as Link } from '@menu/components/RouterLink'
 import { useParams } from 'next/navigation'
 
-// MUI Imports
 import ChevronLeftRounded from '@mui/icons-material/ChevronLeftRounded'
 import ChevronRightRounded from '@mui/icons-material/ChevronRightRounded'
 import { alpha, styled, useTheme } from '@mui/material/styles'
 import { Box, IconButton, Tooltip } from '@mui/material'
 
-// Type Imports
 import type { getDictionary } from '@utils/getDictionary'
 import type { Locale } from '@configs/i18n'
 
-// Component Imports
 import Logo from '@components/layout/shared/Logo'
 import VerticalNav, { NavHeader } from '@menu/vertical-menu'
 import VerticalMenu from './VerticalMenu'
-import LanguageDropdown from '@components/layout/shared/LanguageDropdown'
-import LayoutToggle from '@components/layout/shared/LayoutToggle'
-import Logout from '../shared/Logout'
+import SidebarUtilityMenu from './SidebarUtilityMenu'
+import Logout from '@components/layout/shared/Logout'
 
-// Hook Imports
 import { useSettings } from '@core/hooks/useSettings'
 import useVerticalNav from '@menu/hooks/useVerticalNav'
 import useSidebarCollapse from './useSidebarCollapse'
+import { useAppContext } from '@contexts/AppContext'
 
-// Util Imports
 import { getLocalizedUrl } from '@utils/i18n'
 
 import { VerticalSubMenuDataType } from '@shared/types/menuTypes'
@@ -50,48 +43,68 @@ type Props = {
   dictionary: Awaited<ReturnType<typeof getDictionary>>
   menudata: VerticalSubMenuDataType[]
   onMenuItemClick?: (item: VerticalSubMenuDataType) => void
-  activeItem?: VerticalSubMenuDataType | null
+  onMenuItemNavigate?: () => void
 }
 
 const StyledBoxForShadow = styled('div')(({ theme }) => ({
   top: 60,
-  left: -8,
+  left: 0,
   zIndex: 2,
   opacity: 0,
   position: 'absolute',
   pointerEvents: 'none',
-  width: 'calc(100% + 15px)',
+  width: '100%',
   height: theme.mixins.toolbar.minHeight,
   transition: 'opacity .15s ease-in-out',
-  background: `linear-gradient(var(--mui-palette-background-default) ${theme.direction === 'rtl' ? '95%' : '5%'
-    }, rgb(var(--mui-palette-background-defaultChannel) / 0.85) 30%, rgb(var(--mui-palette-background-defaultChannel) / 0.5) 65%, rgb(var(--mui-palette-background-defaultChannel) / 0.3) 75%, transparent)`,
+  background: `linear-gradient(${theme.direction === 'rtl' ? '0deg' : '180deg'},
+  var(--mui-palette-primary-main) 0%,
+  rgb(var(--mui-palette-primary-mainChannel) / 0.92) 30%,
+  rgb(var(--mui-palette-primary-mainChannel) / 0.58) 65%,
+  transparent 100%)`,
   '&.scrolled': {
     opacity: 1
   }
 }))
 
 const Navigation = (props: Props) => {
-  // Props
-  const { dictionary, menudata, onMenuItemClick, activeItem } = props
+  const { dictionary, menudata, onMenuItemClick, onMenuItemNavigate } = props
 
-  // Hooks
   const verticalNavOptions = useVerticalNav()
   const { settings } = useSettings()
   const { collapsed, toggleSidebar } = useSidebarCollapse(settings.layout === 'collapsed')
   const { locale } = useParams()
   const theme = useTheme()
+const { userInfo } = useAppContext()
 
-  // Refs
+  // While the "Cài đặt" fan menu is open, the rest of the sidebar (main menu, logout, collapse
+  // toggle) must stop reacting to click/hover so a mis-click can't land on the menu behind it.
+  const [isUtilityFanOpen, setIsUtilityFanOpen] = useState(false)
+
+const isTruthyFlag = (value: unknown) =>
+  value === true || value === 1 || ['1', 'true', 'yes', 'y', 't'].includes(String(value ?? '').trim().toLowerCase())
+
+const isSuperAdmin = ['is_supper_admin', 'issuperadmin', 'is_super_admin', 'isSuperAdmin'].some(
+  key => isTruthyFlag((userInfo as Record<string, unknown> | null)?.[key])
+)
+
   const shadowRef = useRef(null)
 
-  // Vars
   const { isCollapsed, isHovered, collapseVerticalNav, isBreakpointReached } = verticalNavOptions
   const common = dictionary.common ?? {}
   const collapseLabel = common.collapsemenu ?? common.close ?? ''
   const expandLabel = common.expandmenu ?? common.menu ?? ''
   const toggleLabel = collapsed ? expandLabel : collapseLabel
   const showToggleButton = !isBreakpointReached && (!isCollapsed || isHovered)
+  const showFooterLabels = Boolean(!isCollapsed || isHovered)
 
+  const footerLabels = {
+    utilities: common.sidebarutilities || 'Cài đặt',
+    systemSettings: dictionary['navigation'].system_settings || 'System Settings',
+    clearCache: common.clearcache || common.reloadcache || 'Reload cache',
+    language: common.language || dictionary['navigation'].language || 'Language',
+    layout: common.layout || 'Layout',
+    logout: common.logout || 'Đăng xuất'
+  }
 
   const scrollMenu = (container: any, isPerfectScrollbar: boolean) => {
     container = isBreakpointReached || !isPerfectScrollbar ? container.target : container
@@ -114,43 +127,48 @@ const Navigation = (props: Props) => {
     }
   }, [collapseVerticalNav, isBreakpointReached, isCollapsed])
 
-  const { data: session } = useSession();
+  const { data: session } = useSession()
 
   const handleClearCache = async () => {
-    if (!session?.user?.token) return;
+    if (!session?.user?.token) return
 
     try {
       const res = await learnAPIService.clearCache({
         sessiontoken: session.user.token as string,
         language: locale as string
-      });
+      })
+      const payload = res.payload as any
 
-      if (isValidResponse(res)) {
-        SwalAlert('success', 'Clear cache successful', 'center');
+      const isSuccess = res.status === 200 && (payload?.success === true || isValidResponse(res))
+
+      if (isSuccess) {
+        SwalAlert('success', 'Clear cache successful', 'center')
       } else {
-        const error = res.payload.dataresponse.errors?.[0]?.info || 'Clear cache failed';
-        SwalAlert('error', error, 'center');
+        const error =
+          payload?.data?.message ||
+          payload?.data?.errors?.[0]?.info ||
+          payload?.message ||
+          payload?.dataresponse?.errors?.[0]?.info ||
+          'Clear cache failed'
+        SwalAlert('error', error, 'center')
       }
-    } catch (error) {
-      console.error('Clear cache error:', error);
-      SwalAlert('error', 'An unexpected error occurred', 'center');
+    } catch {
+      SwalAlert('error', 'An unexpected error occurred', 'center')
     }
-  };
+  }
 
   return (
-    // Sidebar Vertical Menu
     <>
       <VerticalNav
         width={SIDEBAR_WIDTH}
         customStyles={navigationCustomStyles(verticalNavOptions, theme)}
         collapsedWidth={SIDEBAR_COLLAPSED_WIDTH}
-        backgroundColor='#225087'
+        backgroundColor='var(--mui-palette-primary-main)'
         transitionDuration={SIDEBAR_TOGGLE_DURATION}
         data-mui-color-scheme='dark'
         style={{ '--menu-inactive-color': 'rgba(255, 255, 255, 0.85)' } as any}
       >
-        <Box className='flex flex-col h-full'>
-          {/* Nav Header including Logo & nav toggle icons  */}
+        <Box className='flex flex-col h-full' sx={{ position: 'relative' }}>
           <NavHeader>
             <Box
               sx={{
@@ -199,42 +217,71 @@ const Navigation = (props: Props) => {
               )}
             </Box>
           </NavHeader>
+
           <StyledBoxForShadow ref={shadowRef} />
+
           <VerticalMenu
             dictionary={dictionary}
             scrollMenu={scrollMenu}
             onMenuItemClick={onMenuItemClick}
+            onMenuItemNavigate={onMenuItemNavigate}
             menudata={menudata}
-            activeItem={activeItem}
           />
+
           <Box
-            className='mt-auto pbs-4 pbe-6 flex flex-col gap-1 text-white'
+            className='mt-auto pbs-6 pbe-6 flex flex-col gap-1 text-white'
             sx={{
               alignItems: isCollapsed && !isHovered ? 'center' : 'flex-start',
-              px: isCollapsed && !isHovered ? 0 : 6,
+              px: isCollapsed && !isHovered ? 0 : 3,
               transition: theme.transitions.create(['padding', 'align-items'], {
                 duration: SIDEBAR_TOGGLE_DURATION
               })
             }}
           >
-            <Link href={getLocalizedUrl('/system-settings', locale as Locale)}>
-              <IconButton size='small' color='inherit' title={dictionary['navigation'].system_settings || 'System Settings'} className='text-white'>
-                <i className='ri-settings-3-line text-[22px] text-white' />
-              </IconButton>
-            </Link>
-            <IconButton size='small' color='inherit' title='Clear Cache' onClick={handleClearCache} className='text-white'>
-              <i className='ri-refresh-line text-[22px] text-white' />
-            </IconButton>
-            <LanguageDropdown />
-            <LayoutToggle />
-            <Logout />
+            <SidebarUtilityMenu
+              isSuperAdmin={isSuperAdmin}
+              labels={footerLabels}
+              showLabel={showFooterLabels}
+              onClearCache={handleClearCache}
+              onOpenChange={setIsUtilityFanOpen}
+            />
+
+            {/*
+              Single stable instance across collapse/hover changes — same pattern as
+              LanguageDropdown/LayoutToggle above. Swapping between two differently-wrapped
+              JSX trees here (e.g. a ternary between `<Logout>` and `<Tooltip><Logout/></Tooltip>`)
+              makes React unmount/remount Logout whenever `showFooterLabels` flips, which wipes
+              its in-flight `isLoggingOut` state and made the button look broken mid-click.
+            */}
+            <Logout showLabel={showFooterLabels} fullWidth label={footerLabels.logout} colorVariant='warning' />
           </Box>
+
+          {/*
+            Blocks click/hover on the rest of the sidebar (main menu, logout, collapse toggle)
+            while the "Cài đặt" fan menu is open, so a tap meant for a fan bubble can't fall
+            through onto the menu item behind it. Sits above everything here via z-index, but
+            SidebarUtilityMenu's own trigger button opts back in with a higher z-index + explicit
+            pointerEvents so it (and the fan bubbles, portaled separately at a much higher
+            z-index) stay clickable.
+          */}
+          <Box
+            aria-hidden={isUtilityFanOpen}
+            sx={{
+              position: 'absolute',
+              inset: 0,
+              zIndex: 5,
+              backgroundColor: 'rgba(0, 0, 0, 0.12)',
+              opacity: isUtilityFanOpen ? 1 : 0,
+              pointerEvents: isUtilityFanOpen ? 'auto' : 'none',
+              transition: theme.transitions.create('opacity', { duration: 150 })
+            }}
+          />
         </Box>
       </VerticalNav>
-      <div className="sxl:hidden custom-backdrop" style={{ zIndex: 10 } as any}></div>
+
+      <div className='sxl:hidden custom-backdrop' style={{ zIndex: 10 } as any}></div>
     </>
-  );
+  )
 }
 
 export default Navigation
-

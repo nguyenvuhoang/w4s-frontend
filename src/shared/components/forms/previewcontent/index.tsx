@@ -21,11 +21,9 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ content, onClose, dicti
         setActiveTab(newValue);
     };
     const handleJsonChange = (updatedJson: object) => {
-        console.log('Updated JSON:', updatedJson);
     };
 
     const handleXmlChange = (updatedXml: string) => {
-        console.log('Updated XML:', updatedXml);
     };
 
 

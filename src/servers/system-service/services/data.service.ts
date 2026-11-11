@@ -1,4 +1,5 @@
 import { env } from '@/env.mjs';
+import { i18n } from '@/configs/i18n';
 import { BODataResponse, SearchDataRequest, SearchDataResponse, UpdateDataRequest, ViewDataRequest, ViewDataResponse } from "@shared/types/systemTypes";
 import { apiPost, createDefaultBody } from '../../lib/api';
 
@@ -14,7 +15,6 @@ export const dataService = {
     searchData: ({ sessiontoken, workflowid, commandname, searchtext, pageSize, pageIndex, parameters, logtype, language }: SearchDataRequest) => {
         // Validate commandname to prevent empty calls
         if (!commandname || commandname.trim() === '') {
-            console.warn('SearchData called with empty commandname, skipping API call');
             return Promise.resolve({
                 status: 400,
                 payload: {
@@ -35,14 +35,14 @@ export const dataService = {
                 parameters: {
                     searchtext: searchtext,
                     channel: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO',
-                    language: language ?? 'en',
+                    language: language ?? i18n.defaultLocale,
                     ...parameters
                 },
                 ...(logtype && { log_type: logtype })
             }),
             sessiontoken as string,
             {
-                lang: "en",
+                lang: language ?? i18n.defaultLocale,
                 app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
             }
         )
@@ -62,7 +62,7 @@ export const dataService = {
             }),
             sessiontoken as string,
             {
-                lang: "en",
+                lang: i18n.defaultLocale,
                 app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
             }
         ),
@@ -75,7 +75,7 @@ export const dataService = {
             createDefaultBody(workflowid as string, data),
             sessiontoken as string,
             {
-                lang: "en",
+                lang: i18n.defaultLocale,
                 app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
             }
         ),
@@ -87,7 +87,6 @@ export const dataService = {
     viewData: ({ sessiontoken, workflowid, commandname, parameters }: ViewDataRequest) => {
         // Validate commandname to prevent empty calls
         if (!commandname || commandname.trim() === '') {
-            console.warn('âš ï¸ viewData called with empty commandname, skipping API call');
             return Promise.resolve({
                 status: 400,
                 payload: {
@@ -107,7 +106,7 @@ export const dataService = {
                 parameters: parameters
             }),
             sessiontoken as string,
-            { lang: "en", app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'SYS' }
+            { lang: i18n.defaultLocale, app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'SYS' }
         )
     },
 
@@ -118,7 +117,6 @@ export const dataService = {
     advanceSearchData: ({ sessiontoken, workflowid, commandname, advanccesearch, pageSize, pageIndex, language }: SearchDataRequest) => {
         // Validate commandname to prevent empty calls
         if (!commandname || commandname.trim() === '') {
-            console.warn('âš ï¸ advanceSearchData called with empty commandname, skipping API call');
             return Promise.resolve({
                 status: 400,
                 payload: {
@@ -143,7 +141,7 @@ export const dataService = {
             }),
             sessiontoken as string,
             {
-                lang: language ?? "en",
+                lang: language ?? i18n.defaultLocale,
                 app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO'
             }
         )

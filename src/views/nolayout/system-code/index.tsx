@@ -41,7 +41,6 @@ const SystemCodeContent = ({
     const handlePreviewModal = (data: any, previewtype: string, datatype?: string) => {
         try {
             if (data === undefined || data === null) {
-                console.warn('Data is undefined or null');
                 return;
             }
 
@@ -53,9 +52,7 @@ const SystemCodeContent = ({
 
             setModalContent(preview);
             setModalOpen(true);
-        } catch (error) {
-            console.error('Failed to parse data:', error);
-        }
+        } catch {}
     };
     const handleCloseModal = () => {
         setModalOpen(false);

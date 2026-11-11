@@ -110,7 +110,6 @@ const RenderTableForm = ({ input, gridProps, onRowDoubleClick, renderviewdata, i
     };
 
     const handleOptionClick = (action: string) => {
-        console.log(`Selected action: ${action}`, selectedRow);
         if (action === 'modify') {
             onRowDoubleClick(selectedRow, input)
         }

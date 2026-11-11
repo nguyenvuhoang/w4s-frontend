@@ -99,8 +99,7 @@ const ViewImageItem = ({ input, onChangeValue, dictionary, session }: ViewImageI
       setEditing(false);
       setIsUploaded(true);
 
-    } catch (error) {
-      console.error('Upload error:', error);
+    } catch {
       setToastMessage('Unexpected error occurred during upload');
       setToastSeverity('error');
       setToastOpen(true);

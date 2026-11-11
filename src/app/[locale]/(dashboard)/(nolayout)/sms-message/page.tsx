@@ -10,6 +10,7 @@ import SMSHeaderWrapper from '@features/dynamicform/components/layout/sms-header
 import { Suspense } from 'react'
 import { Session } from 'next-auth'
 import dayjs from 'dayjs'
+import { getServerBackendToken } from '@/server/auth/getServerBackendToken'
 
 type Params = Promise<{
     locale: Locale
@@ -29,7 +30,7 @@ const SMSMessageData = async (
     const today = dayjs().format('DD/MM/YYYY')
 
     const dataSearchAPI = await dataService.searchData({
-        sessiontoken: session?.user?.token as string,
+        sessiontoken: (await getServerBackendToken()) as string,
         workflowid: "BO_SEARCH_SMS_MESSAGE",
         commandname: "SimpleSearchSMSSendOut",
         searchtext: "",

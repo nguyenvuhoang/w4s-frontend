@@ -1,4 +1,5 @@
 import { usePathname } from 'next/navigation';
+import { i18n } from '@/configs/i18n';
 
 type Locale = 'en' | 'vi';
 
@@ -63,7 +64,8 @@ export const useDictionary = () => {
     // Ideally retrieve locale from params or context, here mock for simplicity or use pathname hack
     // Assuming /en/... or /vi/...
     const pathname = usePathname();
-    const locale = (pathname?.split('/')[1] as Locale) || 'en';
+    const maybeLocale = pathname?.split('/')[1] as Locale | undefined;
+    const locale = maybeLocale && maybeLocale in dictionary ? maybeLocale : i18n.defaultLocale;
     const dict = dictionary[locale === 'vi' ? 'vi' : 'en'];
 
     const t = (key: keyof typeof dict | string) => {

@@ -2,49 +2,48 @@
 
 // React Imports
 import type { CSSProperties } from 'react'
-import { useEffect, useRef } from 'react'
-
-// Component Imports
-import LogoBank from '@core/svg/Logo'
-
 
 // Hook Imports
-import { useSettings } from '@core/hooks/useSettings'
 import useVerticalNav from '@menu/hooks/useVerticalNav'
+import { useSettings } from '@core/hooks/useSettings'
 
-const Logo = ({ color }: { color?: CSSProperties['color'] }) => {
-  // Refs
-  const logoTextRef = useRef<HTMLSpanElement>(null)
+const DEFAULT_FAVICON = '/images/logobank/FavIcon.svg'
+const DEFAULT_LOGO = '/images/logobank/logo-white.svg'
 
+type LogoProps = {
+  color?: CSSProperties['color']
+  /** 'sidebar' (default): the vertical nav rail — collapsed shows the FavIcon logo slot,
+   * expanded shows the Banner logo slot. 'topMenu': the horizontal layout's top navbar, always
+   * uses the Top Menu logo slot. */
+  variant?: 'sidebar' | 'topMenu'
+}
+
+const Logo = ({ color, variant = 'sidebar' }: LogoProps) => {
   // Hooks
-  const { isHovered } = useVerticalNav()
+  const { isCollapsed, isHovered } = useVerticalNav()
   const { settings } = useSettings()
+  const compact = variant === 'sidebar' && isCollapsed && !isHovered
 
-  // Vars
-  const { layout } = settings
-
-  useEffect(() => {
-    if (layout !== 'collapsed') {
-      return
-    }
-
-    if (logoTextRef && logoTextRef.current) {
-      if (layout === 'collapsed' && !isHovered) {
-        logoTextRef.current?.classList.add('hidden')
-      } else {
-        logoTextRef.current.classList.remove('hidden')
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isHovered, layout])
+  // Custom branding logos (System Settings > Branding > Bộ nhận diện Logo) apply per slot,
+  // falling back to the default IPS assets when a slot isn't configured.
+  const logoSrc = variant === 'topMenu'
+    ? settings.logos?.top_menu || DEFAULT_LOGO
+    : (compact ? settings.logos?.favicon || DEFAULT_FAVICON : settings.logos?.banner || DEFAULT_LOGO)
 
   return (
-    <div className='flex items-center min-bs-[24px]'>
-      {settings.logoUrl ? (
-        <img src={settings.logoUrl} alt="Logo" style={{ height: '40px', width: 'auto' }} />
-      ) : (
-        <LogoBank width="64" height="64" />
-      )}
+    <div className='flex items-center justify-center min-bs-[24px] overflow-hidden'>
+      <img
+        src={logoSrc}
+        alt={settings.brandingName || 'IPS'}
+        style={{
+          color,
+          height: compact ? '64px' : '38px',
+          width: compact ? '104px' : '118px',
+          objectFit: 'contain',
+          objectPosition: compact ? 'left center' : 'center',
+          transform: compact ? 'translateX(21px)' : 'none'
+        }}
+      />
     </div>
   )
 }

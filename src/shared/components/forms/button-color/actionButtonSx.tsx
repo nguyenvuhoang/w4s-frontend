@@ -19,6 +19,20 @@ export const actionButtonSx = {
     }
 }
 
+export const compactActionButtonSx = {
+    ...actionButtonSx,
+    minHeight: 38,
+    paddingInline: '12px',
+    paddingBlock: '8px',
+    fontSize: '0.8125rem',
+    lineHeight: 1.4,
+    whiteSpace: 'nowrap',
+    '& .MuiButton-startIcon': {
+        marginRight: 0.75,
+        '& > *:first-of-type': { fontSize: 16 }
+    }
+}
+
 // 🎨 Màu riêng từng loại
 export const actionButtonColors = {
     primary: {

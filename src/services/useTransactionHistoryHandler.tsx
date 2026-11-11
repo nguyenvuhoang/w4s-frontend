@@ -1,5 +1,5 @@
 // hooks/useContractHandler.ts
-import { Locale } from '@/configs/i18n'
+import { i18n, Locale } from '@/configs/i18n'
 import { codeService, systemServiceApi, workflowService } from '@/servers/system-service'
 import { Transaction } from '@shared/types/bankType'
 import { PageData } from '@shared/types/systemTypes'
@@ -31,7 +31,7 @@ export const useTransactionHistoryHandler = (
     locale: Locale
 ) => {
     const [transactions, setTransactions] = useState<PageData<Transaction>>(transactionhistorydata)
-    const [page, setPage] = useState<number>(Math.max(transactionhistorydata?.page_index ?? 1, 0))
+    const [page, setPage] = useState<number>(Math.max(transactionhistorydata?.page_index ?? 0, 0))
     const [jumpPage, setJumpPage] = useState<number>(transactionhistorydata.page_index || 1)
     const [rowsPerPage, setRowsPerPage] = useState<number>(transactionhistorydata.page_size || 10)
     const [totalCount, setTotalCount] = useState<number>(transactionhistorydata.total_count || 0)
@@ -108,19 +108,13 @@ export const useTransactionHistoryHandler = (
                 !isValidResponse(transactiondataApi) ||
                 (transactiondataApi.payload.dataresponse.errors && transactiondataApi.payload.dataresponse.errors.length > 0)
             ) {
-                console.log(
-                    'ExecutionID:',
-                    transactiondataApi.payload.dataresponse.errors?.[0]?.execute_id + ' - ' + transactiondataApi.payload.dataresponse.errors?.[0]?.info
-                )
                 return
             }
 
             const datatransaction = transactiondataApi.payload.dataresponse.data.input as PageData<Transaction>
             setTransactions(datatransaction)
             setTotalCount(datatransaction.total_count || 0)
-        } catch (err) {
-            console.error('Error fetching transaction data:', err)
-        } finally {
+        } catch {} finally {
             setLoading(false)
         }
     }
@@ -152,7 +146,7 @@ export const useTransactionHistoryHandler = (
             codename: 'TRANSACTIONSTATUS', // changed from CONTRACTSTATUS
             codegroup: 'BO',
             sessiontoken: session?.user?.token as string,
-            language: locale || 'en'
+            language: locale || i18n.defaultLocale
         })
 
         if (!isValidResponse(res) || !res.payload.dataresponse) return
@@ -167,7 +161,7 @@ export const useTransactionHistoryHandler = (
             codename: 'TRANSACTIONTYPE',
             codegroup: 'BO',
             sessiontoken: session?.user?.token as string,
-            language: locale || 'en'
+            language: locale || i18n.defaultLocale
         })
 
         if (!isValidResponse(res) || !res.payload.dataresponse) return

@@ -4,10 +4,21 @@ import { NextResponse } from 'next/server';
 import type { UserTable } from './users';
 import { env } from '@/env.mjs';
 import { WORKFLOWCODE } from '@/data/WorkflowCode';
+import { i18n } from '@/configs/i18n';
+import type { LoginErrorPayload } from '@features/auth/types';
 
 type ResponseUser = Omit<UserTable, 'password'>
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
+const FETCH_TIMEOUT_MS = 30000;
+
+const buildErrorPayload = (
+  message: string,
+  error_code: string | null = null,
+  execution_id: string | null = null,
+  type_error: string = 'danger'
+): LoginErrorPayload => ({ message, error_code, execution_id, type_error })
 
 export async function POST(req: Request) {
   // Vars
@@ -17,7 +28,7 @@ export async function POST(req: Request) {
 
   const headerrequest = {
     'content-type': 'application/json',
-    'lang': req.headers.get('lang') || 'en',
+    'lang': req.headers.get('lang') || i18n.defaultLocale,
     'app': req.headers.get('app') || 'SYS',
     'my_device': JSON.parse(my_device),
     'uid': ""
@@ -31,76 +42,71 @@ export async function POST(req: Request) {
     },
   })
 
-  const requestDetails = {
-    method: 'POST',
-    headers: headerrequest,
-    body: bodyrequest,
-  };
-
   const endpoint = `${env.NEXT_PUBLIC_REST_API_ENDPOINT}`
-  const requestLogin = await fetch(endpoint, requestDetails);
-  let response: null | ResponseUser = null
-  if (requestLogin.status === 200) {
-    const dataresponse = await requestLogin.json()
-    if (dataresponse.errors.length === 0) {
-      response = dataresponse.data
-      return NextResponse.json(response)
-    } else {
-      const errormsg = dataresponse.errors[0].info
-      const keyerror = dataresponse.errors[0].key
-      const errorcode = dataresponse.errors[0].code
-      if (keyerror === '500') {
-        return NextResponse.json(
-          {
-            message: "❌ The server is temporarily unavailable. Please try again later!",
-            error: errormsg
-          },
-          {
-            status: 500,
-            statusText: errormsg
-          }
-        );
-      }
 
-      if (errorcode === 'HAVELOGGED') {
-        return NextResponse.json(
-          {
-            message: errormsg,
-            error: errorcode
-          },
-          {
-            status: 299,
-            statusText: 'HAVELOGGED'
-          }
-        );
-      }
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS)
 
-      return NextResponse.json(
-        {
-          message: errormsg,
-          error: errormsg
-        },
-        {
-          status: 401,
-          statusText: errormsg
-        }
-      )
-    }
-
-  } else if (requestLogin.status === 404) {
+  let requestLogin: Response
+  try {
+    requestLogin = await fetch(endpoint, {
+      method: 'POST',
+      headers: headerrequest,
+      body: bodyrequest,
+      signal: controller.signal,
+    });
+  } catch {
+    // Real network failure or timeout — this is the only case allowed to report "server unavailable".
     return NextResponse.json(
-      {
-        message: "The link URI not found!. The server is temporarily down. Please try again later!"
-      },
-      { status: 404 });
+      buildErrorPayload('The server is temporarily unavailable. Please try again later!', 'SERVER_UNAVAILABLE'),
+      { status: 503 }
+    )
+  } finally {
+    clearTimeout(timeoutId)
   }
 
-  else {
+  let dataresponse: any
+  try {
+    dataresponse = await requestLogin.json()
+  } catch {
+    // Backend actually returned non-JSON/invalid content.
     return NextResponse.json(
-      {
-        message: "❌ The server is temporarily unavailable. Please try again later!"
-      },
-      { status: 500 });
+      buildErrorPayload('The server returned an invalid response. Please try again later!', 'INVALID_RESPONSE'),
+      { status: 502 }
+    )
   }
 
+  const errors = Array.isArray(dataresponse?.errors) ? dataresponse.errors : []
+
+  if (requestLogin.ok && errors.length === 0) {
+    const response: ResponseUser = dataresponse.data
+    return NextResponse.json(response)
+  }
+
+  // Business error from the workflow — key === "500" does NOT mean the server is down,
+  // it can still be a legitimate business error (e.g. account.temporarily.locked). Never
+  // overwrite it with a generic "server unavailable" message.
+  const firstError = errors[0] ?? {}
+  const message = String(
+    firstError.info
+    ?? firstError.message
+    ?? dataresponse?.message
+    ?? 'Login failed. Please try again.'
+  )
+  const error_code: string | null = firstError.code ?? null
+  const execution_id: string | null = String(
+    firstError.execute_id
+    ?? firstError.execution_id
+    ?? dataresponse?.execution_id
+    ?? ''
+  ) || null
+  const type_error: string = firstError.type_error ?? 'danger'
+
+  const payload = buildErrorPayload(message, error_code, execution_id, type_error)
+
+  if (error_code === 'HAVELOGGED') {
+    return NextResponse.json(payload, { status: 299 })
+  }
+
+  return NextResponse.json(payload, { status: 401 })
 }

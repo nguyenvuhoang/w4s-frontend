@@ -13,8 +13,7 @@ src/servers/system-service/
     ├── form.service.ts           # Form & system info operations
     ├── code.service.ts           # Code list operations
     ├── data.service.ts           # Search, view & update operations
-    ├── workflow.service.ts       # BO/FO workflow operations
-    └── report.service.ts         # Report operations
+    └── workflow.service.ts       # BO/FO workflow operations
 ```
 
 ## Service Modules
@@ -60,10 +59,9 @@ Quản lý các thao tác workflow BO/FO:
 **Optimizations:**
 - Validation cho `commandname` khi `issearch=true`
 
-### 6. Report Service (`report.service.ts`)
-Quản lý các thao tác liên quan đến báo cáo:
-- `loadReport()` - Tải danh sách báo cáo
-- `loadReportDetail()` - Tải chi tiết báo cáo
+> Ghi chú: Report list (`/report`) hiện dùng `workflowService.runFODynamic()` với workflow chuẩn
+> `WF_BO_SEARCH_REPORT_CONFIG` thông qua `src/features/report/service.ts`, không còn qua
+> `report.service.ts`/`RPT_EXECUTE_SQL` nữa.
 
 ## Usage
 

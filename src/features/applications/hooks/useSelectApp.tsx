@@ -22,10 +22,9 @@ export default function useSelectApp() {
                     window.location.reload()
                 }, 1000)
             }
-        } catch (err) {
+        } catch {
             setLoading(false)
             setSelectedId(null)
-            console.error(err)
         }
     }, [])
 

@@ -8,7 +8,6 @@ export const generateDynamicJson = (
 
     for (const [key, valueConfig] of Object.entries(parametersConfig)) {
         if (!valueConfig) {
-            console.warn(`Value config for key "${key}" is null or undefined.`);
             continue;
         }
 
@@ -21,8 +20,7 @@ export const generateDynamicJson = (
                     `return (${valueConfig})();`
                 );
                 dynamicJson[key] = executeFunction(localValue, uuidv4);
-            } catch (error) {
-                console.error(`Error executing string function for key "${key}":`, error);
+            } catch {
                 dynamicJson[key] = null; // Xử lý lỗi an toàn
             }
         } else if (typeof valueConfig === 'object' && valueConfig.key) {

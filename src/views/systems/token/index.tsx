@@ -87,12 +87,6 @@ const TokenInformation = ({ dictionary, session, locale, tokendata: initialToken
                 !isValidResponse(tokenApi) ||
                 (tokenApi.payload.dataresponse.errors && tokenApi.payload.dataresponse.errors.length > 0)
             ) {
-                console.log(
-                    'ExecutionID:',
-                    tokenApi.payload.dataresponse.errors[0].execute_id +
-                    ' - ' +
-                    tokenApi.payload.dataresponse.errors[0].info
-                );
                 setNewToken({ ...newToken, value: 'Error generating token' });
                 setIsLoading(false);
                 return;
@@ -105,8 +99,7 @@ const TokenInformation = ({ dictionary, session, locale, tokendata: initialToken
                 value: tokenvalue,
             });
             setCountdown(30); // Báº¯t Ä‘áº§u Ä‘áº¿m ngÆ°á»£c khi token há»£p lá»‡
-        } catch (error) {
-            console.error('Error generating token:', error);
+        } catch {
             setNewToken({ ...newToken, value: 'Error generating token' });
         } finally {
             setIsLoading(false);
@@ -134,21 +127,13 @@ const TokenInformation = ({ dictionary, session, locale, tokendata: initialToken
                 !isValidResponse(coregatewayApi) ||
                 (coregatewayApi.payload.dataresponse.errors && coregatewayApi.payload.dataresponse.errors.length > 0)
             ) {
-                console.log(
-                    'ExecutionID:',
-                    coregatewayApi.payload.dataresponse.errors[0].execute_id +
-                    ' - ' +
-                    coregatewayApi.payload.dataresponse.errors[0].info
-                );
                 setIsLoading(false);
                 return;
             }
 
             const newTokendata = coregatewayApi.payload.dataresponse.data.input as PageData<Token>;
             setTokenData(newTokendata);
-        } catch (error) {
-            console.error('Error fetching token data:', error);
-        } finally {
+        } catch {} finally {
             setIsLoading(false);
         }
     };

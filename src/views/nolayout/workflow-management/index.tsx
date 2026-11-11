@@ -107,8 +107,7 @@ const WorkflowManagementContent = ({
         data = res.payload.dataresponse.data.items || [];
       }
       return data;
-    } catch (err) {
-      console.error("Error loadWfStep:", err);
+    } catch {
       return [];
     } finally {
       setLoading(false);
@@ -127,9 +126,7 @@ const WorkflowManagementContent = ({
         language: locale as Locale,
       });
       return res;
-    } catch (err) {
-      console.error("Error updateWorkflow:", err);
-    } finally {
+    } catch {} finally {
       setLoading(false);
     }
   };
@@ -154,9 +151,7 @@ const WorkflowManagementContent = ({
         setSelectedWfDef([]);
         fetchData();
       }
-    } catch (err) {
-      console.error("Error delete WfDef:", err);
-    } finally {
+    } catch {} finally {
       setLoading(false);
     }
   };

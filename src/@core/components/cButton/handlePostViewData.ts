@@ -23,8 +23,7 @@ export const handlePostViewData = async (
         window.open(newPath, "_blank");
 
         return true;
-    } catch (error) {
-        console.error("handlePostViewData error:", error);
+    } catch {
         return false;
     }
 };

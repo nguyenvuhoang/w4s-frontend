@@ -82,8 +82,7 @@ const WorkflowSearchDialog = ({
                         setTotalPages(1);
                     }
                 }
-            } catch (error) {
-                console.error("Error fetching workflows:", error);
+            } catch {
                 if (active) {
                     setWorkflows([]);
                 }

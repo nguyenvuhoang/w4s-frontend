@@ -71,20 +71,12 @@ export const useSMSMessageHandler = (
         const dataSearchAPI = await dataService.searchData(requestBody)
 
         if (!isValidResponse(dataSearchAPI) || dataSearchAPI.payload?.dataresponse?.error?.length > 0) {
-          console.log(
-            'ExecutionID:',
-            dataSearchAPI.payload?.dataresponse?.error?.[0]?.execute_id,
-            '-',
-            dataSearchAPI.payload?.dataresponse?.error?.[0]?.info
-          )
           return
         }
 
         const data = dataSearchAPI.payload.dataresponse.data.input
         setSmsData(data)
-      } catch (error) {
-        console.error('Error executing search API:', error)
-      } finally {
+      } catch {} finally {
         setLoading(false)
       }
     },
@@ -124,7 +116,6 @@ export const useSMSMessageHandler = (
   const handlePreviewModal = (data: any, previewtype: string, datatype?: string) => {
     try {
       if (data === undefined || data === null) {
-        console.warn('Data is undefined or null')
         return
       }
       let previewData: any = null
@@ -134,8 +125,7 @@ export const useSMSMessageHandler = (
       } else if (previewtype === 'JSON') {
         try {
           previewData = typeof data === 'string' ? JSON.parse(data) : data
-        } catch (err) {
-          console.error('Invalid JSON format:', err)
+        } catch {
           return
         }
       } else {
@@ -145,15 +135,12 @@ export const useSMSMessageHandler = (
       const preview = { previewtype, previewdata: previewData, datatype }
       setModalContent(preview)
       setModalOpen(true)
-    } catch (error) {
-      console.error('Failed to parse data:', error)
-    }
+    } catch {}
   }
 
   const handleExport = async (type: 'PDF' | 'EXCEL') => {
     // export theo láº§n search gáº§n nháº¥t (appliedFilters)
     if (!lastSearchRequest) {
-      console.warn('No previous search request to export')
       SwalAlert('Warning', 'No search request to export', 'center')
       return
     }
@@ -161,16 +148,13 @@ export const useSMSMessageHandler = (
     try {
       const response = await dataService.searchData(exportRequest)
       if (!isValidResponse(response) || response.payload.dataresponse.error?.length > 0) {
-        console.warn('Export error:', response.payload.dataresponse.error[0])
         SwalAlert('Warning', 'No data search', 'center')
         return
       }
       const fullData = response.payload.dataresponse.data.input?.items || []
       if (type === 'PDF') exportToPDF(fullData)
       else exportToExcel(fullData)
-    } catch (error) {
-      console.error('Export failed:', error)
-    }
+    } catch {}
   }
 
   const handleFilterChange = (key: keyof typeof filters, value: string) => {

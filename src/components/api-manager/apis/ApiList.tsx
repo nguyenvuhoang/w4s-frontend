@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { Box, Paper, TextField, InputAdornment, Button, MenuItem, IconButton, Menu, Chip } from '@mui/material';
 import { Search as SearchIcon, Add as AddIcon, MoreVert as MoreVertIcon, FilterList as FilterIcon } from '@mui/icons-material';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@shared/hooks/useRouter';
 import { Api } from '@/types/api-manager';
 import DataTable, { Column } from '@/components/api-manager/shared/DataTable';
 import Link from 'next/link';
@@ -74,8 +74,10 @@ export default function ApiList({ initialData }: ApiListProps) {
                     placeholder="Search APIs..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    InputProps={{
-                        startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>,
+                    slotProps={{
+                        input: {
+                            startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>,
+                        },
                     }}
                     sx={{ flexGrow: 1 }}
                 />

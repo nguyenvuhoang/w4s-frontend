@@ -31,6 +31,8 @@ import {
 import { Session } from "next-auth";
 import { useState } from "react";
 
+import { useSearchTableRowConfig } from "@/shared/components/table";
+
 const UserDeviceContent = ({
   session,
   dictionary,
@@ -65,6 +67,13 @@ const UserDeviceContent = ({
 
     window.open(path, "_blank", "noopener,noreferrer");
   };
+
+  const table = useSearchTableRowConfig<UserDeviceType>({
+    rowInteraction: {
+      onOpenDetail: handleRowDoubleClick,
+      isRowInteractive: (tx) => Boolean(tx.id)
+    }
+  });
 
   return (
     <Box className="mt-5 space-y-5 w-full">
@@ -144,9 +153,7 @@ const UserDeviceContent = ({
                 contracts?.items.map((tx) => (
                   <TableRow
                     key={tx.id}
-                    onDoubleClick={() => handleRowDoubleClick(tx)}
-                    sx={{ cursor: "pointer" }}
-                    hover
+                    {...table.getRowProps(tx)}
                   >
                     <TableCell>{tx.user_code}</TableCell>
                     <TableCell>{tx.device_id}</TableCell>

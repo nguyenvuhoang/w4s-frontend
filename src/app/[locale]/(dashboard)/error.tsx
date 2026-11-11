@@ -1,8 +1,13 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Box, Typography, Button, Paper } from '@mui/material';
+import { Box, CircularProgress, Stack, Typography, Button, Paper } from '@mui/material';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+
+import { isSessionInvalidMessage } from '@/shared/utils/isTokenError';
+import { triggerSessionLogoutRedirect } from '@/shared/utils/triggerSessionLogout';
+import { navigationLifecycle } from '@/shared/components/progressbar/navigationLifecycle';
 
 export default function Error({
     error,
@@ -11,9 +16,49 @@ export default function Error({
     error: Error & { digest?: string };
     reset: () => void;
 }) {
+    // A committed route error is a terminal navigation signal, including ordinary Next links.
+    useEffect(() => { navigationLifecycle.dispose(); }, [error]);
+
+    // Any Server Component under this (dashboard) route group that throws an uncaught error
+    // (e.g. staffService/userRoleService's assertWorkflowSuccess on a session-invalid workflow
+    // response) lands here — this is Next.js's route-segment error boundary, a completely
+    // different rendering path from <ErrorPage>/<PageError>, which is why it needs the exact same
+    // session-invalid check as those: without it, a session-expired error just shows a generic
+    // "Try Again" screen and never redirects to /logout (see isTokenError.ts's shared detector).
+    const redirectingToLogout = isSessionInvalidMessage(error.message);
+
+    const router = useRouter();
+
     useEffect(() => {
-        console.error('Error Details:', error);
     }, [error]);
+
+    useEffect(() => {
+        if (!redirectingToLogout) return;
+
+        triggerSessionLogoutRedirect(router.replace);
+    }, [redirectingToLogout, router.replace]);
+
+    if (redirectingToLogout) {
+        return (
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100vh',
+                    backgroundColor: '#f5f5f5',
+                    padding: 2
+                }}
+            >
+                <Stack spacing={2} alignItems="center">
+                    <CircularProgress size={32} />
+                    <Typography variant="body2" color="textSecondary">
+                        Your session has expired. Redirecting to login...
+                    </Typography>
+                </Stack>
+            </Box>
+        );
+    }
 
     return (
         <Box

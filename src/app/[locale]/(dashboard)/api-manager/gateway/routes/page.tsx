@@ -5,6 +5,8 @@ import { ReverseProxyConfig, ReverseProxyResponseData } from '@/types/yarp';
 import { auth } from '@/auth';
 import { learnAPIService } from '@/servers/system-service/services/learnapi.service';
 import { Locale } from '@/configs/i18n';
+import { getServerBackendToken } from '@/server/auth/getServerBackendToken'
+import { toClientSessionToken } from '@utils/safeSessionToken'
 
 export const dynamic = 'force-dynamic';
 
@@ -33,7 +35,7 @@ export default async function GatewaysRoutesPage({ params }: { params: { locale:
     const locale = params.locale as Locale;
 
     const res = await learnAPIService.getReverseProxyConfig({
-        sessiontoken: session?.user?.token as string,
+        sessiontoken: (await getServerBackendToken()) as string,
         language: locale
     });
 
@@ -54,7 +56,7 @@ export default async function GatewaysRoutesPage({ params }: { params: { locale:
             <YarpConfigView
                 config={reverseProxyConfig}
                 locale={locale}
-                sessionToken={session?.user?.token as string}
+                sessionToken={toClientSessionToken(session) ?? ''}
             />
         </Box>
     );

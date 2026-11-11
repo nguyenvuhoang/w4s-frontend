@@ -3,6 +3,8 @@
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Skeleton } from '@mui/material';
 import { ReactNode } from 'react';
 
+import { useSearchTableRowConfig } from '@/shared/components/table';
+
 export type Column<TRow> = {
     key: string;
     header: ReactNode;
@@ -30,6 +32,13 @@ export function DataTable<TRow>({
     empty: ReactNode;
     rowsPerPage: number;
 }) {
+    const table = useSearchTableRowConfig<TRow>({
+        rowInteraction: {
+            onOpenDetail: onRowDoubleClick,
+            isRowInteractive: () => Boolean(onRowDoubleClick)
+        }
+    });
+
     return (
         <TableContainer component={Paper} sx={{ borderRadius: 2, boxShadow: 3 }}>
             <Table
@@ -70,8 +79,7 @@ export function DataTable<TRow>({
                             : rows.map((row, i) => (
                                 <TableRow
                                     key={rowKey(row, i)}
-                                    hover
-                                    onDoubleClick={onRowDoubleClick ? () => onRowDoubleClick(row) : undefined}
+                                    {...table.getRowProps(row)}
                                 >
                                     {selectionCell && <TableCell sx={{ width: 48, px: 2 }}>{selectionCell(row, i)}</TableCell>}
                                     {columns.map(col => (

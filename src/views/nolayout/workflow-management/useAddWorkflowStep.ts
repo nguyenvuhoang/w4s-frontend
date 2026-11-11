@@ -71,8 +71,7 @@ export const useAddWorkflowStep = ({ session, locale }: UseAddWorkflowStepProps)
             } else {
                 setExistingSteps([]);
             }
-        } catch (error) {
-            console.error("Error fetching workflow steps:", error);
+        } catch {
             setExistingSteps([]);
         }
     };
@@ -169,8 +168,7 @@ export const useAddWorkflowStep = ({ session, locale }: UseAddWorkflowStepProps)
                 const executionId = res?.payload?.dataresponse?.executionid || "Unknown execution id";
                 SwalAlert("error", `Add failed!\n${errorInfo}\nExecution ID: ${executionId}`);
             }
-        } catch (err) {
-            console.error("Error saving WorkflowStep:", err);
+        } catch {
             SwalAlert("error", "Add failed!");
         } finally {
             setLoading(false);

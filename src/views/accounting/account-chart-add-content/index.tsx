@@ -116,8 +116,7 @@ const AccountChartAddContent = ({
             const jsonError = JSON.parse(jsonMatch[0]);
             errorMsg = jsonError.error_message || errorMsg;
           }
-        } catch (_) {
-        }
+        } catch {}
 
         SwalAlert('error', errorMsg, 'center');
         return;
@@ -132,7 +131,6 @@ const AccountChartAddContent = ({
 
   const onSearch = () => {
     // optional: route to list/search page
-    console.log('search clicked');
   };
 
   const accountLevel = useWatch({ control, name: 'account_level' });

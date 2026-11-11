@@ -17,6 +17,8 @@ import {
     Stack,
     Typography
 } from '@mui/material';
+import { getServerBackendToken } from '@/server/auth/getServerBackendToken'
+import logger from '@lib/logger'
 
 export default async function EmailNotificationPage({
     params,
@@ -29,8 +31,8 @@ export default async function EmailNotificationPage({
     const dictionary = await getDictionary(locale);
     const session = await auth();
     const sParams = await searchParams;
-    const page = sParams.page ? parseInt(sParams.page) : 1;
-    const size = sParams.size ? parseInt(sParams.size) : 20;
+    const page = sParams.page ? parseInt(sParams.page) : 0;
+    const size = sParams.size ? parseInt(sParams.size) : 10;
 
     let initialEmails: any[] = [];
     let totalCount = 0;
@@ -39,7 +41,7 @@ export default async function EmailNotificationPage({
     if (session?.user?.token) {
         try {
             const response = await dataService.searchSystemData({
-                sessiontoken: session.user.token,
+                sessiontoken: await getServerBackendToken(),
                 workflowid: WORKFLOWCODE.WF_BO_MAIL_SEND_OUT,
                 pageIndex: page,
                 pageSize: size,
@@ -57,7 +59,7 @@ export default async function EmailNotificationPage({
                     dataResponse.input?.total_pages ?? 1;
             }
         } catch (error) {
-            console.error('[EMAIL_PAGE] Failed to fetch sent emails:', error);
+            logger.error('[EMAIL_PAGE] Failed to fetch sent emails:', error);
         }
     }
 

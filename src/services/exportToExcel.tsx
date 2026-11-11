@@ -13,7 +13,7 @@ export const exportToExcel = async (data: SMSContentType[]) => {
     const now = dayjs().format('DD/MM/YYYY HH:mm:ss')
 
     // ðŸŸ¢ 1. Load logo
-    const logoBase64 = await getBase64FromPublic('/images/logobank/psvblogo.png')
+    const logoBase64 = await getBase64FromPublic('/images/logobank/psvblogo.svg')
     const imageId = workbook.addImage({
         base64: logoBase64,
         extension: 'png'

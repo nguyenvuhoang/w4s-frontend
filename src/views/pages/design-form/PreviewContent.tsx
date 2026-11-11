@@ -15,7 +15,6 @@ type PreviewContentProps = {
 const PreviewContent: React.FC<PreviewContentProps> = ({ content, onClose, dictionary }) => {
 
     const handleJsonChange = (updatedJson: object) => {
-        console.log('Updated JSON:', updatedJson);
     };
     const isClient = () => typeof window !== 'undefined'
     return (

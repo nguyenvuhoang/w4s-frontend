@@ -136,7 +136,7 @@ const Info = ({ data }: Props) => {
                                                 <pre style={{ fontSize: '12px', whiteSpace: 'pre-wrap' }}>
                                                     <JsonEditorComponent
                                                         initialJson={rule.config}
-                                                        onChange={(updatedJson: object) => console.log(updatedJson)}
+                                                        onChange={(updatedJson: object) => {}}
                                                     />
                                                 </pre>
                                             </Box>

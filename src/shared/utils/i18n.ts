@@ -21,11 +21,10 @@ export const localeMessages: any = {
 // Get the localized url
 export const getLocalizedUrl = (url: string, languageCode?: string | null): string => {
   if (!url) {
-    console.warn('getLocalizedUrl called with invalid url:', { url });
     return '/'
   }
 
-  const normalizedLanguageCode = languageCode?.trim() || 'en'
+  const normalizedLanguageCode = languageCode?.trim() || i18n.defaultLocale
 
   return isUrlMissingLocale(url) ? `/${normalizedLanguageCode}${ensurePrefix(url, '/')}` : url
 }

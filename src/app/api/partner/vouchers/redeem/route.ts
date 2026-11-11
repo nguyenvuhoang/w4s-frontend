@@ -1,0 +1,3 @@
+import { NextResponse } from 'next/server'
+import { partnerDemoMode, runPartnerWorkflow } from '@/features/partner-portal/server/partnerWorkflow'
+export async function POST(request: Request) { const { token } = await request.json(); if (!token) return NextResponse.json({ message: 'Thiếu token voucher.' }, { status: 400 }); if (partnerDemoMode) return NextResponse.json({ success: true, data: { transactionReference: `DEMO-${Date.now()}` } }); const result = await runPartnerWorkflow(process.env.IPS_PARTNER_REDEEM_WORKFLOW, { token, idempotency_key: request.headers.get('idempotency-key') }); return NextResponse.json(result, { status: result.success ? 200 : 409 }) }

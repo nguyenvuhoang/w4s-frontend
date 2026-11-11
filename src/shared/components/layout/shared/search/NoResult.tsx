@@ -1,5 +1,5 @@
 // Next Imports
-import Link from 'next/link'
+import { RouterLink as Link } from '@menu/components/RouterLink'
 import { useParams } from 'next/navigation'
 
 // Third-party Imports

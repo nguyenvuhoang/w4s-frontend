@@ -31,7 +31,8 @@ import {
 } from '@mui/material';
 import { SxProps } from '@mui/material/styles';
 import { Session } from 'next-auth';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { useRouter } from '@shared/hooks/useRouter';
 import React, { useCallback, useDeferredValue, useMemo, useState } from 'react';
 
 // ðŸ‘‡ náº¿u path khÃ¡c, sá»­a láº¡i cho Ä‘Ãºng dá»± Ã¡n cá»§a báº¡n

@@ -1,12 +1,15 @@
 import { auth } from '@/auth'
-import PageError from '@components/PageError'
 import Spinner from '@components/spinners'
 import { Locale } from '@/configs/i18n'
-import { reportService } from '@/servers/system-service'
+import { reportService } from '@/features/report/service'
+import { emptyReportFilter } from '@/features/report/components/reportHelpers'
+import type { ReportWorkflowError } from '@/features/report/types'
+import ReportManagementPage from '@/features/report/ReportManagementPage'
 import { getDictionary } from '@utils/getDictionary'
-import { isValidResponse } from '@utils/isValidResponse'
-import ReportPageContent from '@/views/reports'
+import { normalizeWorkflowErrorDetail } from '@/shared/utils/workflowError'
 import { Suspense } from 'react'
+import { getServerBackendToken } from '@/server/auth/getServerBackendToken'
+import logger from '@lib/logger'
 
 type Params = Promise<{
     locale: Locale
@@ -20,37 +23,35 @@ const ReportPage = async ({ params }: { params: Params }) => {
         auth()
     ]);
 
+    let initialData = reportService.getDefaultSearchResponse(emptyReportFilter)
+    let initialError: ReportWorkflowError | null = null
 
-    const reportApi = await reportService.loadReport({
-        sessiontoken: session?.user?.token as string,
-        pageindex: 1,
-        pagesize: 10
-    })
-
-    if (
-        !isValidResponse(reportApi) ||
-        (reportApi.payload.dataresponse.errors && reportApi.payload.dataresponse.errors.length > 0)
-    ) {
-        console.log(
-            'ExecutionID:',
-            reportApi.payload.dataresponse.errors[0].execute_id +
-            ' - ' +
-            reportApi.payload.dataresponse.errors[0].info
-        );
-        const executionId = reportApi.payload.dataresponse.errors[0].execute_id;
-        const errorDetails = reportApi.payload.dataresponse.errors[0].info;
-        return <PageError executionId={executionId} errorDetails={errorDetails} />;
+    try {
+        initialData = await reportService.searchReports({
+            sessiontoken: (await getServerBackendToken()) ?? undefined,
+            language: locale,
+            filter: emptyReportFilter
+        })
+    } catch (error) {
+        initialError = normalizeWorkflowErrorDetail(error, {
+            fallback: 'Unable to load reports.'
+        })
+        logger.error('[report] Unable to load initial data', error)
     }
-
-    const reports = reportApi.payload.dataresponse.data.input
 
     return (
         <Suspense fallback={<Spinner />}>
-            <ReportPageContent
-                reports={reports}
+            <ReportManagementPage
                 dictionary={dictionary}
                 session={session}
                 locale={locale}
+                initialFilter={{
+                    ...emptyReportFilter,
+                    page_index: initialData.page_index,
+                    page_size: initialData.page_size
+                }}
+                initialData={initialData}
+                initialError={initialError}
             />
         </Suspense>
     )

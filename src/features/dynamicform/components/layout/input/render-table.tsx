@@ -7,13 +7,12 @@ import {
   StyledTableRow,
 } from "@/@core/components/jTable/style";
 import PreviewContent from "@components/forms/previewcontent";
-import LoadingSubmit from "@components/LoadingSubmit";
+import SyncOverlay from "@/views/components/SyncOverlay";
 import { FormInput } from "@shared/types/systemTypes";
 import { generateCellTable } from "@utils/generateCellTable";
 import { getDictionary } from "@utils/getDictionary";
 import { getNestedValue } from "@utils/getNestedValue";
 import {
-  Box,
   Grid,
   Modal,
   Paper,
@@ -121,8 +120,7 @@ const RenderTableDefault = ({
             setTotalResults(total_count);
           }
         }
-      } catch (error) {
-        console.error("Error fetching data:", error);
+      } catch {
         if (isMounted) {
           setData([]);
           setFilteredData([]);
@@ -206,7 +204,6 @@ const RenderTableDefault = ({
       previewtype: previewtype,
       previewdata: JSON.parse(data),
     };
-    console.log(preview);
     setModalContent(preview);
     setModalOpen(true);
   };
@@ -217,25 +214,8 @@ const RenderTableDefault = ({
 
   return (
     <Grid size={gridProps} sx={{ marginBottom: "16px", position: "relative" }}>
-      {/* LoadingSubmit náº±m giá»¯a ná»™i dung báº£ng */}
-      {isFetching && (
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            zIndex: 10,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            borderRadius: "8px",
-            padding: "50px", // TÃ¹y chá»n thÃªm khoáº£ng cÃ¡ch
-          }}
-        >
-          <LoadingSubmit loadingtext={dictionary['common'].loading} />
-        </Box>
-      )}
+      {/* Table already has rows rendered below while re-fetching (search/filter/page change) -- a light content-scoped overlay, not a full-page block. */}
+      <SyncOverlay open={isFetching} mode="content" message={dictionary['common'].loading} />
 
       <TableContainer component={Paper}>
         <Table>

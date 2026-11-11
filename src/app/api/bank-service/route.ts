@@ -1,20 +1,30 @@
 // Next Imports
+import { i18n } from '@/configs/i18n';
 import { NextResponse } from 'next/server';
-
+import { getBackendToken } from '@/server/auth/getBackendToken';
 
 export async function POST(req: Request) {
+    // Resolve the caller's identity strictly from the server-side session cookie — never trust
+    // a uid header sent by the browser (see /api/system-service for the same fix).
+    const backendCredential = await getBackendToken(req)
+
+    if (!backendCredential) {
+        return NextResponse.json(
+            { message: ['Phiên đăng nhập không hợp lệ.'] },
+            { status: 401 }
+        )
+    }
+
     // Vars
     const requestData = await req.json()
-
-    const tokenInfo = req.headers.get('uid');
 
     const requestbank = await fetch(`${process.env.NEXT_PUBLIC_REST_API_ENDPOINT}`, {
         method: 'POST',
         headers: {
             'content-type': 'application/json',
-            'lang': req.headers.get('lang') || 'en',
+            'lang': req.headers.get('lang') || i18n.defaultLocale,
             'app': req.headers.get('app') || '89',
-            "uid": `${tokenInfo}`
+            "uid": backendCredential.accessToken
         } as any,
         body: JSON.stringify(requestData)
     });

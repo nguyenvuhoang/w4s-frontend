@@ -14,6 +14,8 @@ import TransactionHistoryError from '@/views/transaction/transaction-history/Tra
 import { Metadata } from 'next';
 import { Session } from 'next-auth';
 import { Suspense } from 'react';
+import { getServerBackendToken } from '@/server/auth/getServerBackendToken'
+import logger from '@lib/logger'
 
 export const metadata: Metadata = generateAuthMetadata('Transaction history');
 
@@ -29,7 +31,7 @@ const TransactionHistoryData = async (
     }
 ) => {
     const contractdataApi = await systemServiceApi.runFODynamic({
-        sessiontoken: session?.user?.token as string,
+        sessiontoken: (await getServerBackendToken()) as string,
         workflowid: "SYS_EXECUTE_SQL",
         input: {
             commandname: "SimpleSearchTransactionHistory",
@@ -64,7 +66,7 @@ const TransactionHistoryData = async (
         const executionId = error?.execute_id;
         const errorInfo = error?.info;
         
-        console.log(
+        logger.log(
             'ExecutionID:',
             executionId + ' - ' + errorInfo
         );

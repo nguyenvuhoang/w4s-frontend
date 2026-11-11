@@ -45,7 +45,7 @@ const StyledHeader = styled.header<StyledHeaderProps>`
     min-block-size: var(--header-height);
     padding-block: 8px;
     padding-inline: ${themeConfig.layoutPadding}px;
-    background: linear-gradient(90deg, #225087,#225087  ) !important;
+    background: var(--mui-palette-primary-main) !important;
     background-size: 200% 200%; /* Gradient sẽ chạy khi có hiệu ứng */
     animation: gradientShift 5s ease infinite; /* Hiệu ứng gradient di chuyển */
   }

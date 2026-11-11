@@ -56,10 +56,10 @@ console.log('\nðŸ“‹ Test 3: extractLocaleFromPath function');
 console.log('\nðŸ“‹ Test 4: constructValidLocaleUrl function');
 [
   '/en/dashboard',
-  '/fr/dashboard',  // invalid - should fallback to 'en'
-  '/es/profile',    // invalid - should fallback to 'en'
+  '/fr/dashboard',  // invalid - should fallback to default locale
+  '/es/profile',    // invalid - should fallback to default locale
   '/la/settings',   // valid
-  '/invalid/page'   // invalid - should fallback to 'en'
+  '/invalid/page'   // invalid - should fallback to default locale
 ].forEach(path => {
   const url = constructValidLocaleUrl(path, 'https://example.com');
   console.log(`  - '${path}' â†’ '${url.pathname}'`);
@@ -67,7 +67,7 @@ console.log('\nðŸ“‹ Test 4: constructValidLocaleUrl function');
 
 console.log('\nâœ¨ Locale fallback functionality tests completed!');
 console.log('\nðŸ” Expected behavior:');
-console.log('- Invalid locales should fallback to "en" (default)');
+console.log(`- Invalid locales should fallback to "${i18n.defaultLocale}" (default)`);
 console.log('- Valid locales (en, la, vi) should be preserved');
 console.log('- URL construction should maintain path structure with valid locale');
 

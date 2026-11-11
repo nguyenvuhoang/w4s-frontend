@@ -5,7 +5,8 @@ import type { MouseEvent } from 'react'
 import { useState } from 'react'
 
 // Next Imports
-import { useParams, useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
+import { useRouter } from '@shared/hooks/useRouter'
 
 // MUI Imports
 import Avatar from '@mui/material/Avatar'
@@ -52,6 +53,7 @@ const UserDropdown = ({ avatar, name, dictionary }: {
 }) => {
   // States
   const [open, setOpen] = useState(false)
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
 
   // Anchor element for Popper
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
@@ -79,10 +81,15 @@ const UserDropdown = ({ avatar, name, dictionary }: {
   }
 
   const handleUserLogout = async () => {
+    if (isLoggingOut) return
+    setIsLoggingOut(true)
+
     try {
+      // Actual backend logout (WF_BO_LOGOUT) + NextAuth signOut are performed
+      // on the /logout page itself, see useLogout hook.
       router.push(`${getLocalizedUrl('/logout', locale as Locale)}`)
-    } catch (error) {
-      console.error(error)
+    } catch {
+      setIsLoggingOut(false)
     }
   }
 
@@ -168,6 +175,7 @@ const UserDropdown = ({ avatar, name, dictionary }: {
                       size='small'
                       endIcon={<i className='ri-logout-box-r-line' />}
                       onClick={handleUserLogout}
+                      disabled={isLoggingOut}
                     >
                       {dictionary['common'].logout}
                     </Button>

@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { getDictionary } from "@utils/getDictionary";
 import { Session } from "next-auth";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@shared/hooks/useRouter";
 import { useState } from "react";
 import { AddWorkflowDefinitionForm } from "./AddWorkflowDefinitionForm";
 import { AddWorkflowStepForm } from "./AddWorkflowStepForm";

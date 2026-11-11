@@ -7,6 +7,7 @@ import type { Locale } from '@/configs/i18n'
 import { useLoginHandler } from '@features/auth/hooks/useLoginHandler'
 import { getDictionary } from '@utils/getDictionary'
 import type { FormData } from '@core/types'
+import WorkflowErrorAlert from '@/shared/components/WorkflowErrorAlert'
 import { valibotResolver } from '@hookform/resolvers/valibot'
 import { Box, Button, TextField, Typography } from '@mui/material'
 import Link from 'next/link'
@@ -54,14 +55,18 @@ const LoginForm = ({ locale, dictionary }: {
                         className='flex flex-col gap-5'
                     >
                         {errorState &&
-                            <Box className="bg-white px-4 py-3 rounded-xl status-error wrapper">
-                                <Box className="flex items-start gap-2">
-                                    <i className='ri-close-circle-line w-6 h-6 text-red-600'></i>
-                                    <span className='text-gray-700 text-[13px] text-left title'>
-                                        {errorState.message}
-                                    </span>
-                                </Box>
-                            </Box>
+                            <WorkflowErrorAlert
+                                title={dictionary['auth'].loginerrortitle}
+                                message={errorState.message?.[0]}
+                                errorCode={errorState.error_code ?? undefined}
+                                executionId={errorState.execution_id ?? undefined}
+                                errorCodeLabel={dictionary['auth'].errorcodelabel}
+                                executionIdLabel={dictionary['auth'].executionidlabel}
+                                copyLabel={dictionary['auth'].copylabel}
+                                copiedLabel={dictionary['auth'].copiedlabel}
+                                copySuccessMessage={dictionary['auth'].copysuccessmessage}
+                                copyFailedMessage={dictionary['auth'].copyfailedmessage}
+                            />
                         }
 
                         <LoginField
@@ -74,13 +79,13 @@ const LoginForm = ({ locale, dictionary }: {
                                 <>
                                     <Typography variant="inherit" sx={{ fontSize: '12px' }}>
                                         {dictionary['auth'].tooltip_username_p}
-                                        <Typography component="span" className="text-primary" sx={{ fontSize: '12px' }}>
+                                        <Typography component="span" className="text-secondary" sx={{ fontSize: '12px' }}>
                                             {dictionary['auth'].tooltip_username_span}
                                         </Typography>
                                     </Typography>
                                     <Typography variant="inherit" sx={{ fontSize: '12px' }}>
                                         {dictionary['auth'].tooltip_without_username_p}
-                                        <Typography component="span" className="text-primary" sx={{ fontSize: '12px' }}>
+                                        <Typography component="span" className="text-secondary" sx={{ fontSize: '12px' }}>
                                             {dictionary['auth'].tooltip_without_username_span}{' '}
                                             {dictionary['auth'].tooltip_without_username_span_2}
                                         </Typography>

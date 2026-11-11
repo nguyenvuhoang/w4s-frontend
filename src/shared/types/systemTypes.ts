@@ -331,6 +331,7 @@ export interface UpdateDataRequest {
 }
 
 export interface ViewDataResponse extends ResponseDefaultData<DefaultData> {
+    requireLogout?: any
     dataresponse: ResponseDefault<ResponseData<ResponseDefaultPortal<any> | any>>
 }
 
@@ -368,19 +369,6 @@ export interface FODataArrayResponse extends ResponseDefaultData<DefaultData> {
     dataresponse: ResponseDefault<ResponseData<PageData<any>>>
 }
 
-export interface ReportDataRequest {
-    sessiontoken: string | unknown
-    pageindex: number
-    pagesize: number
-}
-export interface ReportDetailDataRequest {
-    sessiontoken: string | unknown
-    pageindex: number
-    pagesize: number
-    reportid: string | undefined
-    langid: Locale
-}
-
 export interface MenuItem {
     application_code: string
     command_id: string
@@ -410,6 +398,8 @@ export interface Operation {
 export interface OperationHeader {
     cmdid: string
     caption: string
+    /** Backend-localized operation name when the workflow provides it; caption is the fallback. */
+    label?: string
 }
 
 export interface OperationBody {

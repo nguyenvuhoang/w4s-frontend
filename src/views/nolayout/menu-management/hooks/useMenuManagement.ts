@@ -1,4 +1,4 @@
-import { Locale } from '@/configs/i18n'
+import { i18n, Locale } from '@/configs/i18n'
 import { MenuItem, PageData } from '@shared/types/systemTypes'
 import SwalAlert from '@utils/SwalAlert'
 import { SelectChangeEvent } from '@mui/material'
@@ -140,7 +140,6 @@ export const useMenuManagement = (initialData: MenuItem[], options?: MenuManagem
             ) {
                 const execute_id = response.payload.dataresponse.errors[0]?.execute_id
                 const errorinfo = response.payload.dataresponse.errors[0]?.info
-                console.error('ExecutionID:', execute_id + ' - ' + errorinfo)
                 return
             }
 
@@ -155,8 +154,7 @@ export const useMenuManagement = (initialData: MenuItem[], options?: MenuManagem
 
             options?.onDataUpdate?.(result)
             setFilteredData(result)
-        } catch (error: any) {
-            console.error('Error loading menu data:', error)
+        } catch {
         } finally {
             setLoading(false)
         }
@@ -214,7 +212,7 @@ export const useMenuManagement = (initialData: MenuItem[], options?: MenuManagem
                 pageindex: resetPage ? 0 : (page - 1), // Convert 1-based to 0-based for server
                 pagesize: rowsPerPage,
                 searchtext: searchtext,
-                language: options?.locale || 'en',
+                language: options?.locale || i18n.defaultLocale,
             })
 
             if (
@@ -223,7 +221,6 @@ export const useMenuManagement = (initialData: MenuItem[], options?: MenuManagem
             ) {
                 const execute_id = response.payload.dataresponse.errors[0]?.execute_id
                 const errorinfo = response.payload.dataresponse.errors[0]?.info
-                console.error('ExecutionID:', execute_id + ' - ' + errorinfo)
                 setLoading(false)
                 return
             }
@@ -257,12 +254,11 @@ export const useMenuManagement = (initialData: MenuItem[], options?: MenuManagem
             setLastSearchParams({
                 sessiontoken: options?.sessionToken as string,
                 searchtext: searchtext,
-                language: options?.locale || 'en'
+                language: options?.locale || i18n.defaultLocale
             })
             
             setLoading(false)
-        } catch (error: any) {
-            console.error('Error loading menu data:', error)
+        } catch {
             setLoading(false)
         }
     }
@@ -302,7 +298,7 @@ export const useMenuManagement = (initialData: MenuItem[], options?: MenuManagem
 
             const submitApi = await menuService.createMenu({
                 sessiontoken: options?.sessionToken as string,
-                language: options?.locale || 'en',
+                language: options?.locale || i18n.defaultLocale,
                 fields: payload
             })
 
@@ -353,7 +349,7 @@ export const useMenuManagement = (initialData: MenuItem[], options?: MenuManagem
                     pageindex: 0,
                     pagesize: rowsPerPage,
                     searchtext: '',
-                    language: options?.locale || 'en'
+                    language: options?.locale || i18n.defaultLocale
                 })
                 
                 if (isValidResponse(reloadResponse) && 
@@ -373,7 +369,6 @@ export const useMenuManagement = (initialData: MenuItem[], options?: MenuManagem
                 }
             }
         } catch (error: any) {
-            console.error('Error creating menu:', error)
             setModalError(error?.message || 'An unexpected error occurred. Please try again.')
             setModalLoading(false)
         }
@@ -448,7 +443,7 @@ export const useMenuManagement = (initialData: MenuItem[], options?: MenuManagem
 
             const submitApi = await menuService.updateMenu({
                 sessiontoken: options?.sessionToken as string,
-                language: options?.locale || 'en',
+                language: options?.locale || i18n.defaultLocale,
                 fields: payload
             })
 
@@ -469,7 +464,6 @@ export const useMenuManagement = (initialData: MenuItem[], options?: MenuManagem
             setEditSuccess(true)
             setEditLoading(false)
         } catch (error: any) {
-            console.error('Error updating menu:', error)
             setEditError(error?.message || 'An unexpected error occurred. Please try again.')
             setEditLoading(false)
         }
@@ -504,7 +498,7 @@ export const useMenuManagement = (initialData: MenuItem[], options?: MenuManagem
 
             const submitApi = await menuService.deleteMenu({
                 sessiontoken: options.sessionToken,
-                language: options?.locale || 'en',
+                language: options?.locale || i18n.defaultLocale,
                 fields: {
                     command_id: menuItem.command_id,
                     application_code: menuItem.application_code
@@ -527,8 +521,7 @@ export const useMenuManagement = (initialData: MenuItem[], options?: MenuManagem
             applyFilters(updatedData)
             options?.onDataUpdate?.(updatedData)
             setDeleteLoading(false)
-        } catch (error: any) {
-            console.error('Error deleting menu:', error)
+        } catch {
             setDeleteLoading(false)
         }
     }

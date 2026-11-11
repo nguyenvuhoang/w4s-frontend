@@ -47,9 +47,7 @@ const ViewCheckBoxItem = ({
             if ((!selectData || selectData.length === 0) && input.config) {
                 try {
                     selectData = await getDataConfig(input.config, session, locale)
-                } catch (error) {
-                    console.error('Failed to fetch config data for checkbox:', error)
-                }
+                } catch {}
             }
             const keySelected = input.config?.key_selected
             const keyDisplay = input.config?.key_display

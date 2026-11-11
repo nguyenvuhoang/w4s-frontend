@@ -28,7 +28,7 @@ export const useAccountChartHandler = (
     locale: Locale
 ) => {
     const [accountChart, setAccountChart] = useState<PageData<AccountChartType>>(accountchartdata)
-    const [page, setPage] = useState<number>(Math.max((accountchartdata?.page_index ?? 1), 0))
+    const [page, setPage] = useState<number>(Math.max((accountchartdata?.page_index ?? 0), 0))
     const [jumpPage, setJumpPage] = useState<number>(accountchartdata.page_index || 1)
     const [rowsPerPage, setRowsPerPage] = useState<number>(accountchartdata.page_size || 10)
     const [totalCount, setTotalCount] = useState<number>(accountchartdata.total_count || 0)
@@ -82,21 +82,13 @@ export const useAccountChartHandler = (
                 !isValidResponse(contractdataApi) ||
                 (contractdataApi.payload.dataresponse.errors && contractdataApi.payload.dataresponse.errors.length > 0)
             ) {
-                console.log(
-                    'ExecutionID:',
-                    contractdataApi.payload.dataresponse.errors[0].execute_id +
-                    ' - ' +
-                    contractdataApi.payload.dataresponse.errors[0].info
-                )
                 return
             }
 
             const dataaccountchart = contractdataApi.payload.dataresponse.data.input as PageData<AccountChartType>
             setAccountChart(dataaccountchart)
             setTotalCount(dataaccountchart.total_count || 0)
-        } catch (err) {
-            console.error('Error fetching account chart data:', err)
-        } finally {
+        } catch {} finally {
             setLoading(false)
         }
     }

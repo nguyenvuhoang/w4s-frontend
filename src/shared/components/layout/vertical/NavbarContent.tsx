@@ -5,6 +5,7 @@ import classnames from 'classnames'
 import { verticalLayoutClasses } from '@layouts/utils/layoutClasses'
 import { Box } from '@mui/material'
 import AISearch from '../shared/AISearch'
+import HeaderUserInfo from '../shared/HeaderUserInfo'
 
 interface Props {
   menuData?: any[]
@@ -20,6 +21,7 @@ const NavbarContent = ({ menuData, dictionary }: Props) => {
 
       <Box className={classnames(verticalLayoutClasses.navbarContent, 'flex items-center justify-between gap-6 is-full relative')}>
         <AISearch menuData={menuData || []} dictionary={dictionary} />
+        <HeaderUserInfo dictionary={dictionary} />
       </Box>
     </>
   )

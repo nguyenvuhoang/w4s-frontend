@@ -26,17 +26,21 @@ type MenuButtonStylesProps = Partial<ChildrenType> & {
 export const menuButtonStyles = (props: MenuButtonStylesProps) => {
   // Props
   const { level, disabled, children, isCollapsed, isPopoutWhenCollapsed } = props
+  const collapsedTopLevel = isCollapsed && level === 0
 
   return css({
     display: 'flex',
     alignItems: 'center',
+    justifyContent: collapsedTopLevel ? 'center' : 'flex-start',
     minBlockSize: '30px',
     textDecoration: 'none',
     color: 'inherit',
     boxSizing: 'border-box',
     cursor: 'pointer',
-    paddingInlineEnd: '30px',
-    paddingInlineStart: `${level === 0 ? 20 : (isPopoutWhenCollapsed && isCollapsed ? level : level + 1) * 30}px`,
+    paddingInlineEnd: collapsedTopLevel ? 0 : '30px',
+    paddingInlineStart: collapsedTopLevel
+      ? 0
+      : `${level === 0 ? 20 : (isPopoutWhenCollapsed && isCollapsed ? level : level + 1) * 30}px`,
     '&:hover, &[aria-expanded="true"]': {
       backgroundColor: '#f3f3f3'
     },
@@ -55,7 +59,7 @@ export const menuButtonStyles = (props: MenuButtonStylesProps) => {
     // All the active styles are applied to the button including menu items or submenu
     [`&.${menuClasses.active}`]: {
       ...(!children && { color: 'white' }),
-      backgroundColor: children ? '#f3f3f3' : '#765feb'
+      backgroundColor: children ? '#f3f3f3' : '#64748b'
     }
   })
 }

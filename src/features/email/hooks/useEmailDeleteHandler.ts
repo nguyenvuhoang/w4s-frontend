@@ -21,9 +21,7 @@ export const useEmailDeleteHandler = (onSuccess?: () => void) => {
                     onSuccess();
                 }
             }
-        } catch (error) {
-            console.error('Failed to delete emails:', error);
-        } finally {
+        } catch {} finally {
             setDeleting(false);
         }
     };

@@ -8,7 +8,8 @@ import SearchRounded from '@mui/icons-material/SearchRounded'
 import StarRounded from '@mui/icons-material/StarRounded'
 import { Box, Button, Divider, InputAdornment, Stack, TextField, Typography } from '@mui/material'
 import { alpha, useTheme } from '@mui/material/styles'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
+import { useRouter } from '@shared/hooks/useRouter'
 
 import type { Locale } from '@configs/i18n'
 import type { getDictionary } from '@utils/getDictionary'
@@ -34,7 +35,7 @@ const ModuleLauncher = ({ moduleItem, dictionary, onBack }: ModuleLauncherProps)
   const common = dictionary.common ?? {}
   const dashboardDict = (dictionary as Record<string, any>).dashboard ?? {}
   const moduleDict = dashboardDict.moduleLauncher ?? {}
-  const moduleTitle = getMenuTitle(moduleItem)
+  const moduleTitle = getMenuTitle(moduleItem, locale as string)
 
   const text = {
     home: common.home ?? 'Home',
@@ -48,7 +49,7 @@ const ModuleLauncher = ({ moduleItem, dictionary, onBack }: ModuleLauncherProps)
   }
 
   const children = useMemo(() => getMenuChildren(moduleItem), [moduleItem])
-  const searchableChildren = useMemo(() => flattenMenus(children), [children])
+  const searchableChildren = useMemo(() => flattenMenus(children, [], locale as string), [children, locale])
   const filteredChildren = useMemo(() => {
     const keyword = query.trim().toLowerCase()
 
@@ -183,12 +184,14 @@ const ModuleLauncher = ({ moduleItem, dictionary, onBack }: ModuleLauncherProps)
             value={query}
             onChange={event => setQuery(event.target.value)}
             inputProps={{ style: { fontSize: 13, paddingTop: 9, paddingBottom: 9 } }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position='start'>
-                  <SearchRounded sx={{ fontSize: 18, color: alpha('#225087', 0.78) }} />
-                </InputAdornment>
-              )
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position='start'>
+                    <SearchRounded sx={{ fontSize: 18, color: alpha('#225087', 0.78) }} />
+                  </InputAdornment>
+                )
+              }
             }}
             sx={{
               mt: 2.75,

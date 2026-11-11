@@ -21,7 +21,7 @@ const ForgetPasswordForm = ({
   dictionary: Awaited<ReturnType<typeof getDictionary>>;
   locale: Locale;
 }) => {
-  const { methods, loading, onSubmit } = useForgetPasswordForm(dictionary);
+  const { methods, loading, onSubmit } = useForgetPasswordForm(dictionary, locale);
   const { handleSubmit } = methods;
 
   return (

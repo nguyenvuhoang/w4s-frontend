@@ -8,6 +8,8 @@ import { getDictionary } from '@utils/getDictionary'
 import { isValidResponse } from '@utils/isValidResponse'
 import CalendarContent from '@/views/nolayout/calendar'
 import { Suspense } from 'react'
+import { getServerBackendToken } from '@/server/auth/getServerBackendToken'
+import logger from '@lib/logger'
 
 type Params = Promise<{
     locale: Locale
@@ -22,7 +24,7 @@ const CalendarPage = async ({ params }: { params: Params }) => {
     ]);
 
     const calendarAPI = await workflowService.runFODynamic({
-        sessiontoken: session?.user?.token as string,
+        sessiontoken: (await getServerBackendToken()) as string,
         workflowid: "BO_RETRIEVE_CALENDAR",
         input: {
             page_index: 1,
@@ -38,7 +40,7 @@ const CalendarPage = async ({ params }: { params: Params }) => {
     ) {
         const execute_id = calendarAPI.payload.dataresponse.errors[0].execute_id
         const errorinfo = calendarAPI.payload.dataresponse.errors[0].info
-        console.log(
+        logger.log(
             'ExecutionID:',
             execute_id +
             ' - ' +

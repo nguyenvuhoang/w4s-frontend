@@ -4,11 +4,11 @@
 import { useRef, useState } from 'react'
 
 // Next Imports
-import Link from 'next/link'
 import { useParams, usePathname } from 'next/navigation'
 
 // MUI Imports
 import ClickAwayListener from '@mui/material/ClickAwayListener'
+import Button from '@mui/material/Button'
 import Fade from '@mui/material/Fade'
 import IconButton from '@mui/material/IconButton'
 import MenuItem from '@mui/material/MenuItem'
@@ -23,7 +23,12 @@ import type { Locale } from '@configs/i18n'
 
 // Hook Imports
 import { useSettings } from '@core/hooks/useSettings'
-import Image from 'next/image'
+
+type LanguageDropdownProps = {
+  label?: string
+  showLabel?: boolean
+  fullWidth?: boolean
+}
 
 type LanguageDataType = {
   langCode: Locale
@@ -47,14 +52,10 @@ const languageData: LanguageDataType[] = [
   {
     langCode: 'vi',
     langName: 'Vietnamese'
-  },
-  {
-    langCode: 'la',
-    langName: 'Laos'
   }
 ]
 
-const LanguageDropdown = () => {
+const LanguageDropdown = ({ label = 'Language', showLabel = false, fullWidth = false }: LanguageDropdownProps) => {
   // States
   const [open, setOpen] = useState(false)
 
@@ -70,15 +71,47 @@ const LanguageDropdown = () => {
     setOpen(false)
   }
 
+  const handleChangeLanguage = (nextLocale: Locale) => {
+    const nextPath = getLocalePath(pathName, nextLocale)
+
+    setOpen(false)
+
+    if (nextLocale === currentLocale) return
+
+    window.location.assign(nextPath)
+  }
+
   const handleToggle = () => {
     setOpen(prevOpen => !prevOpen)
   }
 
   return (
     <>
-      <IconButton ref={anchorRef} onClick={handleToggle} className='text-[22px] text-white'>
-        <i className='ri-global-line' />
-      </IconButton>
+      {showLabel ? (
+        <Button
+          ref={anchorRef}
+          onClick={handleToggle}
+          fullWidth={fullWidth}
+          startIcon={<i className='ri-global-line' />}
+          sx={{
+            justifyContent: 'flex-start',
+            minHeight: 38,
+            px: 1.5,
+            borderRadius: 2,
+            color: 'common.white',
+            textTransform: 'none',
+            fontWeight: 500,
+            '& .MuiButton-startIcon': { fontSize: 22, minWidth: 24 },
+            '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.12)' }
+          }}
+        >
+          {label}
+        </Button>
+      ) : (
+        <IconButton ref={anchorRef} onClick={handleToggle} className='text-[22px] text-white'>
+          <i className='ri-global-line' />
+        </IconButton>
+      )}
 
       <Popper
         open={open}
@@ -100,9 +133,7 @@ const LanguageDropdown = () => {
                   {languageData.map(locale => (
                     <MenuItem
                       key={locale.langCode}
-                      component={Link}
-                      href={getLocalePath(pathName, locale.langCode)}
-                      onClick={handleClose}
+                      onClick={() => handleChangeLanguage(locale.langCode)}
                       selected={currentLocale === locale.langCode}
                       className='pli-4'
                     >

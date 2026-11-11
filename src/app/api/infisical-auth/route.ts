@@ -1,6 +1,7 @@
 import { env } from '@/env.mjs';
 import { infisicalServerService } from '@/servers/system-service/services/infisical.server';
 import { NextResponse } from 'next/server';
+import logger from '@lib/logger'
 
 export async function POST() {
     try {
@@ -11,7 +12,7 @@ export async function POST() {
 
         return NextResponse.json(res.payload, { status: res.status });
     } catch (error) {
-        console.error('API Auth error:', error);
+        logger.error('API Auth error:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }

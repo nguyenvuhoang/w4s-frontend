@@ -1,5 +1,5 @@
 import { env } from "@/env.mjs";
-import http from "./http";
+import http, { isClient } from "./http";
 import {
   createEncryptedPayload,
   generateNonce,
@@ -79,8 +79,12 @@ export const apiPost = <T>(
   data: any,
   sessiontoken: string,
   headerOverrides: Record<string, string> = {},
-  options: { encrypt?: boolean } = {}
-) => http.post<T>(url, data, { ...getDefaultHeaders(sessiontoken, headerOverrides), encrypt: options.encrypt });
+  options: { encrypt?: boolean; suppressMaintenanceRedirect?: boolean } = {}
+) => http.post<T>(url, data, {
+  ...getDefaultHeaders(sessiontoken, headerOverrides),
+  encrypt: options.encrypt,
+  suppressMaintenanceRedirect: options.suppressMaintenanceRedirect
+});
 
 /**
  * Secure API Post với mã hóa tự động
@@ -126,6 +130,29 @@ export const apiPostForm = async <T>(
   headerOverrides: Record<string, string> = {},
   folderUpload?: string
 ): Promise<{ status: number; data: T }> => {
+  // Security boundary (same as http.ts request()): the browser must never call the CDN gateway
+  // directly with the real backend token. In the browser, forward through the same-origin BFF
+  // route instead, which resolves the token server-side via getBackendToken().
+  if (isClient()) {
+    let bffUrl = '/api/cnd-service';
+    if (folderUpload) {
+      bffUrl += `?folder=${folderUpload}`;
+    }
+
+    const res = await fetch(bffUrl, {
+      method: 'POST',
+      body: formData
+    });
+
+    const data = await res.json();
+
+    if (!res.ok && res.status !== 409) {
+      throw new Error(`Upload failed (${res.status}): ${JSON.stringify(data)}`);
+    }
+
+    return { status: res.status, data };
+  }
+
   const headers: HeadersInit = {
     uid: `${sessiontoken}`,
     app: env.NEXT_PUBLIC_APPLICATION_CODE ?? 'BO',

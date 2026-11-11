@@ -8,8 +8,7 @@ export const getInfoByToken = (token: string, key: string): any | null => {
     try {
         const decoded = jwtDecode<Record<string, any>>(token)
         return decoded[key] ?? null
-    } catch (err) {
-        console.error('Invalid token:', err)
+    } catch {
         return null
     }
 }

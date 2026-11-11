@@ -1,102 +1,53 @@
-import logger from '@lib/logger';
-import { NextResponse } from 'next/server';
-import { decryptRequestBody } from '@/servers/lib/encrypted-handler';
+import logger from '@lib/logger'
 
-export async function POST(req: Request) {
-    try {
-        // Kiểm tra xem request có được mã hóa không
-        const isEncrypted = req.headers.get('X-Encrypted-Request') === 'true';
+import { getBackendToken } from '@/server/auth/getBackendToken'
+import { withSecureApi } from '@/app/api/_lib/secure-api/server'
+import { SecureApiError } from '@/app/api/_lib/secure-api/errors'
+import { callSystemServiceBackend } from '@/servers/system-service/callBackend'
 
-        let requestData;
-        if (isEncrypted) {
-            // Clone request để đọc body
-            const clonedReq = req.clone();
-            const { success, data, error } = await decryptRequestBody(clonedReq);
+export const dynamic = 'force-dynamic'
 
-            if (!success) {
-                logger.error('❌ Failed to decrypt request:', error);
-                return NextResponse.json(
-                    { message: 'Failed to decrypt request', error },
-                    { status: 400 }
-                );
-            }
-            requestData = data;
-            logger.info('🔓 Request decrypted successfully');
-        } else {
-            requestData = await req.json();
-        }
+type JsonRecord = Record<string, unknown>
 
-        const tokenInfo = req.headers.get('uid');
-
-        logger.start('=====================Request Data====================')
-        logger.info(JSON.stringify(requestData))
-        logger.info('====================End Request Data=====================')
-
-        const endpoint = `${process.env.NEXT_PUBLIC_REST_API_ENDPOINT}`;
-        const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: {
-                'content-type': 'application/json',
-                lang: req.headers.get('lang') || 'en',
-                app: req.headers.get('app') || 'BO',
-                uid: tokenInfo || '',
-            },
-            body: JSON.stringify(requestData),
-        });
-
-        if (!response.ok) {
-            const status = response.status;
-            const errorMessage = await safeParseJSON(response);
-
-            return NextResponse.json(
-                {
-                    message: errorMessage?.message || 'Unexpected error from backend service.',
-                    dataresponse: errorMessage ?? null,
-                },
-                { status }
-            );
-        }
-
-        const dataresponse = await response.json();
-
-        // Check if backend requires logout (token expired, unauthorized, etc.)
-        const requireLogout = dataresponse?.errors?.[0]?.next_action === 'logout';
-        if (requireLogout) {
-            return NextResponse.json(
-                { 
-                    dataresponse,
-                    requireLogout: true,
-                    message: 'Session expired or unauthorized. Please login again.'
-                },
-                { status: 401 }
-            );
-        }
-
-        return NextResponse.json(
-            { dataresponse },
-            {
-                status: 200,
-                statusText: 'Success',
-            }
-        );
-    } catch (error: any) {
-        logger.error('❌ Request failed:', error);
-
-        return NextResponse.json(
-            {
-                message: ['❌ The server is temporarily unavailable. Please try again later!'],
-            },
-            {
-                status: 500,
-            }
-        );
+const createErrorDataResponse = (status: number, message: string) => ({
+  error: [
+    {
+      key: String(status),
+      info: message,
+      message,
+      execute_id: ''
     }
-}
+  ]
+})
 
-async function safeParseJSON(response: Response) {
-    try {
-        return await response.json();
-    } catch {
-        return null;
-    }
-}
+/**
+ * Thin Route Handler: decrypt the browser's envelope (withSecureApi) -> resolve the real backend
+ * token server-side (getBackendToken, never trusting anything the client sends) -> hand off to
+ * callSystemServiceBackend(), the single existing Next.js -> Backend integration shared with the
+ * server-side (SSR) call path in src/servers/lib/http.ts. Nothing about the backend URL, headers,
+ * body shape or response processing lives here — see src/servers/system-service/callBackend.ts.
+ */
+export const POST = withSecureApi<JsonRecord, unknown>('/api/system-service', async (requestData, { req, rid }) => {
+  const backendCredential = await getBackendToken(req)
+
+  if (!backendCredential) {
+    logger.warn('System-service call rejected: no valid server-side session.')
+
+    throw new SecureApiError('Phiên đăng nhập không hợp lệ.', 401, {
+      code: 'UNAUTHORIZED',
+      success: false,
+      message: ['Phiên đăng nhập không hợp lệ.'],
+      dataresponse: createErrorDataResponse(401, 'Phiên đăng nhập không hợp lệ.')
+    })
+  }
+
+  return callSystemServiceBackend(requestData, backendCredential.accessToken, {
+    lang: req.headers.get('lang'),
+    app: req.headers.get('app'),
+    deviceId: req.headers.get('device_id'),
+    scope: req.headers.get('scope'),
+    userAgent: req.headers.get('user-agent'),
+    requestId: req.headers.get('x-request-id') || rid,
+    clientSignal: req.signal
+  })
+})

@@ -1,5 +1,5 @@
 // hooks/useContractHandler.ts
-import { Locale } from '@/configs/i18n'
+import { i18n, Locale } from '@/configs/i18n'
 import { workflowService, codeService } from '@/servers/system-service'
 import { ContractType } from '@shared/types/bankType'
 import { PageData } from '@shared/types/systemTypes'
@@ -33,7 +33,7 @@ export const useContractApproveHandler = (
 ) => {
     const [contracts, setContracts] = useState<PageData<ContractType>>(contractdata)
 
-    const [page, setPage] = useState<number>(Math.max((contractdata?.page_index ?? 1), 0))
+    const [page, setPage] = useState<number>(Math.max((contractdata?.page_index ?? 0), 0))
     const [jumpPage, setJumpPage] = useState<number>(contractdata.page_index || 1) // 1-based display value
     const [rowsPerPage, setRowsPerPage] = useState<number>(contractdata.page_size || 10)
     const [totalCount, setTotalCount] = useState<number>(contractdata.total_count || 0)
@@ -79,7 +79,6 @@ export const useContractApproveHandler = (
                 ) {
                     const err = contractdataApi.payload.dataresponse.errors?.[0]
                     if (err) {
-                        console.log('ExecutionID:', err.execute_id + ' - ' + err.info)
                     }
                     return
                 }
@@ -88,9 +87,7 @@ export const useContractApproveHandler = (
 
                 setContracts(datacontract)
                 setTotalCount(datacontract.total_count || 0)
-            } catch (err) {
-                console.error('Error fetching contract data:', err)
-            } finally {
+            } catch {} finally {
                 setLoading(false)
             }
         },
@@ -122,11 +119,10 @@ export const useContractApproveHandler = (
             codename: 'CONTRACTSTATUS',
             codegroup: 'BO',
             sessiontoken: token,
-            language: locale || 'en',
+            language: locale || i18n.defaultLocale,
         })
 
         if (!isValidResponse(getCdlistApi) || !getCdlistApi.payload.dataresponse) {
-            console.error('Failed to fetch status options:', getCdlistApi)
             return
         }
 
@@ -157,11 +153,10 @@ export const useContractApproveHandler = (
             codename: 'CONTRACTTYPE',
             codegroup: 'BO',
             sessiontoken: session?.user?.token as string,
-            language: locale || 'en'
+            language: locale || i18n.defaultLocale
         })
 
         if (!isValidResponse(getCdlistApi) || !getCdlistApi.payload.dataresponse || !getCdlistApi.payload.dataresponse) {
-            console.error('Failed to fetch contract type options:', getCdlistApi)
             return
         }
         const data_query = getCdlistApi.payload.dataresponse.data.input.items || []

@@ -7,11 +7,22 @@ import { useIdleTimer } from 'react-idle-timer'
 // Component Imports
 import { Locale } from '@/configs/i18n'
 import { getLocalizedUrl } from '@utils/i18n'
-import { useRouter } from 'next/navigation'
+import { useRouter } from '@shared/hooks/useRouter'
 import { useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
+import { ENABLE_IDLE_TIMEOUT } from '@/configs/sessionConfig'
 
-export default function IdleTimer({ children, locale }: ChildrenType & { locale: Locale }) {
+type IdleTimerProps = ChildrenType & { locale: Locale }
+
+export default function IdleTimer({ children, locale }: IdleTimerProps) {
+  // Idle Timeout disabled by env: render children only, no idle timer/listeners are mounted.
+  // Branching between components (not hooks) keeps the Rules of Hooks intact.
+  if (!ENABLE_IDLE_TIMEOUT) return <>{children}</>
+
+  return <IdleTimerWatcher locale={locale}>{children}</IdleTimerWatcher>
+}
+
+function IdleTimerWatcher({ children, locale }: IdleTimerProps) {
   const [isIdle, setIsIdle] = useState(false)
 
   const router = useRouter()

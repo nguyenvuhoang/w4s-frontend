@@ -3,13 +3,13 @@
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { sendEmail } from '../services/emailService';
-import { Locale } from '@/configs/i18n';
+import { i18n, Locale } from '@/configs/i18n';
 import { useParams } from 'next/navigation';
 
 export const useComposeEmailHandler = (onClose: () => void) => {
     const { data: session } = useSession();
     const params = useParams();
-    const locale = (params?.locale as Locale) || 'en';
+    const locale = (params?.locale as Locale) || i18n.defaultLocale;
 
     const [recipient, setRecipient] = useState('');
     const [subject, setSubject] = useState('');
@@ -33,9 +33,7 @@ export const useComposeEmailHandler = (onClose: () => void) => {
                 setContent('');
                 onClose();
             }
-        } catch (error) {
-            console.error('Failed to send email:', error);
-        } finally {
+        } catch {} finally {
             setSending(false);
         }
     };

@@ -12,7 +12,7 @@ import { getLocalizedUrl } from '@utils/i18n'
 import { Button, TextField, Typography } from '@mui/material'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter } from '@shared/hooks/useRouter'
 import { useEffect, useState } from 'react'
 import { QRCode } from 'react-qrcode-logo'
 
@@ -116,8 +116,7 @@ const VerifyDevice = ({ dictionary, locale }: {
                 }
             }
 
-        } catch (error) {
-            console.error('Verify error:', error)
+        } catch {
             alert('ÄÃ£ xáº£y ra lá»—i khi xÃ¡c minh.')
         }
         finally {

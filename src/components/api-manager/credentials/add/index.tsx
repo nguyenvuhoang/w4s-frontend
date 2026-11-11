@@ -3,7 +3,7 @@
 import ApiIcon from '@mui/icons-material/Api'
 import { Box, Grid } from '@mui/material'
 import { Locale } from '@/configs/i18n'
-import { useRouter } from 'next/navigation'
+import { useRouter } from '@shared/hooks/useRouter'
 
 import ContentWrapper from '@/features/dynamicform/components/layout/content-wrapper'
 import { getLocalizedUrl } from '@/shared/utils/i18n'
@@ -16,7 +16,7 @@ export default function OpenAPIAddContent({ dictionary, session, locale }: PageP
     const dict = dictionary['openapi'] || ({} as any)
     const dictCommon = dictionary['common'] || ({} as any)
 
-    const { form, saving, resetForm, onSubmit } = useCredentialForm(session)
+    const { form, saving, resetForm, onSubmit } = useCredentialForm(session, locale)
     const { control, handleSubmit } = form
 
     const handleBack = () => router.push(getLocalizedUrl('/api-manager/credentials/', locale as Locale))

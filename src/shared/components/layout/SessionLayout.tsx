@@ -10,6 +10,7 @@ import { Metadata } from 'next';
 import { Session } from 'next-auth';
 import { JSX } from 'react';
 import Spinner from '../spinners';
+import { getServerBackendToken } from '@/server/auth/getServerBackendToken';
 
 export const generateAuthMetadata = (pageName: string): Metadata => ({
     title: `${siteConfig.shortName} - ${pageName}`,
@@ -51,7 +52,7 @@ const SessionLayout = async ({ children, params }: SessionLayoutProps) => {
         // Only make API call if storename and id are valid
         if (storename && id) {
             const dataviewAPI = await systemServiceApi.viewData({
-                sessiontoken: session?.user?.token as string,
+                sessiontoken: (await getServerBackendToken()) as string,
                 learnapi: 'cbs_workflow_execute',
                 workflowid: 'SYS_EXECUTE_SQL',
                 commandname: storename,
@@ -63,12 +64,6 @@ const SessionLayout = async ({ children, params }: SessionLayoutProps) => {
                 !isValidResponse(dataviewAPI) ||
                 (dataviewAPI.payload.dataresponse.error && dataviewAPI.payload.dataresponse.error.length > 0)
             ) {
-                console.log(
-                    'ExecutionID:',
-                    dataviewAPI.payload.dataresponse.error[0].execute_id +
-                    ' - ' +
-                    dataviewAPI.payload.dataresponse.error[0].info
-                );
                 return <Spinner />;
             }
 

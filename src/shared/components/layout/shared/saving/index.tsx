@@ -8,7 +8,7 @@ import { getDictionary } from '@utils/getDictionary';
 import { getLocalizedUrl } from '@utils/i18n';
 import SwalAlert from '@utils/SwalAlert';
 import { Box, Card, CardContent, CardMedia, Grid, Typography } from '@mui/material';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@shared/hooks/useRouter';
 import Swal from 'sweetalert2';
 
 type Props = {

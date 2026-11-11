@@ -44,7 +44,6 @@ async function ensureLaoFonts(doc: jsPDF) {
         loadTTF(FONT_REGULAR_PATH),
         loadTTF(FONT_BOLD_PATH)
     ])
-    console.log(doc.getFontList())
 
     doc.addFileToVFS('NotoSansLao-Regular.ttf', regB64)
     doc.addFileToVFS('NotoSansLao-Bold.ttf', boldB64)

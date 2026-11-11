@@ -4,7 +4,6 @@
 import { useRef, useState } from 'react'
 
 // Next Imports
-import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 // MUI Imports
@@ -69,6 +68,16 @@ const LanguageDropdown = ({ lang }: { lang: string }) => {
     setOpen(false)
   }
 
+  const handleChangeLanguage = (nextLocale: Locale) => {
+    const nextPath = getLocalePath(pathName, nextLocale)
+
+    setOpen(false)
+
+    if (nextLocale === lang) return
+
+    window.location.assign(nextPath)
+  }
+
   const handleToggle = () => {
     setOpen(prevOpen => !prevOpen)
   }
@@ -80,11 +89,9 @@ const LanguageDropdown = ({ lang }: { lang: string }) => {
 
         {lang === 'en' && <CircleFlagsUk />}
         {lang === 'vi' && <CircleFlagsVN />}
-        {lang === 'la' && <CircleFlagsLA />}
-
 
         <div className="text-primary font-sans text-sm">
-          {lang === 'en' ? 'ENG' : lang === 'vi' ? 'VIE' : lang === 'la' ? 'LAO' : ''}
+          {lang === 'en' ? 'ENG' : lang === 'vi' ? 'VIE' : ''}
         </div>
       </IconButton>
       <Popper
@@ -106,9 +113,7 @@ const LanguageDropdown = ({ lang }: { lang: string }) => {
                   {languageData.map(locale => (
                     <MenuItem
                       key={locale.langCode}
-                      component={Link}
-                      href={getLocalePath(pathName, locale.langCode)}
-                      onClick={handleClose}
+                      onClick={() => handleChangeLanguage(locale.langCode)}
                       selected={lang === locale.langCode}
                       className='pli-4'
                     >

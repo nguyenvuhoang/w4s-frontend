@@ -1,0 +1,12 @@
+'use client'
+import DeleteRounded from '@mui/icons-material/DeleteRounded'
+import EditRounded from '@mui/icons-material/EditRounded'
+import { Alert, Button, Paper, Stack, Typography } from '@mui/material'
+import NextLink from 'next/link'
+import Swal from 'sweetalert2'
+import { useState } from 'react'
+import type { Locale } from '@/configs/i18n'
+import type { ProvinceItem, ProvincesDictionary } from '../types'
+import { provinceService } from '../services/provinceService'
+import { displayProvinceValue, provincePath, provinceText } from './provinceHelpers'
+export default function ProvinceDetailContent({ dictionary, locale, sessiontoken, item, error }: { dictionary: ProvincesDictionary; locale: Locale; sessiontoken?: string; item: ProvinceItem | null; error?: string }) { const [deleting, setDeleting] = useState(false); if (!item) return <Alert severity="error">{error ?? provinceText(dictionary, 'not_found', 'Province/City was not found.')}</Alert>; const remove = async () => { const confirmed = await Swal.fire({ icon: 'warning', title: provinceText(dictionary, 'delete_title', 'Delete Province/City'), text: `${item.province_name} (${item.province_code})`, showCancelButton: true }); if (!confirmed.isConfirmed) return; setDeleting(true); try { await provinceService.deleteProvince({ sessiontoken, language: locale, identity: item }); window.location.assign(provincePath(locale)) } catch (e) { await Swal.fire({ icon: 'error', text: e instanceof Error ? e.message : provinceText(dictionary, 'delete_failed', 'Unable to delete.') }); setDeleting(false) } }; return <Paper sx={{ p: 3 }}><Stack spacing={2}><Stack direction="row" justifyContent="space-between"><Typography variant="h4" fontWeight={800}>{item.province_name}</Typography><Stack direction="row" gap={1}><Button component={NextLink} href={`${provincePath(locale)}/${item.id}/edit?country_id=${encodeURIComponent(item.country_id)}&province_code=${encodeURIComponent(item.province_code)}`} startIcon={<EditRounded />}>{provinceText(dictionary, 'edit', 'Edit')}</Button><Button color="error" disabled={deleting} onClick={() => void remove()} startIcon={<DeleteRounded />}>{provinceText(dictionary, 'delete', 'Delete')}</Button></Stack></Stack>{Object.entries(item).map(([key, value]) => <Stack key={key} direction="row" gap={2}><Typography minWidth={230} color="text.secondary">{provinceText(dictionary, key, key)}</Typography><Typography>{displayProvinceValue(value)}</Typography></Stack>)}</Stack></Paper> }

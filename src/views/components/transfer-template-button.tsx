@@ -46,7 +46,6 @@ const TransferTemplateButton = ({
 
 
         if (requestTransferTemplate.status !== 200) {
-            console.error('Error fetching transfer template');
             setIsLoading(false);
             return;
         }
@@ -169,19 +168,21 @@ const TransferTemplateButton = ({
                                 transition: 'box-shadow 0.3s ease',
                                 borderRadius: '8px',
                             }}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <SearchIcon />
-                                    </InputAdornment>
-                                ),
-                                endAdornment: searchTerm && (
-                                    <InputAdornment position="end">
-                                        <IconButton onClick={handleClear} edge="end">
-                                            <CloseIcon />
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
+                            slotProps={{
+                                input: {
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <SearchIcon />
+                                        </InputAdornment>
+                                    ),
+                                    endAdornment: searchTerm && (
+                                        <InputAdornment position="end">
+                                            <IconButton onClick={handleClear} edge="end">
+                                                <CloseIcon />
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                },
                             }}
                         />
                     </div>

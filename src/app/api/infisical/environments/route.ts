@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { infisicalServerService } from '@/servers/system-service/services/infisical.server';
+import logger from '@lib/logger'
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
@@ -20,7 +21,7 @@ export async function GET(request: Request) {
         const res = await infisicalServerService.getEnvironments(token, workspaceId);
         return NextResponse.json(res.payload, { status: res.status });
     } catch (error) {
-        console.error('API Environments error:', error);
+        logger.error('API Environments error:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }

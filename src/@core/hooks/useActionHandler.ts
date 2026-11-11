@@ -17,15 +17,12 @@ export const useActionHandler = () => {
         setLoading(true);
         try {
             if (options?.showLoadingLog) {
-                console.log(`${actionName} started...`);
             }
 
             await action();
 
-            console.log(`${actionName} success`);
             options?.onSuccess?.();
         } catch (error) {
-            console.error(`${actionName} failed:`, error);
             options?.onError?.(error);
         } finally {
             setLoading(false);

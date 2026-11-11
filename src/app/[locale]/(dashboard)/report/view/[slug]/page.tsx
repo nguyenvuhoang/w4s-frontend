@@ -1,4 +1,3 @@
-import { auth } from '@/auth'
 import Spinner from '@components/spinners'
 import { Locale } from '@/configs/i18n'
 import { getDictionary } from '@utils/getDictionary'
@@ -13,14 +12,11 @@ type Params = Promise<{
 const ReportViewPage = async ({ params }: { params: Params }) => {
     const { locale, slug } = await params
 
-    const [dictionary, session] = await Promise.all([
-        getDictionary(locale),
-        auth()
-    ]);
+    const dictionary = await getDictionary(locale)
 
     return (
         <Suspense fallback={<Spinner />}>
-            <RenderReportDetail reportcode={slug} session={session} dictionary={dictionary} locale = {locale} />
+            <RenderReportDetail reportcode={slug} dictionary={dictionary} locale = {locale} />
         </Suspense>
     )
 }

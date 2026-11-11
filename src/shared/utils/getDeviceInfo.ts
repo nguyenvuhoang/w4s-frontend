@@ -64,8 +64,7 @@ export async function getDeviceInfo() {
             my_country_code = data.country ?? 'Unknown';
             cachedIP = my_ip;
             cachedCountry = my_country_code;
-        } catch (error) {
-            console.error('Error fetching IP address:', error);
+        } catch {
             my_ip = 'Unknown';
             my_country_code = 'Unknown';
         }

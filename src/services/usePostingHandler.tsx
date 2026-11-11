@@ -50,8 +50,7 @@ export const usePostingHandler = ({
             } else {
                 SwalAlert('error', dictionary['account'].syncfailed, 'center');
             }
-        } catch (error) {
-            console.error('Error syncing:', error);
+        } catch {
             SwalAlert('error', dictionary['account'].syncfailed, 'center');
         } finally {
             setLoading(false);

@@ -4,6 +4,7 @@ import { Session } from 'next-auth'
 import { useCallback, useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 
+import { i18n, Locale } from '@/configs/i18n'
 import { workflowService } from '@/servers/system-service'
 import { isValidResponse } from '@/shared/utils/isValidResponse'
 import SwalAlert from '@/shared/utils/SwalAlert'
@@ -13,7 +14,7 @@ import { getLocalizedUrl } from '@/shared/utils/i18n'
 
 const fromLocalDT = (v: string) => (v ? new Date(v).toISOString() : null)
 
-export function useModifyCredentialForm(session: Session | null, initialData: OpenAPIType, locale: string) {
+export function useModifyCredentialForm(session: Session | null, initialData: OpenAPIType, locale: Locale | string) {
     const [saving, setSaving] = useState(false)
 
     const form = useForm<FormValues>({
@@ -60,7 +61,7 @@ export function useModifyCredentialForm(session: Session | null, initialData: Op
         try {
             const resp = await workflowService.updateAPIKey({
                 sessiontoken: session?.user?.token as string,
-                language: 'en' as any,
+                language: (locale as Locale) || i18n.defaultLocale,
                 fields: payload
             })
 
@@ -88,7 +89,7 @@ export function useModifyCredentialForm(session: Session | null, initialData: Op
         } finally {
             setSaving(false)
         }
-    }, [session, initialData.id])
+    }, [locale, session, initialData.id])
 
     return {
         form,

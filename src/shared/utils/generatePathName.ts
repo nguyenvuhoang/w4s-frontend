@@ -8,8 +8,7 @@ export const generatePathName = (id: any, currentPath: string, data: any) => {
         const pathName = `${currentPath}/${storeType}/${storeName}/${id}`;
 
         return `${pathName}`;
-    } catch (error) {
-        console.error('Error parsing JSON in generatePathName:', error);
+    } catch {
         return currentPath;
     }
 };

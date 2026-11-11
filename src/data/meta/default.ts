@@ -148,10 +148,6 @@ export const languageData: LanguageDataType[] = [
   {
     langCode: 'vi',
     langName: 'Vietnamese'
-  },
-  {
-    langCode: 'la',
-    langName: 'Laos'
   }
 ]
 

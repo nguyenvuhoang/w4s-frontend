@@ -13,6 +13,7 @@ import type { Mode } from '@core/types';
 import { Metadata } from 'next';
 import { Session } from 'next-auth';
 import { JSX } from 'react';
+import { getServerBackendToken } from '@/server/auth/getServerBackendToken';
 
 export const generateAuthMetadata = (pageName: string): Metadata => ({
     title: `${siteConfig.shortName} - ${pageName}`,
@@ -57,7 +58,7 @@ const GenerateLayout = async ({ children, params }: SessionLayoutProps) => {
         formcode = pageid.replace(/-/g, '_');
 
         const pagecontentApi = await formService.loadFormInfo({
-            sessiontoken: session?.user?.token as string,
+            sessiontoken: (await getServerBackendToken()) as string,
             language: resolvedParams.locale,
             formid: formcode
         })
@@ -76,7 +77,7 @@ const GenerateLayout = async ({ children, params }: SessionLayoutProps) => {
         const resolvedMasterData = replaceParameterPlaceholders(masterdata, id ?? '', dictionary, resolvedParams.locale);
 
         const viewdataApi = await workflowService.runDynamic({
-            sessiontoken: session?.user?.token as string,
+            sessiontoken: (await getServerBackendToken()) as string,
             body: resolvedMasterData,
         })
 

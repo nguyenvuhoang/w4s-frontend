@@ -9,6 +9,7 @@ import ChannelSkeleton from '@/views/nolayout/channel/ChannelSkeleton'
 import ChannelError from '@/views/nolayout/channel/ChannelError'
 import { Suspense } from 'react'
 import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper'
+import { getServerBackendToken } from '@/server/auth/getServerBackendToken'
 
 type Params = Promise<{
     locale: Locale
@@ -18,7 +19,7 @@ async function ChannelData({ locale, session }: { locale: Locale; session: any }
     const dictionary = await getDictionary(locale)
 
     const channelAPI = await workflowService.runFODynamic({
-        sessiontoken: session?.user?.token as string,
+        sessiontoken: (await getServerBackendToken()) as string,
         workflowid: "BO_RETRIEVE_CHANNEL",
         input: {},
     });

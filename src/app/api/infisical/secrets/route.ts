@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSecretsWithParams } from '@/servers/system-service/services/infisical.server';
+import logger from '@lib/logger'
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
@@ -21,7 +22,7 @@ export async function GET(request: Request) {
         const res = await getSecretsWithParams(token, workspaceId, environment);
         return NextResponse.json(res.payload, { status: res.status });
     } catch (error) {
-        console.error('API Secrets error:', error);
+        logger.error('API Secrets error:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }

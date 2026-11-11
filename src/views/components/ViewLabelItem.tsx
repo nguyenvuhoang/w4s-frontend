@@ -9,7 +9,6 @@ import { Locale } from '@/configs/i18n'
 import { formatAmount } from '@utils/formatAmount'
 import { formatDateTime } from '@utils/formatDateTime'
 import { getDictionary } from '@utils/getDictionary'
-import { getInfoByToken } from '@utils/getInfoByToken'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 import CheckIcon from '@mui/icons-material/Check'
 import EditIcon from '@mui/icons-material/Edit'
@@ -79,10 +78,10 @@ const ViewLabelItem = ({
 
 
   const handleVerifySensitive = () => {
-    const token = session?.user?.token
-
-    const username = getInfoByToken(token ?? '', 'username')
-    const usercode = getInfoByToken(token ?? '', 'usercode')
+    // session.user.token is no longer the real backend JWT (see next-auth.d.ts) — username/
+    // usercode are already decoded server-side into the session object, use those directly.
+    const username = session?.user?.username
+    const usercode = session?.user?.usercode ?? ''
     if (!username) {
       Swal.fire('Invalid session', 'Token is invalid or expired', 'error')
       return

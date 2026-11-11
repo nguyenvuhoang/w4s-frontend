@@ -229,6 +229,10 @@ a {
   text-decoration: none;
 }
 
+option:checked {
+  background-color: rgba(0, 0, 0, 0.08);
+}
+
 ul:not([class]) {
   margin-block: 1rem;
   padding-inline-start: 40px;
@@ -325,4 +329,19 @@ code {
   --tw-gradient-to: rgba(var(--colors-backgroundBody), 0) var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
   background-image: linear-gradient(to right, var(--tw-gradient-stops));
+}
+
+/* SweetAlert dialogs must be positioned against the viewport, not a dashboard layout container. */
+.swal2-container {
+  position: fixed !important;
+  z-index: 1400 !important;
+}
+
+/* Full-viewport only for modal alerts; a toast keeps SweetAlert's own corner position (no overlay). */
+body:not(.swal2-toast-shown) .swal2-container {
+  inset: 0 !important;
+}
+
+.swal2-popup {
+  max-width: calc(100vw - 2rem);
 }

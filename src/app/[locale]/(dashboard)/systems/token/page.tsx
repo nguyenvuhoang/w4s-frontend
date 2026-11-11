@@ -6,6 +6,8 @@ import { getDictionary } from '@utils/getDictionary'
 import { isValidResponse } from '@utils/isValidResponse'
 import TokenInformation from '@/views/systems/token'
 import { Suspense } from 'react'
+import { getServerBackendToken } from '@/server/auth/getServerBackendToken'
+import logger from '@lib/logger'
 
 type Params = Promise<{
     locale: Locale
@@ -21,7 +23,7 @@ const TokenPage = async ({ params }: { params: Params }) => {
     ]);
 
     const coregatewayApi = await coreGetWayServiceApi.coreGatewaySearchInfo({
-        sessiontoken: session?.user?.token as string,
+        sessiontoken: (await getServerBackendToken()) as string,
         language: locale,
         commandname: 'SimpleSearchToken',
         pageIndex: 1,
@@ -32,7 +34,7 @@ const TokenPage = async ({ params }: { params: Params }) => {
         !isValidResponse(coregatewayApi) ||
         (coregatewayApi.payload.dataresponse.errors && coregatewayApi.payload.dataresponse.errors.length > 0)
     ) {
-        console.log(
+        logger.log(
             'ExecutionID:',
             coregatewayApi.payload.dataresponse.errors[0].execute_id +
             ' - ' +

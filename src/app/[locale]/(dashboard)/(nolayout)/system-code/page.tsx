@@ -6,6 +6,7 @@ import { getDictionary } from '@utils/getDictionary'
 import { isValidResponse } from '@utils/isValidResponse'
 import SystemCodeContent from '@/views/nolayout/system-code'
 import { Suspense } from 'react'
+import logger from '@lib/logger'
 
 type Params = Promise<{
     locale: Locale
@@ -23,7 +24,7 @@ const SystemCodePage = async ({ params }: { params: Params }) => {
     //     !isValidResponse(dataSearchAPI) ||
     //     (dataSearchAPI.payload.dataresponse.errors && dataSearchAPI.payload.dataresponse.errors.length > 0)
     // ) {
-    //     console.log(
+    //     logger.log(
     //         'ExecutionID:',
     //         dataSearchAPI.payload.dataresponse.errors[0].execute_id +
     //         ' - ' +

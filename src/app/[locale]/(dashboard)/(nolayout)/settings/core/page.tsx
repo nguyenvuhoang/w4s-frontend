@@ -8,6 +8,8 @@ import { getDictionary } from '@utils/getDictionary'
 import { isValidResponse } from '@utils/isValidResponse'
 import CoreBankingConnectionSettingContent from '@/views/nolayout/settings/core'
 import { Suspense } from 'react'
+import { getServerBackendToken } from '@/server/auth/getServerBackendToken'
+import logger from '@lib/logger'
 
 type Params = Promise<{
     locale: Locale
@@ -22,7 +24,7 @@ const CoreBankingConnectionSettingPage = async ({ params }: { params: Params }) 
     ]);
 
     const dataCoreAPI = await workflowService.runFODynamic({
-        sessiontoken: session?.user?.token as string,
+        sessiontoken: (await getServerBackendToken()) as string,
         workflowid: WORKFLOWCODE.BO_LOAD_CONNECTION_CORE_BANKING
     });
 
@@ -31,7 +33,7 @@ const CoreBankingConnectionSettingPage = async ({ params }: { params: Params }) 
         !isValidResponse(dataCoreAPI) ||
         (dataCoreAPI.payload.dataresponse.errors && dataCoreAPI.payload.dataresponse.errors.length > 0)
     ) {
-        console.log(
+        logger.log(
             'ExecutionID:',
             dataCoreAPI.payload.dataresponse.errors[0].execute_id +
             ' - ' +

@@ -7,6 +7,14 @@ import type { Mode, Skin, Layout, LayoutComponentWidth } from '@core/types'
 import { useObjectCookie } from '@core/hooks/useObjectCookie'
 import themeConfig from "@/configs/themeConfig";
 import primaryColorConfig from "@/configs/primaryColorConfig";
+import { env } from "@/env.mjs";
+import {
+    DEFAULT_BRANDING_LOGOS,
+    DEFAULT_BRANDING_PALETTE,
+    type BrandingLogos,
+    type BrandingPalette,
+    type BrandingSettings
+} from '@shared/constants/branding'
 
 
 export type Settings = {
@@ -17,8 +25,14 @@ export type Settings = {
     navbarContentWidth?: LayoutComponentWidth
     contentWidth?: LayoutComponentWidth
     footerContentWidth?: LayoutComponentWidth
+    /** Kept in sync with palette.primary for lightweight consumers that only need one accent
+     * color (top-loading bar, feature tour) — ThemeProvider itself reads the full `palette`. */
     primaryColor?: string
-    logoUrl?: string
+    /** Full coordinated brand color palette — see src/shared/constants/branding.ts. */
+    palette?: BrandingPalette
+    /** All 5 branding logo slots (banner/top_menu/favicon/loading/login_title) — see
+     * src/shared/constants/branding.ts. */
+    logos?: BrandingLogos
     fontFamily?: string
     brandingName?: string
 }
@@ -40,6 +54,11 @@ type Props = {
     children: ReactNode
     settingsCookie: Settings | null
     mode?: Mode
+    /** Branding config loaded server-side from the IPS backend (falls back to ENV/defaults when
+     * unset or backend unavailable). Takes priority over the hardcoded themeConfig values so a
+     * fresh session (no settings cookie yet) still reflects what was saved on the Branding
+     * settings screen. */
+    brandingSettings?: BrandingSettings
 }
 
 export const SettingsProvider = (props: Props) => {
@@ -53,10 +72,12 @@ export const SettingsProvider = (props: Props) => {
         navbarContentWidth: themeConfig.navbar.contentWidth,
         contentWidth: themeConfig.contentWidth,
         footerContentWidth: themeConfig.footer.contentWidth,
-        primaryColor: primaryColorConfig[0].main,
-        logoUrl: themeConfig.logoUrl,
-        fontFamily: themeConfig.fontFamily,
-        brandingName: themeConfig.templateName
+        primaryColor: props.brandingSettings?.palette?.primary || primaryColorConfig[0].main,
+        palette: props.brandingSettings?.palette || DEFAULT_BRANDING_PALETTE,
+        logos: props.brandingSettings?.logos || DEFAULT_BRANDING_LOGOS,
+        fontFamily: props.brandingSettings?.fontFamily || themeConfig.fontFamily,
+        // Priority: Backend branding config -> ENV default -> themeConfig hardcoded default.
+        brandingName: props.brandingSettings?.brandingName || env.NEXT_PUBLIC_APPLICATION_TITLE || themeConfig.templateName
     }
 
     const updatedInitialSettings = {

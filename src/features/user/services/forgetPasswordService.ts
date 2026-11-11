@@ -1,9 +1,10 @@
 import { WORKFLOWCODE } from "@/data/WorkflowCode";
 import { dataService, workflowService } from "@/servers/system-service";
 import { isValidResponse } from "@utils/isValidResponse";
+import { getLocalizedUrl } from "@utils/i18n";
 import SwalAlert from "@utils/SwalAlert";
 
-export async function handleResetPassword({ data, setLoading, dictionary, router }: any) {
+export async function handleResetPassword({ data, setLoading, dictionary, router, locale }: any) {
     try {
         setLoading(true);
 
@@ -65,7 +66,7 @@ export async function handleResetPassword({ data, setLoading, dictionary, router
             false, // showCancelButton
             true, // withConfirm
             () => {
-                router.push("/login");
+                router.push(getLocalizedUrl("/login", locale));
             }
         );
 

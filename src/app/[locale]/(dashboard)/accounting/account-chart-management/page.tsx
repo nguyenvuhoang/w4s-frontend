@@ -10,6 +10,8 @@ import { getDictionary } from '@utils/getDictionary';
 import { isValidResponse } from '@utils/isValidResponse';
 import AccountingManagementContent from '@/views/accounting';
 import { Metadata } from 'next';
+import { getServerBackendToken } from '@/server/auth/getServerBackendToken'
+import logger from '@lib/logger'
 
 export const metadata: Metadata = generateAuthMetadata('Contract management');
 
@@ -25,7 +27,7 @@ const AccountingManagement = async (props: PageProps) => {
 
     // 1) Load dữ liệu bảng chính
     const accountChartApi = await workflowService.runFODynamic({
-        sessiontoken: session?.user?.token as string,
+        sessiontoken: (await getServerBackendToken()) as string,
         workflowid: 'BO_EXECUTE_SQL_FROM_ACT',
         input: {
             commandname: 'SimpleSearchAccountChart',
@@ -55,7 +57,7 @@ const AccountingManagement = async (props: PageProps) => {
     if (hasError) {
         const err0 = accountChartApi?.payload?.dataresponse?.errors?.[0];
         if (err0) {
-            console.log('ExecutionID:', `${err0.execute_id} - ${err0.info}`);
+            logger.log('ExecutionID:', `${err0.execute_id} - ${err0.info}`);
         }
         return <Spinner />;
     }

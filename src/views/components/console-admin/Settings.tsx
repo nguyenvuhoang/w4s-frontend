@@ -42,7 +42,7 @@ const Settings = ({ session, dictionary }: {
     const [totalCount, setTotalCount] = useState<number>(0)
     const [updatedItemId, setUpdatedItemId] = useState<number | null>(null)
 
-    const fetchSettings = useCallback(async (service: string, pageIndex = 1) => {
+    const fetchSettings = useCallback(async (service: string, pageIndex = 0) => {
         setLoading(true)
         try {
             const dataSearchAPI = await dataService.searchSystemData({
@@ -66,8 +66,7 @@ const Settings = ({ session, dictionary }: {
             const dataSystem = dataSearchAPI.payload.dataresponse.data.items
             setTotalCount(dataSystem.total_count || 0)
             setData(dataSystem)
-        } catch (err) {
-            console.error('Error fetching settings:', err)
+        } catch {
             setData([])
         } finally {
             setLoading(false)
@@ -113,9 +112,7 @@ const Settings = ({ session, dictionary }: {
             setTimeout(() => {
                 setUpdatedItemId(null)
             }, 800)
-        } catch (err) {
-            console.error('Failed to update value', err)
-        }
+        } catch {}
     }
 
     const handleChangePage = (_: unknown, newPage: number) => {

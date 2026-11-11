@@ -66,7 +66,7 @@ const RenderMultiValueDefault = ({
       try {
         const formcontentApi = await formService.loadFormInfo({
           sessiontoken: session?.user?.token as string,
-          language: 'en',
+          language,
           formid: form_id + '_advanced_search',
         });
 
@@ -77,15 +77,13 @@ const RenderMultiValueDefault = ({
           if (Array.isArray(layout)) setListLayout(layout);
           if (form_info && typeof form_info === 'object') setInfo(form_info);
         }
-      } catch (error) {
-        console.error('Error fetching form data:', error);
-      }
+      } catch {}
     };
 
     if (!list_layout || list_layout.length === 0) {
       fetchData();
     }
-  }, [list_layout, form_id, session?.user?.token]);
+  }, [list_layout, form_id, language, session?.user?.token]);
 
 
   const handleSearch = async () => {

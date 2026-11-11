@@ -122,8 +122,7 @@ const CoreSetting = ({ session, dictionary, configdata }: Props) => {
             }
 
             SwalAlert('success', `${dictionary['common'].datachange.replace("{0}", configdata.active_core_code)}`, 'center');
-        } catch (err: any) {
-            console.error('âŒ Save failed:', err);
+        } catch {
             SwalAlert('error', `${dictionary['common'].savefailed}`, 'center');
         } finally {
             setLoading(false);
@@ -167,8 +166,7 @@ const CoreSetting = ({ session, dictionary, configdata }: Props) => {
             }
             setConnectionInfo(testResponse.payload.dataresponse.data.input.info as ConnectionCoreInfo);
             setOpenDialog(true);
-        } catch (err) {
-            console.error('Failed to update mail config', err);
+        } catch {
             SwalAlert('error', 'Unexpected error occurred.', 'center');
         } finally {
             setLoading(false);

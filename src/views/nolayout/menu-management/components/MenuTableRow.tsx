@@ -7,6 +7,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import { MenuItem } from '@shared/types/systemTypes'
 import { Locale } from '@configs/i18n'
+import { useSearchTableRowConfig } from '@/shared/components/table'
 import { MenuItemWithChildren } from '../hooks/useMenuTree'
 
 const getCommandTypeLabel = (type: string): string => {
@@ -61,13 +62,23 @@ export const MenuTableRow = ({
     const isExpanded = expandedRows.has(id)
     const level = row.level || 0
 
+    // Selecting one row (checkbox) locks every other row via pointerEvents/opacity — a
+    // multi-select concern this screen owns, layered on top of the shared click-to-detail
+    // interaction rather than folded into it.
+    const table = useSearchTableRowConfig<MenuItemWithChildren>({
+        rowInteraction: {
+            onOpenDetail: (item) => onRowDoubleClick(item.command_id),
+            isRowInteractive: () => !isDisabledRow
+        }
+    })
+    const rowProps = table.getRowProps(row)
+
     return (
         <TableRow
             key={`${row.command_id}-${index}`}
-            hover
-            onDoubleClick={() => onRowDoubleClick(row.command_id)}
+            {...rowProps}
             sx={{
-                cursor: isDisabledRow ? 'default' : 'pointer',
+                ...rowProps.sx,
                 pointerEvents: isDisabledRow ? 'none' : 'auto',
                 opacity: isDisabledRow ? 0.6 : 1
             }}

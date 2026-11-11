@@ -7,6 +7,7 @@ import { LearnAPIType } from '@/shared/types';
 import { getDictionary } from '@/shared/utils/getDictionary';
 import { isValidResponse } from '@/shared/utils/isValidResponse';
 import { notFound } from 'next/navigation';
+import { getServerBackendToken } from '@/server/auth/getServerBackendToken'
 
 
 type Params = Promise<{
@@ -22,7 +23,7 @@ export default async function LearnApiModifyPage({ params }: { params: Params })
     const [dictionary, learnAPIDataApi] = await Promise.all([
         getDictionary(locale as any),
         learnAPIService.view({
-            sessiontoken: session?.user?.token as string,
+            sessiontoken: (await getServerBackendToken()) as string,
             language: locale as any,
             learn_api_id: apiId,
         })

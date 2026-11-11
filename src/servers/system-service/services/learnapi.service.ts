@@ -4,6 +4,13 @@ import { ReverseProxyConfig, ReverseProxyResponseData } from '@/types/yarp';
 import { BODataResponse, LearnAPIType, SearchDataResponse, SystemSearchDataRequest, WorkflowLogDetailData } from "@shared/types/systemTypes";
 import http from "../../lib/http";
 
+type ClearCacheResponse = {
+    success: boolean;
+    status: number;
+    data: any;
+    message?: string;
+}
+
 /**
  * LearnAPI Service
  * Handles BO (Business Object) and FO (Function Object) operations
@@ -110,15 +117,10 @@ export const learnAPIService = {
             }),
 
     clearCache: ({ sessiontoken, language }: { sessiontoken: string, language: string }) =>
-        http.post<BODataResponse>('/system-service',
+        http.post<ClearCacheResponse>('/api/cache/clear',
+            null,
             {
-                learn_api: LEARNAPICODE.CMS_CLEAR_CACHE,
-                fields: {
-                    target: "all"
-                }
-            },
-            {
-                baseUrl: process.env.NEXT_PUBLIC_API_URL,
+                baseUrl: '',
                 headers: {
                     uid: `${sessiontoken}`,
                     lang: language,

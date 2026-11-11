@@ -1,3 +1,4 @@
+import { logoutClientSession } from '@/servers/lib/http';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || ''; // Relative path for internal
 
@@ -11,8 +12,17 @@ async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
     });
 
     if (!res.ok) {
-        // Handle specific status codes
-        if (res.status === 401) throw new Error('Unauthorized');
+        // Session invalid/expired: clear state and redirect to login through the same central
+        // path every other API client uses (src/servers/lib/http.ts), instead of throwing a
+        // generic error that callers would otherwise surface as their own toast/alert. The
+        // returned promise never resolves so callers never get a chance to render that error.
+        if (res.status === 401) {
+            await logoutClientSession('authentication_error');
+
+            return new Promise<T>(() => { });
+        }
+
+        // 403 is a business/permission error (not a session error) — surfaced to the caller as-is.
         if (res.status === 403) throw new Error('Forbidden');
         const errorData = await res.json().catch(() => ({}));
         throw new Error(errorData.message || `API Error: ${res.statusText}`);

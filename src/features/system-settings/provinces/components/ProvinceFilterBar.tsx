@@ -1,0 +1,15 @@
+'use client'
+import SearchRounded from '@mui/icons-material/SearchRounded'
+import { Button, Grid, InputAdornment, MenuItem, Paper, TextField } from '@mui/material'
+import { useMemo } from 'react'
+import type { Locale } from '@/configs/i18n'
+import { useCodeListCaptionMap } from '@/shared/hooks/useCodeListCaptionMap'
+import { buildCodeListOptions } from '@/shared/utils/buildCodeListOptions'
+import type { ProvinceFilterModel, ProvincesDictionary } from '../types'
+import { PROVINCE_CODE_LISTS, provinceText } from './provinceHelpers'
+export default function ProvinceFilterBar({ dictionary, locale, filter, onChange, onSearch, loading }: { dictionary: ProvincesDictionary; locale: Locale; filter: ProvinceFilterModel; onChange: (key: keyof ProvinceFilterModel, value: string) => void; onSearch: () => void; loading: boolean }) {
+ const effective = useCodeListCaptionMap({ ...PROVINCE_CODE_LISTS.effectiveStatus, language: locale }); const type = useCodeListCaptionMap({ ...PROVINCE_CODE_LISTS.administrativeType, language: locale }); const status = useCodeListCaptionMap({ ...PROVINCE_CODE_LISTS.status, language: locale })
+ const options = (items: any[]) => buildCodeListOptions(items, locale)
+ const select = (label: string, value: string, key: keyof ProvinceFilterModel, entries: any[]) => <TextField select fullWidth size="small" label={label} value={value} onChange={e => onChange(key, e.target.value)}><MenuItem value="">{provinceText(dictionary, 'all', 'All')}</MenuItem>{options(entries).map(item => <MenuItem key={item.value} value={item.value}>{item.label}</MenuItem>)}</TextField>
+ return <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}><Grid container spacing={2}><Grid size={{ xs: 12, md: 4 }}><TextField fullWidth size="small" label={provinceText(dictionary, 'search', 'Search')} value={filter.search_text} onChange={e => onChange('search_text', e.target.value)} onKeyDown={e => { if (e.key === 'Enter') onSearch() }} slotProps={{ input: { startAdornment: <InputAdornment position="start"><SearchRounded fontSize="small" /></InputAdornment> } }} /></Grid><Grid size={{ xs: 12, sm: 6, md: 2 }}>{select(provinceText(dictionary, 'effective_status', 'Effective status'), filter.effective_status, 'effective_status', effective.items)}</Grid><Grid size={{ xs: 12, sm: 6, md: 2 }}>{select(provinceText(dictionary, 'administrative_type', 'Administrative type'), filter.administrative_type, 'administrative_type', type.items)}</Grid><Grid size={{ xs: 12, sm: 6, md: 2 }}><TextField fullWidth size="small" label={provinceText(dictionary, 'region', 'Region')} value={filter.region} onChange={e => onChange('region', e.target.value)} onKeyDown={e => { if (e.key === 'Enter') onSearch() }} /></Grid><Grid size={{ xs: 12, sm: 6, md: 2 }}>{select(provinceText(dictionary, 'status', 'Status'), filter.status, 'status', status.items)}</Grid><Grid size={{ xs: 12 }}><Button variant="contained" startIcon={<SearchRounded />} onClick={onSearch} disabled={loading}>{provinceText(dictionary, 'search', 'Search')}</Button></Grid></Grid></Paper>
+}

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
     Box,
     Button,
@@ -9,250 +9,321 @@ import {
     CardHeader,
     Divider,
     Grid,
-    InputAdornment,
     MenuItem,
     Stack,
     TextField,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    Typography,
-    Alert
+    Typography
 } from '@mui/material'
 import { useSettings } from '@core/hooks/useSettings'
-import primaryColorConfig from '@/configs/primaryColorConfig'
 import { env } from '@/env.mjs'
+import SwalAlert from '@/shared/utils/SwalAlert'
+import {
+    BRANDING_LOGO_KEYS,
+    BRANDING_PALETTE_COLOR_KEYS,
+    DEFAULT_BRANDING_LOGOS,
+    DEFAULT_BRANDING_PALETTE,
+    DEFAULT_BRANDING_SETTINGS,
+    type BrandingLogoKey,
+    type BrandingLogos,
+    type BrandingPalette,
+    type BrandingPaletteColorKey,
+    type BrandingSettings
+} from '@shared/constants/branding'
+import { BrandingApiError, brandingService } from '@/features/system-settings/branding/services/brandingService'
+import { LOGO_FIELD_DEFS } from '@/features/system-settings/branding/logoFieldDefs'
+import LogoUploadField, { type LogoFieldValue } from '@/features/system-settings/branding/components/LogoUploadField'
+import PalettePicker from '@/features/system-settings/branding/components/PalettePicker'
+import type { SystemSettingsDictionary } from './systemSettingsModules'
 
 const fontOptions = [
-    { label: 'Quicksand (Default)', value: 'Quicksand, sans-serif' },
+    { label: 'Quicksand', value: 'Quicksand, sans-serif' },
     { label: 'Inter', value: 'Inter, sans-serif' },
     { label: 'Roboto', value: 'Roboto, sans-serif' },
     { label: 'Open Sans', value: '"Open Sans", sans-serif' },
     { label: 'System UI', value: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif' }
 ]
 
+const ALLOWED_LOGO_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml']
+const MAX_LOGO_SIZE_BYTES = 2 * 1024 * 1024
+const HEX_COLOR_PATTERN = /^#[0-9A-Fa-f]{6}$/
+
 type SystemSettingsClientProps = {
-    presetLogos?: { name: string; url: string }[]
-    serverSettings?: any
+    serverSettings?: Partial<BrandingSettings>
+    dictionary: SystemSettingsDictionary
 }
 
-const SystemSettingsClient = ({ presetLogos = [], serverSettings = {} }: SystemSettingsClientProps) => {
+type LogosFieldState = Record<BrandingLogoKey, LogoFieldValue>
+
+const settingsClientText = (dictionary: SystemSettingsDictionary, key: string) => (
+    dictionary.system_settings_modules?.[key] ?? key
+)
+
+const buildLogosFieldState = (logos: BrandingLogos): LogosFieldState => (
+    BRANDING_LOGO_KEYS.reduce((acc, key) => {
+        acc[key] = { url: logos[key] || '', error: null, warning: null }
+        return acc
+    }, {} as LogosFieldState)
+)
+
+const SystemSettingsClient = ({ serverSettings = {}, dictionary }: SystemSettingsClientProps) => {
     const { settings, updateSettings } = useSettings()
+    const t = (key: string) => settingsClientText(dictionary, key)
 
-    const [formData, setFormData] = useState({
-        logoUrl: serverSettings.logoUrl || settings.logoUrl || '',
-        primaryColor: serverSettings.primaryColor || settings.primaryColor || primaryColorConfig[0].main,
-        fontFamily: serverSettings.fontFamily || settings.fontFamily || fontOptions[0].value,
-        brandingName: env.NEXT_PUBLIC_APPLICATION_TITLE || serverSettings.brandingName || settings.brandingName || ''
-    })
+    // Priority: Backend branding config (serverSettings) -> ENV default -> current context
+    // settings (already resolved through the same Backend -> ENV -> themeConfig chain at
+    // Provider level).
+    const initialLogos = serverSettings.logos || settings.logos || DEFAULT_BRANDING_LOGOS
+    const initialPalette = serverSettings.palette || settings.palette || DEFAULT_BRANDING_PALETTE
+    const initialBrandingName =
+        serverSettings.brandingName ||
+        env.NEXT_PUBLIC_APPLICATION_TITLE ||
+        settings.brandingName ||
+        DEFAULT_BRANDING_SETTINGS.brandingName
+    const initialFontFamily = serverSettings.fontFamily || settings.fontFamily || DEFAULT_BRANDING_SETTINGS.fontFamily
 
-    const [galleryOpen, setGalleryOpen] = useState(false)
-    const [sizeWarning, setSizeWarning] = useState<string | null>(null)
+    const [brandingName, setBrandingName] = useState(initialBrandingName)
+    const [palette, setPalette] = useState<BrandingPalette>(initialPalette)
+    const [paletteErrors, setPaletteErrors] = useState<Partial<Record<BrandingPaletteColorKey, string>>>({})
+    const [fontFamily, setFontFamily] = useState(initialFontFamily)
+    const [logosState, setLogosState] = useState<LogosFieldState>(() => buildLogosFieldState(initialLogos))
     const [isSaving, setIsSaving] = useState(false)
 
-    const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value
-        setFormData(prev => ({ ...prev, [field]: value }))
-        if (field === 'logoUrl') setSizeWarning(null)
+    const pendingLogoFilesRef = useRef<Partial<Record<BrandingLogoKey, File>>>({})
+    const pendingObjectUrlsRef = useRef<Partial<Record<BrandingLogoKey, string>>>({})
+
+    useEffect(() => {
+        return () => {
+            Object.values(pendingObjectUrlsRef.current).forEach(url => {
+                if (url) URL.revokeObjectURL(url)
+            })
+        }
+    }, [])
+
+    const clearPendingLogoFile = (key: BrandingLogoKey) => {
+        const pendingUrl = pendingObjectUrlsRef.current[key]
+
+        if (pendingUrl) URL.revokeObjectURL(pendingUrl)
+        delete pendingObjectUrlsRef.current[key]
+        delete pendingLogoFilesRef.current[key]
     }
 
-    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]
-        if (file) {
-            // Check size (approx 3KB limit for cookie safety)
-            if (file.size > 3072) {
-                setSizeWarning('File is too large (> 3KB). It might not persist after refresh due to cookie limits.')
-            } else {
-                setSizeWarning(null)
-            }
+    const handleLogoFileSelect = (key: BrandingLogoKey, file: File) => {
+        if (!ALLOWED_LOGO_TYPES.includes(file.type)) {
+            setLogosState(prev => ({ ...prev, [key]: { ...prev[key], error: t('branding_logo_type_error') } }))
+            return
+        }
 
-            const reader = new FileReader()
-            reader.onloadend = () => {
-                setFormData(prev => ({ ...prev, logoUrl: reader.result as string }))
+        if (file.size > MAX_LOGO_SIZE_BYTES) {
+            setLogosState(prev => ({ ...prev, [key]: { ...prev[key], error: t('branding_logo_size_error') } }))
+            return
+        }
+
+        clearPendingLogoFile(key)
+
+        const objectUrl = URL.createObjectURL(file)
+
+        pendingObjectUrlsRef.current[key] = objectUrl
+        pendingLogoFilesRef.current[key] = file
+
+        setLogosState(prev => ({ ...prev, [key]: { url: objectUrl, error: null, warning: null } }))
+
+        if (file.type !== 'image/svg+xml') {
+            const def = LOGO_FIELD_DEFS.find(item => item.key === key)!
+            const targetRatio = def.width / def.height
+            const img = new Image()
+
+            img.onload = () => {
+                if (img.naturalWidth && img.naturalHeight) {
+                    const ratio = img.naturalWidth / img.naturalHeight
+
+                    if (Math.abs(ratio - targetRatio) / targetRatio > 0.3) {
+                        setLogosState(prev => ({ ...prev, [key]: { ...prev[key], warning: t('branding_logo_ratio_warning') } }))
+                    }
+                }
             }
-            reader.readAsDataURL(file)
+            img.src = objectUrl
         }
     }
 
-    const handleApply = () => {
-        updateSettings({
-            logoUrl: formData.logoUrl,
-            primaryColor: formData.primaryColor,
-            fontFamily: formData.fontFamily,
-            brandingName: formData.brandingName
-        })
+    const handleLogoRemove = (key: BrandingLogoKey) => {
+        clearPendingLogoFile(key)
+        setLogosState(prev => ({ ...prev, [key]: { url: '', error: null, warning: null } }))
     }
 
-    const handleSaveToServer = async () => {
+    const handlePaletteFieldChange = (key: BrandingPaletteColorKey | 'name', value: string) => {
+        setPalette(prev => ({ ...prev, [key]: value }))
+
+        if (key !== 'name') {
+            setPaletteErrors(prev => ({
+                ...prev,
+                [key]: HEX_COLOR_PATTERN.test(value) ? undefined : t('branding_color_invalid')
+            }))
+        }
+    }
+
+    const handleSelectPreset = (preset: BrandingPalette) => {
+        setPalette({ ...preset })
+        setPaletteErrors({})
+    }
+
+    const handleSave = async () => {
+        const trimmedName = brandingName.trim()
+
+        if (!trimmedName) {
+            SwalAlert('warning', t('branding_name_required'))
+            return
+        }
+
+        if (!palette.name.trim()) {
+            SwalAlert('warning', t('branding_palette_name_required'))
+            return
+        }
+
+        const invalidColorKey = BRANDING_PALETTE_COLOR_KEYS.find(key => !HEX_COLOR_PATTERN.test(palette[key]))
+
+        if (invalidColorKey) {
+            setPaletteErrors(prev => ({ ...prev, [invalidColorKey]: t('branding_color_invalid') }))
+            SwalAlert('warning', t('branding_color_invalid'))
+            return
+        }
+
         setIsSaving(true)
         try {
-            const response = await fetch('/api/system-settings', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            })
-            if (response.ok) {
-                alert('Settings saved to server successfully!')
-            } else {
-                alert('Failed to save settings to server.')
+            const resolvedLogos = { ...DEFAULT_BRANDING_LOGOS } as BrandingLogos
+
+            for (const key of BRANDING_LOGO_KEYS) {
+                const pendingFile = pendingLogoFilesRef.current[key]
+
+                if (pendingFile) {
+                    try {
+                        resolvedLogos[key] = await brandingService.uploadLogo(pendingFile)
+                    } catch {
+                        SwalAlert('error', t('branding_logo_upload_error'))
+                        return
+                    }
+                } else {
+                    resolvedLogos[key] = logosState[key].url
+                }
             }
+
+            const saved = await brandingService.save({
+                brandingName: trimmedName,
+                logos: resolvedLogos,
+                palette: { ...palette, name: palette.name.trim() },
+                fontFamily
+            })
+
+            BRANDING_LOGO_KEYS.forEach(clearPendingLogoFile)
+            setBrandingName(saved.brandingName)
+            setPalette(saved.palette)
+            setPaletteErrors({})
+            setFontFamily(saved.fontFamily)
+            setLogosState(buildLogosFieldState(saved.logos))
+
+            updateSettings({
+                brandingName: saved.brandingName,
+                logos: saved.logos,
+                palette: saved.palette,
+                primaryColor: saved.palette.primary,
+                fontFamily: saved.fontFamily
+            })
+
+            SwalAlert('success', t('settings_save_success'))
         } catch (error) {
-            console.error('Save to server error:', error)
-            alert('An error occurred while saving to server.')
+            // Pass the raw API payload when available so SwalAlert can render the execution_id
+            // reference the same way every other screen in the app does, not just a bare message.
+            const alertContent = error instanceof BrandingApiError
+                ? error.payload
+                : (error instanceof Error && error.message) || t('settings_save_error')
+
+            SwalAlert('error', alertContent)
         } finally {
             setIsSaving(false)
         }
     }
 
-    const handleReset = () => {
-        setFormData({
-            logoUrl: '',
-            primaryColor: primaryColorConfig[0].main,
-            fontFamily: fontOptions[0].value,
-            brandingName: ''
-        })
-        setSizeWarning(null)
-        updateSettings({
-            logoUrl: '',
-            primaryColor: primaryColorConfig[0].main,
-            fontFamily: fontOptions[0].value,
-            brandingName: ''
-        })
-    }
-
-    const handleSelectFromGallery = (url: string) => {
-        setFormData(prev => ({ ...prev, logoUrl: url }))
-        setSizeWarning(null)
-        setGalleryOpen(false)
-    }
-
     return (
         <Grid container spacing={6}>
-            <Grid size={{ xs: 12, md: 6 }}>
+            <Grid size={{ xs: 12 }}>
                 <Card>
-                    <CardHeader title='Branding' subheader='Customize your logo and enterprise identity' />
+                    <CardHeader
+                        title={t('branding_info_section_title')}
+                        subheader={t('branding_info_section_subtitle')}
+                    />
                     <Divider />
                     <CardContent>
-                        <Stack spacing={5}>
-                            <TextField
-                                fullWidth
-                                label='Branding Name'
-                                placeholder='Admin Console'
-                                value={formData.brandingName}
-                                onChange={handleChange('brandingName')}
-                                sx={{}}
-                            />
-                            <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mt: 2 }}>
-                                <TextField
-                                    fullWidth
-                                    label='Logo URL'
-                                    placeholder='https://example.com/logo.png'
-                                    value={formData.logoUrl}
-                                    onChange={handleChange('logoUrl')}
-                                    helperText='Web URL, Base64, or pick from gallery'
-                                    sx={{ '& .MuiFormHelperText-root': {} }}
-                                />
-                                <Box sx={{ display: 'flex', gap: 2, width: '100%', mt: 2 }}>
-                                    <Button
-                                        variant='outlined'
-                                        component='label'
-                                        size='small'
-                                        sx={{ whiteSpace: 'nowrap' }}
-                                    >
-                                        Upload File
-                                        <input type='file' hidden accept='image/*' onChange={handleFileUpload} />
-                                    </Button>
-                                    <Button
-                                        variant='outlined'
-                                        size='small'
-                                        onClick={() => setGalleryOpen(true)}
-                                        sx={{}}
-                                    >
-                                        Choose from Gallery
-                                    </Button>
-                                </Box>
-                            </Box>
-
-                            {sizeWarning && (
-                                <Alert severity='warning' sx={{ mt: 2 }}>
-                                    {sizeWarning}
-                                </Alert>
-                            )}
-
-                            {formData.logoUrl && (
-                                <Box sx={{ mt: 2, p: 4, border: '1px dashed grey', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, borderRadius: 1 }}>
-                                    <img src={formData.logoUrl} alt='Logo Preview' style={{ maxHeight: '80px', maxWidth: '100%' }} />
-                                    <Button size='small' color='error' variant='text' onClick={() => setFormData(prev => ({ ...prev, logoUrl: '' }))}>
-                                        Remove Logo
-                                    </Button>
-                                </Box>
-                            )}
-                        </Stack>
+                        <TextField
+                            fullWidth
+                            label={t('branding_name_label')}
+                            placeholder={t('branding_name_placeholder')}
+                            value={brandingName}
+                            onChange={e => setBrandingName(e.target.value)}
+                        />
                     </CardContent>
                 </Card>
             </Grid>
 
-            <Grid size={{ xs: 12, md: 6 }}>
+            <Grid size={{ xs: 12 }}>
                 <Card>
-                    <CardHeader title='Colors & Typography' subheader='Global styles for the entire platform' />
+                    <CardHeader
+                        title={t('branding_logo_section_title')}
+                        subheader={t('branding_logo_section_subtitle')}
+                    />
                     <Divider />
                     <CardContent>
-                        <Stack spacing={4}>
-                            <TextField
-                                select
-                                fullWidth
-                                label='Font Family'
-                                value={formData.fontFamily}
-                                onChange={handleChange('fontFamily')}
-                            >
-                                {fontOptions.map(option => (
-                                    <MenuItem key={option.value} value={option.value}>
-                                        <span style={{ fontFamily: option.value }}>{option.label}</span>
-                                    </MenuItem>
-                                ))}
-                            </TextField>
+                        <Grid container spacing={4}>
+                            {LOGO_FIELD_DEFS.map(def => (
+                                <Grid size={{ xs: 12, sm: 6, lg: 4 }} key={def.key}>
+                                    <LogoUploadField
+                                        def={def}
+                                        value={logosState[def.key]}
+                                        t={t}
+                                        onFileSelect={file => handleLogoFileSelect(def.key, file)}
+                                        onRemove={() => handleLogoRemove(def.key)}
+                                    />
+                                </Grid>
+                            ))}
+                        </Grid>
+                    </CardContent>
+                </Card>
+            </Grid>
 
-                            <TextField
-                                fullWidth
-                                label='Primary Color'
-                                value={formData.primaryColor}
-                                onChange={handleChange('primaryColor')}
-                                slotProps={{
-                                    input: {
-                                        startAdornment: (
-                                            <InputAdornment position='start'>
-                                                <Box
-                                                    sx={{
-                                                        width: 24,
-                                                        height: 24,
-                                                        borderRadius: '4px',
-                                                        bgcolor: formData.primaryColor,
-                                                        border: '1px solid grey'
-                                                    }}
-                                                />
-                                            </InputAdornment>
-                                        )
-                                    }
-                                }}
+            <Grid size={{ xs: 12 }}>
+                <Card>
+                    <CardHeader
+                        title={t('branding_palette_section_title')}
+                        subheader={t('branding_palette_section_subtitle')}
+                    />
+                    <Divider />
+                    <CardContent>
+                        <Stack spacing={5}>
+                            <PalettePicker
+                                palette={palette}
+                                errors={paletteErrors}
+                                t={t}
+                                onSelectPreset={handleSelectPreset}
+                                onFieldChange={handlePaletteFieldChange}
                             />
 
-                            <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-                                {primaryColorConfig.map(color => (
-                                    <Box
-                                        key={color.main}
-                                        onClick={() => setFormData(prev => ({ ...prev, primaryColor: color.main }))}
-                                        sx={{
-                                            width: 32,
-                                            height: 32,
-                                            borderRadius: '50%',
-                                            bgcolor: color.main,
-                                            cursor: 'pointer',
-                                            border: formData.primaryColor === color.main ? '2px solid black' : '1px solid grey',
-                                            '&:hover': { opacity: 0.8 }
-                                        }}
-                                    />
-                                ))}
+                            <Divider />
+
+                            <Box>
+                                <Typography variant='subtitle2' sx={{ mb: 2 }}>
+                                    {t('font_family_label')}
+                                </Typography>
+                                <TextField
+                                    select
+                                    fullWidth
+                                    value={fontFamily}
+                                    onChange={e => setFontFamily(e.target.value)}
+                                    sx={{ maxWidth: { sm: 360 } }}
+                                >
+                                    {fontOptions.map(option => (
+                                        <MenuItem key={option.value} value={option.value}>
+                                            <span style={{ fontFamily: option.value }}>{option.label}</span>
+                                        </MenuItem>
+                                    ))}
+                                </TextField>
                             </Box>
                         </Stack>
                     </CardContent>
@@ -261,49 +332,11 @@ const SystemSettingsClient = ({ presetLogos = [], serverSettings = {} }: SystemS
 
             <Grid size={{ xs: 12 }}>
                 <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-                    <Button variant='outlined' color='secondary' onClick={handleReset}>
-                        Reset to Default
-                    </Button>
-                    <Button variant='outlined' color='primary' loading={isSaving} onClick={handleSaveToServer}>
-                        Save to Server
-                    </Button>
-                    <Button variant='contained' onClick={handleApply}>
-                        Apply Changes
+                    <Button variant='contained' loading={isSaving} onClick={handleSave}>
+                        {t('save_to_server_button')}
                     </Button>
                 </Box>
             </Grid>
-
-            {/* Logo Gallery Modal */}
-            <Dialog open={galleryOpen} onClose={() => setGalleryOpen(false)} maxWidth='md' fullWidth>
-                <DialogTitle sx={{}}>Logo Warehouse</DialogTitle>
-                <DialogContent>
-                    <Grid container spacing={4} sx={{ mt: 2 }}>
-                        {presetLogos.map(logo => (
-                            <Grid size={{ xs: 6, sm: 4, md: 3 }} key={logo.url}>
-                                <Card
-                                    sx={{
-                                        cursor: 'pointer',
-                                        border: formData.logoUrl === logo.url ? '2px solid primary.main' : '1px solid divider',
-                                        '&:hover': { boxShadow: 4 }
-                                    }}
-                                    onClick={() => handleSelectFromGallery(logo.url)}
-                                >
-                                    <Box sx={{ p: 4, display: 'flex', justifyContent: 'center' }}>
-                                        <img src={logo.url} alt={logo.name} style={{ maxHeight: '60px', maxWidth: '100%' }} />
-                                    </Box>
-                                    <Divider />
-                                    <Box sx={{ p: 2, textAlign: 'center' }}>
-                                        <Typography variant='caption' sx={{}}>{logo.name}</Typography>
-                                    </Box>
-                                </Card>
-                            </Grid>
-                        ))}
-                    </Grid>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setGalleryOpen(false)}>Cancel</Button>
-                </DialogActions>
-            </Dialog>
         </Grid>
     )
 }

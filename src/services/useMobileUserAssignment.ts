@@ -1,8 +1,7 @@
 "use client";
 
-import { STORECOMMAND } from "@/data/StoreCommand";
 import { WORKFLOWCODE } from "@/data/WorkflowCode";
-import { dataService, workflowService } from "@/servers/system-service";
+import { workflowService } from "@/servers/system-service";
 import { UserMobileAccount } from "@shared/types/bankType";
 import { PageData, Role } from "@shared/types/systemTypes";
 import { SelectChangeEvent } from "@mui/material";
@@ -37,6 +36,88 @@ const firstNumberOrUndef = (s?: string) => {
     return m ? Number(m[0]) : undefined;
 };
 
+// Fields đôi khi trả về theo cả snake_case và camelCase tuỳ workflow, nên phải dò nhiều key.
+const getField = (item: any, keys: string[]) => {
+    if (!item || typeof item !== "object") return undefined;
+
+    for (const key of keys) {
+        if (item[key] !== undefined && item[key] !== null) return item[key];
+    }
+
+    return undefined;
+};
+
+const toNumber = (value: any, fallback = 0) => {
+    const numberValue = Number(value);
+    return Number.isFinite(numberValue) ? numberValue : fallback;
+};
+
+// id phải là number ổn định qua các lần fetch; ưu tiên id thật, nếu không có thì hash user_code/user_id
+// (không dùng Math.random() vì sẽ đổi mỗi lần render, phá vỡ so sánh/chọn theo id).
+const toStableId = (value: unknown): number => {
+    if (typeof value === "number" && Number.isFinite(value)) return value;
+
+    const str = String(value ?? "").trim();
+    if (/^\d+$/.test(str)) return Number(str);
+
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = (hash * 31 + str.charCodeAt(i)) | 0;
+    }
+    return Math.abs(hash);
+};
+
+const getResponseRoot = (response: any) => {
+    const dataresponse = response?.payload?.dataresponse ?? response?.dataresponse;
+    const data = dataresponse?.data ?? response?.payload?.data ?? response?.data ?? response;
+
+    return data?.data ?? data?.input?.data ?? data?.input ?? data;
+};
+
+const getErrors = (response: any) => {
+    const dataresponse = response?.payload?.dataresponse ?? response?.dataresponse;
+
+    return dataresponse?.errors ?? dataresponse?.error ?? response?.payload?.errors ?? response?.errors ?? [];
+};
+
+const getExecutionId = (response: any) => {
+    const dataresponse = response?.payload?.dataresponse ?? response?.dataresponse;
+    const errors = getErrors(response);
+    const error = Array.isArray(errors) ? errors[0] : null;
+
+    return error?.execution_id ?? error?.executionid ?? dataresponse?.execution_id ?? dataresponse?.executionid ?? "";
+};
+
+const pickItems = (root: any): any[] => {
+    if (Array.isArray(root)) return root;
+    if (Array.isArray(root?.items)) return root.items;
+    if (Array.isArray(root?.data)) return root.data;
+
+    return [];
+};
+
+const mapMobileUser = (item: any): UserMobileAccount => {
+    const user_id = getField(item, ["user_id", "userId"]) ?? "";
+    const user_code = getField(item, ["user_code", "userCode"]) ?? "";
+    const rawId = getField(item, ["id"]);
+
+    return {
+        id: rawId !== undefined ? toStableId(rawId) : toStableId(user_code || user_id),
+        channel_id: String(getField(item, ["channel_id", "channelId"]) ?? "MB"),
+        user_id: String(user_id),
+        user_name: String(getField(item, ["user_name", "userName"]) ?? ""),
+        user_code: String(user_code),
+        login_name: String(getField(item, ["login_name", "loginName"]) ?? ""),
+        first_name: String(getField(item, ["first_name", "firstName"]) ?? ""),
+        middle_name: String(getField(item, ["middle_name", "middleName"]) ?? ""),
+        last_name: String(getField(item, ["last_name", "lastName"]) ?? ""),
+        role_channel: String(getField(item, ["role_channel", "roleChannel"]) ?? ""),
+        user_type: String(getField(item, ["user_type", "userType"]) ?? "MB"),
+        phone: getField(item, ["phone"]) ?? undefined,
+        total_count: toNumber(getField(item, ["total_count", "totalCount"]), 0)
+    };
+};
+
 // Helper function to check if user is mobile user
 const isMobileUser = (user: UserMobileAccount): boolean => {
     // Check if channelid contains mobile indicators or usertype indicates mobile
@@ -56,9 +137,6 @@ const isMobileUser = (user: UserMobileAccount): boolean => {
 
     return channelCheck || typeCheck || hasPhone;
 };
-
-// Mobile service IDs constant
-const MOBILE_SERVICE_IDS = ["MB", "AM", "WAL"];
 
 export function useMobileUserAssignment({
     session,
@@ -120,18 +198,14 @@ export function useMobileUserAssignment({
         currentPageRight || 1
     );
 
-    // Filter roles by mobile-related service IDs or specific serviceid
+    // User Mobile Assignment chỉ được chọn role thuộc Service MB (role.serviceid, map từ service_id/serviceId).
     const mobileRoles = useMemo(() => {
-        if (serviceid) {
-            // Filter by specific serviceid if provided
-            return role.items.filter((r) => r.serviceid === serviceid);
-        }
-        // Default to mobile service IDs
-        return role.items.filter((r) => MOBILE_SERVICE_IDS.includes(r.usertype));
+        const targetServiceId = serviceid || "MB";
+        return role.items.filter((r) => r.serviceid === targetServiceId);
     }, [role, serviceid]);
 
     const userGroups = useMemo(
-        () => [{ roleid: "ALL", rolename: "All Mobile Users" }, ...mobileRoles],
+        () => [{ roleid: "ALL", rolename: "All Users" }, ...mobileRoles],
         [mobileRoles]
     );
     const token = session?.user?.token as string | undefined;
@@ -188,110 +262,33 @@ export function useMobileUserAssignment({
             totalPages: number;
         }> => {
             try {
-                console.log("Fetching mobile users with pagination:", {
-                    page,
-                    size,
-                    searchtext,
-                });
-
-                const response = await dataService.searchData({
+                const response = await workflowService.runFODynamic({
                     sessiontoken: session?.user?.token as string,
-                    workflowid: WORKFLOWCODE.WF_BO_EXECUTE_SQL_FROM_CTH,
-                    commandname: STORECOMMAND.SIMPLE_SEARCH_MOBILE_USER,
-                    searchtext: searchtext,
-                    pageSize: size,
-                    pageIndex: page,
+                    workflowid: WORKFLOWCODE.WF_BO_SIMPLE_SEARCH_USER,
+                    input: {
+                        page_size: size,
+                        page_index: Math.max(page - 1, 0),
+                        search_text: searchtext,
+                        channel_code: "MB",
+                    },
                 });
-                console.log(
-                    "result fetch: ",
-                    response.payload.dataresponse.data.items
-                );
-                if (response?.status === 200) {
-                    // Check for direct response structure first (new format)
-                    if (response.payload && "items" in response.payload) {
-                        const data = response.payload.items || [];
-                        const totalItems = response.payload.items[0]?.total_count || 0;
-                        const totalPageCount = response.payload.total_pages || 1;
 
-                        const mappedUsers: UserMobileAccount[] = data.map((u: any) => ({
-                            id: u.id || Math.random(), // Generate ID if not provided
-                            channel_id: u.channel_id || "MB",
-                            user_id: u.user_id,
-                            user_name: u.user_name,
-                            user_code: u.user_code,
-                            login_name: u.login_name,
-                            first_name: u.first_name || "",
-                            middle_name: u.middle_name || "",
-                            last_name: u.last_name || "",
-                            role_channel: u.role_channel,
-                            user_type: u.user_type || "MB",
-                            phone: u.phone,
-                            total_count: u.total_count,
-                        }));
-                        return {
-                            users: uniqById(mappedUsers),
-                            total: totalItems,
-                            totalPages: totalPageCount,
-                        };
-                    }
-                    // Check for nested dataresponse structure (old format)
-                    else if (
-                        response.payload?.dataresponse &&
-                        !(
-                            response.payload.dataresponse.errors &&
-                            response.payload.dataresponse.errors.length > 0
-                        )
-                    ) {
-                        const data =
-                            response.payload.dataresponse.data.items || [];
-                        const totalItems =
-                            response.payload.dataresponse.data.items[0]
-                                ?.total_count || 0;
-                        const totalPageCount =
-                            response.payload.dataresponse.data.total_pages || 1;
-
-                        const mappedUsers: UserMobileAccount[] = data.map((u: any) => ({
-                            id: u.id,
-                            channel_id: u.channel_id || u.channelid,
-                            user_id: u.user_id || u.userid,
-                            user_name: u.user_name || u.username,
-                            user_code: u.user_code || u.usercode,
-                            login_name: u.login_name || u.loginname,
-                            first_name: u.first_name || u.firstname,
-                            middle_name: u.middle_name || u.middlename,
-                            last_name: u.last_name || u.lastname,
-                            role_channel: u.role_channel || u.rolechannel,
-                            user_type: u.user_type || u.usertype,
-                            phone: u.phone,
-                            total_count: u.total_count,
-                        }));
-
-                        return {
-                            users: uniqById(mappedUsers),
-                            total: totalItems,
-                            totalPages: totalPageCount,
-                        };
-                    } else {
-                        // Handle error case for nested structure
-                        if (
-                            response.payload?.dataresponse?.errors &&
-                            response.payload.dataresponse.errors.length > 0
-                        ) {
-                            console.error(
-                                "ExecutionID:",
-                                response.payload.dataresponse.errors[0].execute_id +
-                                " - [MobileUser] - " +
-                                response.payload.dataresponse.errors[0].info
-                            );
-                        }
-                        return { users: [], total: 0, totalPages: 0 };
-                    }
-                } else {
-                    console.error("API returned non-200 status:", response?.status);
+                if (response?.status !== 200) {
                     return { users: [], total: 0, totalPages: 0 };
                 }
-            } catch (err) {
-                console.error("Error fetching mobile users with pagination:", err);
+
+                const errors = getErrors(response);
+                if (Array.isArray(errors) && errors.length > 0) {
+                    return { users: [], total: 0, totalPages: 0 };
+                }
+
+                const root = getResponseRoot(response);
+                const total = toNumber(getField(root, ["total_count", "totalCount"]), 0);
+                const totalPages = toNumber(getField(root, ["total_pages", "totalPages"]), 0);
+                const mappedUsers = uniqById(pickItems(root).map(mapMobileUser));
+
+                return { users: mappedUsers, total, totalPages };
+            } catch {
                 return { users: [], total: 0, totalPages: 0 };
             }
         },
@@ -310,128 +307,48 @@ export function useMobileUserAssignment({
         totalPages: number;
     }> => {
         try {
-            console.log("Fetching mobile users by role with pagination:", {
-                page,
-                size,
-                searchtext,
-                roleId,
-            });
-
             if (roleId === 0 || roleId === null) {
                 return { users: [], total: 0, totalPages: 0 };
             }
 
-            const response = await dataService.searchData({
+            const response = await workflowService.runFODynamic({
                 sessiontoken: session?.user?.token as string,
-                workflowid: WORKFLOWCODE.WF_BO_EXECUTE_SQL_FROM_CTH,
-                commandname: STORECOMMAND.SIMPLE_SEARCH_MOBILE_USER_BY_ROLE,
-                searchtext: searchtext,
-                pageSize: size,
-                pageIndex: page,
-                parameters: { roleid: roleId },
+                workflowid: WORKFLOWCODE.WF_BO_SEARCH_MOBILE_USER_BY_ROLES,
+                input: {
+                    page_size: size,
+                    page_index: Math.max(page - 1, 0),
+                    search_text: searchtext,
+                    role_id: roleId,
+                },
             });
-            console.log(
-                "result fetch right: ",
-                response.payload.dataresponse.data.items
-            );
-            if (response?.status === 200) {
-                // Check for direct response structure first (new format)
-                if (response.payload && "items" in response.payload) {
-                    const data = response.payload.items || [];
-                    const totalItems = response.payload.items[0]?.total_count || 0;
-                    const totalPageCount = response.payload.total_pages || 1;
 
-                    const mappedUsers: UserMobileAccount[] = data.map((u: any) => ({
-                        id: u.id || Math.random(), // Generate ID if not provided
-                        channel_id: u.channel_id || "MB",
-                        user_id: u.user_id,
-                        user_name: u.user_name,
-                        user_code: u.user_code,
-                        login_name: u.login_name,
-                        first_name: u.first_name || "",
-                        middle_name: u.middle_name || "",
-                        last_name: u.last_name || "",
-                        role_channel: u.role_channel,
-                        user_type: u.user_type || "MB",
-                        phone: u.phone,
-                        total_count: u.total_count,
-                    }));
-                    return {
-                        users: uniqById(mappedUsers),
-                        total: totalItems,
-                        totalPages: totalPageCount,
-                    };
-                }
-                // Check for nested dataresponse structure (old format)
-                else if (
-                    response.payload?.dataresponse &&
-                    !(
-                        response.payload.dataresponse.error &&
-                        response.payload.dataresponses.error.length > 0
-                    )
-                ) {
-                    const data = response.payload.dataresponse.data.items || [];
-                    const totalItems =
-                        response.payload.dataresponse.data.items[0]?.total_count ||
-                        0;
-                    const totalPageCount =
-                        response.payload.dataresponse.data.total_pages || 1;
-
-                    const mappedUsers: UserMobileAccount[] = data.map((u: any) => ({
-                        id: u.id,
-                        channel_id: u.channel_id || u.channelid,
-                        user_id: u.user_id || u.userid,
-                        user_name: u.user_name || u.username,
-                        user_code: u.user_code || u.usercode,
-                        login_name: u.login_name || u.loginname,
-                        first_name: u.first_name || u.firstname,
-                        middle_name: u.middle_name || u.middlename,
-                        last_name: u.last_name || u.lastname,
-                        role_channel: u.role_channel || u.rolechannel,
-                        user_type: u.user_type || u.usertype,
-                        phone: u.phone,
-                        total_count: u.total_count,
-                    }));
-
-                    return {
-                        users: uniqById(mappedUsers),
-                        total: totalItems,
-                        totalPages: totalPageCount,
-                    };
-                } else {
-                    // Handle error case for nested structure
-                    if (
-                        response.payload?.dataresponse?.errors &&
-                        response.payload.dataresponse.errors.length > 0
-                    ) {
-                        console.error(
-                            "ExecutionID:",
-                            response.payload.dataresponse.errors[0].execute_id +
-                            " - [MobileUserByRole] - " +
-                            response.payload.dataresponse.errors[0].info
-                        );
-                    }
-                    return { users: [], total: 0, totalPages: 0 };
-                }
-            } else {
-                console.error("API returned non-200 status:", response?.status);
+            if (response?.status !== 200) {
                 return { users: [], total: 0, totalPages: 0 };
             }
-        } catch (err) {
-            console.error("Error fetching mobile users by role with pagination:", err);
+
+            const errors = getErrors(response);
+            if (Array.isArray(errors) && errors.length > 0) {
+                return { users: [], total: 0, totalPages: 0 };
+            }
+
+            const root = getResponseRoot(response);
+            const total = toNumber(getField(root, ["total_count", "totalCount"]), 0);
+            const totalPages = toNumber(getField(root, ["total_pages", "totalPages"]), 0);
+            const mappedUsers = uniqById(pickItems(root).map(mapMobileUser));
+
+            return { users: mappedUsers, total, totalPages };
+        } catch {
             return { users: [], total: 0, totalPages: 0 };
         }
     };
 
     useEffect(() => {
         const filterLeftTableData = async () => {
-            console.log("Call filterLeftTableData: ", pageSizeLeft);
             const { users, total, totalPages } = await fetchMobileUsers(
                 1,
                 pageSizeLeft,
                 filterUserName || filterFullname
             );
-            console.log("Filtered users: ", users);
             setAllUsers(users);
             setTotalCountLeft(total);
             setTotalPagesLeft(totalPages);
@@ -443,14 +360,12 @@ export function useMobileUserAssignment({
 
     useEffect(() => {
         const filterRightTableData = async () => {
-            console.log("Call filterRightTableData: ", pageSizeRight);
             const { users, total, totalPages } = await fetchMobileUsersByRole(
                 1,
                 pageSizeRight,
                 filterAssignedUserName || filterAssignedFullname,
                 roleIdNum as number
             );
-            console.log("Filtered assign users: ", users);
             setAssignedUsers(users);
             setTotalCountRight(total);
             setTotalPagesRight(totalPages);
@@ -462,7 +377,6 @@ export function useMobileUserAssignment({
 
     useEffect(() => {
         const changePaginationLeft = async () => {
-            console.log("Call changePagination");
             const { users, total, totalPages } = await fetchMobileUsers(
                 currentPageLeft,
                 pageSizeLeft,
@@ -479,7 +393,6 @@ export function useMobileUserAssignment({
 
     useEffect(() => {
         const changePaginationRight = async () => {
-            console.log("Call changePagination Right");
             const { users, total, totalPages } = await fetchMobileUsersByRole(
                 currentPageRight,
                 pageSizeRight,
@@ -526,10 +439,8 @@ export function useMobileUserAssignment({
                     showToast("success", dictionary["common"].updaterolesuccess);
                     return true;
                 }
-                console.error("Failed to assignment mobile user:", response);
                 return false;
-            } catch (err) {
-                console.error("Error updating mobile assignment:", err);
+            } catch {
                 return false;
             }
         },
@@ -754,8 +665,7 @@ export function useMobileUserAssignment({
                         setTotalPagesLeft(totalPages);
                     }
                 }
-            } catch (err) {
-                console.error("Error fetching users:", err);
+            } catch {
                 if (!aborted) {
                     setAllUsers([]);
                     setTotalCountLeft(0);
@@ -792,11 +702,7 @@ export function useMobileUserAssignment({
                 setTotalCountRight(data.users[0]?.total_count || data.total);
                 setTotalPagesRight(data.totalPages);
 
-            } catch (err) {
-                console.error(
-                    "[Assigned Users] Error fetching assigned mobile users:",
-                    err
-                );
+            } catch {
                 if (!aborted) setAssignedUsers([]);
             }
         })();
@@ -819,7 +725,6 @@ export function useMobileUserAssignment({
 
     // filter right list - assigned users (server already filtered by role, just apply search filters)
     const filteredAssignedUsers = useMemo(() => {
-        console.log("assignedUsers in memo: ", assignedUsers);
         if (assignedUsers.length === 0) {
             return [];
         } else if (assignedUsers.length == 1 && assignedUsers[0].id === undefined) {

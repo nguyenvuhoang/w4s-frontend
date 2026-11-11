@@ -1,11 +1,13 @@
 /**
  * Authorization utilities for route access control
- * 
+ *
  * This module provides server-side authorization checks to prevent
  * unauthorized access to routes even when users know the direct URL.
  */
 
 import type { VerticalMenuDataType, VerticalSubMenuDataType } from '@shared/types/menuTypes';
+import { buildPermissionRegistry, resolvePermission } from '@shared/permissions/permissionUtils';
+import type { PermissionAction } from '@shared/permissions/permissionTypes';
 
 /**
  * Extract all accessible routes from user_command menu structure
@@ -91,5 +93,60 @@ export function hasRouteAccessPattern(
  */
 export function getAccessibleRoutes(userCommand: VerticalSubMenuDataType[] | undefined): string[] {
   return Array.from(extractAccessibleRoutes(userCommand)).sort();
+}
+
+/**
+ * Strict route/page guard: checks that the resolved screen for `routePath` actually has
+ * `canView` true (VIEW command invoke if present, else the menu node's own invoke), not just that
+ * the route exists somewhere in the tree. This is what AuthorizedLayout and per-module server
+ * guards (e.g. serviceRequestAccess.server.ts) should use to block direct URL access.
+ *
+ * Deny-by-default: a route missing from the tree, or present with invoke=false, is denied.
+ * Supports dynamic child routes (e.g. `/properties/project/5/edit`) via longest-prefix matching
+ * against the registered menu routes — see src/shared/permissions/permissionUtils.ts.
+ */
+export function hasScreenViewAccess(
+  userCommand: VerticalSubMenuDataType[] | undefined,
+  routePath: string
+): boolean {
+  const registry = buildPermissionRegistry(userCommand as any);
+
+  return resolvePermission(registry, routePath, true).canView;
+}
+
+/**
+ * Generalized version of hasScreenViewAccess for non-VIEW actions (ADD/MODIFY/DELETE/...),
+ * e.g. gating `/xxx/create` on ADD and `/xxx/[id]/edit` on MODIFY. Deny-by-default: if the screen
+ * has no matching command with invoke=true, access is denied even if the user can see the list.
+ */
+export function hasScreenActionAccess(
+  userCommand: VerticalSubMenuDataType[] | undefined,
+  routePath: string,
+  action: PermissionAction
+): boolean {
+  const registry = buildPermissionRegistry(userCommand as any);
+
+  return resolvePermission(registry, routePath, true).can(action);
+}
+
+/**
+ * Resolves an effective screen action permission. Super Admin access comes from the canonical
+ * BO Context workflow and deliberately bypasses menu/UserCommand permissions; all other users
+ * keep the existing deny-by-default UserCommand check.
+ */
+export function hasEffectiveScreenActionAccess({
+  userCommand,
+  route,
+  action,
+  isSuperAdmin
+}: {
+  userCommand: VerticalSubMenuDataType[] | undefined
+  route: string
+  action: PermissionAction
+  isSuperAdmin: boolean
+}): boolean {
+  if (isSuperAdmin) return true
+
+  return hasScreenActionAccess(userCommand, route, action)
 }
 

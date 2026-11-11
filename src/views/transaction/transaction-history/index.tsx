@@ -2,6 +2,7 @@
 
 import PaginationPage from '@/@core/components/jTable/pagination'
 import EmptyListNotice from '@components/layout/shared/EmptyListNotice'
+import { RowInteractionTip } from '@/shared/components/table'
 import { Locale } from '@/configs/i18n'
 import { SearchForm, useTransactionHistoryHandler } from '@/services/useTransactionHistoryHandler'
 import { PageContentProps } from '@shared/types'
@@ -38,7 +39,7 @@ import { formatAmount } from '@utils/formatAmount'
 import { formatDateShort } from '@utils/formatDateShort'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import dayjs from 'dayjs'
-import { useRouter } from 'next/navigation'
+import { useRouter } from '@shared/hooks/useRouter'
 import { formatDateTime } from '@utils/formatDateTime'
 
 type PageProps = PageContentProps & {
@@ -314,6 +315,11 @@ const TransactionHistoryContent = ({ dictionary, transactionhistorydata, session
         </form>
 
         {/* Table */}
+        {/* Intentionally hardcoded, not resolveRowInteractionMode(): this row's actual click
+            handling below is bespoke (ctrl/cmd+click opens a new tab) and isn't wired through
+            useRowInteraction/tableConfig, so the tip must describe what the row really does
+            rather than follow the system-wide default it doesn't participate in. */}
+        <RowInteractionTip mode="double-click" dictionary={dictionary} />
         <TableContainer component={Paper} sx={{ borderRadius: 2, boxShadow: 3 }}>
           <Table
             size="small"
@@ -389,7 +395,6 @@ const TransactionHistoryContent = ({ dictionary, transactionhistorydata, session
                     <TableRow key={`${refNumber}-${i}`} hover
                       onDoubleClick={(e) => openTxDetail(e, refNumber)}
                       sx={{ cursor: 'pointer' }}
-                      title="Double-click to view details"
                     >
                       <TableCell>{refNumber}</TableCell>
                       <TableCell>{formatDateTime(txDate)}</TableCell>

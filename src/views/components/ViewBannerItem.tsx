@@ -93,8 +93,7 @@ export default function ViewBannerItem({
       setToastSeverity('success');
       setToastOpen(true);
       return data.file_url;
-    } catch (err) {
-      console.error(err);
+    } catch {
       setToastMessage('Unexpected error during upload');
       setToastSeverity('error');
       setToastOpen(true);

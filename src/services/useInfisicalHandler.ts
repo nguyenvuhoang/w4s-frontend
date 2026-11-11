@@ -24,7 +24,6 @@ export function useInfisicalHandler(initialToken?: string) {
         try {
             const res = await infisicalService.loginProxy();
 
-            console.log('Infisical login response:', res);
 
             if (res.status === 200 && res.payload.accessToken) {
                 setAccessToken(res.payload.accessToken);
@@ -35,8 +34,7 @@ export function useInfisicalHandler(initialToken?: string) {
                 SwalAlert('error', errMsg, 'center');
                 return null;
             }
-        } catch (err) {
-            console.error('Infisical login error:', err);
+        } catch {
             setError('An error occurred during Infisical login');
             return null;
         } finally {
@@ -53,9 +51,7 @@ export function useInfisicalHandler(initialToken?: string) {
                     setSelectedWorkspace(res.payload.workspaces[0]);
                 }
             }
-        } catch (err) {
-            console.error('Fetch workspaces error:', err);
-        }
+        } catch {}
     }, []);
 
     const fetchEnvironments = useCallback(async (token: string, workspaceId: string) => {
@@ -65,9 +61,7 @@ export function useInfisicalHandler(initialToken?: string) {
                 setEnvironments(res.payload.environments);
                 return res.payload.environments;
             }
-        } catch (err) {
-            console.error('Fetch environments error:', err);
-        }
+        } catch {}
         return [];
     }, []);
 
@@ -80,9 +74,7 @@ export function useInfisicalHandler(initialToken?: string) {
                     [envSlug]: res.payload.secrets
                 }));
             }
-        } catch (err) {
-            console.error(`Fetch secrets error for ${envSlug}:`, err);
-        }
+        } catch {}
     }, []);
 
     useEffect(() => {

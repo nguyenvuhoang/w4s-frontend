@@ -15,8 +15,10 @@ const PickersComponent = forwardRef(({ label, readOnly, endAdornment, sx, ...res
       inputRef={ref}
       label={label || ''}
       sx={sx}
-      InputProps={{
-        endAdornment: endAdornment
+      slotProps={{
+        input: {
+          endAdornment: endAdornment
+        }
       }}
       inputProps={readOnly ? { readOnly: true } : {}}
       {...rest}

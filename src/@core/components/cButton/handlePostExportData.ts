@@ -69,8 +69,7 @@ export const handlePostExportData = async (
         saveAs(blob, filename);
 
         return true;
-    } catch (error) {
-        console.error('handlePostExportData error:', error);
+    } catch {
         if (dictionary) {
             SwalAlert('error', dictionary['common']?.servererror || 'Export failed', 'center');
         } else {

@@ -231,6 +231,7 @@ const SubMenu: ForwardRefRenderFunction<HTMLLIElement, SubMenuProps> = (props, r
   const { getReferenceProps, getFloatingProps, getItemProps } = useInteractions([hover, click, dismiss, role])
 
   const isSubMenuOpen = openSubmenu?.some((item: OpenSubmenu) => item.id === id) ?? false
+  const showCollapsedIconOnly = isCollapsed && !isHovered && level === 0
 
   const handleSlideToggle = (): void => {
     if (level === 0 && isCollapsed && !isHovered) {
@@ -394,7 +395,7 @@ const SubMenu: ForwardRefRenderFunction<HTMLLIElement, SubMenuProps> = (props, r
             styles: getSubMenuItemStyles('icon'),
             isBreakpointReached
           })}
-          {prefix && (
+          {prefix && !showCollapsedIconOnly && (
             <StyledMenuPrefix
               isHovered={isHovered}
               isCollapsed={isCollapsed}
@@ -405,14 +406,16 @@ const SubMenu: ForwardRefRenderFunction<HTMLLIElement, SubMenuProps> = (props, r
               {prefix}
             </StyledMenuPrefix>
           )}
-          <StyledMenuLabel
-            className={menuClasses.label}
-            rootStyles={getSubMenuItemStyles('label')}
-            textTruncate={textTruncate}
-          >
-            {label}
-          </StyledMenuLabel>
-          {suffix && (
+          {!showCollapsedIconOnly && (
+            <StyledMenuLabel
+              className={menuClasses.label}
+              rootStyles={getSubMenuItemStyles('label')}
+              textTruncate={textTruncate}
+            >
+              {label}
+            </StyledMenuLabel>
+          )}
+          {suffix && !showCollapsedIconOnly && (
             <StyledMenuSuffix
               isHovered={isHovered}
               isCollapsed={isCollapsed}
@@ -423,7 +426,7 @@ const SubMenu: ForwardRefRenderFunction<HTMLLIElement, SubMenuProps> = (props, r
               {suffix}
             </StyledMenuSuffix>
           )}
-          {isCollapsed && !isHovered && level === 0 ? null : (
+          {showCollapsedIconOnly ? null : (
             <StyledVerticalNavExpandIconWrapper
               className={menuClasses.subMenuExpandIcon}
               rootStyles={getSubMenuItemStyles('subMenuExpandIcon')}

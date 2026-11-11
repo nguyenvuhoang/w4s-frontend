@@ -31,8 +31,7 @@ export const scanLogos = (): ScannedLogo[] => {
                     url: `/images/logobank/${file}`
                 }
             })
-    } catch (error) {
-        console.error('Error scanning logos:', error)
+    } catch {
         return []
     }
 }

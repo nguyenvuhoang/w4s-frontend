@@ -52,7 +52,7 @@ const StoreCommand = ({ session, dictionary }: {
     const [openModal, setOpenModal] = useState(false)
     const [selectedQuery, setSelectedQuery] = useState<string>('')
 
-    const fetchStoreCommand = useCallback(async (service: string, pageIndex = 1) => {
+    const fetchStoreCommand = useCallback(async (service: string, pageIndex = 0) => {
         setLoading(true)
         try {
             const dataSearchAPI = await dataService.searchSystemData({
@@ -77,8 +77,7 @@ const StoreCommand = ({ session, dictionary }: {
             const dataSystem = dataSearchAPI.payload.dataresponse.data.input
             setData(dataSystem.items || [])
             setTotalCount(dataSystem.total_count || 0)
-        } catch (err) {
-            console.error('Error fetching settings:', err)
+        } catch {
             setData([])
         } finally {
             setLoading(false)
@@ -124,9 +123,7 @@ const StoreCommand = ({ session, dictionary }: {
             setTimeout(() => {
                 setUpdatedItemId(null)
             }, 800)
-        } catch (err) {
-            console.error(`Failed to update ${field}`, err)
-        }
+        } catch {}
     }
 
 

@@ -2,6 +2,7 @@ import { Session } from 'next-auth'
 import { useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
+import { i18n, Locale } from '@/configs/i18n'
 import { workflowService } from '@/servers/system-service'
 import { isValidResponse } from '@/shared/utils/isValidResponse'
 import SwalAlert from '@/shared/utils/SwalAlert'
@@ -11,7 +12,7 @@ import Swal from 'sweetalert2'
 
 const fromLocalDT = (v: string) => (v ? new Date(v).toISOString() : null)
 
-export function useCredentialForm(session: Session | null) {
+export function useCredentialForm(session: Session | null, locale?: Locale) {
     const [saving, setSaving] = useState(false)
 
     const form = useForm<FormValues>({ defaultValues: DEFAULT_FORM_VALUES })
@@ -120,7 +121,7 @@ export function useCredentialForm(session: Session | null) {
         try {
             const resp = await workflowService.addAPIKey({
                 sessiontoken: session?.user?.token as string,
-                language: 'en' as any,
+                language: locale ?? i18n.defaultLocale,
                 fields: payload
             })
 
@@ -144,7 +145,7 @@ export function useCredentialForm(session: Session | null) {
         } finally {
             setSaving(false)
         }
-    }, [session, showSuccessModal])
+    }, [locale, session, showSuccessModal])
 
     return {
         form,

@@ -25,6 +25,7 @@ import useVerticalMenu from '@hooks/useVerticalMenu'
 // Util Imports
 import { renderMenuIcon } from '@utils/menuUtils'
 import { menuClasses } from '@utils/menuClasses'
+import { isMenuActive } from '@components/layout/shared/menu-utils'
 
 // Styled Component Imports
 import StyledMenuLabel from '../../styles/StyledMenuLabel'
@@ -80,6 +81,7 @@ const MenuItem: ForwardRefRenderFunction<HTMLLIElement, MenuItemProps> = (props,
 
   const { isCollapsed, isHovered, isPopoutWhenCollapsed, toggleVerticalNav, isToggled, isBreakpointReached } =
     useVerticalNav()
+  const showCollapsedIconOnly = isCollapsed && !isHovered && level === 0
 
   // Get the styles for the specified element.
   const getMenuItemStyles = (element: MenuItemElement): CSSObject | undefined => {
@@ -129,7 +131,11 @@ const MenuItem: ForwardRefRenderFunction<HTMLLIElement, MenuItemProps> = (props,
 
     if (href) {
       // Check if the current url matches any of the children urls
-      if (exactMatch ? pathname === href : activeUrl && pathname.includes(activeUrl)) {
+      if (
+        exactMatch
+          ? isMenuActive(typeof href === 'string' ? href : undefined, pathname)
+          : activeUrl && pathname.includes(activeUrl)
+      ) {
         setActive(true)
       } else {
         setActive(false)
@@ -182,7 +188,7 @@ const MenuItem: ForwardRefRenderFunction<HTMLLIElement, MenuItemProps> = (props,
         })}
 
         {/* Menu Item Prefix */}
-        {prefix && (
+        {prefix && !showCollapsedIconOnly && (
           <StyledMenuPrefix
             isHovered={isHovered}
             isCollapsed={isCollapsed}
@@ -195,17 +201,19 @@ const MenuItem: ForwardRefRenderFunction<HTMLLIElement, MenuItemProps> = (props,
         )}
 
         {/* Menu Item Label */}
-        <StyledMenuLabel
-          className={menuClasses.label}
-          rootStyles={getMenuItemStyles('label')}
-          textTruncate={textTruncate}
-          active={active}
-        >
-          {children}
-        </StyledMenuLabel>
+        {!showCollapsedIconOnly && (
+          <StyledMenuLabel
+            className={menuClasses.label}
+            rootStyles={getMenuItemStyles('label')}
+            textTruncate={textTruncate}
+            active={active}
+          >
+            {children}
+          </StyledMenuLabel>
+        )}
 
         {/* Menu Item Suffix */}
-        {suffix && (
+        {suffix && !showCollapsedIconOnly && (
           <StyledMenuSuffix
             isHovered={isHovered}
             isCollapsed={isCollapsed}

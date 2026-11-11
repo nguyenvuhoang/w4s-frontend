@@ -1,43 +1,36 @@
 'use client'
 
 import { Locale } from '@/configs/i18n'
-import { env } from '@/env.mjs'
 import { getDictionary } from '@utils/getDictionary'
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
 import { Box, Typography } from '@mui/material'
-import { Session } from 'next-auth'
 import { useEffect, useState } from 'react'
 
 type Props = {
     reportcode: string
-    session: Session | null
     locale: Locale
     dictionary: Awaited<ReturnType<typeof getDictionary>>;
 }
 
-const RenderReportDetail = ({ reportcode, session, dictionary, locale }: Props) => {
+// BFF proxy (src/app/api/report/route.ts): resolves the real backend token server-side from the
+// HttpOnly session cookie and forwards to NEXT_PUBLIC_REPORT_URI. The browser never sees the real
+// token — not in this URL, not via a redirect, not anywhere.
+const RenderReportDetail = ({ reportcode, dictionary, locale }: Props) => {
     const [isValidSession, setIsValidSession] = useState<boolean | null>(null);
 
-    let urlRequest = `${env.NEXT_PUBLIC_REPORT_URI}?report_code=${reportcode}&token=${session?.user?.token}&lang=${locale}`;
+    let urlRequest = `/api/report?report_code=${reportcode}&lang=${locale}`;
 
     useEffect(() => {
         const checkReportAccess = async (url: string) => {
             try {
-                const response = await fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Allow-Control-Allow-Origin': '*',
-                    },
-                });
+                const response = await fetch(url, { method: 'GET' });
 
                 if (response.status === 401) {
                     setIsValidSession(false);
                 } else {
                     setIsValidSession(true);
                 }
-            } catch (error) {
-                console.error('Error checking report access:', error);
+            } catch {
                 setIsValidSession(false);
             }
         };

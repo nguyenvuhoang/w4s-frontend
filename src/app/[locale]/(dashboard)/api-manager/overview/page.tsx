@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic';
 import PageHeader from '@/components/api-manager/shared/PageHeader';
 import StatsCard from '@/components/api-manager/shared/StatsCard';
 import { Box, Chip, Grid, List, ListItem, ListItemText, Paper, Typography } from '@mui/material';
+import logger from '@lib/logger'
 
 const getData = async () => {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
@@ -10,7 +11,7 @@ const getData = async () => {
         if (!res.ok) throw new Error('Failed to fetch data');
         return res.json();
     } catch (e) {
-        console.error(e);
+        logger.error(e);
         return null;
     }
 };

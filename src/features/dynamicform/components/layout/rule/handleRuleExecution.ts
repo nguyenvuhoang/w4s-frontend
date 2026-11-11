@@ -29,17 +29,14 @@ export const handleRuleExecution = async (
                     } else if (typeof result === "number") {
                         isModify = result !== 0;
                     } else {
-                        console.warn("Unexpected type from function_cal:", typeof result);
                     }
                     setIsModify(isModify);
                 }
 
             } else {
-                console.log(`Unhandled event: ${component_event}`);
             }
         });
     } else {
-        console.log(`No matching rule found for action: ${action}`);
     }
 };
 

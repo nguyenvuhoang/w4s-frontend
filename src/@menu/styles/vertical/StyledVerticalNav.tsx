@@ -12,6 +12,9 @@ type StyledVerticalNavProps = VerticalNavProps &
   Pick<VerticalNavState, 'isBreakpointReached' | 'collapsing' | 'expanding' | 'transitionDuration'>
 
 const StyledVerticalNav = styled.aside<StyledVerticalNavProps>`
+  height: 100vh;
+  min-height: 100dvh;
+
   ${({ scrollWithContent }) =>
     !scrollWithContent &&
     `

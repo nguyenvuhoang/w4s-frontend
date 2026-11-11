@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { infisicalServerService } from '@/servers/system-service/services/infisical.server';
+import logger from '@lib/logger'
 
 export async function GET(request: Request) {
     const authHeader = request.headers.get('Authorization');
@@ -13,7 +14,7 @@ export async function GET(request: Request) {
         const res = await infisicalServerService.getWorkspaces(token);
         return NextResponse.json(res.payload, { status: res.status });
     } catch (error) {
-        console.error('API Workspaces error:', error);
+        logger.error('API Workspaces error:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }

@@ -115,9 +115,7 @@ export const useOpenApiClientHandler = (
                     }
                 }
             }
-        } catch (err) {
-            console.error('Fetch error:', err)
-        } finally {
+        } catch {} finally {
             setLoading(false)
             fetchInProgress.current = false
         }

@@ -22,7 +22,6 @@ export const fetchEmailSettings = async (token: string) => {
         }
         return { success: false, error: 'No configuration found' };
     } catch (error) {
-        console.error('emailService: fetchEmailSettings failed', error);
         return { success: false, error: 'Failed to fetch settings' };
     }
 };
@@ -30,7 +29,6 @@ export const fetchEmailSettings = async (token: string) => {
 export const sendEmail = async (token: string, data: { recipient: string, subject: string, content: string }, locale: Locale) => {
     // This is a placeholder for actual send logic
     // Usually involve workflowService.runBODynamic or similar
-    console.log('emailService: sending email', data);
     return { success: true };
 };
 
@@ -49,7 +47,6 @@ export const deleteEmails = async (token: string, ids: (string | number)[]) => {
         }
         return { success: false, error: 'Delete failed' };
     } catch (error) {
-        console.error('emailService: deleteEmails failed', error);
         return { success: false, error: 'Failed to delete emails' };
     }
 };
@@ -72,7 +69,6 @@ export const fetchEmailDetail = async (token: string, id: string | number) => {
         }
         return { success: false, error: 'Failed to fetch email detail' };
     } catch (error) {
-        console.error('emailService: fetchEmailDetail failed', error);
         return { success: false, error: 'Failed to fetch email detail' };
     }
 };
@@ -92,7 +88,6 @@ export const setStarEmail = async (token: string, id: string | number) => {
         }
         return { success: false, error: 'Failed to star email' };
     } catch (error) {
-        console.error('emailService: setStarEmail failed', error);
         return { success: false, error: 'Failed to star email' };
     }
 };
@@ -112,7 +107,6 @@ export const setImportantEmail = async (token: string, id: string | number) => {
         }
         return { success: false, error: 'Failed to mark email as important' };
     } catch (error) {
-        console.error('emailService: setImportantEmail failed', error);
         return { success: false, error: 'Failed to mark email as important' };
     }
 };

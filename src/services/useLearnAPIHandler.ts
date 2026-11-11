@@ -7,7 +7,7 @@ import { isValidResponse } from '@/shared/utils/isValidResponse'
 import SwalAlert from '@/shared/utils/SwalAlert'
 import { SelectChangeEvent } from '@mui/material'
 import { Session } from 'next-auth'
-import { useRouter } from 'next/navigation'
+import { useRouter } from '@shared/hooks/useRouter'
 import { useEffect, useMemo, useState } from 'react'
 
 export interface LearnAPISearchForm {
@@ -28,7 +28,7 @@ export function useLearnAPIHandler(
     // 🟢 DATA & PAGINATION STATE
     // =========================
     const [learnAPIs, setLearnAPIs] = useState<PageData<LearnAPIType>>(initialData)
-    const [page, setPage] = useState(initialData?.page_index ?? initialData?.pageindex ?? 1)
+    const [page, setPage] = useState(initialData?.page_index ?? initialData?.pageindex ?? 0)
     const [rowsPerPage, setRowsPerPage] = useState(initialData?.page_size ?? initialData?.pagesize ?? 10)
     const [jumpPage, setJumpPage] = useState(page)
     const [totalCount, setTotalCount] = useState(initialData?.total_count ?? 0)
@@ -122,8 +122,7 @@ export function useLearnAPIHandler(
                         const exception = res.payload.dataresponse.execution_id || 'Delete failed'
                         SwalAlert('error', error + ' - ' + exception, 'center')
                     }
-                } catch (error) {
-                    console.error('Delete error:', error)
+                } catch {
                     SwalAlert('error', 'An unexpected error occurred during deletion.', 'center')
                 } finally {
                     setLoading(false)
@@ -154,12 +153,6 @@ export function useLearnAPIHandler(
                 !isValidResponse(learnAPIDataApi) ||
                 (learnAPIDataApi.payload.dataresponse.errors && learnAPIDataApi.payload.dataresponse.errors.length > 0)
             ) {
-                console.log(
-                    'Error:',
-                    learnAPIDataApi.payload.dataresponse.errors?.[0]?.execute_id +
-                    ' - ' +
-                    learnAPIDataApi.payload.dataresponse.errors?.[0]?.info
-                )
                 return
             }
 
@@ -182,9 +175,7 @@ export function useLearnAPIHandler(
                 total_count: actualTotalCount
             })
             setTotalCount(actualTotalCount)
-        } catch (err) {
-            console.error('Error fetching LearnAPI data:', err)
-        } finally {
+        } catch {} finally {
             setLoading(false)
         }
     }

@@ -5,6 +5,7 @@ import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
     Paper, TablePagination, Box, CircularProgress, Typography
 } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material/styles';
 import brandColorConfig from '@/configs/brandColorConfig';
 
 export interface Column<T> {
@@ -26,11 +27,15 @@ interface DataTableProps<T> {
     loading?: boolean;
     onRowClick?: (row: T) => void;
     actions?: (row: T) => React.ReactNode; // Or action menu
+    compact?: boolean;
+    disableInternalScroll?: boolean;
+    paperSx?: SxProps<Theme>;
 }
 
 export default function DataTable<T extends { id: string }>({
     columns, rows, count = 0, page = 0, rowsPerPage = 10,
-    onPageChange, onRowsPerPageChange, loading = false, onRowClick, actions
+    onPageChange, onRowsPerPageChange, loading = false, onRowClick, actions,
+    compact = false, disableInternalScroll = false, paperSx
 }: DataTableProps<T>) {
     const headerGradient = `linear-gradient(90deg, ${brandColorConfig.primary} 0%, ${brandColorConfig.primaryDark} 58%, ${brandColorConfig.primaryLight} 100%)`;
     const headerSx = {
@@ -66,9 +71,13 @@ export default function DataTable<T extends { id: string }>({
     }
 
     return (
-        <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-            <TableContainer sx={{ maxHeight: 600 }}>
-                <Table stickyHeader aria-label="sticky table">
+        <Paper sx={[{ width: '100%', overflow: 'hidden', borderRadius: 2 }, ...(Array.isArray(paperSx) ? paperSx : paperSx ? [paperSx] : [])]}>
+            <TableContainer sx={{
+                maxHeight: disableInternalScroll ? 'none' : 600,
+                overflowX: 'hidden',
+                overflowY: disableInternalScroll ? 'visible' : 'auto'
+            }}>
+                <Table stickyHeader={!disableInternalScroll} aria-label="sticky table" sx={{ tableLayout: 'fixed' }}>
                     <TableHead sx={{ background: headerGradient }}>
                         <TableRow sx={{ background: headerGradient }}>
                             {columns.map((column) => (
@@ -76,12 +85,12 @@ export default function DataTable<T extends { id: string }>({
                                     key={String(column.id)}
                                     align={column.align}
                                     style={{ minWidth: column.minWidth }}
-                                    sx={headerSx}
+                                    sx={{ ...headerSx, py: compact ? 1.5 : undefined }}
                                 >
                                     {column.label}
                                 </TableCell>
                             ))}
-                            {actions && <TableCell align="right" sx={headerSx}>Actions</TableCell>}
+                            {actions && <TableCell align="right" sx={{ ...headerSx, py: compact ? 1.5 : undefined, width: 132 }}>Actions</TableCell>}
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -98,13 +107,22 @@ export default function DataTable<T extends { id: string }>({
                                     {columns.map((column) => {
                                         const value = row[column.id as keyof T];
                                         return (
-                                            <TableCell key={String(column.id)} align={column.align}>
+                                            <TableCell
+                                                key={String(column.id)}
+                                                align={column.align}
+                                                sx={{
+                                                    py: compact ? 1.5 : undefined,
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis',
+                                                    whiteSpace: 'nowrap'
+                                                }}
+                                            >
                                                 {column.format ? column.format(value, row) : (value as unknown as React.ReactNode)}
                                             </TableCell>
                                         );
                                     })}
                                     {actions && (
-                                        <TableCell align="right" onClick={(e) => e.stopPropagation()}>
+                                        <TableCell align="right" onClick={(e) => e.stopPropagation()} sx={{ py: compact ? 1 : undefined, width: 132 }}>
                                             {actions(row)}
                                         </TableCell>
                                     )}

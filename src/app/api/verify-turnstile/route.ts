@@ -7,7 +7,6 @@ export async function POST(req: Request) {
   const body = await req.json()
   const token = body['cf-turnstile-response']
   const ip = req.headers.get('x-forwarded-for') || ''
-  console.log(`env.TURNSTILE_SECRET: ${env.TURNSTILE_SECRET}`)
   const url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify'
   const response = await fetch(url, {
     method: 'POST',

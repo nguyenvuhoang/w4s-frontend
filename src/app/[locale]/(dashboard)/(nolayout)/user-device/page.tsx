@@ -12,6 +12,8 @@ import { Suspense } from 'react'
 import ContentWrapper from '@features/dynamicform/components/layout/content-wrapper'
 import { SystemSecurityUpdateGood } from '@mui/icons-material'
 import { WORKFLOWCODE } from '@/data/WorkflowCode'
+import { getServerBackendToken } from '@/server/auth/getServerBackendToken'
+import logger from '@lib/logger'
 
 type Params = Promise<{
     locale: Locale
@@ -21,7 +23,7 @@ async function UserDeviceData({ locale, session }: { locale: Locale; session: an
     const dictionary = await getDictionary(locale)
 
     const dataSearchAPI = await workflowService.runFODynamic({
-        sessiontoken: session?.user?.token as string,
+        sessiontoken: (await getServerBackendToken()) as string,
         workflowid: WORKFLOWCODE.WF_BO_EXECUTE_SQL_FROM_CTH,
         input: {
             commandname: "SimpleSearchUserDevice",
@@ -40,7 +42,7 @@ async function UserDeviceData({ locale, session }: { locale: Locale; session: an
     ) {
         const execute_id = dataSearchAPI.payload.dataresponse.errors[0]?.execute_id
         const errorinfo = dataSearchAPI.payload.dataresponse.errors[0]?.info
-        console.log(
+        logger.log(
             'ExecutionID:',
             execute_id +
             ' - ' +

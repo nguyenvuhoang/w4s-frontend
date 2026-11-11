@@ -8,8 +8,9 @@ import { Session } from "next-auth";
 import Footer from "../../shared/Footer";
 import Background from "../../shared/Background";
 import { getDictionary } from "@/shared/utils/getDictionary";
+import { getBrandingSettings } from "@shared/services/brandingSettingsService";
 
-const ForgetPassword = ({
+const ForgetPassword = async ({
   session,
   dictionary,
   locale,
@@ -18,6 +19,8 @@ const ForgetPassword = ({
   dictionary: Awaited<ReturnType<typeof getDictionary>>;
   locale: Locale;
 }) => {
+  const brandingSettings = await getBrandingSettings();
+  const appTitle = brandingSettings.brandingName || env.NEXT_PUBLIC_APPLICATION_TITLE;
 
   return (
     <>
@@ -41,7 +44,7 @@ const ForgetPassword = ({
                     className="font-sans text-[#00502F]"
                     sx={{ fontFamily: "Quicksand" }}
                   >
-                    {env.NEXT_PUBLIC_APPLICATION_TITLE}
+                    {appTitle}
                   </Typography>
                   <Box
                     className="text-16-medium text-[#00502F]"

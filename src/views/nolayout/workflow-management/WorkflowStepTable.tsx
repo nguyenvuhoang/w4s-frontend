@@ -130,9 +130,8 @@ const WorkflowStepTable = ({
                     severity: "error",
                 });
             }
-        } catch (err) {
+        } catch {
             setSnackbar({ open: true, message: "Update failed!", severity: "error" });
-            console.error("Error while saving WorkflowStep:", err);
         }
     };
 

@@ -755,6 +755,7 @@ export interface Usrac {
     udfield1: string
     iscash: string
     remark: any
+    isaccountant : string
 }
 
 export interface Position {

@@ -2,7 +2,7 @@
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { Button, Box } from '@mui/material'
-import { useRouter } from 'next/navigation'
+import { useRouter } from '@shared/hooks/useRouter'
 import { getLocalizedUrl } from '@/shared/utils/i18n'
 import { Locale } from '@/configs/i18n'
 

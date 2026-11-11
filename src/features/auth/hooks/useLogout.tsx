@@ -2,8 +2,11 @@
 
 import { Locale } from '@/configs/i18n'
 import { getLocalizedUrl } from '@utils/i18n'
-import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useRouter } from '@shared/hooks/useRouter'
+import { useSession } from 'next-auth/react'
+import { useEffect, useRef, useState } from 'react'
+import { useWorkingProjectStore } from '@/@core/stores/useWorkingProjectStore'
+import { menuService } from '@/shared/services/menuService'
 
 const useLogout = ({
   locale,
@@ -14,10 +17,26 @@ const useLogout = ({
 }) => {
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
+  const { status } = useSession()
+  const hasRunRef = useRef(false)
 
   useEffect(() => {
+    // Wait for NextAuth to resolve the session so the backend logout call
+    // below has a valid token to work with; run the logout flow only once.
+    if (status === 'loading' || hasRunRef.current) return
+    hasRunRef.current = true
+
     const handleLogout = async () => {
       try {
+        // Invalidate the session on the backend BEFORE clearing the Next.js session below.
+        // The real backend token never reaches the browser (see src/auth.ts) — /api/logout
+        // resolves it itself, server-side, from the session cookie.
+        await fetch('/api/logout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reason: 'manual' })
+        }).catch(err => {})
+
         // Get CSRF token first
         const csrfResponse = await fetch('/api/auth/csrf')
         const { csrfToken } = await csrfResponse.json()
@@ -40,6 +59,9 @@ const useLogout = ({
         }
 
         // Clear any local storage tokens vÃ  gá»i API xÃ³a cookie app á»Ÿ server
+        useWorkingProjectStore.getState().reset()
+        menuService.clearMenuCache()
+
         if (typeof window !== 'undefined') {
           localStorage.removeItem('token')
           localStorage.removeItem('refresh_token')
@@ -58,13 +80,12 @@ const useLogout = ({
           })
         }
       } catch (err: any) {
-        console.error('[LOGOUT] Failed:', err)
         setError(err?.message || 'Logout failed. Please try again.')
       }
     }
 
     handleLogout()
-  }, [locale, router])
+  }, [locale, router, status])
 
   return (
     <></>

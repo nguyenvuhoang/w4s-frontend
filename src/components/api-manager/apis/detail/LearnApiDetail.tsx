@@ -16,7 +16,7 @@ import {
     Paper,
     Typography
 } from '@mui/material';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@shared/hooks/useRouter';
 import dynamic from 'next/dynamic';
 
 const JsonEditor = dynamic(

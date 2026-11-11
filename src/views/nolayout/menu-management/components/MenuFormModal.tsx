@@ -201,8 +201,7 @@ export const MenuFormModal = ({
             )
             const data = await response.json()
             return data[0][0][0] || text
-        } catch (error) {
-            console.error('Translation error:', error)
+        } catch {
             return text
         }
     }
@@ -228,9 +227,7 @@ export const MenuFormModal = ({
                     const translatedVi = await translateText(commandName, 'vi')
                     setValue('command_name_vi', translatedVi)
                 }
-            } catch (error) {
-                console.error('Auto-fill error:', error)
-            } finally {
+            } catch {} finally {
                 setIsTranslating(false)
             }
         }

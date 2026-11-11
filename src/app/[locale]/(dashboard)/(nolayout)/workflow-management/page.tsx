@@ -12,6 +12,7 @@ import { isValidResponse } from '@utils/isValidResponse';
 import { Metadata } from 'next';
 import { Session } from 'next-auth';
 import { Suspense } from 'react';
+import { getServerBackendToken } from '@/server/auth/getServerBackendToken'
 
 export const metadata: Metadata = generateAuthMetadata('Workflow Management');
 
@@ -25,7 +26,7 @@ const WorkflowManagementData = async ({
   dictionary: Awaited<ReturnType<typeof getDictionary>>;
 }) => {
   const workflowDataApi = await workflowService.searchWorkflowDefinition({
-    sessiontoken: session?.user?.token as string,
+    sessiontoken: (await getServerBackendToken()) as string,
     pageindex: 0,
     pagesize: 10,
     searchtext: '',

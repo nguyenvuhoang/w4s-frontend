@@ -34,8 +34,7 @@ const RenderTextAreaDefault = ({ input, gridProps, formData, onChange, rendervie
     const parseJSON = (value: any) => {
         try {
             return typeof value === 'string' ? JSON.parse(value) : value;
-        } catch (error) {
-            console.error('Invalid JSON string:', error);
+        } catch {
             return {};
         }
     };
@@ -55,7 +54,6 @@ const RenderTextAreaDefault = ({ input, gridProps, formData, onChange, rendervie
 
     // Xá»­ lÃ½ khi JSON trong editor thay Ä‘á»•i
     const handleJsonChange = (updatedJson: object) => {
-        console.log('Updated JSON:', updatedJson);
         setJsonContent(updatedJson);
 
         // Gá»i hÃ m onChange Ä‘á»ƒ cáº­p nháº­t `formData`

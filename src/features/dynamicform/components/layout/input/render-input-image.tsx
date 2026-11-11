@@ -152,7 +152,6 @@ const RenderImageUpload = ({
       const formData = new FormData();
       formData.append('file', file);
 
-      console.log("folderUpload: ", input?.config?.folder_upload);
       const res = await cdnServiceApi.uploadFile({
         sessiontoken: session?.user?.token,
         file: formData,

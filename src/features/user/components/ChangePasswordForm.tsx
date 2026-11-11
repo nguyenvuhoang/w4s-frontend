@@ -8,12 +8,13 @@ import { Visibility, VisibilityOff } from '@mui/icons-material'
 import {
     Box,
     Button,
+    CircularProgress,
     InputAdornment,
     NoSsr,
     TextField
 } from '@mui/material'
 import { Session } from 'next-auth'
-import { Controller } from 'react-hook-form'
+import { Controller, useFormState } from 'react-hook-form'
 
 type Props = {
     locale: Locale | null
@@ -42,6 +43,8 @@ const ChangePasswordForm = ({ dictionary, session, loginname = '' }: Props) => {
         toggleConfirmPassword
     } = useChangePassword({ dictionary, session, loginname })
 
+    const { isSubmitting } = useFormState({ control })
+
     const PasswordField = ({
         name,
         label,
@@ -65,7 +68,6 @@ const ChangePasswordForm = ({ dictionary, session, loginname = '' }: Props) => {
                     label={label}
                     type={show ? "text" : "password"}
                     fullWidth
-                    size="small"
                     sx={textFieldStyle}
                     error={!!error}
                     helperText={error?.message}
@@ -98,9 +100,9 @@ const ChangePasswordForm = ({ dictionary, session, loginname = '' }: Props) => {
             <Box component="form" onSubmit={handleSubmit(onSubmit)}>
                 <PasswordField
                     name="oldPassword"
-                    label={'Current Password'}
+                    label={dictionary['auth'].currentpassword || 'Current Password'}
                     rules={{
-                        required: 'Current Password is required',
+                        required: dictionary['auth'].currentpasswordrequired || 'Current Password is required',
                         minLength: {
                             value: 6,
                             message: dictionary['auth'].passwordminlength || 'Current Password must be at least 6 characters'
@@ -110,7 +112,7 @@ const ChangePasswordForm = ({ dictionary, session, loginname = '' }: Props) => {
                     toggle={toggleOldPassword}
                 />
 
-                <Box height={16} />
+                <Box height={20} />
 
                 <PasswordField
                     name="newPassword"
@@ -126,7 +128,7 @@ const ChangePasswordForm = ({ dictionary, session, loginname = '' }: Props) => {
                     toggle={toggleNewPassword}
                 />
 
-                <Box height={16} />
+                <Box height={20} />
 
                 <PasswordField
                     name="confirmPassword"
@@ -138,18 +140,23 @@ const ChangePasswordForm = ({ dictionary, session, loginname = '' }: Props) => {
                     toggle={toggleConfirmPassword}
                 />
 
-                <Box mt={4} display="flex" justifyContent="center">
+                <Box mt={5}>
                     <Button
                         type="submit"
                         variant="contained"
-                        color="primary"
-                        size="large"
                         fullWidth
+                        className="p-3"
+                        disabled={isSubmitting}
+                        startIcon={isSubmitting ? <CircularProgress size={18} color="inherit" /> : undefined}
                         sx={{
                             background:
-                                'radial-gradient(300.55% 959.41% at 293.35% -237.5%, #00502F 0%, #089356 67.24%, #629F0D 98.3%)',
+                                'radial-gradient(300.55% 959.41% at 293.35% -237.5%, #6EC2F7 0%, #2531F5 67.24%, #04E7B2 98.3%)',
                             color: 'white',
-                            '&:hover': { opacity: 0.5 }
+                            '&:hover': { opacity: 0.5 },
+                            '&.Mui-disabled': {
+                                color: 'white',
+                                opacity: 0.5
+                            }
                         }}
                     >
                         {dictionary['auth'].changepassword || 'Change Password'}
@@ -168,12 +175,15 @@ const textFieldStyle = {
     '& .MuiInputLabel-root': {
         color: 'primary.main'
     },
+    '& label.Mui-focused': {
+        color: 'primary.main'
+    },
     '& .MuiOutlinedInput-root': {
         '& fieldset': {
             borderColor: 'primary.main'
         },
         '&:hover fieldset': {
-            borderColor: 'primary.dark'
+            borderColor: 'primary.main'
         },
         '&.Mui-focused fieldset': {
             borderColor: 'primary.main'

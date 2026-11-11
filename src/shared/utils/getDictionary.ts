@@ -3,6 +3,7 @@ import 'server-only'
 
 // Type Imports
 import type { Locale } from '@configs/i18n'
+import { i18n } from '@configs/i18n'
 
 const dictionaries: Record<Locale, () => Promise<any>> = {
   en: () => import('@/data/dictionaries/en.json').then(m => m.default),
@@ -11,6 +12,6 @@ const dictionaries: Record<Locale, () => Promise<any>> = {
 }
 
 export const getDictionary = async (locale: Locale) => {
-  const loader = dictionaries[locale] ?? dictionaries['en'] // fallback to English
+  const loader = dictionaries[locale] ?? dictionaries[i18n.defaultLocale]
   return loader()
 }

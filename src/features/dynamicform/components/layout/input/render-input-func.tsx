@@ -44,7 +44,6 @@ const RenderInputFunc = ({ input, gridProps, language, rules, ismodify, session,
             if (key in formdata) {
                 formMethods.setValue(key, formdata[key]);
             } else {
-                console.warn(`Key "${key}" khÃ´ng tá»“n táº¡i trong formdata.`);
             }
         });
     };
@@ -70,13 +69,10 @@ const RenderInputFunc = ({ input, gridProps, language, rules, ismodify, session,
                         const formdata = response.payload.dataresponse.data;
                         fillDataForForm(formdata, rule.config.component_result);
                     } else {
-                        console.warn('tx.input khÃ´ng tá»“n táº¡i trong txFo:', tx);
                     }
                 }
             }
-        } catch (error) {
-            console.error('Error during blur handler:', error);
-        } finally {
+        } catch {} finally {
             setLoading(false);
         }
     };

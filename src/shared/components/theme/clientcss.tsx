@@ -18,15 +18,8 @@ import '@/styles/style.css';
 import '@/app/globals.css';
 import 'swiper/css';
 import 'swiper/css/grid';
-import dynamic from 'next/dynamic';
-const InitColorSchemeScriptClient = dynamic(
-    () => import("@mui/material/InitColorSchemeScript"),
-    { ssr: false }
-);
 const ClientCss = () => {
-    return (
-        <InitColorSchemeScriptClient attribute="class" />
-    )
+    return null
 }
 
 export default ClientCss

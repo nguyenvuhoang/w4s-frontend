@@ -9,7 +9,6 @@
  * - codeService: Code list operations
  * - dataService: Search, view, and update operations
  * - workflowService: BO/FO workflow operations
- * - reportService: Report loading operations
  * - logService: Workflow log operations
  * 
  * For better maintainability, import specific services instead:
@@ -24,7 +23,6 @@ export { dataService } from './services/data.service';
 export { formService } from './services/form.service';
 export { logService } from './services/log.service';
 export { menuService } from './services/menu.service';
-export { reportService } from './services/report.service';
 export { workflowService } from './services/workflow.service';
 
 // Legacy export for backward compatibility
@@ -35,7 +33,6 @@ import { formService } from './services/form.service';
 import { learnAPIService } from './services/learnapi.service';
 import { logService } from './services/log.service';
 import { menuService } from './services/menu.service';
-import { reportService } from './services/report.service';
 import { workflowService } from './services/workflow.service';
 
 /**
@@ -58,9 +55,6 @@ export const systemServiceApi = {
 
     // Workflow Service
     ...workflowService,
-
-    // Report Service
-    ...reportService,
 
     // Log Service
     ...logService,

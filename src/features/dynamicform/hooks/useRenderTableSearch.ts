@@ -235,7 +235,6 @@ export const useRenderTableSearch = ({
     (data: any, previewtype: string, datatype?: string, _app?: string) => {
       try {
         if (data === undefined || data === null) {
-          console.warn('Data is undefined or null');
           return;
         }
 
@@ -254,9 +253,7 @@ export const useRenderTableSearch = ({
           datatype,
         });
         setModalOpen(true);
-      } catch (error) {
-        console.error('Failed to parse data:', error);
-      }
+      } catch {}
     },
     []
   );

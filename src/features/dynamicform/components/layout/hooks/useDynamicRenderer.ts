@@ -190,7 +190,6 @@ export const useDynamicRenderer = ({
   const handleApprove = useCallback(() => {
     setLoading(true);
     // TODO: handle approve logic
-    console.log('Approve clicked');
     setLoading(false);
   }, []);
 
@@ -198,7 +197,6 @@ export const useDynamicRenderer = ({
   const handleReject = useCallback(() => {
     setLoading(true);
     // TODO: handle reject logic
-    console.log('Reject clicked');
     setLoading(false);
   }, []);
 
@@ -319,9 +317,7 @@ export const useDynamicRenderer = ({
           },
           'OK'
         );
-      } catch (error) {
-        console.error('Submit error:', error);
-      }
+      } catch {}
     },
     [layouts, session, dictionary]
   );

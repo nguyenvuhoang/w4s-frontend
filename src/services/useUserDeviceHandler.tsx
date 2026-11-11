@@ -20,7 +20,7 @@ export const useUserDeviceHandler = (
   const [contracts, setUserDevices] =
     useState<PageData<UserDeviceType>>(contractdata);
   const [page, setPage] = useState<number>(
-    Math.max(contractdata?.page_index ?? 1, 1)
+    Math.max(contractdata?.page_index ?? 0, 0)
   );
   const [jumpPage, setJumpPage] = useState<number>(
     contractdata.page_index || 1
@@ -53,7 +53,6 @@ export const useUserDeviceHandler = (
         ...payload,
         // searchtext: "",
       };
-      console.log("call api: ", pageOverride, sizeOverride);
       const contractdataApi = await workflowService.runFODynamic({
         sessiontoken: session?.user?.token as string,
         workflowid: WORKFLOWCODE.WF_BO_EXECUTE_SQL_FROM_CTH,
@@ -71,23 +70,14 @@ export const useUserDeviceHandler = (
         (contractdataApi.payload.dataresponse.errors &&
           contractdataApi.payload.dataresponse.errors.length > 0)
       ) {
-        console.log(
-          "ExecutionID:",
-          contractdataApi.payload.dataresponse.errors[0].execute_id +
-            " - " +
-            contractdataApi.payload.dataresponse.errors[0].info
-        );
         return;
       }
 
       const datacontract = contractdataApi.payload.dataresponse.data
         .input as PageData<UserDeviceType>;
-      console.log("datacontract: ", datacontract);
       setUserDevices(datacontract);
       setTotalCount(datacontract.items[0]?.total_count || 0);
-    } catch (err) {
-      console.error("Error fetching contract data:", err);
-    } finally {
+    } catch {} finally {
       setLoading(false);
     }
   };

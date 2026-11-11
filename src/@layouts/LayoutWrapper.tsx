@@ -32,9 +32,9 @@ const LayoutWrapper = (props: LayoutWrapperProps) => {
         toastOptions={{
           duration: 3000,
           style: {
-            background: '#225087',
+            background: 'var(--mui-palette-primary-main)',
             color: 'white',
-            fontSize: '14px'
+            fontSize: '14px',
           }
         }}
       />

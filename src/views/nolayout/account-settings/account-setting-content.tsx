@@ -4,6 +4,11 @@ import PaginationPage from '@/@core/components/jTable/pagination'
 import { Locale } from '@/configs/i18n'
 import { languageData } from '@/data/meta'
 import ChangePasswordForm from '@features/user/components/ChangePasswordForm'
+import { useUserSessions } from '@features/user/hooks/useUserSessions'
+import type { UserSessionFilterModel, UserSessionSearchResponse } from '@features/user/types'
+import { getDetailFullName } from '@features/staffs/services/staffService'
+import { getStaffStatusLabel } from '@features/staffs/components/staff-list/staffListHelpers'
+import type { UserAccountDetail, UserRoleDetail } from '@features/staffs/types'
 import {
     Check,
     Email,
@@ -14,6 +19,7 @@ import {
     Translate
 } from '@mui/icons-material'
 import {
+    Alert,
     Avatar,
     Box,
     Divider,
@@ -21,7 +27,6 @@ import {
     InputAdornment,
     MenuItem,
     Paper,
-    SelectChangeEvent,
     Tab,
     Table,
     TableBody,
@@ -33,67 +38,84 @@ import {
     TextField,
     Typography
 } from '@mui/material'
-import { AccountActivity, UserAccount } from '@shared/types/bankType'
-import { PageData } from '@shared/types/systemTypes'
 import { getDictionary } from '@utils/getDictionary'
 import { Session } from 'next-auth'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
 type PageProps = {
-    userdata: UserAccount
-    useractivity: PageData<AccountActivity>
+    account: UserAccountDetail | null
+    avatarUrl: string
+    roles: UserRoleDetail[]
+    sessions: UserSessionSearchResponse
+    sessionsFilter: UserSessionFilterModel
+    sessionsError?: string | null
+    sessiontoken?: string
     dictionary: Awaited<ReturnType<typeof getDictionary>>
     locale: Locale
     session: Session | null
+    error?: string | null
 }
 
-const AccountSettingContent = ({ userdata, useractivity, dictionary, locale, session }: PageProps) => {
-
+const AccountSettingContent = ({ account, avatarUrl, roles, sessions, sessionsFilter, sessionsError, sessiontoken, dictionary, locale, session, error }: PageProps) => {
 
     const [tab, setTab] = useState(0)
-    const [page, setPage] = useState(1)
-    const [pageSize, setPageSize] = useState(10);
-    const [jumpPage, setJumpPage] = useState(1);
 
-    const pagedItems = useractivity?.items?.slice((page - 1) * pageSize, page * pageSize)
-    console.log('useractivity', useractivity);
+    const userSessions = useUserSessions({
+        sessiontoken,
+        language: locale,
+        initialFilter: sessionsFilter,
+        initialData: sessions,
+        initialError: sessionsError
+    })
+
+    if (error || !account) {
+        return (
+            <Box className="max-w mx-auto px-4 py-10">
+                <Alert severity="error">
+                    {error || dictionary['staffs']?.detail_empty || 'User detail not found.'}
+                </Alert>
+            </Box>
+        )
+    }
+
+    const fullName = getDetailFullName(account)
     const personalFields = [
         {
             name: 'fullName',
             label: dictionary['contract'].fullname,
             icon: <Person />,
-            defaultValue: [userdata.firstname, userdata.middlename, userdata.lastname].filter(Boolean).join(' '),
+            defaultValue: fullName,
         },
         {
             name: 'phone',
             label: dictionary['contract'].phonenumber,
             icon: <Phone />,
-            defaultValue: userdata.phone ?? '',
+            defaultValue: account.phone ?? '',
         },
         {
             name: 'email',
             label: 'Email',
             icon: <Email />,
-            defaultValue: userdata.email ?? '',
+            defaultValue: account.email ?? '',
         },
 
         {
             name: 'gender',
             label: dictionary['contract'].gender,
             icon: null,
-            defaultValue: userdata.gender ?? '',
+            defaultValue: account.gender ?? 1,
             type: 'select',
             options: [
-                { label: dictionary['common'].male, value: 'M' },
-                { label: dictionary['common'].female, value: 'F' },
+                { label: dictionary['common'].male, value: 1 },
+                { label: dictionary['common'].female, value: 0 },
             ]
         },
         {
             name: 'address',
             label: dictionary['contract'].address,
             icon: <Home />,
-            defaultValue: userdata.address ?? '',
+            defaultValue: account.address ?? '',
         }
 
     ]
@@ -104,29 +126,6 @@ const AccountSettingContent = ({ userdata, useractivity, dictionary, locale, ses
             return acc
         }, {} as Record<string, any>)
     })
-
-    let totalResults = Math.ceil(useractivity.items.length / pageSize);
-
-    const handleJumpPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const value = Number(event.target.value);
-        if (value > 0 && value <= totalResults) {
-            setJumpPage(value);
-            setPage(value);
-        }
-    };
-
-    const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
-        if (value !== page) {
-            setPage(value);
-        }
-    };
-
-    const handlePageSizeChange = (event: SelectChangeEvent<number>) => {
-        const newSize = Number(event.target.value);
-        if (newSize !== pageSize) {
-            setPageSize(newSize);
-        }
-    };
 
     return (
         <Box className="max-w mx-auto px-4 py-10 space-y-8">
@@ -140,6 +139,7 @@ const AccountSettingContent = ({ userdata, useractivity, dictionary, locale, ses
                         {/* Avatar */}
                         <Box className="bg-green-200 p-[3px] rounded-full shadow-sm">
                             <Avatar
+                                src={avatarUrl || undefined}
                                 sx={{
                                     width: 100,
                                     height: 100,
@@ -151,20 +151,18 @@ const AccountSettingContent = ({ userdata, useractivity, dictionary, locale, ses
                                     color: 'primary.main'
                                 }}
                             >
-                                {(userdata?.firstname?.[0] || 'U')}
+                                {(account.first_name?.[0] || account.login_name?.[0] || 'U')}
                             </Avatar>
                         </Box>
 
                         {/* Full name */}
                         <Typography variant="h5" mt={2} fontWeight="bold" textAlign="center" color='primary.main'>
-                            {[userdata?.firstname, userdata?.middlename, userdata?.lastname]
-                                .filter(Boolean)
-                                .join(' ')}
+                            {fullName}
                         </Typography>
 
                         {/* Email */}
                         <Typography variant="body2" color="primary.main" textAlign="center" gutterBottom>
-                            {userdata?.email}
+                            {account.email}
                         </Typography>
 
                         <Divider sx={{ width: '100%', my: 1 }} />
@@ -174,14 +172,14 @@ const AccountSettingContent = ({ userdata, useractivity, dictionary, locale, ses
                             <Typography variant="caption" className="text-green-700 font-semibold">
                                 {dictionary['navigation'].roles}
                             </Typography>
-                            {userdata.usergroup?.length > 0 ? (
+                            {roles?.length > 0 ? (
                                 <Box className="mt-1 flex flex-wrap justify-center gap-1">
-                                    {userdata.usergroup.map((role: any, index: number) => (
+                                    {roles.map((role, index) => (
                                         <Box
-                                            key={index}
+                                            key={role.role_id ?? index}
                                             className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium"
                                         >
-                                            {role.rolename}
+                                            {role.role_name}
                                         </Box>
                                     ))}
                                 </Box>
@@ -196,7 +194,7 @@ const AccountSettingContent = ({ userdata, useractivity, dictionary, locale, ses
 
                         {/* Status */}
                         <Typography variant="body2" color="text.secondary" fontStyle="italic">
-                            {dictionary['common'].status}: {userdata.statuscaption}
+                            {dictionary['common'].status}: {getStaffStatusLabel(dictionary, account.status || '')}
                         </Typography>
                     </Grid>
 
@@ -384,7 +382,7 @@ const AccountSettingContent = ({ userdata, useractivity, dictionary, locale, ses
                                 <Grid size={{ xs: 12, sm: 6 }}>
                                     <TextField
                                         label={dictionary['common'].lastlogin}
-                                        value={userdata.lastlogintime?.substring(0, 19) ?? ''}
+                                        value={account.last_login_time?.substring(0, 19) ?? ''}
                                         fullWidth
                                         size="small"
                                         disabled
@@ -438,11 +436,17 @@ const AccountSettingContent = ({ userdata, useractivity, dictionary, locale, ses
                                 <Typography variant="h5" color='primary.main' gutterBottom>
                                     {dictionary['common'].activity}
                                 </Typography>
+
+                                {userSessions.error && (
+                                    <Alert severity="error" sx={{ mb: 2 }}>{userSessions.error}</Alert>
+                                )}
+
                                 <TableContainer
                                     component={Paper}
                                     variant="outlined"
                                     sx={{
                                         borderColor: 'primary.main',
+                                        opacity: userSessions.loading ? 0.6 : 1,
                                         '& .MuiTable-root': {
                                             borderCollapse: 'collapse',
                                         },
@@ -473,9 +477,16 @@ const AccountSettingContent = ({ userdata, useractivity, dictionary, locale, ses
                                         </TableHead>
 
                                         <TableBody>
-                                            {pagedItems.map((session, idx) => (
+                                            {userSessions.rows.length === 0 && !userSessions.loading && (
+                                                <TableRow>
+                                                    <TableCell colSpan={6} align="center" sx={{ color: 'grey.600' }}>
+                                                        {dictionary['common'].nodata ?? '-'}
+                                                    </TableCell>
+                                                </TableRow>
+                                            )}
+                                            {userSessions.rows.map((item, idx) => (
                                                 <TableRow
-                                                    key={idx}
+                                                    key={item.id || idx}
                                                     sx={{
                                                         backgroundColor: idx % 2 === 0 ? 'white' : '#f9fafb',
                                                         '& td': {
@@ -484,13 +495,13 @@ const AccountSettingContent = ({ userdata, useractivity, dictionary, locale, ses
                                                         }
                                                     }}
                                                 >
-                                                    <TableCell>{session.createdonutc?.replace('T', ' ').substring(0, 19) || ''}</TableCell>
-                                                    <TableCell>{session.updatedonutc?.replace('T', ' ').substring(0, 19) || ''}</TableCell>
-                                                    <TableCell>{session.ipaddress || '-'}</TableCell>
-                                                    <TableCell>{session.device || '-'}</TableCell>
-                                                    <TableCell>{session.token || '-'}</TableCell>
+                                                    <TableCell>{item.created_on_utc?.replace('T', ' ').substring(0, 19) || ''}</TableCell>
+                                                    <TableCell>{item.updated_on_utc?.replace('T', ' ').substring(0, 19) || ''}</TableCell>
+                                                    <TableCell>{item.ip_address || '-'}</TableCell>
+                                                    <TableCell>{item.device || '-'}</TableCell>
+                                                    <TableCell>{item.id || '-'}</TableCell>
                                                     <TableCell>
-                                                        {session.isrevoked ? (
+                                                        {item.is_revoked ? (
                                                             <Check color="error" fontSize="small" />
                                                         ) : (
                                                             <Check color="success" fontSize="small" />
@@ -502,16 +513,18 @@ const AccountSettingContent = ({ userdata, useractivity, dictionary, locale, ses
                                     </Table>
                                 </TableContainer>
 
-                                <PaginationPage
-                                    totalResults={Math.ceil(useractivity.items.length / pageSize)}
-                                    pageSize={pageSize}
-                                    page={page}
-                                    jumpPage={jumpPage}
-                                    handlePageChange={handlePageChange}
-                                    handlePageSizeChange={handlePageSizeChange}
-                                    handleJumpPage={handleJumpPage}
-                                    dictionary={dictionary}
-                                />
+                                {userSessions.totalCount > 0 && (
+                                    <PaginationPage
+                                        totalResults={userSessions.totalCount}
+                                        pageSize={userSessions.filter.page_size}
+                                        page={userSessions.filter.page_index}
+                                        jumpPage={userSessions.filter.page_index}
+                                        handlePageChange={userSessions.handlePageChange}
+                                        handlePageSizeChange={userSessions.handlePageSizeChange}
+                                        handleJumpPage={userSessions.handleJumpPage}
+                                        dictionary={dictionary}
+                                    />
+                                )}
                             </Box>
                         )}
                     </Grid>

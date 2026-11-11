@@ -24,7 +24,6 @@ export function getValidLocale(locale: string): Locale {
     return locale;
   }
   
-  console.warn(`Invalid locale '${locale}' provided, falling back to default locale '${i18n.defaultLocale}'`);
   return i18n.defaultLocale;
 }
 

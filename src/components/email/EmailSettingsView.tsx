@@ -108,17 +108,19 @@ export default function EmailSettingsView({ onBack, dictionary }: EmailSettingsV
                                 value={config?.password || ''}
                                 onChange={(e) => setConfig(prev => prev ? ({ ...prev, password: e.target.value }) : null)}
                                 variant="outlined"
-                                InputProps={{
-                                    endAdornment: (
-                                        <InputAdornment position="end">
-                                            <IconButton
-                                                onClick={togglePasswordVisibility}
-                                                edge="end"
-                                            >
-                                                {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                                            </IconButton>
-                                        </InputAdornment>
-                                    ),
+                                slotProps={{
+                                    input: {
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    onClick={togglePasswordVisibility}
+                                                    edge="end"
+                                                >
+                                                    {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        ),
+                                    },
                                 }}
                             />
                         </Grid>

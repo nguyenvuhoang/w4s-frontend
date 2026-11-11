@@ -1,0 +1,8 @@
+'use client'
+import { Chip, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
+import { useSearchTableRowConfig } from '@/shared/components/table'
+import type { Locale } from '@/configs/i18n'
+import type { ProvinceItem, ProvincesDictionary } from '../types'
+import { displayProvinceValue, provinceText } from './provinceHelpers'
+const columns = ['province_code','administrative_code','province_name','m_province_name','administrative_type','region','postal_code','phone_area_code','effective_status','status','sort_order'] as const
+export default function ProvincesTable({ dictionary, rows, onOpenDetail }: { dictionary: ProvincesDictionary; locale: Locale; rows: ProvinceItem[]; onOpenDetail: (row: ProvinceItem) => void }) { const table = useSearchTableRowConfig<ProvinceItem>({ rowInteraction: { onOpenDetail } }); return <Paper variant="outlined"><TableContainer sx={{ overflowX: 'auto' }}><Table size="small"><TableHead><TableRow>{columns.map(column => <TableCell key={column} sx={{ bgcolor: 'primary.main', color: 'common.white', fontWeight: 800 }}>{provinceText(dictionary, column, column)}</TableCell>)}</TableRow></TableHead><TableBody>{rows.length === 0 ? <TableRow><TableCell colSpan={columns.length} align="center"><Typography sx={{ py: 4 }}>{provinceText(dictionary, 'empty', 'No provinces/cities found.')}</Typography></TableCell></TableRow> : rows.map(row => <TableRow key={row.id} {...table.getRowProps(row)}>{columns.map(column => <TableCell key={column}>{column === 'effective_status' || column === 'status' ? <Chip size="small" label={displayProvinceValue(row[column])} /> : displayProvinceValue(row[column])}</TableCell>)}</TableRow>)}</TableBody></Table></TableContainer></Paper> }

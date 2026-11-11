@@ -450,8 +450,7 @@ export function useReverseProxyConfig({ initialConfig, sessionToken, locale }: U
             setValidationErrors([]);
             setEditState(null);
             setStatusMessage({ severity: 'success', text: 'Reverse Proxy config reloaded.' });
-        } catch (error) {
-            console.error('Reload reverse proxy config failed:', error);
+        } catch {
             setStatusMessage({ severity: 'error', text: 'Failed to reload Reverse Proxy config.' });
         } finally {
             setSaving(false);
@@ -493,8 +492,7 @@ export function useReverseProxyConfig({ initialConfig, sessionToken, locale }: U
             setValidationErrors([]);
             setEditState(null);
             setStatusMessage({ severity: 'success', text: 'Reverse Proxy config saved and reloaded.' });
-        } catch (error) {
-            console.error('Save reverse proxy config failed:', error);
+        } catch {
             setStatusMessage({ severity: 'error', text: 'Failed to save Reverse Proxy config.' });
         } finally {
             setSaving(false);

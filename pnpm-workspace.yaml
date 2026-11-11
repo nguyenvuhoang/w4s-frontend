@@ -1,4 +1,14 @@
+verifyDepsBeforeRun: false
+
+allowBuilds:
+  core-js: false
+  sharp: false
+  unrs-resolver: false
+
 onlyBuiltDependencies:
   - core-js
   - sharp
   - unrs-resolver
+
+minimumReleaseAgeExclude:
+  - '@vknighthub/o24-console@1.0.0'

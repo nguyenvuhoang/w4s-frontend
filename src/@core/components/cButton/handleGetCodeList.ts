@@ -23,8 +23,6 @@ export const handleGetCodeList = async (session: Session | null, codegroup: stri
 
         return dataresponse.data.input;
 
-    } catch (error) {
-        console.log(error);
-    }
+    } catch {}
 };
 

@@ -2,8 +2,10 @@
 
 import { useEffect, useRef } from 'react';
 import { useSession, signOut } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@shared/hooks/useRouter';
 import { initializeSessionManager, getSessionManager } from '@utils/sessionManager';
+import { i18n } from '@/configs/i18n';
+import { ENABLE_IDLE_TIMEOUT } from '@/configs/sessionConfig';
 
 /**
  * Global logout handler that automatically manages user sessions
@@ -19,14 +21,17 @@ export const useGlobalLogoutHandler = () => {
     if (session && typeof window !== 'undefined') {
       // Initialize session manager with custom config
       // TEMPORARILY DISABLE auto-logout on browser close to fix F5 issue
+      // No onBeforeLogout callback needed: SessionManager.triggerLogout() already calls
+      // /api/logout below, which now invalidates the backend session itself, server-side
+      // (the real backend token is never available in the browser — see src/auth.ts).
       sessionManagerRef.current = initializeSessionManager({
         autoLogoutOnBrowserClose: false, // Disabled to prevent F5 logout issues
         sessionTimeoutMinutes: 30,
         checkIntervalSeconds: 60,
-        browserCloseThresholdMs: 60000 // Increase threshold to 60 seconds
+        browserCloseThresholdMs: 60000, // Increase threshold to 60 seconds
+        idleTimeoutEnabled: ENABLE_IDLE_TIMEOUT, // NEXT_PUBLIC_ENABLE_IDLE_TIMEOUT, default true
       });
 
-      console.log('[GlobalLogoutHandler] Session manager initialized');
     }
 
     return () => {
@@ -50,11 +55,10 @@ export const useGlobalLogoutHandler = () => {
       
       // Only redirect if not already on auth-related pages
       if (!isLoginPage && !isLogoutPage && !isAuthPage) {
-        console.log('[GlobalLogoutHandler] No session found, redirecting to login...');
         
-        // Extract locale from current path or default to 'en'
+        // Extract locale from current path or default to configured locale
         const localeMatch = currentPath.match(/^\/([a-z]{2})/);
-        const locale = localeMatch ? localeMatch[1] : 'en';
+        const locale = localeMatch ? localeMatch[1] : i18n.defaultLocale;
         
         // Use window.location for immediate redirect to locale-specific login
         window.location.href = `/${locale}/login`;
@@ -70,11 +74,10 @@ export const useGlobalLogoutHandler = () => {
       const isLogoutPage = currentPath.includes('/logout');
       
       if (!isLoginPage && !isLogoutPage) {
-        console.log('[GlobalLogoutHandler] Session became unauthenticated, redirecting...');
         
-        // Extract locale from current path or default to 'en'
+        // Extract locale from current path or default to configured locale
         const localeMatch = currentPath.match(/^\/([a-z]{2})/);
-        const locale = localeMatch ? localeMatch[1] : 'en';
+        const locale = localeMatch ? localeMatch[1] : i18n.defaultLocale;
         
         window.location.href = `/${locale}/login`;
       }
@@ -84,30 +87,35 @@ export const useGlobalLogoutHandler = () => {
   // Provide a manual logout function
   const manualLogout = async (reason: string = 'manual') => {
     try {
-      console.log(`[GlobalLogoutHandler] Manual logout triggered: ${reason}`);
       
       // Use session manager for logout if available
       const sessionManager = getSessionManager();
       if (sessionManager) {
         await sessionManager.triggerLogout(reason);
       } else {
-        // Fallback logout
+        // Fallback logout: session manager not initialized yet. /api/logout invalidates the
+        // backend session server-side (resolving the token itself from the session cookie)
+        // before the NextAuth cookie below is cleared.
+        await fetch('/api/logout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reason })
+        }).catch(err => {});
         await signOut({ redirect: false });
-        
-        // Extract locale from current path or default to 'en'
+
+        // Extract locale from current path or default to configured locale
         const currentPath = window.location.pathname;
         const localeMatch = currentPath.match(/^\/([a-z]{2})/);
-        const locale = localeMatch ? localeMatch[1] : 'en';
+        const locale = localeMatch ? localeMatch[1] : i18n.defaultLocale;
         
         window.location.href = `/${locale}/login`;
       }
-    } catch (error) {
-      console.error('[GlobalLogoutHandler] Manual logout failed:', error);
+    } catch {
       
       // Extract locale for error fallback
       const currentPath = window.location.pathname;
       const localeMatch = currentPath.match(/^\/([a-z]{2})/);
-      const locale = localeMatch ? localeMatch[1] : 'en';
+      const locale = localeMatch ? localeMatch[1] : i18n.defaultLocale;
       
       window.location.href = `/${locale}/login`;
     }

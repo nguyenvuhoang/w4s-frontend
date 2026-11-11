@@ -9,7 +9,7 @@ import { getDictionary } from '@utils/getDictionary'
 import { getLocalizedUrl } from '@utils/i18n'
 import type { ErrorType, FormData } from '@core/types'
 import { handleLogin } from '@features/auth/services/login'
-import { useRouter } from 'next/navigation'
+import { useRouter } from '@shared/hooks/useRouter'
 import { useState } from 'react'
 import Swal from 'sweetalert2'
 
@@ -69,54 +69,40 @@ export const useLoginHandler = ({
 
         setLoading(false)
     }
-    /**
-         * HÃ m xÃ¡c thá»±c máº­t kháº©u ngÆ°á»i dÃ¹ng
-            * @param username TÃªn Ä‘Äƒng nháº­p cá»§a ngÆ°á»i dÃ¹ng
-            * @param password Máº­t kháº©u cá»§a ngÆ°á»i dÃ¹ng
-            * @return Tráº£ vá» true náº¿u xÃ¡c thá»±c thÃ nh cÃ´ng, false náº¿u tháº¥t báº¡i
-            * @description HÃ m nÃ y sáº½ mÃ£ hÃ³a máº­t kháº©u káº¿t há»£p vá»›i tÃªn Ä‘Äƒng nháº­p, sau Ä‘Ã³ gá»i hÃ m handleLogin Ä‘á»ƒ xÃ¡c thá»±c.
-            * Náº¿u xÃ¡c thá»±c thÃ nh cÃ´ng, tráº£ vá» true, náº¿u cÃ³ lá»—i hoáº·c xÃ¡c thá»±c khÃ´ng thÃ nh cÃ´ng, tráº£ vá» false.
-            */
 
-    const verifyPassword = async (token: string, usercode: string, password: string): Promise<boolean> => {
+    const verifyPassword = async (sessionToken: string, usercode: string, password: string) => {
+        if (!sessionToken || !usercode || !password) return false
+
         try {
             const encryptedPassword = encrypt(`${usercode}_${password}`)
-            const response = await workflowService.runBODynamic({
-                sessiontoken: token,
-                txFo: {
-                    bo: [
-                        {
-                            use_microservice: true,
-                            input: {
-                                workflowid: WORKFLOWCODE.GENERATE_CONTRACT_NUMBER,
-                                learn_api: 'cbs_workflow_execute',
-                                fields: {
-                                    password: encryptedPassword,
-                                    usercode: usercode
-                                }
-                            },
-                        },
-                    ],
+            const response = await workflowService.runFODynamic({
+                sessiontoken: sessionToken,
+                workflowid: WORKFLOWCODE.BO_VERIFY_SENSITIVE_DATA,
+                input: {
+                    usercode,
+                    password: encryptedPassword
                 },
-            });
+                language: locale as Locale
+            })
 
-            if (response.status === 200 && response.payload?.dataresponse) {
-                return true;
+            const errors = response.payload?.dataresponse?.errors
+
+            if (response.status !== 200 || (Array.isArray(errors) && errors.length > 0)) {
+                return false
             }
 
-            return false;
-        } catch (err) {
-            console.error('Error verifying password:', err);
-            return false;
+            return response.payload?.dataresponse?.data?.input?.data === true
+        } catch {
+            return false
         }
     }
 
     return {
         onSubmit,
+        verifyPassword,
         loading,
         errorState,
-        setErrorState,
-        verifyPassword
+        setErrorState
     }
 }
 

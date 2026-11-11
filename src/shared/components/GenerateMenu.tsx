@@ -1,5 +1,5 @@
 // React Imports
-import { useId, useState } from 'react'
+import { useId, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 
 // Next Imports
@@ -29,6 +29,17 @@ import { MenuSection, MenuItem as VerticalMenuItem } from '@menu/vertical-menu'
 
 // Util Imports
 import { getLocalizedUrl } from '@utils/i18n'
+import {
+  excludeMenuRoutes,
+  getCommandId,
+  getFirstDescendantMenuRoute,
+  getMenuRoute,
+  getMenuTitle,
+  getModuleCommandIdFromPath,
+  isMenuActive,
+  isUsableMenuRoute
+} from './layout/shared/menu-utils'
+import { filterMenuForSidebar } from '@shared/permissions/permissionUtils'
 
 type MenuIconProps = {
   icon?: string
@@ -54,6 +65,19 @@ const NON_DOM_PROPS = new Set([
   'is_required',
   'is_check_permission',
   'is_external',
+  'command_name',
+  'command_name_language',
+  'command_icon',
+  'command_url',
+  'commandUrl',
+  'commandURL',
+  'CommandURL',
+  'command_uri',
+  'commandUri',
+  'commandURI',
+  'CommandURI',
+  'group_menu_icon',
+  'label',
   'children',
   'items',
   'submenus',
@@ -162,39 +186,45 @@ function stripSubMenuLinkProps<T extends Record<string, unknown>>(obj: T): T {
 }
 
 const renderChipOrNode = (node: ReactNode | ChipProps | undefined): ReactNode => {
+  if (typeof node === 'string' || typeof node === 'number') return undefined
+
   return node && (node as ChipProps).label ? <Chip size='small' {...(node as ChipProps)} /> : (node as ReactNode)
 }
 
 export const GenerateVerticalMenu = ({
   menuData,
   onMenuItemClick,
-  activeItem
+  onMenuItemNavigate
 }: {
   menuData: VerticalMenuDataType[]
   onMenuItemClick?: (item: VerticalSubMenuDataType) => void
-  activeItem?: VerticalSubMenuDataType | null
+  onMenuItemNavigate?: () => void
 }) => {
   const { locale } = useParams()
   const pathname = usePathname()
 
-  const isSameMenuItem = (left: any, right: any) => {
-    if (!left || !right) return false
+  // Sidebar visibility must respect invoke + group_menu_visible, not just command_type — see
+  // src/shared/permissions/permissionUtils.ts. Command (C) nodes never appear in the sidebar and
+  // parents left with no valid children after filtering are pruned.
+  const visibleMenuData = useMemo(
+    () => excludeMenuRoutes(filterMenuForSidebar(menuData as any) as unknown as VerticalMenuDataType[]),
+    [menuData]
+  )
 
-    return Boolean(
-      (left.id && right.id && left.id === right.id) ||
-      (left.command_id && right.command_id && left.command_id === right.command_id) ||
-      (left.label && right.label && left.label === right.label)
-    )
-  }
+  // The `/module/[commandId]` hub route (a parent menu's submenu list) carries no business
+  // screen path of its own, so it can never match via localizedRoute below — without this, the
+  // parent menu would show inactive while its own hub screen is open.
+  const moduleCommandId = getModuleCommandIdFromPath(pathname)
 
-  const hasActiveChildRoute = (item: any): boolean => {
+  const isMenuBranchActive = (item: any): boolean => {
+    const route = getMenuRoute(item)
+    const localizedRoute = route?.startsWith('http') ? route : route && getLocalizedUrl(route, locale as Locale)
+
+    if (localizedRoute && isMenuActive(localizedRoute, pathname)) return true
+    if (moduleCommandId && moduleCommandId === getCommandId(item)) return true
+
     return getChildren(item).some((child: any) => {
-      const route = child.href || child.command_uri || child.command_url
-      const localizedRoute = route?.startsWith('http') ? route : route && getLocalizedUrl(route, locale as Locale)
-
-      if (localizedRoute && pathname === localizedRoute) return true
-
-      return hasActiveChildRoute(child)
+      return isMenuBranchActive(child)
     })
   }
 
@@ -217,56 +247,82 @@ export const GenerateVerticalMenu = ({
       }
 
       const itemChildren = getChildren(subMenuItem).filter(isValidMenuItem)
+      const itemLabel = getMenuTitle(subMenuItem, locale as string)
 
       if (itemChildren.length > 0) {
-        const { icon, prefix, suffix, ...rest } = subMenuItem as any
-        const parentActive = isSameMenuItem(subMenuItem, activeItem) || hasActiveChildRoute(subMenuItem)
+        const { icon, prefix, suffix, label, ...rest } = subMenuItem as any
+        const parentRoute = getMenuRoute(subMenuItem)
+        const route = isUsableMenuRoute(parentRoute) ? parentRoute : getFirstDescendantMenuRoute(subMenuItem)
+        const effectiveHref = route?.startsWith('http')
+          ? route
+          : route && getLocalizedUrl(route, locale as Locale)
+        // Active is derived exclusively from the current URL. Opening a group must never
+        // apply the active background while the user remains on another route.
+        const parentActive = isMenuBranchActive(subMenuItem)
 
         return (
           <VerticalMenuItem
             key={index}
-            title={typeof subMenuItem.label === 'string' ? subMenuItem.label : undefined}
+            title={itemLabel || undefined}
             prefix={renderChipOrNode(prefix)}
             suffix={renderChipOrNode(suffix)}
             active={parentActive}
+            data-prevent-progress="true"
             onClick={(event: any) => {
+              // Keep a real link for browser context-menu and modified-click actions (opens
+              // effectiveHref, e.g. the first descendant route, in a new tab).
+              // A normal primary click instead navigates to this menu's own `/module/[commandId]`
+              // hub route (see onMenuItemClick in DashboardShell) so the URL always reflects what
+              // is on screen — required so a second click, refresh, or Back all behave correctly.
+              if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+
               event.preventDefault()
               onMenuItemClick?.(subMenuItem)
             }}
             {...stripSubMenuLinkProps(stripNonDomProps(rest))}
-            icon={<MenuIcon icon={icon} size={20} color='currentColor' />}
+            href={effectiveHref}
+            icon={<MenuIcon icon={icon || (subMenuItem as any).group_menu_icon || (subMenuItem as any).command_icon} size={20} color='currentColor' />}
           >
-            {subMenuItem.label}
+            {itemLabel}
           </VerticalMenuItem>
         )
       }
 
       const { label, excludeLang, icon, prefix, suffix, ...rest } = menuItem as any
-      const href = rest.href?.startsWith('http')
-        ? rest.href
-        : rest.href && (excludeLang ? rest.href : getLocalizedUrl(rest.href, locale as Locale))
+      const route = getMenuRoute(menuItem)
+      const href = route?.startsWith('http')
+        ? route
+        : route && (excludeLang ? route : getLocalizedUrl(route, locale as Locale))
 
       return (
         <VerticalMenuItem
           key={index}
-          title={typeof label === 'string' ? label : undefined}
+          title={itemLabel || undefined}
           prefix={renderChipOrNode(prefix)}
           suffix={renderChipOrNode(suffix)}
           {...stripNonDomProps(rest)}
           href={href}
-          icon={<MenuIcon icon={icon} size={20} color='currentColor' />}
+          onClick={() => {
+            onMenuItemNavigate?.()
+          }}
+          icon={<MenuIcon icon={icon || (menuItem as any).group_menu_icon || (menuItem as any).command_icon} size={20} color='currentColor' />}
         >
-          {label}
+          {itemLabel}
         </VerticalMenuItem>
       )
     })
   }
 
-  return <>{menuData && renderMenuItems(menuData)}</>
+  return <>{visibleMenuData && renderMenuItems(visibleMenuData)}</>
 }
 
 export const GenerateHorizontalMenu = ({ menuData }: { menuData: HorizontalMenuDataType[] }) => {
   const { locale } = useParams()
+
+  const visibleMenuData = useMemo(
+    () => excludeMenuRoutes(filterMenuForSidebar(menuData as any) as unknown as HorizontalMenuDataType[]),
+    [menuData]
+  )
 
   const renderMenuItems = (data: HorizontalMenuDataType[]) => {
     return data?.map((item: HorizontalMenuDataType, index) => {
@@ -275,18 +331,20 @@ export const GenerateHorizontalMenu = ({ menuData }: { menuData: HorizontalMenuD
       const subMenuItem = item as HorizontalSubMenuDataType
       const menuItem = item as HorizontalMenuItemDataType
       const validChildren = getChildren(subMenuItem as any).filter(isValidMenuItem) as HorizontalMenuDataType[]
+      const itemLabel = getMenuTitle(item, locale as string)
 
       if (validChildren.length > 0) {
-        const { icon, prefix, suffix, ...rest } = subMenuItem as any
+        const { icon, prefix, suffix, label, ...rest } = subMenuItem as any
 
         return (
           <HorizontalSubMenu
             key={index}
-            title={typeof subMenuItem.label === 'string' ? subMenuItem.label : undefined}
+            label={itemLabel}
+            title={itemLabel || undefined}
             prefix={renderChipOrNode(prefix)}
             suffix={renderChipOrNode(suffix)}
             {...stripSubMenuLinkProps(stripNonDomProps(rest))}
-            icon={<MenuIcon icon={icon} size={20} />}
+            icon={<MenuIcon icon={icon || (subMenuItem as any).group_menu_icon || (subMenuItem as any).command_icon} size={20} />}
           >
             {renderMenuItems(validChildren)}
           </HorizontalSubMenu>
@@ -294,25 +352,26 @@ export const GenerateHorizontalMenu = ({ menuData }: { menuData: HorizontalMenuD
       }
 
       const { label, excludeLang, icon, prefix, suffix, ...rest } = menuItem as any
-      const href = rest.href?.startsWith('http')
-        ? rest.href
-        : rest.href && (excludeLang ? rest.href : getLocalizedUrl(rest.href, locale as Locale))
+      const route = getMenuRoute(menuItem)
+      const href = route?.startsWith('http')
+        ? route
+        : route && (excludeLang ? route : getLocalizedUrl(route, locale as Locale))
 
       return (
         <HorizontalMenuItem
           key={index}
-          title={typeof label === 'string' ? label : undefined}
+          title={itemLabel || undefined}
           prefix={renderChipOrNode(prefix)}
           suffix={renderChipOrNode(suffix)}
           {...stripNonDomProps(rest)}
           href={href}
-          icon={<MenuIcon icon={icon} size={20} />}
+          icon={<MenuIcon icon={icon || (menuItem as any).group_menu_icon || (menuItem as any).command_icon} size={20} />}
         >
-          {label}
+          {itemLabel}
         </HorizontalMenuItem>
       )
     })
   }
 
-  return <>{renderMenuItems(menuData)}</>
+  return <>{renderMenuItems(visibleMenuData)}</>
 }

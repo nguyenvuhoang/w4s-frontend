@@ -9,7 +9,8 @@ import { generatePathNameView } from '@utils/generatePathNameView';
 import { getDictionary } from '@utils/getDictionary';
 import { getLocalizedUrl } from '@utils/i18n';
 import { Session } from 'next-auth';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
+import { useRouter } from '@shared/hooks/useRouter';
 import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import RenderLayout from './layout/layout';
@@ -142,9 +143,7 @@ const Layout = ({
                     let _txFo: any[] = [];
                     try {
                         _txFo = actionRowSelect.txFo ? JSON.parse(actionRowSelect.txFo) : [];
-                    } catch (e) {
-                        console.error('Error parsing txFo in viewdetail:', e);
-                    }
+                    } catch {}
                     const targetPathname = actionRowSelect.pathname;
                     if (_txFo.length > 0) {
                         const parameters = _txFo[0].parameters;
@@ -179,9 +178,7 @@ const Layout = ({
                     break;
                 }
             }
-        } catch (error) {
-            console.error('Error fetching detail:', error);
-        }
+        } catch {}
     }, [pathname, router, language, session, formMethods]);
 
     const renderLayouts = useMemo(() => datalayout
@@ -235,7 +232,7 @@ const Layout = ({
     return !isNested ? (
         <form
             id={form_id}
-            onSubmit={formMethods.handleSubmit((data) => console.log('Form Submitted:', data))}
+            onSubmit={formMethods.handleSubmit((data) => {})}
         >
             {renderLayouts}
         </form>

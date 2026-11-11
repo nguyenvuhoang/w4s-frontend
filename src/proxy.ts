@@ -6,23 +6,54 @@ import { NextResponse } from 'next/server';
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-
-  // Skip middleware for static files, API routes, and auth-related routes
+  // Skip middleware for static files and API routes
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api') ||
     pathname.startsWith('/images') ||
     pathname.startsWith('/assets') ||
-    pathname.includes('.') ||
+    pathname.includes('.')
+  ) {
+    return NextResponse.next();
+  }
+
+  const hostname = request.headers.get('host')?.split(':')[0]?.toLowerCase() ?? '';
+  const isPartnerHost = hostname === 'partner.ips.vn' || hostname.startsWith('partner.');
+  const partnerRouteMatch = pathname.match(/^\/([a-z]{2})\/partner(?:\/|$)/);
+
+  // Partner Portal shares this app but keeps its route and session isolated from Backoffice.
+  if (isPartnerHost || partnerRouteMatch) {
+    const locale = partnerRouteMatch?.[1] ?? i18n.defaultLocale;
+    const basePath = `/${locale}/partner`;
+    const partnerPath = partnerRouteMatch ? (pathname.slice(basePath.length) || '/') : pathname;
+    const canonicalPath = `${basePath}${partnerPath === '/' ? '/login' : partnerPath}`;
+
+    // Always expose the locale-prefixed canonical URL requested by the Partner Portal.
+    if (!partnerRouteMatch) {
+      return NextResponse.redirect(new URL(canonicalPath, request.url));
+    }
+
+    const partnerSession = request.cookies.get('ips_partner_session')?.value;
+    const isPartnerLogin = partnerPath === '/login';
+    if (!partnerSession && !isPartnerLogin) {
+      const loginUrl = new URL(`${basePath}/login`, request.url);
+      loginUrl.searchParams.set('redirectTo', pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+    if (partnerSession && isPartnerLogin) {
+      return NextResponse.redirect(new URL(`${basePath}/scan`, request.url));
+    }
+    return NextResponse.next();
+  }
+
+  const isAuthRoute =
     pathname.includes('/login') ||
     pathname.includes('/logout') ||
     pathname.includes('/auth') ||
     pathname.includes('/forgot-password') ||
     pathname.includes('/verify-') ||
-    pathname.includes('/change-password')
-  ) {
-    return NextResponse.next();
-  }
+    pathname.includes('/change-password') ||
+    pathname.includes('/maintenance');
 
   // Handle invalid locales - redirect to default locale with same path structure
   const { locale: extractedLocale, isValid: isValidExtractedLocale } = extractLocaleFromPath(pathname);
@@ -33,6 +64,20 @@ export async function proxy(request: NextRequest) {
     // Construct a valid URL with the default locale
     const redirectUrl = constructValidLocaleUrl(pathname, request.url);
     return NextResponse.redirect(redirectUrl);
+  }
+
+  const hasLocalePrefix = pathname === `/${i18n.defaultLocale}` || i18n.locales.some(
+    locale => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`)
+  );
+
+  if (!hasLocalePrefix) {
+    const redirectUrl = new URL(`/${i18n.defaultLocale}${pathname === '/' ? '' : pathname}`, request.url);
+    return NextResponse.redirect(redirectUrl);
+  }
+
+  // Auth-related routes are public once the locale prefix is valid.
+  if (isAuthRoute) {
+    return NextResponse.next();
   }
 
   // Handle locale-only paths (e.g., /en, /la, /vi) - redirect to default dashboard page

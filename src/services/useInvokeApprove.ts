@@ -1,10 +1,9 @@
 import { Locale } from '@/configs/i18n';
-import { WORKFLOWCODE } from '@/data/WorkflowCode';
-import { workflowService } from '@/servers/system-service';
-import { MenuItem, Operation, OperationHeader } from '@shared/types/systemTypes';
+import { MenuItem, Operation } from '@shared/types/systemTypes';
 import { getDictionary } from '@utils/getDictionary';
 import { Session } from 'next-auth';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { buildOperationColumns, fetchRoleMenuTree, fetchRoleOperations, filterVisibleParentMenus, submitRoleRights } from './roleOperationApi';
 
 // Äá»‹nh nghÄ©a type cho command trong groupedOperations
 interface Command {
@@ -27,6 +26,7 @@ export interface GroupedOperation {
 export interface DynamicColumn {
     cmdid: string;
     caption: string;
+    label?: string;
 }
 
 interface UseInvokeApproveProps {
@@ -81,81 +81,61 @@ export const useInvokeApprove = ({
     const [toastOpen, setToastOpen] = useState<boolean>(false);
     const [toastSeverity, setToastSeverity] = useState<'success' | 'error'>('success');
     const [toastMessage, setToastMessage] = useState<string>('');
+    const operationRequestId = useRef(0);
+    const selectedMenuRef = useRef<MenuItem | null>(null);
 
     const toggleMenu = useCallback((menu: string): void => {
         setExpandedMenu(prev => prev === menu ? null : menu);
     }, []);
 
-    const fetchMenuData = useCallback(async (channelId: string): Promise<MenuItem[]> => {
-        try {
-            const response = await workflowService.runFODynamic({
-                sessiontoken: session?.user?.token as string,
-                workflowid: WORKFLOWCODE.WF_BO_LOAD_MENU,
-                input: {
-                    channel_id: channelId
-                }
-            });
-            if (response.status === 200 && response.payload?.dataresponse?.data) {
-                const menuItem = response.payload.dataresponse.data.data as MenuItem[];
-                return menuItem;
-            }
-        } catch (error) {
-            console.error("Error fetching menu data:", error);
-        }
-        return [];
-    }, [session?.user?.token]);
+    const fetchMenuData = useCallback(async (channelId: string): Promise<MenuItem[]> => (
+        fetchRoleMenuTree(session?.user?.token as string, channelId, locale)
+    ), [session?.user?.token, locale]);
 
     const handleMenuClick = useCallback(async (menu: MenuItem): Promise<void> => {
+        const requestId = ++operationRequestId.current;
+        selectedMenuRef.current = menu;
         setSelectedMenu(menu);
-        try {
-            const response = await workflowService.runFODynamic({
-                sessiontoken: session?.user?.token as string,
-                workflowid: WORKFLOWCODE.WF_BO_LOAD_OPERATION,
-                input: {
-                    command_id: menu.command_id,
-                }
-            });
-            if (response.status === 200 && response.payload?.dataresponse?.data) {
-                const data = response.payload.dataresponse.data as unknown as Operation;
-                const operationsData: Operation = data || { operation_header: [], operation_body: [] };
-                setOperations(operationsData);
+        // Do not display columns from a previously selected menu while its operations load.
+        setOperations(undefined);
+        setCheckboxState({});
+        setSelfInvokeState({});
 
-                const initialCheckboxState: { [roleName: string]: { [cmdid: string]: boolean } } = {};
-                const initialSelfInvokeState: { [roleName: string]: boolean } = {};
-                operationsData.operation_body?.forEach(row => {
-                    if (!initialCheckboxState[row.role_name]) {
-                        initialCheckboxState[row.role_name] = {};
-                    }
-                    if (row.command_type === 'C') {
-                        initialCheckboxState[row.role_name][row.command_id] = row.invoke === 1;
-                    }
-                    if (row.command_type === 'M') {
-                        initialSelfInvokeState[row.role_name] = row.invoke === 1;
-                    }
-                });
-                setCheckboxState(initialCheckboxState);
-                setSelfInvokeState(initialSelfInvokeState);
-            } else {
-                console.warn("âš ï¸ No operations found for this menu!", response);
-                setOperations({ operation_header: [], operation_body: [] });
-                setCheckboxState({});
-                setSelfInvokeState({});
+        const operationsData = await fetchRoleOperations(session?.user?.token as string, menu.command_id, locale);
+        // Ignore a late response from an earlier menu selection.
+        if (requestId !== operationRequestId.current) return;
+
+        setOperations(operationsData);
+
+        const initialCheckboxState: { [roleName: string]: { [cmdid: string]: boolean } } = {};
+        const initialSelfInvokeState: { [roleName: string]: boolean } = {};
+        operationsData.operation_body?.forEach(row => {
+            if (!initialCheckboxState[row.role_name]) {
+                initialCheckboxState[row.role_name] = {};
             }
-        } catch (error) {
-            console.error("âŒ Error fetching operations:", error);
-            setOperations({ operation_header: [], operation_body: [] });
-            setCheckboxState({});
-            setSelfInvokeState({});
+            if (row.command_type === 'C') {
+                initialCheckboxState[row.role_name][row.command_id] = row.invoke === 1;
+            }
+            if (row.command_type === 'M') {
+                initialSelfInvokeState[row.role_name] = row.invoke === 1;
+            }
+        });
+        setCheckboxState(initialCheckboxState);
+        setSelfInvokeState(initialSelfInvokeState);
+    }, [locale, session?.user?.token]);
+
+    useEffect(() => {
+        const menu = selectedMenuRef.current;
+        if (menu) {
+            void handleMenuClick(menu);
         }
-    }, [session?.user?.token]);
+    }, [handleMenuClick, locale]);
 
     useEffect(() => {
         const loadMenuData = async () => {
             const channelId = "BO";
             const data = await fetchMenuData(channelId);
-            setMenuParent(data?.filter((item: MenuItem) =>
-                item.parent_id === "0" && item.group_menu_visible === "1" && item.group_menu_id === ''
-            ));
+            setMenuParent(filterVisibleParentMenus(data));
             setMenuData(data);
         };
         loadMenuData();
@@ -181,11 +161,8 @@ export const useInvokeApprove = ({
     }, [operations?.operation_body]);
 
     const dynamicColumns = useMemo((): DynamicColumn[] => {
-        return operations?.operation_header?.map((header: OperationHeader) => ({
-            cmdid: header.cmdid,
-            caption: header.caption,
-        })) || [];
-    }, [operations?.operation_header]);
+        return buildOperationColumns(operations?.operation_header, dictionary['common'].operation);
+    }, [dictionary, operations?.operation_header]);
 
     const getSelfInvokeState = useCallback((roleName: string): boolean => {
         const role = groupedOperations?.[roleName];
@@ -203,6 +180,7 @@ export const useInvokeApprove = ({
         return null;
     }, [groupedOperations]);
 
+    // eslint-disable-next-line react-hooks/preserve-manual-memoization
     const handleSelfInvokeChange = useCallback(async (roleName: string, checked: boolean) => {
         setSelfInvokeState(prevState => ({
             ...prevState,
@@ -212,31 +190,26 @@ export const useInvokeApprove = ({
         try {
             const roleData = operations?.operation_body?.find(row => row.role_name === roleName);
             if (!roleData) {
-                console.error(`Role ${roleName} not found in operation_body`);
                 return;
             }
 
             const command = operations?.operation_body?.find(row => row.role_name === roleName && row.command_type === 'M');
             if (!command) {
-                console.error(`No Self Invoke command found for role ${roleName}`);
                 return;
             }
 
-            const response = await workflowService.runFODynamic({
+            const response = await submitRoleRights({
                 sessiontoken: session?.user?.token as string,
-                workflowid: WORKFLOWCODE.WF_BO_UPDATE_RIGHT,
-                input: {
-                    list_user_right: [
-                        {
-                            RoleId: roleData.role_id,
-                            CommandId: command.command_id,
-                            CommandIdDetail: command.command_id_detail || "A",
-                            Invoke: checked,
-                            Approve: checked,
-                            ChannelId: command.application_code,
-                        }
-                    ]
-                }
+                items: [
+                    {
+                        RoleId: roleData.role_id,
+                        CommandId: command.command_id,
+                        CommandIdDetail: command.command_id_detail || "A",
+                        Invoke: checked,
+                        Approve: checked,
+                        ChannelId: command.application_code,
+                    }
+                ]
             });
 
             if (response.status === 200) {
@@ -250,13 +223,11 @@ export const useInvokeApprove = ({
                 }
                 setToastOpen(true);
             } else {
-                console.error(`Failed to update Self Invoke for ${roleName}:`, response);
             }
-        } catch (error) {
-            console.error(`Error updating Self Invoke for ${roleName}:`, error);
-        }
+        } catch {}
     }, [operations?.operation_body, session?.user?.token, dictionary]);
 
+    // eslint-disable-next-line react-hooks/preserve-manual-memoization
     const handleCommandChange = useCallback(async (roleName: string, cmdid: string, checked: boolean) => {
         setCheckboxState(prevState => ({
             ...prevState,
@@ -269,25 +240,21 @@ export const useInvokeApprove = ({
         try {
             const roleData = operations?.operation_body?.find(row => row.role_name === roleName && row.command_id === cmdid);
             if (!roleData) {
-                console.error(`Role ${roleName} or command ${cmdid} not found in operation_body`);
                 return;
             }
 
-            const response = await workflowService.runFODynamic({
+            const response = await submitRoleRights({
                 sessiontoken: session?.user?.token as string,
-                workflowid: WORKFLOWCODE.WF_BO_UPDATE_RIGHT,
-                input: {
-                    list_user_right: [
-                        {
-                            RoleId: roleData.role_id,
-                            CommandId: cmdid,
-                            CommandIdDetail: roleData.command_id_detail || "A",
-                            Invoke: checked,
-                            Approve: checked,
-                            ChannelId: roleData.application_code,
-                        }
-                    ],
-                }
+                items: [
+                    {
+                        RoleId: roleData.role_id,
+                        CommandId: cmdid,
+                        CommandIdDetail: roleData.command_id_detail || "A",
+                        Invoke: checked,
+                        Approve: checked,
+                        ChannelId: roleData.application_code,
+                    }
+                ]
             });
 
             if (response.status === 200) {
@@ -301,11 +268,8 @@ export const useInvokeApprove = ({
                 }
                 setToastOpen(true);
             } else {
-                console.error(`Failed to update ${cmdid} for ${roleName}:`, response);
             }
-        } catch (error) {
-            console.error(`Error updating ${cmdid} for ${roleName}:`, error);
-        }
+        } catch {}
     }, [operations?.operation_body, session?.user?.token, dictionary]);
 
     const handleCloseToast = useCallback((event?: React.SyntheticEvent | Event, reason?: string) => {

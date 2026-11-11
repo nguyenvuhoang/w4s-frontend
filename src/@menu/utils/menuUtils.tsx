@@ -19,6 +19,7 @@ import { GenerateVerticalMenu } from '@components/GenerateMenu'
 
 // Util Imports
 import { menuClasses } from './menuClasses'
+import { isMenuActive } from '@components/layout/shared/menu-utils'
 
 // Styled Component Imports
 import StyledMenuIcon from '../styles/StyledMenuIcon'
@@ -55,13 +56,13 @@ export const confirmUrlInChildren = (children: ChildrenType['children'], url: st
 
     if (component && component.props && component.props.href) {
       return exactMatch === true || exactMatch === undefined
-        ? component.props.href === url
+        ? isMenuActive(component.props.href, url)
         : typeof activeUrl === 'string' && url.includes(activeUrl)
     }
 
     if (href) {
       return exactMatch === true || exactMatch === undefined
-        ? href === url
+        ? isMenuActive(href, url)
         : !!(activeUrl && typeof activeUrl === 'string' && url.includes(activeUrl))
     }
 

@@ -45,8 +45,9 @@ const DynamicFormRenderer = ({
 
   return (
     <Box className="relative">
+      {/* Scoped to this wrapper (not `fixed`) so it never covers the Dashboard Header/Sidebar. */}
       {loading && (
-        <LoadingSubmit loadingtext={dictionary['common'].loading} />
+        <LoadingSubmit loadingtext={dictionary['common'].loading} position="absolute" />
       )}
 
       <ContentWrapper

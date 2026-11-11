@@ -1,91 +1,122 @@
 'use client'
 
-import { Global } from '@emotion/react'
+import { useContext, useEffect } from 'react'
+import { keyframes } from '@emotion/react'
 import { Typography } from '@mui/material'
 import type { BoxProps } from '@mui/material/Box'
 import Box from '@mui/material/Box'
+import { SettingsContext } from '@core/contexts/settingsContext'
+import { navTraceLoader } from '@/shared/utils/navigationDebug'
 
-const FallbackSpinner = ({ sx, loadingtext }: { sx?: BoxProps['sx'], loadingtext?: string }) => {
+const bounce = keyframes`
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+`
+
+const fadeLoop = keyframes`
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+`
+
+type FallbackSpinnerProps = {
+  sx?: BoxProps['sx']
+  loadingtext?: string
+  loadingText?: string
+}
+
+const FallbackSpinner = ({ sx, loadingtext, loadingText }: FallbackSpinnerProps) => {
+  const resolvedLoadingText = loadingText || loadingtext || 'Loading, please wait...'
+
+  useEffect(() => {
+    navTraceLoader('FallbackSpinner', true)
+
+    return () => navTraceLoader('FallbackSpinner', false)
+  }, [])
+
+  // Read the context directly instead of the throwing useSettings() hook: this component is also
+  // used as a Suspense `fallback` shown WHILE <Providers> (which mounts SettingsProvider) is
+  // itself still loading — at that exact moment there is no SettingsProvider ancestor yet, so it
+  // must degrade gracefully to the built-in animated logo rather than crash.
+  const settingsCtx = useContext(SettingsContext)
+  const loadingLogoUrl = settingsCtx?.settings?.logos?.loading
+
   return (
     <>
-      {/* Global animation styles */}
-      <Global
-        styles={`
-          @keyframes bounce {
-            0%, 100% {
-              transform: translateY(0);
-            }
-            50% {
-              transform: translateY(-10px);
-            }
-          }
-
-          @keyframes fadeLoop {
-            0%, 100% {
-              opacity: 0.4;
-            }
-            50% {
-              opacity: 1;
-            }
-          }
-        `}
-      />
-
       <Box
         sx={{
           display: 'flex',
+          width: '100%',
+          minWidth: 0,
           alignItems: 'center',
           flexDirection: 'column',
           justifyContent: 'center',
-          height: '100vh',
+          minHeight: '100dvh',
+          px: 2,
           ...sx
         }}
       >
-        <svg
-          width="64"
-          height="64"
-          viewBox="0 0 128 128"
-          fill="none"
+
+        {loadingLogoUrl ? (
+          <Box
+            component="img"
+            src={loadingLogoUrl}
+            alt={resolvedLoadingText}
+            sx={{
+              width: 104,
+              height: 104,
+              maxWidth: 120,
+              maxHeight: 120,
+              objectFit: 'contain',
+              animation: `${fadeLoop} 2s ease-in-out infinite, ${bounce} 2s ease-in-out infinite`
+            }}
+          />
+        ) : (
+        <Box
+          component="svg"
           xmlns="http://www.w3.org/2000/svg"
-          style={{
-            animation: 'fadeLoop 2s ease-in-out infinite, bounce 2s infinite ease-in-out'
+          viewBox="0 0 128.61 52.34"
+          sx={{
+            width: 104,
+            height: 'auto',
+            maxWidth: 120,
+            maxHeight: 120,
+            flex: '0 0 auto',
+            animation: `${fadeLoop} 2s ease-in-out infinite, ${bounce} 2s ease-in-out infinite`
           }}
         >
-          <path
-            d="M90.5576 48.588L72.329 66.6401C72.8735 63.7503 72.6972 60.7727 71.8154 57.9655C70.9335 55.1583 69.3728 52.6061 67.2683 50.5301L65.4303 48.7125C62.5141 45.799 60.6891 41.9895 60.2564 37.9124C59.8236 33.8353 60.8089 29.7341 63.0498 26.2853C65.2906 22.8364 68.6532 20.2458 72.5829 18.9409C76.5125 17.6359 80.7746 17.6945 84.6661 19.107C86.8703 20.0039 88.8728 21.3241 90.5576 22.9913C93.9893 26.386 95.9171 30.9896 95.9171 35.7897C95.9171 40.5898 93.9893 45.1933 90.5576 48.588Z"
-            fill="#193B69"
-          />
-          <path
-            d="M61.7547 50.53C64.3609 53.1056 66.1205 56.3991 66.8033 59.9798C67.4861 63.5604 67.0603 67.2615 65.5817 70.5989C64.6688 72.5426 63.4062 74.306 61.8554 75.8029H61.8302C58.3977 79.1967 53.7427 81.1032 48.8889 81.1032C44.0352 81.1032 39.3802 79.1967 35.9476 75.8029L8.42843 48.5878C6.41783 46.6111 4.90189 44.1973 4.00142 41.5387C3.10095 38.8801 2.84085 36.0502 3.24184 33.2747C3.27157 33.0403 3.31359 32.8076 3.36773 32.5775C4.049 29.0569 5.78608 25.8207 8.3529 23.29C11.7887 19.9023 16.4425 18 21.2942 18C26.1459 18 30.7997 19.9023 34.2355 23.29L61.7547 50.53Z"
-            fill="#193B69"
-          />
-          <path
-            d="M94.1583 52.9706C96.7707 50.3884 98.6948 47.2057 99.7582 43.7077C100.822 40.2096 100.991 36.5053 100.251 32.9265L119.638 52.0991C123.071 55.498 125 60.1057 125 64.9099C125 69.7141 123.071 74.3218 119.638 77.7206L92.0937 104.936C88.6612 108.329 84.0062 110.236 79.1524 110.236C74.2987 110.236 69.6437 108.329 66.2111 104.936L66.1608 104.886C62.7721 101.529 60.8689 96.9801 60.8689 92.237C60.8689 87.4939 62.7721 82.9447 66.1608 79.5881L68.0743 77.7206L94.1583 52.9706Z"
-            fill="url(#paint0_linear_134_568)"
-          />
-          <path
-            d="M48.8887 86.6339C50.3085 86.6396 51.7253 86.5061 53.1185 86.2355L34.2101 104.935C32.5143 106.618 30.4993 107.953 28.2807 108.864C26.0622 109.775 23.6836 110.244 21.2814 110.244C18.8792 110.244 16.5006 109.775 14.282 108.864C12.0634 107.953 10.0484 106.618 8.35264 104.935L8.30228 104.885C6.62138 103.225 5.28791 101.253 4.3781 99.0827C3.46829 96.9123 3 94.5858 3 92.2363C3 89.8868 3.46829 87.5603 4.3781 85.3899C5.28791 83.2195 6.62138 81.2478 8.30228 79.5874L10.1906 77.7199C12.1651 75.7651 13.6596 73.3881 14.5588 70.7721C15.458 68.156 15.738 65.3708 15.3772 62.6309L33.1275 80.185C35.1951 82.2342 37.6521 83.8589 40.357 84.9657C43.0619 86.0724 45.9614 86.6394 48.8887 86.6339Z"
-            fill="url(#paint1_linear_134_568)"
-          />
-          <defs>
-            <linearGradient id="paint0_linear_134_568" x1="92.9343" y1="32.9265" x2="92.9343" y2="110.236" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#06824C" />
-              <stop offset="1" stopColor="#05D29E" />
-            </linearGradient>
-            <linearGradient id="paint1_linear_134_568" x1="28.0593" y1="62.6309" x2="28.0593" y2="110.244" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#06824C" />
-              <stop offset="1" stopColor="#05D29E" />
-            </linearGradient>
-          </defs>
-        </svg>
+          <g id="Layer_2" data-name="Layer 2">
+            <g id="Layer_1-2" data-name="Layer 1">
+              <rect fill="#0089cf" x="41.1" y="6.1" width="7.51" height="40.05" />
+              <path fill="#0089cf" d="M75.71,6a15.81,15.81,0,0,1,6.42,1.22A13.19,13.19,0,0,1,89.48,15a15.44,15.44,0,0,1,.93,5.19,15,15,0,0,1-.9,5.2,13.45,13.45,0,0,1-2.77,4.54,13.72,13.72,0,0,1-4.59,3.21,15.85,15.85,0,0,1-6.44,1.21H64.4V46.15H56.83V6.1q4.77,0,9.45,0t9.43,0M64.4,27.44H75.71a7.24,7.24,0,0,0,4-1.05,6.68,6.68,0,0,0,2.42-2.63,7.48,7.48,0,0,0,.79-3.42,7.37,7.37,0,0,0-.81-3.42,6.78,6.78,0,0,0-2.41-2.62,7.19,7.19,0,0,0-4-1.05H64.4Z" />
+              <path fill="#0089cf" d="M121.35,15.79a6.62,6.62,0,0,0-1.44-1.66,11.26,11.26,0,0,0-2.18-1.43,13.72,13.72,0,0,0-2.75-1,13,13,0,0,0-3.13-.38,14.17,14.17,0,0,0-3.66.42,8.56,8.56,0,0,0-2.6,1.13,4.67,4.67,0,0,0-1.53,1.68,4.36,4.36,0,0,0-.51,2.08,3.32,3.32,0,0,0,.73,2.18,5.62,5.62,0,0,0,1.94,1.44,12.17,12.17,0,0,0,2.84.89c1.08.21,2.22.39,3.43.52,1.4.16,2.76.38,4.09.64a30.57,30.57,0,0,1,3.8,1,16.76,16.76,0,0,1,3.31,1.54,10.45,10.45,0,0,1,2.6,2.25,9.77,9.77,0,0,1,1.7,3.14,13.06,13.06,0,0,1,.62,4.19,11.09,11.09,0,0,1-5.06,9.73,16.56,16.56,0,0,1-5.36,2.3,27.17,27.17,0,0,1-6.4.74,30.86,30.86,0,0,1-5.76-.51A17.4,17.4,0,0,1,101.11,45a14.3,14.3,0,0,1-3.94-3,15.47,15.47,0,0,1-2.83-4.63l6.31-3.26a9,9,0,0,0,1.83,2.84,10.08,10.08,0,0,0,2.64,2,12.06,12.06,0,0,0,3.22,1.14,17,17,0,0,0,3.57.37,17.53,17.53,0,0,0,3.44-.33,9.71,9.71,0,0,0,3-1,6,6,0,0,0,2-1.86,4.76,4.76,0,0,0,.77-2.78,4.12,4.12,0,0,0-.7-2.43,5.59,5.59,0,0,0-1.94-1.7,11.55,11.55,0,0,0-2.93-1.12,28.67,28.67,0,0,0-3.7-.64c-1.36-.17-2.7-.37-4-.62a25.46,25.46,0,0,1-3.71-1,16.65,16.65,0,0,1-3.22-1.48,10,10,0,0,1-2.52-2.14,9.49,9.49,0,0,1-1.67-3,11.9,11.9,0,0,1-.6-4,9.78,9.78,0,0,1,1.39-5.3,11.46,11.46,0,0,1,3.6-3.6,16.49,16.49,0,0,1,5-2.08,24.29,24.29,0,0,1,5.53-.7,29.2,29.2,0,0,1,4.66.38,18.45,18.45,0,0,1,4.4,1.28,14.2,14.2,0,0,1,3.8,2.45,12.57,12.57,0,0,1,2.86,3.85Z" />
+              <path fill="#1b449c" d="M9.33,22.29.78,28.83A1.78,1.78,0,0,0,.17,31,1.48,1.48,0,0,1,0,30.39a.86.86,0,0,1,0-.16H0V13.93a2,2,0,0,1,.78-1.55L3.92,10.2,1.13,12.38a2,2,0,0,0,0,3.15Z" />
+              <path fill="#ed1c24" d="M17,31.62,9.7,37.29a1.78,1.78,0,0,1-2.24,0L.68,31.67A1.83,1.83,0,0,1,.16,31a1.79,1.79,0,0,1,.62-2.14l8.55-6.54,7.56,6.4A2,2,0,0,1,17,31.62" />
+              <path fill="#0089cf" d="M19.4,1.8V13.55A1.81,1.81,0,0,1,18.71,15l-.19.15L9.33,22.29,1.09,15.53a2,2,0,0,1,0-3.15L3.92,10.2h0L16.5.38A1.8,1.8,0,0,1,19.4,1.8" />
+              <path fill="#1b449c" d="M33.71,22.11v16.3A2,2,0,0,1,32.93,40l-3.14,2.17L32.58,40a2,2,0,0,0,0-3.16l-8.24-6.76,8.55-6.54a1.79,1.79,0,0,0,.62-2.14,1.85,1.85,0,0,1,.16.58v.16Z" />
+              <path fill="#ed1c24" d="M32.93,23.51,24.38,30l-7.56-6.39a2,2,0,0,1-.08-2.93L24,15.05a1.79,1.79,0,0,1,2.25,0L33,20.67a1.7,1.7,0,0,1,.52.7,1.79,1.79,0,0,1-.62,2.14" />
+              <path fill="#0089cf" d="M24.38,30l8.24,6.77a2,2,0,0,1,0,3.16l-2.79,2.17h0L17.21,52a1.8,1.8,0,0,1-2.9-1.42V38.79A1.81,1.81,0,0,1,15,37.37l.19-.14Z" />
+            </g>
+          </g>
+        </Box>
+        )}
+
         <Typography
           sx={{
             fontSize: '14px',
             color: '#193B69',
             marginTop: 1,
+            fontFamily: 'Quicksand, sans-serif',
           }}
         >
-          {loadingtext || 'Loading, please wait...'}
+          {resolvedLoadingText}
         </Typography>
       </Box>
     </>

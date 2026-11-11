@@ -129,8 +129,7 @@ export const useAddWorkflowDefinition = ({ session, locale }: UseAddWorkflowDefi
                     severity: "error",
                 });
             }
-        } catch (err) {
-            console.error("Error while saving WorkflowDefinition:", err);
+        } catch {
             setSnackbar({ open: true, message: "Add failed!", severity: "error" });
         } finally {
             setLoading(false);

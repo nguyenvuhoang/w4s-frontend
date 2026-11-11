@@ -3,7 +3,6 @@ import { handlePostUpdateData } from '@/@core/components/cButton/handlePostUpdat
 import { handleSearchAPI } from '@/@core/components/cButton/handleSearchAPI';
 import { handlePostAddData } from '@/@core/components/cButton/handlePostAddData';
 import { handlePostViewData } from '@/@core/components/cButton/handlePostViewData';
-import { handlePostExportData } from '@/@core/components/cButton/handlePostExportData';
 import { Locale } from '@/configs/i18n';
 
 type PerformParams = {
@@ -47,8 +46,11 @@ export const performTransaction = async ({
         case '#sys:view-data':
             return await handlePostViewData(txFo, selectedRows);
 
-        case '#sys:fo-export-data':
+        case '#sys:fo-export-data': {
+            const { handlePostExportData } = await import('@/@core/components/cButton/handlePostExportData');
+
             return await handlePostExportData(txFo, selectedRows, dictionary, allRows);
+        }
 
         default:
             return { error: 'Unknown txcode' };

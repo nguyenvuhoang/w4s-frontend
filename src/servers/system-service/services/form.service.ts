@@ -61,7 +61,7 @@ export const formService = {
     getMenuInfo: ({ sessiontoken, language, application }: SystemDataRequest) =>
         apiPost<SystemDataListResponse>('/system-service',
             createDefaultBody(WORKFLOWCODE.WF_BO_LOAD_MENU, {
-                channel_id: application ?? env.NEXT_PUBLIC_APPLICATION_CODE ?? ''
+                channel: application ?? env.NEXT_PUBLIC_APPLICATION_CODE ?? ''
             }),
             sessiontoken,
             {

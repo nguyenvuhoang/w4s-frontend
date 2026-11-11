@@ -1,6 +1,7 @@
 'use client'
 
 import { arrayMoveImmutable } from "array-move";
+import { i18n } from "@/configs/i18n";
 
 
 type LangData = {
@@ -12,7 +13,7 @@ type LangData = {
 const cache = {
     app_config: {
         para: {
-            language: 'en',
+            language: i18n.defaultLocale,
         },
         lang_data: {} as LangData
     },
@@ -199,7 +200,6 @@ const Application = {
     },
     AppException(code_error?: string, info_exception?: string, type_error?: string) {
         if (Application.isDebug()) {
-            console.log(code_error + "==" + type_error + "=>" + info_exception);
         }
     },
     arrayMoveImmutableListFormIsOpen({ oldIndex, newIndex }: { oldIndex: number, newIndex: number }) {

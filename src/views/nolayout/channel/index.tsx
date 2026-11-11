@@ -112,8 +112,7 @@ const ChannelContent = ({ dictionary, channelData, session }: PageProps) => {
                     );
 
                     SwalAlert('success', `Channel has been ${actionText}ed successfully.`, 'center');
-                } catch (err) {
-                    console.error(err);
+                } catch {
                     SwalAlert('error', 'Action failed. Please try again.', 'center');
                 } finally {
                     setActionLoadingId(null);

@@ -80,9 +80,7 @@ const RenderLookupDefault = ({
             } else {
                 Application.AppException("#HandleLookupClick", response.payload.error[0].code, "Error");
             }
-        } catch (error) {
-            console.error('Error fetching lookup data:', error);
-        } finally {
+        } catch {} finally {
             setLoading(false);
         }
     };

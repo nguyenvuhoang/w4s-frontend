@@ -72,8 +72,7 @@ const EmailSetting = ({ session, dictionary }: {
                 return;
             }
             SwalAlert('success', 'Update successful!', 'center');
-        } catch (err) {
-            console.error('Failed to update mail config', err);
+        } catch {
             SwalAlert('error', 'Unexpected error occurred.', 'center');
         } finally {
             setSaving(false);
@@ -115,8 +114,7 @@ const EmailSetting = ({ session, dictionary }: {
 
 
             SwalAlert('success', 'Test mail sent successfully!', 'center');
-        } catch (err) {
-            console.error('Failed to send test mail', err);
+        } catch {
             SwalAlert('error', 'Unexpected error occurred while sending test mail.', 'center');
         } finally {
             setTesting(false);
@@ -158,8 +156,7 @@ const EmailSetting = ({ session, dictionary }: {
                     useTLS: firstItem.enable_tls || false,
                 });
             }
-        } catch (err) {
-            console.error('Error fetching settings:', err);
+        } catch {
             reset();
         } finally {
             setLoading(false);
@@ -188,8 +185,7 @@ const EmailSetting = ({ session, dictionary }: {
 
             const input = templateResult.payload.dataresponse.data.input;
             setTemplates(input.items || []);
-        } catch (err) {
-            console.error('Error fetching templates:', err);
+        } catch {
             setTemplates([]);
         } finally {
             setTemplateLoading(false);

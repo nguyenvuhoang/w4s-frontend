@@ -8,6 +8,7 @@ import { OpenAPIType } from '@/shared/types/systemTypes';
 import { getDictionary } from '@/shared/utils/getDictionary';
 import { isValidResponse } from '@/shared/utils/isValidResponse';
 import { Metadata } from 'next';
+import { getServerBackendToken } from '@/server/auth/getServerBackendToken'
 
 export const metadata: Metadata = generateAuthMetadata('OpenAPI management modify');
 
@@ -20,7 +21,7 @@ const ModifyCredentialPage = async (props: { params: Promise<{ locale: Locale, i
     ]);
 
     const openAPIdataApi = await workflowService.viewAPIKey({
-        sessiontoken: session?.user?.token as string,
+        sessiontoken: (await getServerBackendToken()) as string,
         language: locale,
         fields: {
             client_id: id

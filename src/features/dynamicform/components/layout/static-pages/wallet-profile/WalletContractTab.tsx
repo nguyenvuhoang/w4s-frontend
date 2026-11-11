@@ -40,7 +40,6 @@ const WalletContractTab = ({
 
     const contractData = walletData?.contract || {};
 
-    console.log(contractData)
 
     return (
         <Card className="shadow-md" sx={{ borderRadius: 2 }}>

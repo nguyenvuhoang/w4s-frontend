@@ -5,13 +5,12 @@ import { Dispatch, SetStateAction } from 'react';
 import { useForm } from 'react-hook-form';
 
 import PreviewInfo from '@components/forms/previewinfo';
-import LoadingSubmit from '@components/LoadingSubmit';
 import { Locale } from '@/configs/i18n';
 import { useRenderButton } from '@features/dynamicform/hooks/useRenderButton';
 import { FormInput, PageData, RuleStrong } from '@shared/types/systemTypes';
 import { getDictionary } from '@utils/getDictionary';
 import { getIcon } from '@utils/getIcon';
-import { Box, Button, Grid, Modal } from '@mui/material';
+import { Box, Button, CircularProgress, Grid, Modal } from '@mui/material';
 
 
 // ============================================================================
@@ -92,13 +91,15 @@ const RenderButtonDefault = ({
   const iconClass = getIcon(input);
   return (
     <Grid size={gridProps} sx={{ marginBottom: '16px' }}>
-      {/* Main Button */}
+      {/* Main Button — loading state lives on the button itself (per the "submit action" loading
+          convention used across the app), not as a page-covering overlay. `isDisabled` already
+          includes the in-flight state (see useRenderButton), so this alone prevents double-submit. */}
       <Button
         id={input.default.id || undefined}
         name={input.default.code}
         variant="contained"
         color="primary"
-        startIcon={iconClass}
+        startIcon={isLoading ? <CircularProgress size={16} color="inherit" /> : iconClass}
         disabled={isDisabled}
         onClick={handleClick}
       >
@@ -126,11 +127,6 @@ const RenderButtonDefault = ({
             />
           </Box>
         </Modal>
-      )}
-
-      {/* Loading Overlay */}
-      {isLoading && (
-        <LoadingSubmit loadingtext={dictionary['common'].loading} position="fixed" />
       )}
     </Grid>
   );

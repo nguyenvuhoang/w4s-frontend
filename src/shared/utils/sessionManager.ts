@@ -2,12 +2,20 @@
  * Session Management Utilities
  * Handles browser close detection and automatic logout
  */
+import { i18n } from '@/configs/i18n';
 
 export interface SessionConfig {
   autoLogoutOnBrowserClose: boolean;
   sessionTimeoutMinutes: number;
   checkIntervalSeconds: number;
   browserCloseThresholdMs: number;
+  /**
+   * Inactivity-based logout (activity tracking + `session_timeout` check). When false, no activity
+   * listeners or check interval are created. See NEXT_PUBLIC_ENABLE_IDLE_TIMEOUT (@/configs/sessionConfig).
+   */
+  idleTimeoutEnabled: boolean;
+  /** Invoked before the frontend session is cleared, e.g. to call the backend WF_BO_LOGOUT workflow. */
+  onBeforeLogout?: (reason: string) => Promise<void> | void;
 }
 
 export const defaultSessionConfig: SessionConfig = {
@@ -15,12 +23,14 @@ export const defaultSessionConfig: SessionConfig = {
   sessionTimeoutMinutes: 30,
   checkIntervalSeconds: 60,
   browserCloseThresholdMs: 30000, // 30 seconds
+  idleTimeoutEnabled: true,
 };
 
 export class SessionManager {
   private config: SessionConfig;
   private checkInterval: NodeJS.Timeout | null = null;
   private lastActivityTime: number = Date.now();
+  private listenerCleanups: Array<() => void> = [];
 
   constructor(config: Partial<SessionConfig> = {}) {
     this.config = { ...defaultSessionConfig, ...config };
@@ -30,12 +40,14 @@ export class SessionManager {
   private init() {
     if (typeof window === 'undefined') return;
 
-    // Set up activity tracking
-    this.trackUserActivity();
-    
-    // Set up periodic session checks
-    this.startSessionCheck();
-    
+    if (this.config.idleTimeoutEnabled) {
+      // Set up activity tracking
+      this.trackUserActivity();
+
+      // Set up periodic session checks
+      this.startSessionCheck();
+    }
+
     // Handle browser close/refresh
     this.setupBrowserCloseDetection();
   }
@@ -50,6 +62,7 @@ export class SessionManager {
     const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
     events.forEach(event => {
       document.addEventListener(event, updateActivity, { passive: true });
+      this.listenerCleanups.push(() => document.removeEventListener(event, updateActivity));
     });
 
     // Initial activity
@@ -105,6 +118,12 @@ export class SessionManager {
     window.addEventListener('pagehide', handlePageHide);
     window.addEventListener('pageshow', handlePageShow);
     document.addEventListener('visibilitychange', handleVisibilityChange);
+    this.listenerCleanups.push(() => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('pagehide', handlePageHide);
+      window.removeEventListener('pageshow', handlePageShow);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    });
 
     // Check on initial load
     this.checkForBrowserCloseRecovery();
@@ -141,12 +160,9 @@ export class SessionManager {
       
       // Don't logout for quick refreshes or quick visibility returns
       if (isQuickRefresh || isVisibilityQuickReturn) {
-        console.log('[SessionManager] Quick page refresh detected (F5), maintaining session');
       } else if (this.config.autoLogoutOnBrowserClose && isWithinLogoutThreshold) {
-        console.log('[SessionManager] Actual browser close detected after extended time, triggering logout...');
         this.triggerLogout('browser_close_recovery');
       } else {
-        console.log('[SessionManager] Page navigation or quick reload detected, maintaining session');
       }
 
       // Always clean up flags after processing
@@ -155,6 +171,8 @@ export class SessionManager {
   }
 
   private checkSessionValidity() {
+    if (!this.config.idleTimeoutEnabled) return;
+
     const lastActivity = localStorage.getItem('lastActivity');
     if (!lastActivity) return;
 
@@ -162,7 +180,6 @@ export class SessionManager {
     const sessionTimeoutMs = this.config.sessionTimeoutMinutes * 60 * 1000;
 
     if (timeSinceActivity > sessionTimeoutMs) {
-      console.log('[SessionManager] Session timeout detected');
       this.triggerLogout('session_timeout');
     }
   }
@@ -187,13 +204,19 @@ export class SessionManager {
           keepalive: true
         }).catch(console.error);
       }
-    } catch (error) {
-      console.error('[SessionManager] Failed to send logout beacon:', error);
-    }
+    } catch {}
   }
 
   public async triggerLogout(reason: string) {
     try {
+      // Invalidate the session on the backend BEFORE clearing local/frontend
+      // session state below. Best-effort: must not block logout on failure.
+      if (this.config.onBeforeLogout) {
+        try {
+          await this.config.onBeforeLogout(reason);
+        } catch {}
+      }
+
       // Clear local storage
       localStorage.removeItem('token');
       localStorage.removeItem('refresh_token');
@@ -206,20 +229,19 @@ export class SessionManager {
         headers: { 'Content-Type': 'application/json' }
       });
 
-      // Extract locale from current path or default to 'en'
+      // Extract locale from current path or default to configured locale
       const currentPath = window.location.pathname;
       const localeMatch = currentPath.match(/^\/([a-z]{2})/);
-      const locale = localeMatch ? localeMatch[1] : 'en';
+      const locale = localeMatch ? localeMatch[1] : i18n.defaultLocale;
 
       // Redirect to locale-specific login
       window.location.href = `/${locale}/login`;
-    } catch (error) {
-      console.error('[SessionManager] Logout failed:', error);
+    } catch {
       
       // Force redirect even if API call fails
       const currentPath = window.location.pathname;
       const localeMatch = currentPath.match(/^\/([a-z]{2})/);
-      const locale = localeMatch ? localeMatch[1] : 'en';
+      const locale = localeMatch ? localeMatch[1] : i18n.defaultLocale;
       
       window.location.href = `/${locale}/login`;
     }
@@ -230,6 +252,10 @@ export class SessionManager {
       clearInterval(this.checkInterval);
       this.checkInterval = null;
     }
+
+    // Remove document/window listeners so re-initialization doesn't stack duplicates.
+    this.listenerCleanups.forEach(cleanup => cleanup());
+    this.listenerCleanups = [];
   }
 
   public updateActivity() {
